@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<script src="https://cdn.plrjs.com/player/if4yd39i7b5z7/jv4pykjik2eg.js" type="text/javascript"></script>
+  <style>
+	body {
+		background: url(#COVER#); /* Фоновый цвет и фоновый рисунок*/
+		background-color: rgba(0,0,0,.6);
+        background-blend-mode: darken;
+		color: #fff; /*Цвет текста на странице*/
+		background-attachment: fixed; /* Фон страницы фиксируется */
+		background-size: cover;
+	}
+	.title{
+	    text-align: center;
+	    font: 18px/24px Lato,Arial;
+	    padding-top: 8px;
+	    padding-bottom: 8px;
+	}
+	.player{
+	    margin:5px 0 0 0;
+	    text-align: center;
+	}
+	.copyright{
+	    text-align: center;
+	    border-top:1px solid #333;
+	    position:relative;
+	    overflow:hidden;
+	    display:flex;
+	    justify-content:center;
+	    flex-direction:column;
+	    padding:10px 0 0 0;
+	    margin:15px 0 0 0;
+	}
+   </style>
+</head>
+<body>
+<div class="title">#TITLE#</div>
+<div id="player">
+<script> var player = new Playerjs({id:"player", title:"#NAME#", file:"#LINK#"});</script>
+</div>
+<div class="copyright">Kodik HD</div>
+</body>
+</html>
