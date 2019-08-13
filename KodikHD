@@ -23,17 +23,6 @@
 	    margin:5px 0 0 0;
 	    text-align: center;
 	}
-	.copyright{
-	    text-align: center;
-	    border-top:1px solid #333;
-	    position:relative;
-	    overflow:hidden;
-	    display:flex;
-	    justify-content:center;
-	    flex-direction:column;
-	    padding:10px 0 0 0;
-	    margin:15px 0 0 0;
-	}
    </style>
 </head>
 <body>
@@ -41,6 +30,5 @@
 <div id="player">
 <script> var player = new Playerjs({id:"player", title:"#NAME#", file:"#LINK#"});</script>
 </div>
-<div class="copyright">Kodik HD</div>
 </body>
 </html>
