@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>YouTube Play</title>
+<script src="https://cdn.plrjs.com/player/if4yd39i7b5z7/rpjaj72xgc56.js"></script>
+<style>
+	body {
+		background: url(https://png.pngtree.com/back_origin_pic/04/13/51/f76daf6ed181d9e0e0f82c28644b8112.jpg);
+		background-color: #fff;
+        background-blend-mode: darken;
+		color: #fff;
+		background-attachment: fixed;
+		background-size: cover;
+	}
+    .title {
+        border-left:3px #238189 double; 
+        border-right:3px #238189 double; 
+        border-top:3px #238189 double;
+        border-radius: 15px; 
+        padding: 5px 0 5px 15px;
+        text-align: center;
+        color: #238189;
+	    font: 14px fantasy,Arial Black;
+        font-size: 38px;
+        text-shadow: 4px 4px 4px #444;
+	    padding-top: 8px;
+	    padding-bottom: 8px;
+	}
+	.footer { 
+	    position: fixed; 
+        color: #238189;
+	    font: 14px cursive,Arial;
+	    top: 95%;
+	    left: 35%;
+	    
+	}
+   </style>
+</head>
+<body>
+    <div onclick="location.href='tg://resolve?domain=iOSshortcut';" style="cursor: pointer;" class="title">YouTube Play</div>
+    <div id="player">
+    <script> var player = new Playerjs({id:"player",
+    file:[#FILEJS#]
+   });</script>
+    </div>
+    <div onclick="location.href='https://aa1286901.github.io/';" style="cursor: pointer;" class="footer">© Ahmedov</div >
+</body>
+</html>
