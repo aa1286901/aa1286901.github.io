@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>YouTube Play</title>
-<script src="https://cdn.plrjs.com/player/if4yd39i7b5z7/rpjaj72xgc56.js"></script>
+<script src="https://cdn.plrjs.com/player/if4yd39i7b5z7/qmgxtm0lqbgg.js"></script>
 <style>
 	body {
 		background: url(https://png.pngtree.com/back_origin_pic/04/13/51/f76daf6ed181d9e0e0f82c28644b8112.jpg);
@@ -15,13 +15,14 @@
 		background-size: cover;
 	}
     .title {
-        border-left:3px #238189 double; 
-        border-right:3px #238189 double; 
-        border-top:3px #238189 double;
+        border-left:0px #ff0000 solid; 
+        border-right:0px #ff0000 solid; 
+        border-top:0px #ff0000 solid;
+        border-bottom:0px #ff0000 solid;
         border-radius: 15px; 
         padding: 5px 0 5px 15px;
         text-align: center;
-        color: #238189;
+        color: #ff0000;
 	    font: 14px fantasy,Arial Black;
         font-size: 38px;
         text-shadow: 4px 4px 4px #444;
@@ -29,8 +30,14 @@
 	    padding-bottom: 8px;
 	}
 	.footer { 
+        border-left:1px #fff solid; 
+        border-right:1px #fff solid; 
+        border-top:1px #fff solid;
+        border-bottom:1px #fff solid;
+        border-radius: 10px; 
+        padding: 0px 2px 0px 2px;
 	    position: fixed; 
-        color: #238189;
+        color: #fff;
 	    font: 14px;
 	    top: 95%;
 	    left: 35%;
@@ -39,8 +46,8 @@
    </style>
 </head>
 <body>
-    <div onclick="location.href='tg://resolve?domain=iOSshortcut';" style="cursor: pointer;" class="title">YouTube Play</div>
-    <div id="player">
+    <div onclick="location.href='tg://resolve?domain=iOSshortcut';" style="cursor: pointer; margin-bottom: 5px" class="title">YouTube Play</div>
+    <div id="player" style="width:100%; border-bottom:1px #fff solid; border-top:1px #fff solid; border-right:1px #fff solid;  border-left:1px #fff solid; height:90px">
     <script> var player = new Playerjs({id:"player",
     file:[#FILEJS#]
    });</script>
