@@ -1,0 +1,962 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
+    <META NAME="ROBOTS" CONTENT="NOINDEX,NOFOLLOW">
+    <title>Player</title>
+
+    <script type="text/javascript" src="https://github.com/aa1286901/player/raw/master/js/jquery.js"></script>
+    <script type="text/javascript" src="https://github.com/aa1286901/player/raw/master/js/jquery-ui.js"></script>
+    <script type="text/javascript" src="https://github.com/aa1286901/player/raw/master/js/perfect-scrollbar.jquery.min.js"></script>
+    <script type="text/javascript" src="https://github.com/aa1286901/player/raw/master/js/mplayer.js"></script>
+    <style>
+    @font-face {
+    font-family: 'robotoregular';
+    font-weight: normal;
+    font-style: normal;
+
+    src: url('../fonts/roboto-regular-webfont.woff2') format('woff2'),
+    url('../fonts/roboto-regular-webfont.woff') format('woff'),
+    url('../fonts/roboto-regular-webfont.ttf') format('truetype');
+}
+body{
+		background-color: #000;
+}
+
+	.footer { 
+        border-left:1px #fff solid; 
+        border-right:1px #fff solid; 
+        border-top:1px #fff solid;
+        border-bottom:1px #fff solid;
+        border-radius: 10px; 
+        padding: 0px 2px 0px 2px;
+	    position: fixed; 
+        color: #fff;
+	    font: 14px;
+	    top: 95%;
+	    width: 80px;
+        position: absolute; 
+        left: 50%;
+        margin-left: -40px;
+	    
+	}
+
+.mplayer {
+    position: fixed;
+    overflow: hidden;
+    width: 290px;
+    font-family: Arial, sans-serif;
+    box-shadow:0 0 20px 0 rgba(0, 0, 0, 0.5);
+    border-radius:3px;
+}
+.mplayer__front-header {
+    position: relative;
+    overflow: hidden;
+    height: 380px;
+    text-align: center;
+}
+.mplayer__front-header:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    background-color: rgba(0, 0,0, 0.1);
+}
+
+.mplayer__front-header-current-bg,
+.mplayer__front-header-next-bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-position: center;
+    background-size: cover;
+}
+
+.mplayer__front-btn-playlist {
+    position: absolute;
+    z-index: 1;
+    top: 3px;
+    right: 5px;
+    display: inline-block;
+    width: 18px;
+    height: 14px;
+    padding-top: 14px;
+    padding-right: 12px;
+    cursor: pointer;
+    background: 0 13px no-repeat url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAANCAYAAACgu+4kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo2QTA1MDgxMTUxMEFFNzExODVENkEzMDIwRkIwNEE5MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4OEQ5MERBNzE1QzkxMUU3QkUwQkEyOEE0OEJERTRCMCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4OEQ5MERBNjE1QzkxMUU3QkUwQkEyOEE0OEJERTRCMCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChXaW5kb3dzKSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk1QzRDNzA2MDQwQkU3MTE5QUU3OTIzODRFQkRGOTg1IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjZBMDUwODExNTEwQUU3MTE4NUQ2QTMwMjBGQjA0QTkwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+ta8WQgAAADdJREFUeNpi/A8EDBDACKVhfKIAEwOFgIWRkdEPbC3UITA+sYAR4QPyAOVeQAq00UAcuYEIEGAAZy4Z8//RM2YAAAAASUVORK5CYII=');
+}
+
+.mplayer__cover-art {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    overflow: hidden;
+    width: 190px;
+    height: 190px;
+    margin-top: 44px;
+    border-radius: 100%;
+}
+
+
+
+.mplayer__cover-art img {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.mplayer__cover-art-next {
+    position: absolute;
+    z-index: -2;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.mplayer__front-body {
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding-bottom: 7px;
+    background-color: rgba(0,0,0,0.7);
+}
+
+.mplayer__toolbar {
+    position: absolute;
+    z-index: 1;
+    top: 115px;
+    right: 0;
+    left: 0;
+    text-align: center;
+}
+
+.mplayer__pause {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    margin: 0 47px 0 47px;
+    border-radius: 100%;
+    cursor: pointer;
+    transition: box-shadow 0.5s ease-out;
+    vertical-align: middle;
+    background-color: #ffffff;
+    box-shadow: 0 9px 13px rgba(0, 0, 0, 0.6);
+}
+
+.mplayer__pause:hover {
+    box-shadow: 0 9px 13px rgba(0, 0, 0, 0.9);
+}
+.mplayer__pause:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: inline-block;
+    background: no-repeat 56% 50% url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAUCAMAAAC3SZ14AAAAkFBMVEUnJyf///8nJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJyctwfZ3AAAAL3RSTlMAAOjp5t6z5+Xu+a0uE2dm1IjOSiyQEp1rzOJ+B0egJ8BCXPh4A5UbOfvSVrXjc4VKoJIAAAB3SURBVHheZdDHDgIxFENRP2AGphd67728//87ooCUWLnLs7KMaVTCTwSpajtkGqgpy5lsTeGop7+SislWr//UV1c8YrKNJ4Y6SiUzS9w8pEVAyxW6BJutCNFuDxBFB5i8EcfTGUyXK0AU3wBHd9XHky98vT8A0RdnbiLe24ZvwgAAAABJRU5ErkJggg==');
+}
+
+.mplayer__pause.isplay:after {
+    background: no-repeat 50% 50% url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAUAQMAAACHy55vAAAABlBMVEUnJycnJyezB7+5AAAAAXRSTlMAQObYZgAAAA1JREFUeF5j+FFDNgIAbSEdEZy4uuoAAAAASUVORK5CYII=');
+}
+
+.mplayer__prev,
+.mplayer__next {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    cursor: pointer;
+    transition: box-shadow 0.5s ease-out;
+    vertical-align: middle;
+    background-color: #1f1f1f;
+    box-shadow: 0 9px 13px rgba(0, 0, 0, 0.6);
+}
+
+.mplayer__prev:hover,
+.mplayer__next:hover {
+    box-shadow: 0 9px 13px rgba(0, 0, 0, 0.9);
+}
+
+.mplayer__prev:after,
+.mplayer__next:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: inline-block;
+}
+
+.mplayer__prev {
+    position: relative;
+}
+
+.mplayer__prev:after {
+    background: no-repeat 50% 50% url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAAAb1BMVEX///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+pUA8cAAAAJHRSTlMA967i1Pm44/CksOSe4MpyovEgQ+6nx8Qi2tKEdC1OefUlrNDvaehZAAAAWElEQVR4XkXORxKAMAxDUQUIvfdedf8zMsGZQbu3+TbCCLK660FfUFRUoGPQ5CQzMAbGkmYumGJtaaG9gXYB9DT/YIpFCZIvsDkCm949qdmjx0n1v3PdzwsRlgpj2FBMSgAAAABJRU5ErkJggg==');
+}
+.mplayer__next:after {
+    background: no-repeat 50% 50% url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAAAb1BMVEX///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+pUA8cAAAAJHRSTlMA967isKTknrjw4/nUcuAgIsen8cpDxHSi0truhC1O9XnQrCW9ZLJ5AAAAVklEQVR4XkXORxKAIBBE0casmHOOff8zWhSIf/c2PYOqLqDzYwg2mUZE5CTbTsEhXKrGEvA+cBkQEglNfSp/TLNEoCFWhDRwNjuQ7mZa8Djt0et+7DsvIO8KY54gPugAAAAASUVORK5CYII=');
+}
+
+.mplayer__front-row:after {
+    content: ' ';
+    display: table;
+    clear: both;
+}
+
+.mplayer__front-title-wrap {
+    padding: 9px 0 0 0px;
+    text-align: center;
+}
+
+.mplayer__front-title-author {
+    overflow: hidden;
+    max-width: 100%;
+    height: 12px;
+    min-height: 1em;
+    margin-top: 1px;
+    color: #909090;
+    font-family: robotoregular,sans-serif;
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    letter-spacing: 0.1em;
+}
+
+.mplayer__front-title-track {
+    overflow: hidden;
+    max-width: 100%;
+    min-height: 1em;
+    padding-bottom: 6px;
+    color: #ffffff;
+    font-family: robotoregular,sans-serif;
+    font-size: 14px;
+    line-height: 1;
+    white-space: nowrap;
+    text-transform: uppercase;
+    text-overflow: ellipsis;
+    letter-spacing: 0.1em;
+}
+
+.mplayer__order-btn-wrap {
+    float: left;
+    padding: 2px 0px 0 11px;
+}
+
+.mplayer__random,
+.mplayer__repeat {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.mplayer__random {
+}
+
+.mplayer__random.mplayer__random-on {
+    content: '';
+    width: 20px;
+    height: 14px;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAOCAMAAAAYGszCAAAA1VBMVEX///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////98+g/AAAAARnRSTlMADdAt/Mz9Zglpe4KZmvAEeDOrL+UIRteFt+lW5EABI7pJjAMRaCAb/o5fJDLc2tn0nmLRJ7aD74EHsjZdHE+9Jq6jFMOtec4xbAAAAJtJREFUeF5lzMUWglAARdGrpCIKWNjd3d16//+TfIgDF+7BGR4EWU38ixdFShFN0yL9AYSoMhpPmbWh0FcHVvQVYIQ9eebgkm4tE+cZX+lYuUJGAVTn+JHlQrSh40eLbCOg02UPQsL+3EKeYYopWBcAE1NkJquqKpNcJkhnbWy43WHPD+UAPUbfEaekJEnJKzwZ8+bIvD8Q9HwBb9VTF1JkFQBMAAAAAElFTkSuQmCC');
+}
+
+.mplayer__random {
+    content: '';
+    width: 20px;
+    height: 14px;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAOCAMAAAAYGszCAAAA2FBMVEVwcHD///9wcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBlw1H3AAAAR3RSTlMAANANLWbM/P1GCZp4M6vwmYLXewiFaS/lBPRA5FZJ6SO33AEDtmjRG/6OIF8kEb3Z2p66YieMg++BB7I2XRwyTyauoxTDrbT6XpMAAACkSURBVHheXc1FzsNAEITRnsTMFGZmZoYf6v43yoysSJbfpqRv0U1p1pwxSnOrPFbysiznpzMRQqW9KiOwSUFsT9RDrEZ+RmigRTkgV9ddPL83I6/TBEIi2myTjwIM+HQNloh9YCKWJeJwhLHYki1ilBUeRRTJWvC6NHlcq5qmqQB2JcA5+EecznSBAOVKhofYje4FSZIKLxJ08+2o+PmltL9/xj4tWxf96Ve1twAAAABJRU5ErkJggg==');
+}
+
+.mplayer__repeat.mplayer__repeat-on {
+    content: '';
+    width: 15px;
+    height: 14px;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAOCAMAAADHVLbdAAAAtFBMVEX///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8YFGe8AAAAO3RSTlMAvICPzs0Bl/LYbgcCtUvrC9kyxdIIFJyZ+ugY5WZKhhL5KECBXBb+OluvdPYut6L17R5l5PPHHDe4TcUbFHMAAABySURBVAgdVcEFDoNQAETBBxSru7u7+97/XiWfpIQZEtkiKW1VieTmBcsI1dnkKVeUKEFLOjlGTfVGk0AjYn6XXp9AA2LD5XgipCkzD2OhB6s17pbYTnsOHOXahnOWBaESlyveTbpnjKf/IvLWh5Svzd8Ppc8QCHYgMbgAAAAASUVORK5CYII=');
+}
+.mplayer__repeat {
+    content: '';
+    width: 15px;
+    height: 14px;
+    margin-right: 3px;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAOCAMAAADHVLbdAAAAtFBMVEX///9wcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHAtkH8yAAAAO3RSTlMAvICPzs0Bl/LYbgcCtUvrC9kyxdIIFJyZ+ugY5WZKhhL5KECBXBb+OluvdPYut6L17R5l5PPHHDe4TcUbFHMAAABySURBVAgdVcEFDoNQAETBBxSru7u7+97/XiWfpIQZEtkiKW1VieTmBcsI1dnkKVeUKEFLOjlGTfVGk0AjYn6XXp9AA2LD5XgipCkzD2OhB6s17pbYTnsOHOXahnOWBaESlyveTbpnjKf/IvLWh5Svzd8Ppc8QCHYgMbgAAAAASUVORK5CYII=');
+}
+
+.mplayer__current-time,
+.mplayer__all-time {
+    display: inline-block;
+    color: #ffffff;
+    font-family: robotoregular,sans-serif;
+    letter-spacing: 0.1em;
+    font-size: 10px;
+}
+
+.mplayer__long,
+.mplayer__volume {
+    height: 24px;
+    vertical-align: top;
+}
+
+.mplayer__long {
+    overflow: hidden;
+    margin-top: 3px;
+    white-space: nowrap;
+}
+.mplayer__volume {
+    float: right;
+    margin-top: 1px;
+    margin-right: 8px;
+}
+
+.mplayer__long-slider,
+.mplayer__volume-slider {
+    position: relative;
+    display: inline-block;
+    height: 2px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    cursor: pointer;
+    vertical-align: top;
+}
+
+.mplayer__long-slider {
+    position: relative;
+    width: 193px;
+    margin-right: 19px;
+    margin-left: 5px;
+}
+.mplayer__volume-slider {
+    width: 63px;
+    margin-right: 13px;
+}
+
+.mplayer__long-slider:before,
+.mplayer__volume-slider:before {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    right: -11px;
+    left: 0;
+    display: block;
+    height: 2px;
+    background-color: #707070;
+}
+
+.mplayer__long-slider .ui-widget-header,
+.mplayer__volume-slider .ui-widget-header {
+    position: relative;
+    z-index: 1;
+    height: 2px;
+    background: #ffffff;
+}
+
+.mplayer__long-slider .ui-slider-handle,
+.mplayer__volume-slider .ui-slider-handle {
+    position: absolute;
+    top: -5px;
+    width: 14px;
+    height: 14px;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAMAAAAolt3jAAAAQlBMVEX///8nJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJycnJyfIyMhoaGj19fX09PRnZ2eXl5f29vZpaWn///8tMPenAAAADHRSTlMAEBESSIK/4uPk8/XfI2mXAAAAYUlEQVQIHQXBiRHDIAwAMPkh1/23bWOgUiAr2ty5BN0N3j1KfzJVWvqcjvIUiF+fWs9qIE+cDANwRbYCKJ0AuOTYAMfkFQDhlohMsGemrt79zfvd47eDXgVmRqAylvfuwx98vCoxuPuEVQAAAABJRU5ErkJggg==');
+}
+
+.mplayer__volume-icon {
+    position: relative;
+    top: 2px;
+    display: inline-block;
+    width: 14px;
+    height: 11px;
+    margin-right: 5px;
+    background: no-repeat url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAALCAMAAAB4W0xQAAAA2FBMVEX///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+0oG7xAAAAR3RSTlMAFu+IzFMzFcL6oJ9p/JVGNf0U3j2jWsEpy2C8gzaRknebjLo6LxhZsMR4Xapei8D5ZUu7SH2kobhVZyv+MjntamOyGtxtDjS+oQEAAAB4SURBVHheNcdFAsIwFAXAl9S9uLu7u+u//42ghMxuIPga0E7hr0t9BKE3/sVQiWaoJpKxODKmyYko7WRz+UIRJJTKFbdWb8g2W9uOo/Rk9cFwZCsTTC0r6nyxtFfrDQzGdt/uD9rxxM+I6Bdycb3dVQiP5wt4c4YPvX0TvGjB7h0AAAAASUVORK5CYII=');
+}
+
+.mplayer__playlist {
+    position: absolute;
+    z-index: 999;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #f9f9f9;
+}
+
+
+/* perfect-scrollbar v0.6.12 */
+
+.ps-container {
+    overflow: hidden !important;
+
+    -ms-touch-action: none;
+        touch-action: none;
+    -ms-overflow-style: none;
+}
+
+@supports (-ms-overflow-style: none) {
+    .ps-container {
+        overflow: auto !important;
+    }
+}
+
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .ps-container {
+        overflow: auto !important;
+    }
+}
+
+
+.ps-container.ps-active-y > .ps-scrollbar-y-rail,
+.ps-scrollbar-y-rail {
+    /* update */
+    display: block;
+    background-color: transparent;
+}
+
+
+
+.ps-container.ps-in-scrolling {
+    pointer-events: none;
+}
+
+.ps-container.ps-in-scrolling.ps-y > .ps-scrollbar-y-rail {
+    /*background-color: #eee;*/
+    /*opacity: 0.9;*/
+}
+
+.ps-container.ps-in-scrolling.ps-y > .ps-scrollbar-y-rail > .ps-scrollbar-y {
+    /*background-color: #999;*/
+}
+
+
+
+
+.ps-container > .ps-scrollbar-y-rail {
+    position: absolute;
+    right: 0;
+    display: none;
+    width: 15px;
+}
+
+.ps-container > .ps-scrollbar-y-rail > .ps-scrollbar-y {
+    /* there must be 'right' for ps-scrollbar-y */
+}
+
+.mplayer__playlist-body-inner.ps-container > .ps-scrollbar-y-rail > .ps-scrollbar-y {
+    position: absolute;
+    right: 5px;
+    width: 7px;
+    opacity: 0.3;
+    border: 0;
+    transition: opacity 0.2s ease-out;
+    background-color: transparent;
+}
+
+.mplayer__playlist-body-inner > .ps-scrollbar-y-rail > .ps-scrollbar-y:after {
+    content: '';
+    position: absolute;
+    top: 7px;
+    right: 0;
+    bottom: 7px;
+    left: 0;
+    display: inline-block;
+    border-radius: 7px;
+    background-color: #ffffff;
+}
+
+.mplayer__playlist-body-inner > .ps-scrollbar-y-rail > .ps-scrollbar-y:hover,
+.mplayer__playlist-body-inner > .ps-scrollbar-y-rail > .ps-scrollbar-y:active {
+    opacity: 0.7;
+    cursor: pointer;
+    transition: opacity 0.2s ease-out;
+}
+
+.ps-container:hover.ps-in-scrolling {
+    pointer-events: none;
+}
+
+/* END perfect-scrollbar v0.6.12 */
+
+.mplayer__playlist-header {
+    position: relative;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+.mplayer__playlist-btn-front {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 12px;
+    height: 20px;
+    padding-right: 20px;
+    padding-left: 15px;
+    cursor: pointer;
+    background: 15px 50% no-repeat url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAUCAYAAAC58NwRAAABKklEQVR42mP8//8/Ay5gbW3NCaT6gDgYiDcBcQkjLg1AxVxAaioQJyAJz8aqAaiYGUhNAeIMNKkPGBqAipmgzsjHYvF2FA1Qxe1AXIZF8XkgDmNBE6zDofgqEIcfPXr0DtwGoOmVQKoNi+LbQBwEVHwFxAFrACouArK7gZgJTfFDIA4BKj4DE2C0srICBdt0IOZAU/wY6ozjyIIgDQ+AtDya4idQk0+iu48JizNA4C8Qf8MWobBg/I0mDrJxA9Bvhtg0zADiRiyGKQHxSqAmXRQ/IAVrE5CqxaLxMjRY76BogGrqxBFx50ApFqjpAboGUMz3AnEeFk2gEAvHlvhAmqYBcSoWTRtwJW92aGAkEEzeSJp4gdQcUApFEl7MSCCL8kAzki8oLwBxIQCmvHTxK88s9wAAAABJRU5ErkJggg==');
+}
+
+.mplayer__playlist-header-title {
+    display: inline-block;
+    color: #3a3a3a;
+    font-size: 14px;
+    line-height: 1;
+    text-align: center;
+}
+.mplayer__playlist-body {
+    position: absolute;
+    top: 40px; /* .mplayer__playlist-header { height: 40px; */
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+}
+.mplayer__playlist-body-current-bg,
+.mplayer__playlist-body-next-bg {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-position: center;
+    background-size: cover;
+}
+
+.mplayer__playlist-body-inner {
+    position: absolute;
+    z-index: 99999;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.mplayer__playlist-body:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: inline-block;
+    opacity: 0.54;
+    background-color: #000000;
+}
+
+.mplayer__playlist span {
+    display: block;
+    overflow: hidden;
+    padding-right: 70px;
+    padding-left: 14px;
+    color: #d1d1d1;
+    font-size: 12px;
+    line-height: 40px;
+    cursor: pointer;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.mplayer__playlist span:nth-child(2n+1) {
+    background-color: rgba(0,0,0,0.1);
+}
+
+.mplayer__playlist span.mplayer__playlist-current:nth-child(2n+1),
+.mplayer__playlist span.mplayer__playlist-current:nth-child(2n+1):hover {
+    background-color: rgba(0,0,0,0.6);
+}
+
+.mplayer__playlist span:nth-child(2n+1):hover {
+    background-color: rgba(0,0,0,0.2);
+}
+
+.mplayer__playlist span:nth-child(2n) {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.mplayer__playlist span.mplayer__playlist-current:nth-child(2n),
+.mplayer__playlist span.mplayer__playlist-current:nth-child(2n):hover {
+    background-color: rgba(255,255,255,0.4);
+}
+
+.mplayer__playlist span:nth-child(2n):hover {
+    background-color: rgba(255,255,255,0.15);
+}
+
+.mplayer__playlist span.mplayer__playlist-current {
+    color: #fffefe;
+    font-size: 12px;
+}
+.mplayer__playlist-current:before {
+    content: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAALCAQAAAAzKa6MAAAA20lEQVQYGV3AMShEARgA4P9Byl0ZKEjdwJUYWY1KSZeynJKS5bIwXFYZKFmEMljuZFFuVKKMNhMxiIGExSll/Ey3vC+EEEJoMazi3qxECHl78iKE0KRZn7IPUJUReg14cKkjdJm3Ys2NhqqsxJVVo34shSNp+woKdvwaVHEd6tK2LXo241ZZ0Xv4lLan06uSml1TvkJd2rZlj6bdWTHvLZxIOzBpwqFvOacuQo+SdVvuNFS1a3Juwbg/xRASrdrkbKiDY1mJbiOe1GRCCCGEVmPOvJiTCGHIpn7xD+AoIUg5zSZoAAAAAElFTkSuQmCC');
+    position: relative;
+    top: 2px;
+    display: inline-block;
+    margin: 0 7px 0 0;
+}
+
+.mplayer__playlist time {
+    position: absolute;
+    right: 34px;
+    overflow: hidden;
+    max-width: 37px;
+    color: #a5a5a5;
+    font-size: 12px;
+    font-weight: 400;
+    text-overflow: ellipsis;
+}
+
+.vscrollerbase {
+    background-color: transparent;
+}
+input,
+textarea {
+    outline: none;
+}
+input:active,
+textarea:active {
+    outline: none;
+}
+:focus {
+    outline: none;
+}
+
+a,
+abbr,
+acronym,
+address,
+applet,
+article,
+aside,
+audio,
+b,
+big,
+blockquote,
+body,
+canvas,
+caption,
+center,
+cite,
+code,
+dd,
+del,
+details,
+dfn,
+dialog,
+div,
+dl,
+dt,
+em,
+embed,
+fieldset,
+figcaption,
+figure,
+font,
+footer,
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+header,
+hgroup,
+hr,
+html,
+i,
+iframe,
+img,
+ins,
+kbd,
+label,
+legend,
+li,
+mark,
+menu,
+meter,
+nav,
+object,
+ol,
+output,
+p,
+pre,
+progress,
+q,
+rp,
+rt,
+ruby,
+s,
+samp,
+section,
+small,
+span,
+strike,
+strong,
+sub,
+summary,
+sup,
+table,
+tbody,
+td,
+tfoot,
+th,
+thead,
+time,
+tr,
+tt,
+u,
+ul,
+var,
+video,
+xmp {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+}
+html,
+body {
+    height: 100%;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
+b,
+strong {
+    font-weight: bold;
+}
+img {
+    -ms-interpolation-mode: bicubic;
+    color: transparent;
+    font-size: 0;
+    vertical-align: middle;
+}
+ol,
+ul {
+    list-style: none;
+}
+li {
+    display: list-item;
+}
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+th,
+td,
+caption {
+    font-weight: normal;
+    text-align: left;
+    vertical-align: top;
+}
+q {
+    quotes: none;
+}
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+sub,
+sup,
+small {
+    font-size: 75%;
+}
+sub,
+sup {
+    position: relative;
+    line-height: 0;
+    vertical-align: baseline;
+}
+sub {
+    bottom: -0.25em;
+}
+sup {
+    top: -0.5em;
+}
+svg {
+    overflow: hidden;
+}
+.mplayer {
+    top: 50%;
+    left: 50%;
+    margin: -240px 0 0 -141px;
+}
+
+   </style>
+</head>
+<body>
+<div class="mplayer">
+    <div class="mplayer__front-header">
+        <div class="mplayer__front-header-next-bg"></div>
+        <div class="mplayer__front-header-current-bg"></div>
+        <div class="mplayer__front-btn-playlist"></div>
+        <div class="mplayer__cover-art">
+            <img class="mplayer__cover-art-next" src="#" alt="cover art">
+            <img class="mplayer__cover-art-current" src="#" alt="cover art">
+        </div>
+        <div class="mplayer__toolbar">
+            <div class="mplayer__prev"></div>
+            <div class="mplayer__pause"></div>
+            <div class="mplayer__next"></div>
+        </div>
+        <div class="mplayer__front-body">
+            <div class="mplayer__front-row">
+                <div class="mplayer__front-title-wrap">
+                    <div class="mplayer__front-title-track"></div>
+                    <div class="mplayer__front-title-author"></div>
+                </div>
+            </div>
+            <div class="mplayer__front-row">
+                <div class="mplayer__long">
+                    <div class="mplayer__current-time">0:00</div>
+                    <div class="mplayer__long-slider"></div>
+                    <div class="mplayer__all-time"></div>
+                </div>
+            </div>
+            <div class="mplayer__front-row">
+                <div class="mplayer__order-btn-wrap">
+                    <div class="mplayer__repeat"></div>
+                    <div class="mplayer__random"></div>
+                </div>
+                <div class="mplayer__volume">
+                    <div class="mplayer__volume-icon"></div>
+                    <div class="mplayer__volume-slider"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mplayer__playlist ">
+        <div class="mplayer__playlist-header">
+            <div class="mplayer__playlist-btn-front"></div>
+            <div class="mplayer__playlist-header-title">
+                Плейлист
+            </div>
+        </div>
+        <div class="mplayer__playlist-body">
+            <div class="mplayer__playlist-body-next-bg"></div>
+            <div class="mplayer__playlist-body-current-bg"></div>
+            <div class="mplayer__playlist-body-inner js-perfect-scrollbar"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+"use strict";
+    $(function () {
+        $('.mplayer').mplayer({
+            'volume': 80,
+            'playlist': [
+                {
+                    "title": "Final Song",
+                    "author": "MØ",
+                    "cover": "files/covers/1.jpg",
+                    "background": "files/backgrounds/1.jpg",
+                    "pfile": "files/music/1.mp3",
+                    "duration": "232"
+                },
+                {
+                    "title": "This Is What You Came For",
+                    "author": "Calvin Harris",
+                    "cover": "files/covers/2.jpg",
+                    "background": "files/backgrounds/2.jpg",
+                    "pfile": "files/music/2.mp3",
+                    "duration": "221"
+                },
+                {
+                    "title": "Shape of You",
+                    "author": "Ed Sheeran",
+                    "cover": "files/covers/3.jpg",
+                    "background": "files/backgrounds/3.jpg",
+                    "pfile": "files/music/3.mp3",
+                    "duration": "233"
+                },
+                {
+                    "title": "can't stop the feeling",
+                    "author": "Justin Timberlake",
+                    "cover": "files/covers/4.jpg",
+                    "background": "files/backgrounds/4.jpg",
+                    "pfile": "files/music/4.mp3",
+                    "duration": "236"
+                },
+                {
+                    "title": "Don't Let Me Down",
+                    "author": "The Chainsmokers",
+                    "cover": "files/covers/5.jpg",
+                    "background": "files/backgrounds/5.jpg",
+                    "pfile": "files/music/5.mp3",
+                    "duration": "219"
+                },
+                {
+                    "title": "Mind",
+                    "author": "Skrillex & Diplo",
+                    "cover": "files/covers/6.jpg",
+                    "background": "files/backgrounds/6.jpg",
+                    "pfile": "files/music/6.mp3",
+                    "duration": "211"
+                },
+                {
+                    "title": "We Don't Talk Anymore",
+                    "author": "Charlie Puth",
+                    "cover": "files/covers/7.jpg",
+                    "background": "files/backgrounds/7.jpg",
+                    "pfile": "files/music/7.mp3",
+                    "duration": "217"
+                },
+                {
+                    "title": "Chained To The Rhythm",
+                    "author": "Katy Perry",
+                    "cover": "files/covers/8.jpg",
+                    "background": "files/backgrounds/8.jpg",
+                    "pfile": "files/music/8.mp3",
+                    "duration": "237"
+                },
+                {
+                    "title": "Kamikaze",
+                    "author": "MØ",
+                    "cover": "files/covers/9.jpg",
+                    "background": "files/backgrounds/9.jpg",
+                    "pfile": "files/music/9.mp3",
+                    "duration": "205"
+                },
+                {
+                    "title": "I Got You",
+                    "author": "Bebe Rexha",
+                    "cover": "files/covers/10.jpg",
+                    "background": "files/backgrounds/10.jpg",
+                    "pfile": "files/music/10.mp3",
+                    "duration": "191"
+                }
+            ]
+        });
+    });
+</script>
+<div onclick="location.href='https://aa1286901.github.io/';" style="cursor: pointer;" class="footer">© Ahmedov</div >
+</body>
+</html>
