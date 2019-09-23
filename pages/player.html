@@ -1866,12 +1866,7 @@ var widgetsSlider = $.widget( "ui.slider", $.ui.mouse, {
 
             init_track(cpl);
             for (var i = 0; i < options.playlist.length; i++) {
-                var trackDuration = Math.floor(options.playlist[i].duration / 60) + ':';
-                if (Math.floor(options.playlist[i].duration % 60) < 10) {
-                    trackDuration += '0' + options.playlist[i].duration % 60;
-                } else {
-                    trackDuration += options.playlist[i].duration % 60;
-                }
+                var trackDuration = Math.floor(options.playlist[i].duration);
                 $this.find('.mplayer__playlist-body-inner').append(
                     '<span>'
                     + options.playlist[i].title
