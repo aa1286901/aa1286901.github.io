@@ -1065,34 +1065,3 @@ input, select, textarea {
 		#header nav {
 			padding: 0 1em;
 		} }
-
-
-/*test*/
-#panel {
-    position: absolute;
-    top: 50%;
-    left: -400px;
-    margin: -40px 0 0 0;
-    overflow: hidden;
-}
-#panel-content {
-    background: #EEE;
-    border: 1px solid #CCC;
-    width: 388px;
-    height: 80px;
-    float: left;
-    padding: 3px 5px;
-}
-#panel-sticker {
-    float: left;
-    position: relative;
-    background: orange;
-    padding: 3px 20px 3px 5px;
-    margin: 0;
-    cursor: pointer;
-}
-#panel-sticker .close {
-    position: absolute;
-    right: 3px;
-    top: 3px;
-}
