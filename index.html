@@ -11,7 +11,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="icon" type="image/png" sizes="196x196" href="images/avatar.png">
 		<link rel="stylesheet" href="assets/css/main.css" />
-		<script ENGINE="text/javascript" src="https://code.jquery.com/jquery-1.11.2.js "></script>
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 		
 	</head>
@@ -43,50 +42,6 @@
 			window.onload = function() { document.body.classList.remove('is-preload'); }
 			window.ontouchmove = function() { return false; }
 			window.onorientationchange = function() { document.body.scrollTop = 0; }
-		</script>
-	<div id="panel">
-    <div id="panel-content">
-        <iframe src="https://funding.webmoney.ru/widgets/vertical/77655e6e-93e1-43d2-bf34-a0bbaab284d6?bt=3&hs=1&sum=100" width="240" height="240" scrolling="no" style="border:none;"></iframe>
-    </div>
-    <div id="panel-sticker">
-        <span>Открыть</span>   
-    </div>
-</div>
-		<script>
-		(function($) {
-    $(document).ready(function() {
-        var $panel = $('#panel');
-        if ($panel.length) {
-            var $sticker = $panel.children('#panel-sticker');
-            var showPanel = function() {
-                $panel.animate({
-                    left: '+=400',
-                }, 200, function() {
-                    $(this).addClass('visible');
-                });
-            };
-            var hidePanel = function() {
-                $panel.animate({
-                    left: '-=400',
-                }, 200, function() {
-                    $(this).removeClass('visible');
-                });
-            };
-            $sticker
-                .children('span').click(function() {
-                    if ($panel.hasClass('visible')) {
-                        hidePanel();
-                    }
-                    else {
-                        showPanel();
-                    }
-                }).andSelf()
-                .children('.close').click(function() {
-                    $panel.remove();
-                });
-        }
-    });
-})(jQuery);
-	</script>	
+		</script>	
 	</body>
 </html>
