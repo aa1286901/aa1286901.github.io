@@ -69,12 +69,12 @@ function NewRow(ob) {//для добавления новых строк пар�
         <select disabled="disabled" name="enctype">
           <option selected="selected" value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option>
           <option value="multipart/form-data">multipart/form-data</option>
-        </select>
+        </select><br>
 		Цель: <select disabled="disabled" onchange="set_target(this)">
 			<option value="_blank">Новое окно</option>
 			<option value="frame" selected="selected">IFrame</option>
 			<option value="_self">В этом окне</option>
-		</select>
+		</select><br>
 		Повторять каждые: <input disabled="disabled" value="-1" id="interval" name="interval"> секунд
 
 		<input type="hidden" id="nums" value="3">
