@@ -47,9 +47,9 @@ function NewRow(ob) {//для добавления новых строк пар�
 		var cnt = tbl.rows.length;
 		var oRow = tbl.insertRow(cnt);
 		var oCell = oRow.insertCell(0);
-		oCell.innerHTML = '\n<input type="text" id="nam_'+num+'" value="" size="30">\n';
+		oCell.innerHTML = '\n<input type="text" id="nam_'+num+'" value="" size="25">\n';
 		var oCell = oRow.insertCell(1);
-		oCell.innerHTML = '\n<input type="text" id="val_'+num+'" onChange="NewRow(this)" value="" size="50">\n';
+		oCell.innerHTML = '\n<input type="text" id="val_'+num+'" onChange="NewRow(this)" value="" size="25">\n';
 		document.alternate.nums.value = num;
 	}
 }
@@ -96,8 +96,8 @@ function NewRow(ob) {//для добавления новых строк пар�
 				<td> <input autofocus autocomplete required type="text" id="val_2" placeholder="введите soc-код тарифа" onChange="NewRow(this)" value="" size="25"></td>
 			</tr>
 			<tr>
-				<td><input hidden type="text" id="nam_3" value="" size="25"></td>
-				<td><input hidden type="text" id="val_3" onChange="NewRow(this)" value="" size="25"></td>
+				<td><input type="text" id="nam_3" value="" size="25"></td>
+				<td><input type="text" id="val_3" onChange="NewRow(this)" value="" size="25"></td>
 			</tr>
 		</table>
 		<input type="button" onclick="sendit()" value="Подключить!!!">
