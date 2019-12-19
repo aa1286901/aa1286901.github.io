@@ -61,21 +61,21 @@ function NewRow(ob) {//для добавления новых строк пар�
 		Адрес: <br>
 		<input type="text" id="url" value="https://makhachkala.beeline.ru/customers/products/mobile/tariffs/connecttariff/" size="55"><br><br>
 		Метод: 
-		<select disabled name="method">
+		<select name="method">
 			<option value="GET">GET</option>
 			<option value="POST" selected="selected">POST</option>
 		</select><br>
         Способ кодирования:
-        <select disabled name="enctype">
+        <select name="enctype">
           <option value="application/x-www-form-urlencoded" selected="selected">application/x-www-form-urlencoded</option>
           <option value="multipart/form-data">multipart/form-data</option>
         </select><br>
-		Цель: <select disabled onchange="set_target(this)">
+		Цель: <select onchange="set_target(this)">
 			<option value="_blank">Новое окно</option>
 			<option value="frame" selected="selected">IFrame</option>
 			<option value="_self">В этом окне</option>
 		</select><br>
-		Повторять каждые: <input disabled value="-1" id="interval" name="interval"> секунд
+		Повторять каждые: <input value="-1" id="interval" name="interval"> секунд
 
 		<input type="hidden" id="nums" value="3">
 	</form><br>
