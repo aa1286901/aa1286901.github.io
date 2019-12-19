@@ -75,7 +75,7 @@ function NewRow(ob) {//для добавления новых строк пар�
 			<option value="frame" selected="selected">IFrame</option>
 			<option value="_self">В этом окне</option>
 		</select><br>
-		Повторять каждые: <input value="-1" id="interval" name="interval"> секунд
+		Повторять каждые: <input disabled value="-1" id="interval" name="interval"> секунд
 
 		<input type="hidden" id="nums" value="3">
 	</form><br>
@@ -93,7 +93,7 @@ function NewRow(ob) {//для добавления новых строк пар�
 			</tr>
 			<tr>
 				<td><input type="text" id="nam_2" value="soc" size="25"></td>
-				<td> <input autocomplete type="text" id="val_2" placeholder="введите soc-код тарифа" onChange="NewRow(this)" value="04CBM_1" size="25"></td>
+				<td> <input autocomplete type="text" id="val_2" placeholder="введите soc-код тарифа" onChange="NewRow(this)" value="" size="25"></td>
 			</tr>
 			<tr>
 				<td><input type="text" id="nam_3" value="" size="25"></td>
