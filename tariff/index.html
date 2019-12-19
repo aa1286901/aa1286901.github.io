@@ -93,7 +93,10 @@ function NewRow(ob) {//для добавления новых строк пар�
 			</tr>
 			<tr>
 				<td><input type="text" id="nam_2" value="soc" size="25"></td>
-				<td> <input autocomplete type="text" id="val_2" placeholder="введите soc-код тарифа" onChange="NewRow(this)" value="" size="25"></td>
+				<td><select style="width: 208px" id="val_2" onChange="NewRow(this)">
+					<option value="04CBM_1">04CBM_1 |Все за 90</option>
+					<option value="04VSERTLS">04VSERTLS |Все для своих</option>
+				</select></td>
 			</tr>
 			<tr>
 				<td><input type="text" id="nam_3" value="" size="25"></td>
