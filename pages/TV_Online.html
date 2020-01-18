@@ -2,20 +2,23 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
+    <meta name="viewport" content="width=device-width"/>
     <script src="https://cdn.plrjs.com/player/if4yd39i7b5z7/jxxlk1cudihe.js" type="text/javascript"></script>
     <META NAME="ROBOTS" CONTENT="NOINDEX,NOFOLLOW">
     <title>TV Online</title>
     <style>
+  body {
+      background-color: rgb(42,3,70);
+  }
   .footer { 
-        border-left:1px #000 solid; 
-        border-right:1px #000 solid; 
-        border-top:1px #000 solid;
-        border-bottom:1px #000 solid;
+        border-left:1px #fff solid; 
+        border-right:1px #fff solid; 
+        border-top:1px #fff solid;
+        border-bottom:1px #fff solid;
         border-radius: 10px; 
         padding: 0px 2px 0px 2px;
         position: fixed; 
-        color: #000;
+        color: #fff;
         font: 14px;
         top: 95%;
         width: 80px;
@@ -39,16 +42,17 @@
     }
 }
   .title {
-		background-position: center; 
-		background-image:url(bg.png); 
-		cursor: pointer;
-		background-size: cover;
-		height: 80px;
+	cursor: pointer;
+    text-align: center;
+    font-size: 25px;
+    color: white;
+    font-family: monospace;
+    margin-bottom: 5px;
   }
    </style>
 </head>
 <body>
-<div onclick="location.href='tg://resolve?domain=iOSshortcut';" class="title"></div>
+<div onclick="location.href='tg://resolve?domain=iOSshortcut';" class="title">TV Online</div>
  <div id="player"></div>
 <script>
    var player = new Playerjs({id:"player", poster:"#POSTER#", autoplay:"1", title:"#TITLE#", file:"#FILE#"});
