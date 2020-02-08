@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>assets</key>
+			<array>
+				<dict>
+					<key>kind</key>
+					<string>software-package</string>
+					<key>url</key>
+					<string>https://www.dropbox.com/s/ssqinuscyixnw2e/VK_v2_15_3.ipa?dl=1</string>
+				</dict>
+				<dict>
+					<key>kind</key>
+					<string>display-image</string>
+					<key>needs-shine</key>
+					<false/>
+					<key>url</key>
+					<string>https://is4-ssl.mzstatic.com/image/thumb/Purple114/v4/6d/79/17/6d791736-d2c9-3c1e-8133-f306cc46cebf/source/512x512bb.png</string>
+				</dict>
+				<dict>
+					<key>kind</key>
+					<string>full-size-image</string>
+					<key>needs-shine</key>
+					<false/>
+					<key>url</key>
+					<string>https://is4-ssl.mzstatic.com/image/thumb/Purple114/v4/6d/79/17/6d791736-d2c9-3c1e-8133-f306cc46cebf/source/512x512bb.png</string>
+				</dict>
+			</array>
+			<key>metadata</key>
+			<dict>
+				<key>bundle-identifier</key>
+				<string>com.vk1.vkclient</string>
+				<key>bundle-version</key>
+				<string>2.15.3</string>
+				<key>kind</key>
+				<string>software</string>
+				<key>title</key>
+				<string>VK</string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>
