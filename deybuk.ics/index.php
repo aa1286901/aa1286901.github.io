@@ -1,7 +1,7 @@
 <?php
 header("content-type: application/octet-stream");
 
-$text = file_get_contents("https://ahmedov.ml/deybuk-time/file.txt", false);
+$text = file_get_contents("https://raw.githubusercontent.com/ahmedov94/ahmedov94.github.io/master/deybuk.ics/file.txt", false);
 $price =  explode("\n", $text);
 $count = count($price);
 echo "BEGIN:VCALENDAR\nMETHOD:PUBLISH\nVERSION:2.0\nX-WR-CALNAME:Рузнама Сагаси-Дейбук\nX-WR-CALDESC:Creater by Ahmedov\nX-WR-TIMEZONE:Europe/Moscow\n\n";
