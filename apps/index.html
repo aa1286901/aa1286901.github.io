@@ -10,109 +10,62 @@
     content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="theme-color" content="#2196f3">
+  <meta name="theme-color" content="#202020">
   <meta name="format-detection" content="telephone=no">
   <meta name="msapplication-tap-highlight" content="no">
   <meta name="robots" content="noindex">
-
   <title>Apps by Ahmedov</title>
-
-  <!-- Enable the homescreen app on mobile devices -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-
-  <!-- Enable the App Icon -->
   <link rel="stylesheet" href="css/framework7.bundle.min.css">
   <link href="https://fonts.googleapis.com/css?family=Neucha" rel="stylesheet">
   <link rel="stylesheet" href="css/icons.css">
   <link rel="stylesheet" href="css/app.css">
   <link href="https://fonts.googleapis.com/css?family=Amiko:400,600,700" rel="stylesheet">
-  <link rel="stylesheet" href="css/common-0930.css">
+  <link rel="stylesheet" href="css/common.css">
 </head>
-
 <body>
-
   <div id="app">
-
-    <!-- Views/Tabs container -->
     <div class="views tabs safe-areas">
-      <!-- Tabbar for switching views-tabs -->
-
-      <!-- Your main view/tab, should have "view-main" class. It also has "tab-active" class -->
       <div id="view-main-page" class="view view-main tab tab-active">
-        <!-- Page, data-name contains page name which can be used in page callbacks -->
-
         <div class="page " data-name="home">
-          <!-- Top Navbar -->
           <div class="navbar">
             <div class="navbar-inner">
               <div class="left" style="left: 10px;">
               </div>
-              <div class="title sliding">Apps</div>
+              <div class="title sliding">Apps by Ahmedov</div>
               <div class="right" style="right: 10px;">
               </div>
             </div>
           </div>
-          <!-- Scrollable page content-->
           <div class="page-content">
             <div class="page-body">
               <div class="custom-searchbar">
                 <div class="search-container">
-                    <form class="form-search form-inline">
-                        <div>
-                          <svg fill="#848484" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" x="0px" y="0px" viewBox="0 0 100 100">
-                            <g transform="translate(0,-952.36218)"><g transform="translate(8.9950798,961.32626)"><path d="M 34.015747,0.03543307 C 15.307086,0.03543307 0,15.307086 0,34.015747 c 0,18.708661 15.307086,34.015748 34.015747,34.015748 7.192914,0 13.854331,-2.30315 19.346457,-6.129921 l 18.389763,18.35433 c 2.338583,2.374016 6.165354,2.374016 8.503937,0 2.338582,-2.338583 2.338582,-6.129921 0,-8.468504 L 61.86614,53.397637 c 3.862205,-5.527559 6.129922,-12.188976 6.129922,-19.38189 0,-18.708661 -15.307087,-33.98031393 -33.980315,-33.98031393 z m 0,11.97637793 c 12.188976,0 21.968504,9.779527 21.968504,22.003936 0,12.22441 -9.779528,22.003937 -21.968504,22.003937 -12.224409,0 -22.003936,-9.779527 -22.003936,-22.003937 0,-12.224409 9.779527,-22.003936 22.003936,-22.003936 z" style="" fill="#000000" fill-opacity="1" fill-rule="nonzero" stroke="none"></path></g></g>
-                          </svg>
-                          <input type="text" class="input-medium search-query" placeholder="Search...">
-                        </div>
-                    </form>
+                  <form class="form-search form-inline">
+                    <div>
+                      <svg fill="#848484" xmlns:dc="http://purl.org/dc/elements/1.1/"
+                        xmlns:cc="http://creativecommons.org/ns#"
+                        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg"
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+                        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" x="0px" y="0px"
+                        viewBox="0 0 100 100">
+                        <g transform="translate(0,-952.36218)">
+                          <g transform="translate(8.9950798,961.32626)">
+                            <path
+                              d="M 34.015747,0.03543307 C 15.307086,0.03543307 0,15.307086 0,34.015747 c 0,18.708661 15.307086,34.015748 34.015747,34.015748 7.192914,0 13.854331,-2.30315 19.346457,-6.129921 l 18.389763,18.35433 c 2.338583,2.374016 6.165354,2.374016 8.503937,0 2.338582,-2.338583 2.338582,-6.129921 0,-8.468504 L 61.86614,53.397637 c 3.862205,-5.527559 6.129922,-12.188976 6.129922,-19.38189 0,-18.708661 -15.307087,-33.98031393 -33.980315,-33.98031393 z m 0,11.97637793 c 12.188976,0 21.968504,9.779527 21.968504,22.003936 0,12.22441 -9.779528,22.003937 -21.968504,22.003937 -12.224409,0 -22.003936,-9.779527 -22.003936,-22.003937 0,-12.224409 9.779527,-22.003936 22.003936,-22.003936 z"
+                              fill="#000000" fill-opacity="1" fill-rule="nonzero" stroke="none"></path>
+                          </g>
+                        </g>
+                      </svg>
+                      <input type="text" class="input-medium search-query" placeholder="Поиск...">
+                    </div>
+                  </form>
                 </div>
               </div>
-              <div class="apps-list">
-                <a href="itms-services://?action=download-manifest&url=https://ahmedov.website/apps/plist/sber.plist" class="app-link">
-                  <div class="app">
-                    <div class="row app-block">
-                      <div class="left-col col-25">
-                        <img src="https://iosninja.io/img/ipas/airrec.png">
-                      </div>
-                      <div class="right-col col-50">
-                        <div class="title">
-                          AirRec </div>
-                        <div class="category">
-                          screen-recorder </div>
-
-                      </div>
-                      <div class="col-25">
-                        <div class="getBtn">
-                          Get
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </a>
-                <a href="/app/?id=2" class="app-link">
-                  <div class="app">
-                    <div class="row app-block">
-                      <div class="left-col col-25">
-                        <img src="https://iosninja.io/img/ipas/airshou.png">
-                      </div>
-                      <div class="right-col col-50">
-                        <div class="title">
-                          Airshou </div>
-                        <div class="category">
-                          screen-recorder </div>
-
-                      </div>
-                      <div class="col-25">
-                        <div class="getBtn">
-                          Get
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </a>
-              </div>
+              <div class="apps-list" id="apps-list"></div>
             </div>
           </div>
         </div>
@@ -123,56 +76,30 @@
 <footer>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
   <script src="js/framework7.bundle.min.js"></script>
-  <!-- <script src="js/routes-8ajd94.js"></script> -->
-  <script src="js/routes-1.js"></script>
-  <script src="js/app23.js"></script>
-  <script src="js/in-9013pas.js"></script>
+  <script src="js/routes.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/in.js"></script>
 
   <script type="text/javascript">
     $(document).on("page:init", ".page", function (e) {
       (adsbygoogle = window.adsbygoogle || []).push({});
     });
-
-
     $(document).ready(function () {
-
-      // $('.installBtn').on('click', function(){
-      //   console.log("Install tapped");
-      // });
-
       $('body').on('click', '.installBtn', (event) => {
-
         console.log("Install tapped");
-
-        // console.log(event);
-        // console.log(this);
-
         var id = event.currentTarget.dataset.id;
         console.log("App ID: " + id);
-
       });
-
     });
-
-    // var showPopup = Cookies.get('showFollowPopup');
-
     let popupShown = getCookie('followPopupShown');
-
-    // var showPopup = true;
     if (popupShown == null || popupShown == 'false' || popupShown == false) {
-
       setTimeout(
         function () {
           $("#social-modal").addClass("show-modal");
           // Cookies.set('showFollowPopup', false, { expires: 45 });
         }, 1000);
-
       setCookie("followPopupShown", true, 30);
-
-
     }
-
-
     var modal = document.querySelector(".modal");
     $("#social-modal .close-button").click(function (event) {
       $("#social-modal").toggleClass("show-modal");
@@ -183,9 +110,7 @@
         $("#social-modal").toggleClass("show-modal");
       }
     }
-
     window.addEventListener("click", windowOnClick);
-
 
     function setCookie(name, value, days) {
       var expires = "";
@@ -211,13 +136,56 @@
           end = dc.length;
         }
       }
-      // because unescape has been deprecated, replaced with decodeURI
-      //return unescape(dc.substring(begin + prefix.length, end));
       return decodeURI(dc.substring(begin + prefix.length, end));
     }
+
+    fetch('./js/routes-app.json')
+      .then(response => response.json())
+      .then(function (obj) {
+        for (var kl1 in obj['routes']) {
+          var id = Number(kl1) + 1;
+          if (kl1 == 0) {
+            var applist = '\
+              <a href="/app/' + id + '/?id=' + id + '" class="app-link">\
+                <div class="app">\
+                  <div class="row app-block">\
+                      <div class="left-col col-25">\
+                        <img src="' + obj['routes'][kl1]['img'] + '">\
+                      </div>\
+                      <div class="right-col col-50">\
+                        <div class="title">' + obj['routes'][kl1]['title'] + '</div>\
+                        <div class="category">' + obj['routes'][kl1]['category'] + '</div>\
+                      </div>\
+                      <div class="col-25">\
+                      </div>\
+                    </div>\
+                  </div>\
+                </a>';
+          } else {
+            var applist = applist + '\
+              <a href="/app/' + id + '/?id=' + id + '" class="app-link">\
+                <div class="app">\
+                  <div class="row app-block">\
+                      <div class="left-col col-25">\
+                        <img src="' + obj['routes'][kl1]['img'] + '">\
+                      </div>\
+                      <div class="right-col col-50">\
+                        <div class="title">' + obj['routes'][kl1]['title'] + '</div>\
+                        <div class="category">' + obj['routes'][kl1]['category'] + '</div>\
+                      </div>\
+                      <div class="col-25">\
+                      </div>\
+                    </div>\
+                  </div>\
+                </a>';
+          }
+        }
+        document.getElementById('apps-list').innerHTML = applist;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   </script>
-
-
 </footer>
 
 </html>

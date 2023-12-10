@@ -1,0 +1,80 @@
+{
+  "routes":[{
+      "title":"Сбербанк Онлайн",
+      "img":"/pages/app1/icon.png",
+      "path":"/app1/",
+      "url": "./pages/app1/",
+      "category":"IOS 13.0+ | v. 12.15.0"
+    },
+    {
+      "title":"Тинькофф",
+      "img": "./pages/app2/icon.png",
+      "path": "/app2/",
+      "url": "./pages/app2/",
+      "category":"IOS 14.0+ | v. 6.13.5"
+    },
+    {
+      "title": "SBOL",
+      "img": "./pages/app3/icon.png",
+      "path": "/app3/",
+      "url": "./pages/app3/",
+      "category":"IOS 13.0+ | v. 12.15.0"
+    },
+    {
+      "title": "Сбол",
+      "img": "./pages/app4/icon.png",
+      "path": "/app4/",
+      "url": "./pages/app4/",
+      "category":"IOS 13.0+ | v. 12.15.0"
+    },
+    {
+      "title": "Сбербанк",
+      "img": "./pages/app5/icon.png",
+      "path": "/app5/",
+      "url": "./pages/app5/",
+      "category":"IOS 13.0+ | v. 12.15.0"
+    },
+    {
+      "title": "Сбербанк",
+      "img": "./pages/app6/icon.png",
+      "path": "/app6/",
+      "url": "./pages/app6/",
+      "category":"IOS 13.0+ | v. 12.15.0"
+    },
+    {
+      "title": "Сбербанк",
+      "img": "./pages/app7/icon.png",
+      "path": "/app7/",
+      "url": "./pages/app7/",
+      "category":"IOS 13.0+ | v. 12.15.0"
+    },
+    {
+      "title": "Сбербанк",
+      "img": "./pages/app8/icon.png",
+      "path": "/app8/",
+      "url": "./pages/app8/",
+      "category":"IOS 13.0+ | v. 12.15.0"
+    },
+    {
+      "title": "Сбербанк",
+      "img": "./pages/app9/icon.png",
+      "path": "/app9/",
+      "url": "./pages/app9/",
+      "category":"IOS 13.0+ | v. 12.15.0"
+    },
+    {
+      "title": "Сбербанк",
+      "img": "./pages/app10/icon.png",
+      "path": "/app10/",
+      "url": "./pages/app10/",
+      "category":"IOS 13.0+ | v. 12.15.0"
+    },
+    {
+      "title": "Сбербанк",
+      "img": "./pages/app11/icon.png",
+      "path": "/app11/",
+      "url": "./pages/app11/",
+      "category":"IOS 13.0+ | v. 12.15.0"
+    }
+  ]
+}
