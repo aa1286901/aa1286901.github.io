@@ -2,79 +2,85 @@
   "routes":[{
       "title":"Сбербанк Онлайн",
       "img":"./pages/app1/icon.png",
-      "path":"/app1/",
-      "url": "./pages/app1/",
+      "manifest":"itms-services://?action=download-manifest&url=https://dl.dropboxusercontent.com/scl/fi/t2hwruxpe33gjwnr6e0eo/manifest.plist?rlkey=m7b77zdy8y919n1t2ecmzlpmb",
+      "acc": "aa...@mail.com",
       "category":"IOS 13.0+ | v. 12.15.0"
+    },
+    {
+      "title":"СберБизнес",
+      "img": "./pages/app2/icon.png",
+      "acc": "aa...@gmail.com",
+      "category":"IOS 13.0+ | v. 3.31.0"
     },
     {
       "title":"Тинькофф",
-      "img": "./pages/app2/icon.png",
-      "path": "/app2/",
-      "url": "./pages/app2/",
+      "img": "./pages/app3/icon.png",
+      "acc": "aa...@mail.com",
       "category":"IOS 14.0+ | v. 6.13.5"
     },
     {
-      "title": "SBOL",
-      "img": "./pages/app3/icon.png",
-      "path": "/app3/",
-      "url": "./pages/app3/",
-      "category":"IOS 13.0+ | v. 12.15.0"
-    },
-    {
-      "title": "Сбол",
+      "title": "Тинькофф Бизнес",
       "img": "./pages/app4/icon.png",
       "path": "/app4/",
       "url": "./pages/app4/",
-      "category":"IOS 13.0+ | v. 12.15.0"
+      "acc": "aa...@gmail.com",
+      "category":"IOS 14.0+ | v. 2.84"
     },
     {
-      "title": "Сбербанк",
+      "title": "Деньги (Альфа Банк)",
       "img": "./pages/app5/icon.png",
       "path": "/app5/",
       "url": "./pages/app5/",
-      "category":"IOS 13.0+ | v. 12.15.0"
+      "acc": "aa...@gmail.com",
+      "category":"IOS 12.3+ | v. 1.1"
     },
     {
-      "title": "Сбербанк",
+      "title": "Все просто (ВТБ Банк)",
       "img": "./pages/app6/icon.png",
       "path": "/app6/",
       "url": "./pages/app6/",
-      "category":"IOS 13.0+ | v. 12.15.0"
+      "acc": "aa...@gmail.com",
+      "category":"IOS 12.0+ | v. 17.3.6"
     },
     {
-      "title": "Сбербанк",
+      "title": "МТС Банк",
       "img": "./pages/app7/icon.png",
       "path": "/app7/",
       "url": "./pages/app7/",
-      "category":"IOS 13.0+ | v. 12.15.0"
+      "acc": "aa...@gmail.com",
+      "category":"IOS 14.0+ | v. 1.62.0"
     },
     {
-      "title": "Сбербанк",
+      "title": "РСХБ Банк",
       "img": "./pages/app8/icon.png",
       "path": "/app8/",
       "url": "./pages/app8/",
-      "category":"IOS 13.0+ | v. 12.15.0"
+      "acc": "aa...@gmail.com",
+      "category":"IOS 12.0+ | v. 22.10.2"
     },
     {
-      "title": "Сбербанк",
+      "title": "Сбол (Сбербанк Онлайн)",
       "img": "./pages/app9/icon.png",
       "path": "/app9/",
       "url": "./pages/app9/",
-      "category":"IOS 13.0+ | v. 12.15.0"
+      "acc": "aa...@gmail.com",
+      "category":"IOS 13.0+ | v. 14.3.0"
     },
     {
-      "title": "Сбербанк",
+      "title": "SBOL (Сбербанк Онлайн)",
       "img": "./pages/app10/icon.png",
       "path": "/app10/",
       "url": "./pages/app10/",
-      "category":"IOS 13.0+ | v. 12.15.0"
+      "acc": "aa...@gmail.com",
+      "category":"IOS 13.0+ | v. 14.11.0"
     },
     {
-      "title": "Сбербанк",
+      "title": "ЮMoney",
       "img": "./pages/app11/icon.png",
       "path": "/app11/",
       "url": "./pages/app11/",
-      "category":"IOS 13.0+ | v. 12.15.0"
+      "acc": "aa...@gmail.com",
+      "category":"IOS 13.0+ | v. 11.12.0"
     }
   ]
 }

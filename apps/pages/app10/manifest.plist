@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>assets</key>
+			<array>
+				<dict>
+					<key>kind</key>
+					<string>software-package</string>
+					<key>url</key>
+					<string>https://dl.dropboxusercontent.com/scl/fi/y5xh53mqz4ph4666qa6xv/SBOL.ipa?rlkey=8ut02v64fcvbl1tqxgkfl6vpn</string>
+				</dict>
+			</array>
+			<key>metadata</key>
+			<dict>
+				<key>bundle-identifier</key>
+				<string>ru.vlad.work</string>
+				<key>bundle-version</key>
+				<string>14.11.0</string>
+				<key>kind</key>
+				<string>software</string>
+				<key>title</key>
+				<string>SBOL (Сбербанк Онлайн)</string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -5,11 +5,7 @@ routes = [
   },
   {
     path: '/app/:appId/',
-    url: './pages/app{{appId}}'
-  },
-  {
-    path: '/install/:appId/',
-    url: 'itms-services://?action=download-manifest&url=https://install.getappbox.com/install/s/txevg83kunalclp/manifest.plist'
+    url: 'https://app.ru{{appId}}'
   },
   {
     path: '/category/',

@@ -311,14 +311,14 @@
   
       .apps-list .app-block .title{
         font-weight: bold;
-        font-size: 18px;
+        font-size: 15px;
         overflow: hidden;
         text-overflow: ellipsis;
         color: #eeeeee;
       }
   
       .apps-list .app-block .category{
-        font-size: 14px;
+        font-size: 13px;
         color: #aaaaaa;
       }
   
