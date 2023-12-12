@@ -4,8 +4,8 @@ routes = [
     url: './index.php',
   },
   {
-    path: '/app/:appId/',
-    url: 'https://app.ru{{appId}}'
+    path: '/app/:fi/:rlkey/:id',
+    url: 'itms-services://?action=download-manifest&url=https://dl.dropboxusercontent.com/scl/fi/{{fi}}/manifest.plist?rlkey={{rlkey}}'
   },
   {
     path: '/category/',
