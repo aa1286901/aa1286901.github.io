@@ -2,7 +2,6 @@
   "routes":[{
       "title":"Сбербанк Онлайн",
       "img":"./img/app1/icon.png",
-      "manifest":"itms-services://?action=download-manifest&url=https://dl.dropboxusercontent.com/scl/fi/t2hwruxpe33gjwnr6e0eo/manifest.plist?rlkey=m7b77zdy8y919n1t2ecmzlpmb",
       "rlkey":"m7b77zdy8y919n1t2ecmzlpmb",
       "fi":"t2hwruxpe33gjwnr6e0eo",
       "acc": "aa...@mail.com",
