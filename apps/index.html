@@ -1,5 +1,6 @@
-<html lang="en" class="md device-pixel-ratio-2 device-retina device-desktop device-macos"><head>
+<html lang="en" class="md device-pixel-ratio-2 device-retina device-desktop device-macos"><head><script type="text/javascript" src="/___vscode_livepreview_injected_script"></script><style type="text/css"></style>
   <meta charset="utf-8">
+
   <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap: content:">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -127,7 +128,7 @@
           var id = Number(kl1) + 1;
           if (kl1 == 0) {
             var applist = '\
-              <a href="itms-services://?action=download-manifest&url=https://dl.dropboxusercontent.com/scl/fi/' + obj['routes'][kl1]['fi'] + '/manifest.plist?rlkey='+obj['routes'][kl1]['rlkey']+'" class="app-link">\
+              <a href="' + obj['routes'][kl1]['manifest'] + '" class="app-link">\
                 <div class="app">\
                   <div class="row app-block">\
                       <div class="left-col col-25">\
@@ -145,7 +146,7 @@
                 </a>';
           } else {
             var applist = applist + '\
-              <a href="/app/?id=' + obj['routes'][kl1]['manifest'] + '" class="app-link">\
+              <a href="itms-services://?action=download-manifest&url=https://install.getappbox.com/install/scl/fi/' + obj['routes'][kl1]['fi'] + '/queryparam-rlkey-value-' + obj['routes'][kl1]['fi'] + '/manifest.plist" class="app-link">\
                 <div class="app">\
                   <div class="row app-block">\
                       <div class="left-col col-25">\
