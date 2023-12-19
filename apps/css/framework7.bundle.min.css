@@ -1542,6 +1542,51 @@ html.device-full-viewport body {
     padding: 0 calc(var(--f7-navbar-inner-padding-right) + var(--f7-safe-area-right)) 0 calc(var(--f7-navbar-inner-padding-right) + var(--f7-safe-area-left))
 }
 
+.qr {
+    z-index: 1;
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(23, 23, 23, 0.63);
+}
+
+#imgqr {
+    width: 300px;
+    top: 110px;
+    position: absolute;
+    left: calc(50% - 150px);
+    border-radius: 20px;
+}
+
+.cl {
+    z-index: 2;
+    display: none;
+    cursor: pointer;
+    position: fixed;
+    ;
+    top: 60px;
+    font-size: 45px;
+    font-weight: 600;
+    left: calc(50% + 160px);
+    color: #eeeeee;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    height: var(--f7-navbar-height);
+    border-bottom: #282828 .8px solid;
+    background-color: #171717;
+    width: calc(100% - 40px);
+    padding: 10px 20px 0 20px;
+    color: #aaaaaa;
+    text-align: center;
+    z-index: 200;
+}
+
 .navbar-inner.stacked {
     display: none
 }
@@ -1635,7 +1680,8 @@ html.device-full-viewport body {
 .navbar~.page-content,
 .navbar~.page:not(.no-navbar) .page-content,
 .navbar~:not(.page) .page-content {
-    padding-top: var(--f7-navbar-height)
+    padding-top: var(--f7-navbar-height);
+    padding-bottom: var(--f7-navbar-height);
 }
 
 .navbar~* .page:not(.no-navbar).page-with-navbar-large .page-content,
