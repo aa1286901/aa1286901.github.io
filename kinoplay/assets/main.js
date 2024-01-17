@@ -465,7 +465,15 @@ function apiSections() {
     document.getElementById('loader').setAttribute('style', 'display: none');
 }
 
-apiSections();
+if (window.location.href.includes('#')) {
+    if (window.location.hash.includes('mv')) {
+        apiItem('movie/'+window.location.hash.replace("\#mv", ""))
+    } else {
+        apiItem('tv/'+window.location.hash.replace("\#tv", ""))
+    }
+} else{
+    apiSections();
+}
 
 function apiTV() {
     const mainContent = document.getElementById('mainContent');
