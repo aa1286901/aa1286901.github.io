@@ -492,7 +492,7 @@ function showPlayer(num, id) {
     if (num == 1) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://api.embr.ws/embed/imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 2) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://mute-value.cdnmovies-stream.online/tmdb/' + id + '/iframe?domain=kinobox.tv" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://mute-value.cdnmovies-stream.online/imdb/' + id + '/iframe?domain=kinobox.tv" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 3) {
         fetch('https://apivb.info/api/videos.json?id_kp=' + id + '&token=f84860deb66d9bac149fdc8c8edba1d4')
             .then(res => res.json())
