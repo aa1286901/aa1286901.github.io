@@ -116,11 +116,11 @@ function apiSearch() {
     var input = document.getElementById('search_input');
     if (input.value.length > 0) {
         fetch(`https://apitmdb.cub.red/3/search/multi?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru&query=` + encodeURI(input.value))
-        .then(res => res.json())
-        .then(function (data) {
-            const mainContent = document.getElementById('mainContent');
-            mainContent.innerHTML = '<div class="loader" id="loader" style="margin-bottom: 100%"></div>';
-            var divtitle = '<div class="title-wrap" style="text-align: center;">\
+            .then(res => res.json())
+            .then(function (data) {
+                const mainContent = document.getElementById('mainContent');
+                mainContent.innerHTML = '<div class="loader" id="loader" style="margin-bottom: 100%"></div>';
+                var divtitle = '<div class="title-wrap" style="text-align: center;">\
                     <h2>\
                         <a>\
                             <span class="link-u">Результаты поиска</span>\
@@ -128,25 +128,25 @@ function apiSearch() {
                     </h2>\
                 </div>\
                 <div class="fadeInElement" style="white-space: normal;" id="search_results"></div>';
-            document.getElementById('mainContent').insertAdjacentHTML("beforeend", divtitle);
-            for (var key in data['results']) {
-                if (data["results"][key]["vote_average"] > 0) {
-                    var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
+                document.getElementById('mainContent').insertAdjacentHTML("beforeend", divtitle);
+                for (var key in data['results']) {
+                    if (data["results"][key]["vote_average"] > 0) {
+                        var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
                                 <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
                               </div>";
-                };
-                if(data["results"][key]["media_type"] == 'movie'){
-                    var date = new Date(data["results"][key]["release_date"]);
-                    var title = data["results"][key]["title"];
-                    var tv = ' ';
-                } else{
-                    var date = new Date(data["results"][key]["first_air_date"]);
-                    var title = data["results"][key]["name"];
-                    var tv = '<div style="position: absolute; top: 10px; right: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color); border-radius: .4rem; justify-content: center; background: #d01633;">\
+                    };
+                    if (data["results"][key]["media_type"] == 'movie') {
+                        var date = new Date(data["results"][key]["release_date"]);
+                        var title = data["results"][key]["title"];
+                        var tv = ' ';
+                    } else {
+                        var date = new Date(data["results"][key]["first_air_date"]);
+                        var title = data["results"][key]["name"];
+                        var tv = '<div style="position: absolute; top: 10px; right: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color); border-radius: .4rem; justify-content: center; background: #d01633;">\
                     <span>TV</span>\
                   </div>';
-                }
-                var div = "\
+                    }
+                    var div = "\
                 <a onclick=\"apiItem('" + data["results"][key]["media_type"] + "/" + data["results"][key]["id"] + "')\">\
                     <div class=\"creditsCardWrapper\">\
                         <img alt=\"" + title + "\" src=\"https://imagetmdb.com/t/p/w200/" + data["results"][key]["poster_path"] + "\" loading=\"lazy\">\
@@ -154,24 +154,34 @@ function apiSearch() {
                             <span style=\"margin: 0px 5px;\">" + date.getFullYear() + "</span>\
                         </div>\
                         " + rating + "\
-                        "+tv+"\
+                        " + tv + "\
                         <div class=\"description\">\
                             <h2 class=\"title\">" + title + "</h2>\
                         </div>\
                     </div>\
                 </a>\
                 ";
-                document.getElementById('search_results').insertAdjacentHTML("beforeend", div);
-            }
-            document.getElementById('loader').style.display = "none";          
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-        
-    } else {
-    }
+                    document.getElementById('search_results').insertAdjacentHTML("beforeend", div);
+                }
+                document.getElementById('loader').style.display = "none";
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    } else {}
 }
+
+document.getElementById("search_input").addEventListener("keydown", function (e) {
+    if (e.code === "Enter") { //checks whether the pressed key is "Enter"
+        apiSearch();
+    }
+});
+document.getElementById("search_input").addEventListener('keyup', function (e) {
+    if (e.keyCode === 13) {
+        apiSearch();
+    }
+}, false);
 
 function apiSections() {
     const mainContent = document.getElementById('mainContent');
@@ -195,6 +205,8 @@ function apiSections() {
                     var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
                                 <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
                               </div>";
+                } else{
+                    var rating = "";
                 };
                 var date = new Date(data["results"][key]["release_date"]);
                 var div = "\
@@ -237,6 +249,8 @@ function apiSections() {
                     var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
                                 <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
                               </div>";
+                } else{
+                    var rating = "";
                 };
                 var date = new Date(data["results"][key]["release_date"]);
                 var div = "\
@@ -280,6 +294,8 @@ function apiSections() {
                     var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
                                 <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
                               </div>";
+                } else{
+                    var rating = "";
                 };
                 var date = new Date(data["results"][key]["release_date"]);
                 var div = "\
@@ -323,6 +339,8 @@ function apiSections() {
                     var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
                                 <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
                               </div>";
+                } else{
+                    var rating = "";
                 };
                 var date = new Date(data["results"][key]["first_air_date"]);
                 var div = "\
@@ -369,6 +387,8 @@ function apiSections() {
                     var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
                                 <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
                               </div>";
+                } else{
+                    var rating = "";
                 };
                 var date = new Date(data["results"][key]["release_date"]);
                 var div = "\
@@ -394,11 +414,11 @@ function apiSections() {
         });
 
 
-        ///////// Новые сериалы ////////
+    ///////// Новые сериалы ////////
     fetch(`https://tmdb.cub.red/?cat=tv&sort=now`)
-    .then(res => res.json())
-    .then(function (data) {
-        var divtitle = '<div class="title-wrap">\
+        .then(res => res.json())
+        .then(function (data) {
+            var divtitle = '<div class="title-wrap">\
         <h2>\
             <a>\
                 <span class="link-u">Новые сериалы</span>\
@@ -406,16 +426,18 @@ function apiSections() {
         </h2>\
     </div>\
     <div class="fadeInElement" id="top_tv"></div>';
-        document.getElementById('mainContent').insertAdjacentHTML("beforeend", divtitle);
+            document.getElementById('mainContent').insertAdjacentHTML("beforeend", divtitle);
 
-        for (var key in data['results']) {
-            if (data["results"][key]["vote_average"] > 0) {
-                var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
+            for (var key in data['results']) {
+                if (data["results"][key]["vote_average"] > 0) {
+                    var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
                             <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
                           </div>";
-            };
-            var date = new Date(data["results"][key]["first_air_date"]);
-            var div = "\
+                } else{
+                    var rating = "";
+                };
+                var date = new Date(data["results"][key]["first_air_date"]);
+                var div = "\
         <a onclick=\"apiItem('tv/" + data["results"][key]["id"] + "')\">\
             <div class=\"creditsCardWrapper\">\
                 <img alt=\"" + data["results"][key]["name"] + "\" src=\"https://imagetmdb.com/t/p/w200/" + data["results"][key]["poster_path"] + "\" loading=\"lazy\">\
@@ -432,13 +454,13 @@ function apiSections() {
             </div>\
         </a>\
         ";
-            document.getElementById('top_tv').insertAdjacentHTML("beforeend", div);
-        }
+                document.getElementById('top_tv').insertAdjacentHTML("beforeend", div);
+            }
 
-    })
-    .catch(function (error) {
-        console.log(error);
-    });
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 
     document.getElementById('loader').setAttribute('style', 'display: none');
 }
@@ -458,74 +480,75 @@ function apiTV() {
         });
 }
 
-function search() {
-    var search = document.getElementById('fast-search');
-    var ind = search.getAttribute('class');
-    var index = ind.indexOf("hide");
-    if (index !== -1) {
-        search.setAttribute('class', 'section s-search elem-blur');
-    } else {
-        search.setAttribute('class', 'section s-search elem-blur hide');
-    }
-};
 function showPlayer(num, id) {
-    if (num == 1) {    
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://api.embr.ws/embed/imdb/'+id+'" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';       
-    } else if (num == 2) {    
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://mute-value.cdnmovies-stream.online/tmdb/'+id+'/iframe?domain=kinobox.tv" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';       
-    } else if (num == 3) {  
-    fetch('https://apivb.info/api/videos.json?id_kp='+id+'&token=f84860deb66d9bac149fdc8c8edba1d4')
-    .then(res => res.json())
-    .then(function (obj) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="'+obj[0]['iframe_url']+'" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';       
-    })
-    .catch(function (error) {
-        console.log(error);
-    });
+    if (num == 1) {
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://api.embr.ws/embed/imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+    } else if (num == 2) {
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://mute-value.cdnmovies-stream.online/tmdb/' + id + '/iframe?domain=kinobox.tv" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+    } else if (num == 3) {
+        fetch('https://apivb.info/api/videos.json?id_kp=' + id + '&token=f84860deb66d9bac149fdc8c8edba1d4')
+            .then(res => res.json())
+            .then(function (obj) {
+                document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="' + obj[0]['iframe_url'] + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     } else if (num == 4) {
-            document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://kinoplay1.site/iplayer/videodb.php?kp='+id+'" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';       
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://kinoplay1.site/iplayer/videodb.php?kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 5) {
-            document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://polati.newplayjj.com:9443/?token=2820224373db9f144b6c9feb75e345&kp='+id+'" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';       
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://polati.newplayjj.com:9443/?token=2820224373db9f144b6c9feb75e345&kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 6) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://voidboost.tv/embed/'+id+'" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';       
-    } else if (num == 7) {  
-        fetch('http://videocdn.tv/api/short?api_token=3i40G5TSECmLF77oAqnEgbx61ZWaOYaE&imdb_id='+id)
-        .then(res => res.json())
-        .then(function (obj) {
-            document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="'+obj['data'][0]['iframe_src']+'" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';       
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://voidboost.tv/embed/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+    } else if (num == 7) {
+        fetch('https://videocdn.tv/api/short?api_token=3i40G5TSECmLF77oAqnEgbx61ZWaOYaE&imdb_id=' + id)
+            .then(res => res.json())
+            .then(function (obj) {
+                document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="' + obj['data'][0]['iframe_src'] + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     } else if (num == 8) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//militorys.net/van/'+id+'" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';       
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//militorys.net/van/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+    } else if (num == 9) {
+        fetch('http://kodikapi.com/search?token=0c9a72daf8747f4eacc2beba552b40ef&limit=100&with_episodes=true&imdb_id=' + id)
+            .then(res => res.json())
+            .then(function (obj) {
+                document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="' + obj['results'][0]['link'] + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 }
+
 function showTrayler(num, id) {
     if (num == 1) {
-        fetch('https://apitmdb.cub.red/3/'+id+'/videos?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru')
-        .then(res => res.json())
-        .then(function (obj) {
-            document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://www.youtube.com/embed/' + obj['results'][0]['key'] + '?fs=1&modestbranding=1&autoplay=1&showinfo=0&rel=0&iv_load_policy=3" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';       
-        })
-        .catch(function (error) {
-            console.log(error);
-        }); 
-    } else if (num == 2) { 
-        fetch('https://apitmdb.cub.red/3/'+id+'/videos?api_key=4ef0d7355d9ffb5151e987764708ce96&language=en')
-        .then(res => res.json())
-        .then(function (obj) {
-            document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://www.youtube.com/embed/' + obj['results'][0]['key'] + '?fs=1&modestbranding=1&autoplay=1&showinfo=0&rel=0&iv_load_policy=3" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';       
-        })
-        .catch(function (error) {
-            console.log(error);
-        });   
-     } else if (num == 3) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//api.embr.ws/embed/trailer-imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';       
+        fetch('https://apitmdb.cub.red/3/' + id + '/videos?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru')
+            .then(res => res.json())
+            .then(function (obj) {
+                document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://www.youtube.com/embed/' + obj['results'][0]['key'] + '?fs=1&modestbranding=1&autoplay=1&showinfo=0&rel=0&iv_load_policy=3" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    } else if (num == 2) {
+        fetch('https://apitmdb.cub.red/3/' + id + '/videos?api_key=4ef0d7355d9ffb5151e987764708ce96&language=en')
+            .then(res => res.json())
+            .then(function (obj) {
+                document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://www.youtube.com/embed/' + obj['results'][0]['key'] + '?fs=1&modestbranding=1&autoplay=1&showinfo=0&rel=0&iv_load_policy=3" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    } else if (num == 3) {
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//api.embr.ws/embed/trailer-imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 4) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://polati.newplayjj.com:9443/t/?token=2820224373db9f144b6c9feb75e345&kp='+id+'" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';       
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://polati.newplayjj.com:9443/t/?token=2820224373db9f144b6c9feb75e345&kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     }
 }
+
 function apiItem(id) {
     const mainContent = document.getElementById('mainContent');
     mainContent.innerHTML = '<div class="loader"></div>';
@@ -534,17 +557,17 @@ function apiItem(id) {
         .then(function (obj) {
             if (id.includes('movie')) {
                 var title = obj['title'];
-                var budget = ' | Бюджет: '+new Intl.NumberFormat("ru").format(obj['budget'])+'$';
+                var budget = ' | Бюджет: ' + new Intl.NumberFormat("ru").format(obj['budget']) + '$';
                 var date = obj['release_date'];
                 var time = obj['runtime'];
                 var original_title = obj['original_title'];
-              } else {
+            } else {
                 var title = obj['name'];
                 var date = obj['first_air_date'];
                 var budget = ' ';
                 var time = obj['last_episode_to_air']['runtime'];
                 var original_title = obj['original_name'];
-              }
+            }
             mainContent.innerHTML = '\
             <div id="Content-img" style="height: 56.5vw; max-height: 360px;">\
                 <div class="title-content" id="titlecontent">\
@@ -577,22 +600,23 @@ function apiItem(id) {
                 <input type="checkbox" class="show_pl" id="pl" style="display:none">\
                 <label for="pl" id="show-player" >Показать плеер</label>\
                 <div id="show_pl" class="dropdown-content" style="text-align: left;">\
-                    <a onclick="showPlayer(1,\''+obj['imdb_id']+'\')">#1 <span style="font-size:8px">(Callaps)</span></a>\
-                    <a onclick="showPlayer(2,\''+obj['imdb_id']+'\')">#2 <span style="font-size:8px">(CDNmovies)</span></a>\
-                    <a onclick="showPlayer(3,\''+obj['kinopoisk_id']+'\')">#3 <span style="font-size:8px">(DBHDVB)</span></a>\
-                    <a onclick="showPlayer(4,\''+obj['kinopoisk_id']+'\')">#4 <span style="font-size:8px">(VideoDB)</span></a>\
-                    <a onclick="showPlayer(5,\''+obj['kinopoisk_id']+'\')">#5 <span style="font-size:8px">(Alloha)</span></a>\
-                    <a onclick="showPlayer(6,\''+obj['imdb_id']+'\')">#6 <span style="font-size:8px">(HDRezha)</span></a>\
-                    <a onclick="showPlayer(7,\''+obj['imdb_id']+'\')">#7 <span style="font-size:8px">(VideoCDN)</span></a>\
-                    <a onclick="showPlayer(8,\''+obj['kinopoisk_id']+'\')">#8 <span style="font-size:8px">(Militorys)</span></a>\
+                    <a onclick="showPlayer(1,\'' + obj['imdb_id'] + '\')">Плеер #1 <span style="font-size:6px">(Callaps)</span></a>\
+                    <a onclick="showPlayer(2,\'' + obj['imdb_id'] + '\')">Плеер #2 <span style="font-size:6px">(CDNmovies)</span></a>\
+                    <a onclick="showPlayer(3,\'' + obj['kinopoisk_id'] + '\')">Плеер #3 <span style="font-size:6px">(DBHDVB)</span></a>\
+                    <a onclick="showPlayer(4,\'' + obj['kinopoisk_id'] + '\')">Плеер #4 <span style="font-size:6px">(VideoDB)</span></a>\
+                    <a onclick="showPlayer(5,\'' + obj['kinopoisk_id'] + '\')">Плеер #5 <span style="font-size:6px">(Alloha)</span></a>\
+                    <a onclick="showPlayer(6,\'' + obj['imdb_id'] + '\')">Плеер #6 <span style="font-size:6px">(HDRezha)</span></a>\
+                    <a onclick="showPlayer(7,\'' + obj['imdb_id'] + '\')">Плеер #7 <span style="font-size:6px">(VideoCDN)</span></a>\
+                    <a onclick="showPlayer(9,\'' + obj['imdb_id'] + '\')">Плеер #8 <span style="font-size:6px">(KodikBD)</span></a>\
+                    <a onclick="showPlayer(8,\'' + obj['kinopoisk_id'] + '\')">Плеер #9 <span style="font-size:6px">(Militorys)</span></a>\
                 </div>\
                 <input type="checkbox" class="show_tr" id="tr" style="display:none">\
                 <label for="tr" id="show-player" >Показать трейлер</label>\
                 <div id="show_tr" class="dropdown-content" style="text-align: left;left: 175px;">\
-                    <a onclick="showTrayler(1, \''+id+'\')">#1 <span style="font-size:8px">(YouTube)</span></a>\
-                    <a onclick="showTrayler(2, \''+id+'\')">#2 <span style="font-size:8px">(YouTube En)</span></a>\
-                    <a onclick="showTrayler(3,\''+obj['imdb_id']+'\')">#3 <span style="font-size:8px">(Callaps)</span></a>\
-                    <a onclick="showTrayler(4,\''+obj['kinopoisk_id']+'\')">#4 <span style="font-size:8px">(Alloha)</span></a>\
+                    <a onclick="showTrayler(1, \'' + id + '\')">Трейлер #1 <span style="font-size:6px">(YouTube)</span></a>\
+                    <a onclick="showTrayler(2, \'' + id + '\')">Трейлер #2 <span style="font-size:6px">(YouTube En)</span></a>\
+                    <a onclick="showTrayler(3,\'' + obj['imdb_id'] + '\')">Трейлер #3 <span style="font-size:6px">(Callaps)</span></a>\
+                    <a onclick="showTrayler(4,\'' + obj['kinopoisk_id'] + '\')">Трейлер #4 <span style="font-size:6px">(Alloha)</span></a>\
                 </div>\
             </div>\
         <div class="Content-desc" style="width: 100%; max-width: 750px; display: inline-block; -webkit-border-after: 1px solid #e6e6e6; border-block-end: 1px solid #e6e6e6;">\
@@ -607,20 +631,20 @@ function apiItem(id) {
 };
 
 function favorites(check) {
-    if(check == 0){
+    if (check == 0) {
         var results = document.cookie.match(/favorites=(.+?)(;|$)/);
         document.getElementById('favorites').setAttribute("onclick", "favorites(1)");
         document.getElementById('favorites-icon').setAttribute("stroke", "#000");
         document.getElementById('favorites-icon').setAttribute("fill", "rgb(116, 132, 145)");
-        if(results == null) {
+        if (results == null) {
             var fav = "' . $type . $id . '" + ",";
         } else {
             var fav = results[1] + "' . $type . $id . ',";
         }
-        document.cookie = "favorites=" + fav + ";path=/;max-age=31556926"; 
-    } else if(check == 1){
+        document.cookie = "favorites=" + fav + ";path=/;max-age=31556926";
+    } else if (check == 1) {
         var results = document.cookie.match(/favorites=(.+?)(;|$)/);
-        document.cookie = "favorites="; 
+        document.cookie = "favorites=";
         document.getElementById('favorites').setAttribute("onclick", "favorites(0)");
         document.getElementById('favorites-icon').setAttribute("fill", "none");
         document.getElementById('favorites-icon').setAttribute("stroke", "#748491");
