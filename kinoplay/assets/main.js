@@ -186,8 +186,9 @@ document.getElementById("search_input").addEventListener('keyup', function (e) {
 function apiSections() {
     const mainContent = document.getElementById('mainContent');
     mainContent.innerHTML = '<div class="loader" id="loader" style="margin-bottom: 100%"></div>';
-    //////////  Сейчас смотрят /////////
-    fetch(`https://tmdb.cub.red/?cat=movie&sort=now_playing`)
+
+    //////// Сегодня в тренде ////////        
+    fetch(`https://apitmdb.cub.red/3/trending/movie/day?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
         .then(res => res.json())
         .then(function (data) {
             var divtitle = '<div class="title-wrap">\
@@ -197,7 +198,7 @@ function apiSections() {
                 </a>\
             </h2>\
         </div>\
-        <div class="fadeInElement" id="now_playing"></div>';
+        <div class="fadeInElement" id="tr_day"></div>';
             document.getElementById('mainContent').insertAdjacentHTML("beforeend", divtitle);
 
             for (var key in data['results']) {
@@ -205,51 +206,7 @@ function apiSections() {
                     var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
                                 <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
                               </div>";
-                } else{
-                    var rating = "";
-                };
-                var date = new Date(data["results"][key]["release_date"]);
-                var div = "\
-                <a onclick=\"apiItem('movie/" + data["results"][key]["id"] + "')\">\
-                    <div class=\"creditsCardWrapper\">\
-                        <img alt=\"" + data["results"][key]["title"] + "\" src=\"https://imagetmdb.com/t/p/w200/" + data["results"][key]["poster_path"] + "\" loading=\"lazy\">\
-                        <div style=\"position: absolute; top: 165px; left: 5px; display: flex; font-size: .75rem; color: var(--text-color); border-radius: .4rem; justify-content: center; background: #f60;\">\
-                            <span style=\"margin: 0px 5px;\">" + date.getFullYear() + "</span>\
-                        </div>\
-                        " + rating + "\
-                        <div class=\"description\">\
-                            <h2 class=\"title\">" + data["results"][key]["title"] + "</h2>\
-                        </div>\
-                    </div>\
-                </a>\
-                ";
-                document.getElementById('now_playing').insertAdjacentHTML("beforeend", div);
-            }
-
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-    //////// В высоком качестве ////////        
-    fetch(`https://tmdb.cub.red/?cat=movie&sort=latest&uhd=true`)
-        .then(res => res.json())
-        .then(function (data) {
-            var divtitle = '<div class="title-wrap">\
-            <h2>\
-                <a>\
-                    <span class="link-u">В высоком качестве</span>\
-                </a>\
-            </h2>\
-        </div>\
-        <div class="fadeInElement" id="upcoming"></div>';
-            document.getElementById('mainContent').insertAdjacentHTML("beforeend", divtitle);
-
-            for (var key in data['results']) {
-                if (data["results"][key]["vote_average"] > 0) {
-                    var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
-                                <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
-                              </div>";
-                } else{
+                } else {
                     var rating = "";
                 };
                 var date = new Date(data["results"][key]["release_date"]);
@@ -267,7 +224,7 @@ function apiSections() {
                 </div>\
             </a>\
             ";
-                document.getElementById('upcoming').insertAdjacentHTML("beforeend", div);
+                document.getElementById('tr_day').insertAdjacentHTML("beforeend", div);
             }
 
         })
@@ -275,18 +232,18 @@ function apiSections() {
             console.log(error);
         });
 
-    ///////// Популярные  фильмы ////////
-    fetch(`https://tmdb.cub.red/?cat=movie&sort=top`)
+    ///////// В тренде за неделю ////////
+    fetch(`https://apitmdb.cub.red/3/trending/movie/week?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
         .then(res => res.json())
         .then(function (data) {
             var divtitle = '<div class="title-wrap">\
             <h2>\
                 <a>\
-                    <span class="link-u">Популярные  фильмы</span>\
+                    <span class="link-u">В тренде за неделю</span>\
                 </a>\
             </h2>\
         </div>\
-        <div class="fadeInElement" id="popular"></div>';
+        <div class="fadeInElement" id="tr_week"></div>';
             document.getElementById('mainContent').insertAdjacentHTML("beforeend", divtitle);
 
             for (var key in data['results']) {
@@ -294,7 +251,7 @@ function apiSections() {
                     var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
                                 <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
                               </div>";
-                } else{
+                } else {
                     var rating = "";
                 };
                 var date = new Date(data["results"][key]["release_date"]);
@@ -312,7 +269,52 @@ function apiSections() {
                 </div>\
             </a>\
             ";
-                document.getElementById('popular').insertAdjacentHTML("beforeend", div);
+                document.getElementById('tr_week').insertAdjacentHTML("beforeend", div);
+            }
+
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+    ///////// Популярные фильмы ////////
+    fetch(`https://apitmdb.cub.red/3/movie/popular?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
+        .then(res => res.json())
+        .then(function (data) {
+            var divtitle = '<div class="title-wrap">\
+        <h2>\
+            <a>\
+                <span class="link-u">Популярные фильмы</span>\
+            </a>\
+        </h2>\
+    </div>\
+    <div class="fadeInElement" id="popular_mv"></div>';
+            document.getElementById('mainContent').insertAdjacentHTML("beforeend", divtitle);
+
+            for (var key in data['results']) {
+                if (data["results"][key]["vote_average"] > 0) {
+                    var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
+                            <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
+                          </div>";
+                } else {
+                    var rating = "";
+                };
+                var date = new Date(data["results"][key]["release_date"]);
+                var div = "\
+        <a onclick=\"apiItem('movie/" + data["results"][key]["id"] + "')\">\
+            <div class=\"creditsCardWrapper\">\
+                <img alt=\"" + data["results"][key]["title"] + "\" src=\"https://imagetmdb.com/t/p/w200/" + data["results"][key]["poster_path"] + "\" loading=\"lazy\">\
+                <div style=\"position: absolute; top: 165px; left: 5px; display: flex; font-size: .75rem; color: var(--text-color); border-radius: .4rem; justify-content: center; background: #f60;\">\
+                    <span style=\"margin: 0px 5px;\">" + date.getFullYear() + "</span>\
+                </div>\
+                " + rating + "\
+                <div class=\"description\">\
+                    <h2 class=\"title\">" + data["results"][key]["title"] + "</h2>\
+                </div>\
+            </div>\
+        </a>\
+        ";
+                document.getElementById('popular_mv').insertAdjacentHTML("beforeend", div);
             }
 
         })
@@ -321,7 +323,7 @@ function apiSections() {
         });
 
     ///////// Популярные  сериалы ////////
-    fetch(`https://tmdb.cub.red/?cat=tv&sort=top`)
+    fetch(`https://apitmdb.cub.red/3/trending/tv/week?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
         .then(res => res.json())
         .then(function (data) {
             var divtitle = '<div class="title-wrap">\
@@ -339,7 +341,7 @@ function apiSections() {
                     var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
                                 <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
                               </div>";
-                } else{
+                } else {
                     var rating = "";
                 };
                 var date = new Date(data["results"][key]["first_air_date"]);
@@ -368,14 +370,14 @@ function apiSections() {
             console.log(error);
         });
 
-    ///////// Новые фильмы ////////
-    fetch(`https://tmdb.cub.red/?cat=movie&sort=now`)
+    ///////// Топ фильмы ////////
+    fetch(`https://apitmdb.cub.red/3/movie/top_rated?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
         .then(res => res.json())
         .then(function (data) {
             var divtitle = '<div class="title-wrap">\
             <h2>\
                 <a>\
-                    <span class="link-u">Новые фильмы</span>\
+                    <span class="link-u">Топ фильмы</span>\
                 </a>\
             </h2>\
         </div>\
@@ -387,7 +389,7 @@ function apiSections() {
                     var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
                                 <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
                               </div>";
-                } else{
+                } else {
                     var rating = "";
                 };
                 var date = new Date(data["results"][key]["release_date"]);
@@ -414,14 +416,14 @@ function apiSections() {
         });
 
 
-    ///////// Новые сериалы ////////
-    fetch(`https://tmdb.cub.red/?cat=tv&sort=now`)
+    ///////// Топ сериалы ////////
+    fetch(`https://apitmdb.cub.red/3/tv/top_rated?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
         .then(res => res.json())
         .then(function (data) {
             var divtitle = '<div class="title-wrap">\
         <h2>\
             <a>\
-                <span class="link-u">Новые сериалы</span>\
+                <span class="link-u">Топ сериалы</span>\
             </a>\
         </h2>\
     </div>\
@@ -433,7 +435,7 @@ function apiSections() {
                     var rating = "<div style=\"position: absolute; top: 10px; left: 6px; display: flex; width: 30px; font-size: .75rem; color: var(--text-color);; border-radius: .4rem; justify-content: center;background: #3bb33b;\">\
                             <span>" + data['results'][key]['vote_average'].toFixed(1) + "</span>\
                           </div>";
-                } else{
+                } else {
                     var rating = "";
                 };
                 var date = new Date(data["results"][key]["first_air_date"]);
@@ -467,11 +469,11 @@ function apiSections() {
 
 if (window.location.href.includes('#')) {
     if (window.location.hash.includes('mv')) {
-        apiItem('movie/'+window.location.hash.replace("\#mv", ""))
+        apiItem('movie/' + window.location.hash.replace("\#mv", ""))
     } else {
-        apiItem('tv/'+window.location.hash.replace("\#tv", ""))
+        apiItem('tv/' + window.location.hash.replace("\#tv", ""))
     }
-} else{
+} else {
     apiSections();
 }
 
@@ -490,9 +492,9 @@ function apiTV() {
 
 function showPlayer(num, id) {
     if (num == 1) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://api.embr.ws/embed/imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://api.lessornot.ws/embed/imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 2) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://mute-value.cdnmovies-stream.online/imdb/' + id + '/iframe?domain=kinobox.tv" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://player.cdnvideohub.com/playerjs?partner=9&kid=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 3) {
         fetch('https://apivb.info/api/videos.json?id_kp=' + id + '&token=f84860deb66d9bac149fdc8c8edba1d4')
             .then(res => res.json())
@@ -505,7 +507,7 @@ function showPlayer(num, id) {
     } else if (num == 4) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://kinoplay1.site/iplayer/videodb.php?kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 5) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://polati.newplayjj.com:9443/?token=2820224373db9f144b6c9feb75e345&kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://allo.cdnlbox.club/?token=f688111d44220009e894da7069031c&kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 6) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://voidboost.tv/embed/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 7) {
@@ -560,12 +562,16 @@ function showTrayler(num, id) {
 function apiItem(id) {
     const mainContent = document.getElementById('mainContent');
     mainContent.innerHTML = '<div class="loader"></div>';
-    fetch('https://tmdb.cub.red/3/' + id + '/?append_to_response=content_ratings,release_dates,credits,similar,external_ids,keywords&api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru')
+    fetch('https://apitmdb.cub.red/3/' + id + '?append_to_response=content_ratings,release_dates,credits,similar,external_ids,keywords&api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru')
         .then(res => res.json())
         .then(function (obj) {
             if (id.includes('movie')) {
                 var title = obj['title'];
-                var budget = ' | Бюджет: ' + new Intl.NumberFormat("ru").format(obj['budget']) + '$';
+                if (obj['budget'] > 0) {
+                    var budget = ' | Бюджет: ' + new Intl.NumberFormat("ru").format(obj['budget']) + '$';
+                } else {
+                    var budget = ' ';
+                }
                 var date = obj['release_date'];
                 var time = obj['runtime'];
                 var original_title = obj['original_title'];
@@ -573,10 +579,67 @@ function apiItem(id) {
                 var title = obj['name'];
                 var date = obj['first_air_date'];
                 var budget = ' ';
-                var time = obj['last_episode_to_air']['runtime'];
+                if (obj['last_episode_to_air'] === null) {
+                    var time = ' ';
+                } else {
+                    var time = obj['last_episode_to_air']['runtime'];
+                }
                 var original_title = obj['original_name'];
             }
-            mainContent.innerHTML = '\
+            for (var gnrs in obj['genres']) {
+                if (gnrs == 0) {
+                    var genres = obj['genres'][gnrs]['name'][0].toUpperCase() + obj['genres'][gnrs]['name'].substring(1);
+                } else {
+                    var genres = genres + ', ' + obj['genres'][gnrs]['name'][0].toUpperCase() + obj['genres'][gnrs]['name'].substring(1)
+                }
+            }
+            var params = new URLSearchParams();
+            params.set('card_id', obj['id']);
+            params.set('auth', false);
+            params.set('uid', 'b7980da1ec96cca56069b29a3_433923778');
+
+            fetch('http://api.lampa.stream/KPrating', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    },
+                    body: params
+                }).then(res => res.json())
+                .then(function (res) {
+                    var kp_id = res['data']['kp_id'];
+
+
+                    for (var cast in obj['credits']['cast']) {
+                        if (obj['credits']['cast'][cast]['profile_path'] === null) {
+                            var imageUrl = './assets/cast.svg';
+                        } else {
+                            var imageUrl = 'https://imagetmdb.com/t/p/w276_and_h350_face/' + obj['credits']['cast'][cast]['profile_path'];
+                        }
+                        if (cast == 0) {
+                            var castitem = '\
+                    <a class="cast" style="position: relative; display: block; width: 72px; margin: 10px 8px; text-align: center; color: #fff; transition: all .15s linear; title="' + obj['credits']['cast'][cast]['name'] + '">\
+                        <div class="photo" style="position: relative; transition: all .4s ease; width: 72px; height: 72px; background-color: #9cadc3; border-radius: 50%; overflow: hidden; margin: 0 auto 10px; display: flex; flex-direction: column; justify-content: center; z-index: 1;">\
+                            <img style="width: 72px;" src="' + imageUrl + '" loading="lazy">\
+                        </div>\
+                        <span class="castLink" style="flex-direction: column; font-family: inherit; font-size: 12px; line-height: 12px; text-align: center; letter-spacing: .02em; width: 100%;">' + obj['credits']['cast'][cast]['name'] + '</span>\
+                    </a>';
+                        } else {
+                            var castitem = castitem + '\
+                    <a class="cast" style="position: relative; display: block; width: 72px; margin: 10px 8px; text-align: center; color: #fff; transition: all .15s linear; title="' + obj['credits']['cast'][cast]['name'] + '">\
+                        <div class="photo" style="position: relative; transition: all .4s ease; width: 72px; height: 72px; background-color: #9cadc3; border-radius: 50%; overflow: hidden; margin: 0 auto 10px; display: flex; flex-direction: column; justify-content: center; z-index: 1;">\
+                            <img style="width: 72px;" src="' + imageUrl + '" loading="lazy">\
+                        </div>\
+                        <span class="castLink" style="flex-direction: column; font-family: inherit; font-size: 12px; line-height: 12px; text-align: center; letter-spacing: .02em; width: 100%;">' + obj['credits']['cast'][cast]['name'] + '</span>\
+                    </a>';
+                        }
+                    }
+                    if (obj['similar']['results'] === undefined) {
+
+                    } else {
+
+                    }
+                    
+                    mainContent.innerHTML = '\
             <div id="Content-img" style="height: 56.5vw; max-height: 360px;">\
                 <div class="title-content" id="titlecontent">\
                 <img class="title-img" style="object-fit: cover; object-position: center top" alt="' + title + '"src="https://imagetmdb.com/t/p/w1280/' + obj['backdrop_path'] + '"\
@@ -592,7 +655,7 @@ function apiItem(id) {
 		                <path d="M 41.171875 29.457031 C 40.953125 28.597656 40.144531 28 39.199219 28 L 36.066406 28 C 33.371094 18.910156 28.738281 4.039063 28.1875 2.304688 C 28.054688 1.425781 27.007813 1 25 1 C 22.992188 1 21.949219 1.425781 21.8125 2.300781 C 21.4375 3.503906 18.289063 13.6875 15.65625 22.382813 L 15.558594 22.445313 C 15.574219 22.46875 15.597656 22.492188 15.613281 22.519531 C 15.027344 24.464844 14.464844 26.328125 13.96875 28 L 10.800781 28 C 10.03125 28 9.285156 28.492188 8.90625 29.253906 L 4.046875 44.699219 L 4 46 C 4 47.160156 4.839844 48 6 48 L 44 48 C 45.160156 48 46 47.160156 46 46 L 46 45 Z M 23.648438 3.117188 C 23.902344 3.0625 24.359375 3 25 3 C 25.648438 3 26.109375 3.0625 26.359375 3.121094 C 26.585938 3.761719 27.046875 5.210938 27.648438 7.15625 C 27.355469 7.511719 26.355469 8 25 8 C 23.515625 8 22.515625 7.433594 22.371094 7.210938 C 22.964844 5.296875 23.417969 3.835938 23.648438 3.117188 Z M 19.496094 16.605469 C 20.839844 17.460938 22.839844 18 25 18 C 27.164063 18 29.171875 17.449219 30.53125 16.566406 C 31.0625 18.316406 31.601563 20.101563 32.128906 21.84375 C 30.855469 22.980469 28.144531 24 25 24 C 21.839844 24 19.15625 23.0625 17.859375 21.996094 C 18.394531 20.21875 18.949219 18.394531 19.496094 16.605469 Z M 36.238281 36.066406 C 36.136719 38.078125 31.3125 41 25 41 C 18.691406 41 13.792969 38.078125 13.691406 36.066406 C 13.769531 35.699219 14.476563 33.324219 15.058594 31.34375 C 17.335938 32.949219 21.085938 34 25 34 C 28.835938 34 32.597656 32.882813 34.90625 31.183594 C 35.507813 33.25 36.15625 35.691406 36.238281 36.066406 Z"></path>\
 	                </svg>\
                 </div>\
-                <div onclick="favorites(0)" id="favorites" style="cursor: pointer; position: absolute;bottom: 5px; left: 5px">\
+                <div onclick="addfav("'+obj['id']+'")" id="addfav" style="cursor: pointer; position: absolute;bottom: 5px; left: 5px">\
                     <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg">\
 	                    <path d="M9 9.004h5.997M12 2c-6.84 0-7.995.981-7.995 8.873C4.005 19.707 3.836 22 5.545 22s4.498-3.878 6.455-3.878c1.957 0 4.746 3.878 6.454 3.878 1.71 0 1.541-2.293 1.541-11.127C19.995 2.98 18.84 2 12 2z" fill="none" stroke-linecap="round" id="favorites-icon" stroke-linejoin="round" stroke="#748491" stroke-width="1.5"></path>\
                     </svg>\
@@ -601,22 +664,22 @@ function apiItem(id) {
             <div class="entity-desc-value is-rating" id="israting">\
         	        <span title="TMDB" class="entity-rating-tmdb">Рейтинг: ' + obj['vote_average'].toFixed(1) + ' (голосов: ' + obj['vote_count'] + ')</span>\
             </div>\
-            <div class="entity-desc-item">Жанр: ' + obj['genres']['0']['name'][0].toUpperCase() + obj['genres']['0']['name'].substring(1) + budget + '</div>\
-            <div class="entity-desc-item">Дата релиза: ' + new Date(date).getDay() + '.' + new Date(date).getMonth() + '.' + new Date(date).getFullYear() + ' | Продолжительность: ' + new Date(time).getTime() + ' мин.</div>\
+            <div class="entity-desc-item">Жанр: ' + genres + budget + '</div>\
+            <div class="entity-desc-item">Дата: ' + new Intl.DateTimeFormat('ru-Ru').format(new Date(date)) + ' | Время: ' + new Date(time).getTime() + ' мин.</div>\
             </div>\
             <div class="dropdown" id="dropdown" style="display: inline-flex;">\
                 <input type="checkbox" class="show_pl" id="pl" style="display:none">\
                 <label for="pl" id="show-player" >Показать плеер</label>\
                 <div id="show_pl" class="dropdown-content" style="text-align: left;">\
                     <a onclick="showPlayer(1,\'' + obj['imdb_id'] + '\')">Плеер #1 <span style="font-size:6px">(Callaps)</span></a>\
-                    <a onclick="showPlayer(2,\'' + obj['imdb_id'] + '\')">Плеер #2 <span style="font-size:6px">(CDNmovies)</span></a>\
-                    <a onclick="showPlayer(3,\'' + obj['kinopoisk_id'] + '\')">Плеер #3 <span style="font-size:6px">(DBHDVB)</span></a>\
-                    <a onclick="showPlayer(4,\'' + obj['kinopoisk_id'] + '\')">Плеер #4 <span style="font-size:6px">(VideoDB)</span></a>\
-                    <a onclick="showPlayer(5,\'' + obj['kinopoisk_id'] + '\')">Плеер #5 <span style="font-size:6px">(Alloha)</span></a>\
-                    <a onclick="showPlayer(6,\'' + obj['imdb_id'] + '\')">Плеер #6 <span style="font-size:6px">(HDRezha)</span></a>\
-                    <a onclick="showPlayer(7,\'' + obj['imdb_id'] + '\')">Плеер #7 <span style="font-size:6px">(VideoCDN)</span></a>\
-                    <a onclick="showPlayer(9,\'' + obj['imdb_id'] + '\')">Плеер #8 <span style="font-size:6px">(KodikBD)</span></a>\
-                    <a onclick="showPlayer(8,\'' + obj['kinopoisk_id'] + '\')">Плеер #9 <span style="font-size:6px">(Militorys)</span></a>\
+                    <a onclick="showPlayer(3,\'' + kp_id + '\')">Плеер #2 <span style="font-size:6px">(DBHDVB)</span></a>\
+                    <a onclick="showPlayer(4,\'' + kp_id + '\')">Плеер #3 <span style="font-size:6px">(VideoDB)</span></a>\
+                    <a onclick="showPlayer(5,\'' + kp_id + '\')">Плеер #4 <span style="font-size:6px">(Alloha)</span></a>\
+                    <a onclick="showPlayer(6,\'' + obj['imdb_id'] + '\')">Плеер #5 <span style="font-size:6px">(HDRezha)</span></a>\
+                    <a onclick="showPlayer(7,\'' + obj['imdb_id'] + '\')">Плеер #6 <span style="font-size:6px">(VideoCDN)</span></a>\
+                    <a onclick="showPlayer(9,\'' + obj['imdb_id'] + '\')">Плеер #7 <span style="font-size:6px">(KodikBD)</span></a>\
+                    <a onclick="showPlayer(2,\'' + kp_id + '\')">Плеер #8 <span style="font-size:6px">(RedHeadSound)</span></a>\
+                    <a onclick="showPlayer(8,\'' + kp_id + '\')">Плеер #9 <span style="font-size:6px">(Militorys)</span></a>\
                 </div>\
                 <input type="checkbox" class="show_tr" id="tr" style="display:none">\
                 <label for="tr" id="show-player" >Показать трейлер</label>\
@@ -630,8 +693,10 @@ function apiItem(id) {
         <div class="Content-desc" style="width: 100%; max-width: 750px; display: inline-block; -webkit-border-after: 1px solid #e6e6e6; border-block-end: 1px solid #e6e6e6;">\
         <div class="desc-full" style="background: linear-gradient(to top, transparent 5%, black 100%); border-radius: 10px; text-align: center; margin-top: 5px; padding: 10px; line-height: 1.5; word-spacing: 1.4px; font-size: 1rem; min-height: 14rem;">' + obj['tagline'] + obj['overview'] + '</div>\
         </div>\
+        <div class="castRow-container" style="display: flex; width: 100%; overflow: visible; overflow-x: scroll; -webkit-border-after: 1px solid #e6e6e6; border-block-end: 1px solid #e6e6e6;">' + castitem + '</div>\
         <span style="color: #748491; margin: 15px 0px; display: inline-block; font-size: 14px;">Уважаемые правообладатели, учтите, что все плееры из сторонних источников. Пишите напрямую этих видео-балансеров для соблюдения DMCA.</span>\
             ';
+                })
         })
         .catch(function (error) {
             console.log(error);

@@ -278,6 +278,19 @@ h1 {
     display: block;
 }
 
+#show-torrent{
+    display: inline-block; 
+    background-color: rgba(255, 255, 255, 0); 
+    color: rgb(255, 255, 255);
+    width: 155px;
+    cursor: pointer;
+    min-width: 155px;
+    font-size: .8rem;
+    letter-spacing: 1px;
+    word-spacing: 1.4px;
+    line-height: 1.5;
+    margin: 5px;
+}
 #show-player {
     width: 155px;
     border: 0px;
