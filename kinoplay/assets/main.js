@@ -563,21 +563,20 @@ function kpid(id) {
     params.set('card_id', id);
     params.set('auth', false);
     params.set('uid', 'b7980da1ec96cca56069b29a3_433923778');
-    fetch('http://api.lampa.stream/KPrating', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            },
-            body: params
-        })
-        .then(response => response.json())
-        .then(answer => {
-            document.getElementById("showPlayer2").setAttribute("onclick", "showPlayer(3,'" + answer['data']['kp_id'] + "')");
-            document.getElementById("showPlayer3").setAttribute("onclick", "showPlayer(4,'" + answer['data']['kp_id'] + "')");
-            document.getElementById("showPlayer4").setAttribute("onclick", "showPlayer(5,'" + answer['data']['kp_id'] + "')");
-            document.getElementById("showPlayer8").setAttribute("onclick", "showPlayer(2,'" + answer['data']['kp_id'] + "')");
-            document.getElementById("showPlayer9").setAttribute("onclick", "showPlayer(8,'" + answer['data']['kp_id'] + "')");
-        });
+
+    $.ajax({
+        url: 'http://api.lampa.stream/KPrating',
+        method: 'post',
+        dataType: 'json',
+        data: {'card_id': id,'auth':'false','uid':'b7980da1ec96cca56069b29a3_433923778'},
+        success: function(data){
+            document.getElementById("showPlayer2").setAttribute("onclick", "showPlayer(3,'" + data['data']['kp_id'] + "')");
+            document.getElementById("showPlayer3").setAttribute("onclick", "showPlayer(4,'" + data['data']['kp_id'] + "')");
+            document.getElementById("showPlayer4").setAttribute("onclick", "showPlayer(5,'" + data['data']['kp_id'] + "')");
+            document.getElementById("showPlayer8").setAttribute("onclick", "showPlayer(2,'" + data['data']['kp_id'] + "')");
+            document.getElementById("showPlayer9").setAttribute("onclick", "showPlayer(8,'" + data['data']['kp_id'] + "')");
+        }
+    });
 };
 
 function apiItem(id) {
