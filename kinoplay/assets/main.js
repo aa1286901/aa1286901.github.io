@@ -563,7 +563,6 @@ function kpid(id) {
     params.set('card_id', id);
     params.set('auth', false);
     params.set('uid', 'b7980da1ec96cca56069b29a3_433923778');
-
     $.ajax({
         url: 'http://api.lampa.stream/KPrating',
         method: 'post',
