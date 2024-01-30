@@ -566,7 +566,7 @@ function kpid(id) {
     $.ajax({
         url: 'http://api.lampa.stream/KPrating',
         method: 'post',
-        dataType: 'json',
+        dataType: 'jsonp',
         data: {'card_id': id,'auth':'false','uid':'b7980da1ec96cca56069b29a3_433923778'},
         success: function(data){
             document.getElementById("showPlayer2").setAttribute("onclick", "showPlayer(3,'" + data['data']['kp_id'] + "')");
