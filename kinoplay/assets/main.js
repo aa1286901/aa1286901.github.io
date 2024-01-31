@@ -559,22 +559,17 @@ function showTrayler(num, id) {
     }
 }
 function kpid(id) {
-    params = new URLSearchParams();
-    params.set('card_id', id);
-    params.set('auth', false);
-    params.set('uid', 'b7980da1ec96cca56069b29a3_433923778');
-    $.ajax({
-        url: 'http://api.lampa.stream/KPrating',
-        method: 'post',
-        dataType: 'jsonp',
-        data: {'card_id': id,'auth':'false','uid':'b7980da1ec96cca56069b29a3_433923778'},
-        success: function(data){
-            document.getElementById("showPlayer2").setAttribute("onclick", "showPlayer(3,'" + data['data']['kp_id'] + "')");
-            document.getElementById("showPlayer3").setAttribute("onclick", "showPlayer(4,'" + data['data']['kp_id'] + "')");
-            document.getElementById("showPlayer4").setAttribute("onclick", "showPlayer(5,'" + data['data']['kp_id'] + "')");
-            document.getElementById("showPlayer8").setAttribute("onclick", "showPlayer(2,'" + data['data']['kp_id'] + "')");
-            document.getElementById("showPlayer9").setAttribute("onclick", "showPlayer(8,'" + data['data']['kp_id'] + "')");
-        }
+    fetch('https://videocdn.tv/api/short?api_token=3i40G5TSECmLF77oAqnEgbx61ZWaOYaE&imdb_id=' + id)
+    .then(res => res.json())
+    .then(function (data) {
+        document.getElementById("showPlayer2").setAttribute("onclick", "showPlayer(3,'" + data['data']['0']['kp_id'] + "')");
+        document.getElementById("showPlayer3").setAttribute("onclick", "showPlayer(4,'" + data['data']['0']['kp_id'] + "')");
+        document.getElementById("showPlayer4").setAttribute("onclick", "showPlayer(5,'" + data['data']['0']['kp_id'] + "')");
+        document.getElementById("showPlayer8").setAttribute("onclick", "showPlayer(2,'" + data['data']['0']['kp_id'] + "')");
+        document.getElementById("showPlayer9").setAttribute("onclick", "showPlayer(8,'" + data['data']['0']['kp_id'] + "')");
+    })
+    .catch(function (error) {
+        console.log(error);
     });
 };
 
@@ -614,7 +609,7 @@ function apiItem(id) {
                     var genres = genres + ', ' + obj['genres'][gnrs]['name'][0].toUpperCase() + obj['genres'][gnrs]['name'].substring(1)
                 }
             }
-            kp_id = kpid(obj['id']);
+            kp_id = kpid(obj['imdb_id']);
             for (var cast in obj['credits']['cast']) {
                 if (obj['credits']['cast'][cast]['profile_path'] === null) {
                     var imageUrl = './assets/cast.svg';
