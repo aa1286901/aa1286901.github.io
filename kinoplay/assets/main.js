@@ -172,11 +172,6 @@ function apiSearch() {
     } else {}
 }
 
-document.getElementById("search_input").addEventListener("keydown", function (e) {
-    if (e.code === "Enter") { //checks whether the pressed key is "Enter"
-        apiSearch();
-    }
-});
 document.getElementById("search_input").addEventListener('keyup', function (e) {
     if (e.keyCode === 13) {
         apiSearch();
@@ -490,6 +485,15 @@ function apiTV() {
         });
 }
 
+function _isContains(json, value) {
+    let contains = false;
+    Object.keys(json).some(key => {
+        contains = typeof json[key] === 'object' ? _isContains(json[key], value) : json[key] === value;
+        return contains;
+    });
+    return contains;
+}
+
 function showPlayer(num, id) {
     if (num == 1) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://api.lessornot.ws/embed/imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
@@ -499,7 +503,11 @@ function showPlayer(num, id) {
         fetch('https://apivb.info/api/videos.json?id_kp=' + id + '&token=f84860deb66d9bac149fdc8c8edba1d4')
             .then(res => res.json())
             .then(function (obj) {
-                document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="' + obj[0]['iframe_url'] + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                if (/.*iframe_url.*/g.test(JSON.stringify(obj))) {
+                    document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="' + obj[0]['iframe_url'] + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                } else {
+                    document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="./error.html" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                }
             })
             .catch(function (error) {
                 console.log(error);
@@ -514,7 +522,11 @@ function showPlayer(num, id) {
         fetch('https://videocdn.tv/api/short?api_token=3i40G5TSECmLF77oAqnEgbx61ZWaOYaE&imdb_id=' + id)
             .then(res => res.json())
             .then(function (obj) {
-                document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="' + obj['data'][0]['iframe_src'] + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                if (obj['result'] == true) {
+                    document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="' + obj['data'][0]['iframe_src'] + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                } else {
+                    document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="./error.html" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                }
             })
             .catch(function (error) {
                 console.log(error);
@@ -522,10 +534,14 @@ function showPlayer(num, id) {
     } else if (num == 8) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//militorys.net/van/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 9) {
-        fetch('http://kodikapi.com/search?token=0c9a72daf8747f4eacc2beba552b40ef&limit=100&with_episodes=true&imdb_id=' + id)
+        fetch('https://kodikapi.com/search?token=0c9a72daf8747f4eacc2beba552b40ef&limit=1&imdb_id=' + id)
             .then(res => res.json())
             .then(function (obj) {
-                document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="' + obj['results'][0]['link'] + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                if (obj['total'] !== 0) {
+                    document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="' + obj['results'][0]['link'] + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                } else {
+                    document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="./error.html" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                }
             })
             .catch(function (error) {
                 console.log(error);
@@ -538,7 +554,11 @@ function showTrayler(num, id) {
         fetch('https://apitmdb.cub.red/3/' + id + '/videos?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru')
             .then(res => res.json())
             .then(function (obj) {
-                document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://www.youtube.com/embed/' + obj['results'][0]['key'] + '?fs=1&modestbranding=1&autoplay=1&showinfo=0&rel=0&iv_load_policy=3" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                if (_isContains(obj, "YouTube") == true) {
+                    document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://www.youtube.com/embed/' + obj['results'][0]['key'] + '?fs=1&modestbranding=1&autoplay=1&showinfo=0&rel=0&iv_load_policy=3" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                } else {
+                    document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="./error.html" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                }
             })
             .catch(function (error) {
                 console.log(error);
@@ -547,31 +567,48 @@ function showTrayler(num, id) {
         fetch('https://apitmdb.cub.red/3/' + id + '/videos?api_key=4ef0d7355d9ffb5151e987764708ce96&language=en')
             .then(res => res.json())
             .then(function (obj) {
-                document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://www.youtube.com/embed/' + obj['results'][0]['key'] + '?fs=1&modestbranding=1&autoplay=1&showinfo=0&rel=0&iv_load_policy=3" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                if (_isContains(obj, "YouTube") == true) {
+                    document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://www.youtube.com/embed/' + obj['results'][0]['key'] + '?fs=1&modestbranding=1&autoplay=1&showinfo=0&rel=0&iv_load_policy=3" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                } else {
+                    document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="./error.html" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                }
             })
             .catch(function (error) {
                 console.log(error);
             });
-    } else if (num == 3) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//api.embr.ws/embed/trailer-imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 4) {
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//api.embr.ws/embed/trailer-imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+    } else if (num == 5) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://polati.newplayjj.com:9443/t/?token=2820224373db9f144b6c9feb75e345&kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+    } else if (num == 3) {
+        window.open('https://widgets.kinopoisk.ru/discovery/film/' + id + '/?noAd=1&onlyPlayer=1', '_blank').focus();
     }
 }
+
 function kpid(id) {
     fetch('https://videocdn.tv/api/short?api_token=3i40G5TSECmLF77oAqnEgbx61ZWaOYaE&imdb_id=' + id)
-    .then(res => res.json())
-    .then(function (data) {
-        document.getElementById("showPlayer2").setAttribute("onclick", "showPlayer(3,'" + data['data']['0']['kp_id'] + "')");
-        document.getElementById("showPlayer3").setAttribute("onclick", "showPlayer(4,'" + data['data']['0']['kp_id'] + "')");
-        document.getElementById("showPlayer4").setAttribute("onclick", "showPlayer(5,'" + data['data']['0']['kp_id'] + "')");
-        document.getElementById("showPlayer8").setAttribute("onclick", "showPlayer(2,'" + data['data']['0']['kp_id'] + "')");
-        document.getElementById("showPlayer9").setAttribute("onclick", "showPlayer(8,'" + data['data']['0']['kp_id'] + "')");
-    })
-    .catch(function (error) {
-        console.log(error);
-    });
+        .then(res => res.json())
+        .then(function (data) {
+            document.getElementById("showPlayer2").setAttribute("onclick", "showPlayer(3,'" + data['data']['0']['kp_id'] + "')");
+            document.getElementById("showPlayer3").setAttribute("onclick", "showPlayer(4,'" + data['data']['0']['kp_id'] + "')");
+            document.getElementById("showPlayer4").setAttribute("onclick", "showPlayer(5,'" + data['data']['0']['kp_id'] + "')");
+            document.getElementById("showPlayer8").setAttribute("onclick", "showPlayer(2,'" + data['data']['0']['kp_id'] + "')");
+            document.getElementById("showPlayer9").setAttribute("onclick", "showPlayer(8,'" + data['data']['0']['kp_id'] + "')");
+            document.getElementById("showTrayler3").setAttribute("onclick", "showTrayler(3,'" + data['data']['0']['kp_id'] + "')");
+            document.getElementById("showTrayler5").setAttribute("onclick", "showTrayler(5,'" + data['data']['0']['kp_id'] + "')");
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 };
+
+function getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    console.log(matches[1]);
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
 
 function apiItem(id) {
     const mainContent = document.getElementById('mainContent');
@@ -609,7 +646,8 @@ function apiItem(id) {
                     var genres = genres + ', ' + obj['genres'][gnrs]['name'][0].toUpperCase() + obj['genres'][gnrs]['name'].substring(1)
                 }
             }
-            kp_id = kpid(obj['imdb_id']);
+
+            kp_id = kpid(obj['external_ids']['imdb_id']);
             for (var cast in obj['credits']['cast']) {
                 if (obj['credits']['cast'][cast]['profile_path'] === null) {
                     var imageUrl = './assets/cast.svg';
@@ -672,23 +710,24 @@ function apiItem(id) {
                 <input type="checkbox" class="show_pl" id="pl" style="display:none">\
                 <label for="pl" id="show-player" >Показать плеер</label>\
                 <div id="show_pl" class="dropdown-content" style="text-align: left;">\
-                    <a id="showPlayer1" onclick="showPlayer(1,\'' + obj['imdb_id'] + '\')">Плеер #1 <span style="font-size:6px">(Callaps)</span></a>\
+                    <a id="showPlayer1" onclick="showPlayer(1,\'' + obj['external_ids']['imdb_id'] + '\')">Плеер #1 <span style="font-size:6px">(Callaps)</span></a>\
                     <a id="showPlayer2" onclick="showPlayer(3,\'' + kp_id + '\')">Плеер #2 <span style="font-size:6px">(DBHDVB)</span></a>\
                     <a id="showPlayer3" onclick="showPlayer(4,\'' + kp_id + '\')">Плеер #3 <span style="font-size:6px">(VideoDB)</span></a>\
                     <a id="showPlayer4" onclick="showPlayer(5,\'' + kp_id + '\')">Плеер #4 <span style="font-size:6px">(Alloha)</span></a>\
-                    <a id="showPlayer5" onclick="showPlayer(6,\'' + obj['imdb_id'] + '\')">Плеер #5 <span style="font-size:6px">(HDRezha)</span></a>\
-                    <a id="showPlayer6" onclick="showPlayer(7,\'' + obj['imdb_id'] + '\')">Плеер #6 <span style="font-size:6px">(VideoCDN)</span></a>\
-                    <a id="showPlayer7" onclick="showPlayer(9,\'' + obj['imdb_id'] + '\')">Плеер #7 <span style="font-size:6px">(KodikBD)</span></a>\
+                    <a id="showPlayer5" onclick="showPlayer(6,\'' + obj['external_ids']['imdb_id'] + '\')">Плеер #5 <span style="font-size:6px">(HDRezha)</span></a>\
+                    <a id="showPlayer6" onclick="showPlayer(7,\'' + obj['external_ids']['imdb_id'] + '\')">Плеер #6 <span style="font-size:6px">(VideoCDN)</span></a>\
+                    <a id="showPlayer7" onclick="showPlayer(9,\'' + obj['external_ids']['imdb_id'] + '\')">Плеер #7 <span style="font-size:6px">(KodikBD)</span></a>\
                     <a id="showPlayer8" onclick="showPlayer(2,\'' + kp_id + '\')">Плеер #8 <span style="font-size:6px">(RedHeadSound)</span></a>\
                     <a id="showPlayer9" onclick="showPlayer(8,\'' + kp_id + '\')">Плеер #9 <span style="font-size:6px">(Militorys)</span></a>\
                 </div>\
                 <input type="checkbox" class="show_tr" id="tr" style="display:none">\
                 <label for="tr" id="show-player" >Показать трейлер</label>\
                 <div id="show_tr" class="dropdown-content" style="text-align: left;left: 175px;">\
-                    <a onclick="showTrayler(1, \'' + id + '\')">Трейлер #1 <span style="font-size:6px">(YouTube)</span></a>\
-                    <a onclick="showTrayler(2, \'' + id + '\')">Трейлер #2 <span style="font-size:6px">(YouTube En)</span></a>\
-                    <a onclick="showTrayler(3,\'' + obj['imdb_id'] + '\')">Трейлер #3 <span style="font-size:6px">(Callaps)</span></a>\
-                    <a onclick="showTrayler(4,\'' + obj['kinopoisk_id'] + '\')">Трейлер #4 <span style="font-size:6px">(Alloha)</span></a>\
+                    <a id="showTrayler1" onclick="showTrayler(1, \'' + id + '\')">Трейлер #1 <span style="font-size:6px">(YouTube)</span></a>\
+                    <a id="showTrayler2" onclick="showTrayler(2, \'' + id + '\')">Трейлер #2 <span style="font-size:6px">(YouTube En)</span></a>\
+                    <a id="showTrayler3" onclick="showTrayler(3,\'' + kp_id + '\')">Трейлер #3 <span style="font-size:6px">(КиноПоиск)</span></a>\
+                    <a id="showTrayler4" onclick="showTrayler(4,\'' + obj['imdb_id'] + '\')">Трейлер #4 <span style="font-size:6px">(Callaps)</span></a>\
+                    <a id="showTrayler5" onclick="showTrayler(5,\'' + kp_id + '\')">Трейлер #5 <span style="font-size:6px">(Alloha)</span></a>\
                 </div>\
             </div>\
         <div class="Content-desc" style="width: 100%; max-width: 750px; display: inline-block; -webkit-border-after: 1px solid #e6e6e6; border-block-end: 1px solid #e6e6e6;">\
@@ -742,6 +781,10 @@ if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.
         localStorage.setItem('pwaInstalled', '1');
         isInstalled = true;
     });
+}
+
+function addfav(id) {
+    document.cookie = "favorites=" + document.cookie + ',' + id + ";path=/;max-age=31556926";
 }
 
 function fav() {

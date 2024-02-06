@@ -1,0 +1,1621 @@
+{
+    "domain": "cub.red",
+    "user": {
+        "id": 34581,
+        "email": "aa1286901@gmail.com",
+        "profile": 37285,
+        "telegram_id": 0,
+        "telegram_chat": 0,
+        "n_movie": 1,
+        "n_tv": 1,
+        "n_voice": 1,
+        "premium": 0,
+        "backup": 0
+    },
+    "bookmarks": [{
+        "id": 2173800,
+        "type": "history",
+        "card_id": 381288,
+        "profile": 37285
+    }, {
+        "id": 2187407,
+        "type": "history",
+        "card_id": 74823,
+        "profile": 37285
+    }, {
+        "id": 2313217,
+        "type": "history",
+        "card_id": 457232,
+        "profile": 37285
+    }, {
+        "id": 2331549,
+        "type": "history",
+        "card_id": 361743,
+        "profile": 37285
+    }, {
+        "id": 2338986,
+        "type": "history",
+        "card_id": 84325,
+        "profile": 37285
+    }, {
+        "id": 2408314,
+        "type": "history",
+        "card_id": 436270,
+        "profile": 37285
+    }, {
+        "id": 2472485,
+        "type": "history",
+        "card_id": 774752,
+        "profile": 37285
+    }, {
+        "id": 4494325,
+        "type": "history",
+        "card_id": 315162,
+        "profile": 37285
+    }],
+    "profiles": [{
+        "id": 37285,
+        "cid": 34581,
+        "name": "Общий",
+        "main": 1,
+        "icon": "l_1"
+    }],
+    "query": {},
+    "params": {
+        "source": "tmdb",
+        "media": "tv",
+        "id": "210865-yal-apkn"
+    },
+    "content": {
+        "links": {
+            "recommendations": "/view/tv/210865/recommendations",
+            "similar": "/view/tv/210865/similar"
+        },
+        "card": {
+            "adult": false,
+            "backdrop_path": "/vh9Rk0BeU3udQoOFUIxndmafq7s.jpg",
+            "created_by": [{
+                "id": 2105270,
+                "credit_id": "633844e1befd91007db9e698",
+                "name": "Burcu Alptekin",
+                "gender": 0,
+                "profile_path": null
+            }, {
+                "id": 3112206,
+                "credit_id": "633844f6befd91007a3b824c",
+                "name": "Gülseren Budayıcıoğlu",
+                "gender": 1,
+                "profile_path": "/KiDqgZ9eyQkXtVgnJeiBQsbzee.jpg"
+            }],
+            "episode_run_time": [120],
+            "first_air_date": "2022-09-23",
+            "genres": [{
+                "id": 10751,
+                "name": "семейный"
+            }, {
+                "id": 18,
+                "name": "драма"
+            }],
+            "homepage": "https://www.startv.com.tr/dizi/yali-capkini",
+            "id": 210865,
+            "in_production": true,
+            "languages": ["tr"],
+            "last_air_date": "2024-01-26",
+            "last_episode_to_air": {
+                "id": 5100771,
+                "name": "Эпизод 19",
+                "overview": "",
+                "vote_average": 0,
+                "vote_count": 0,
+                "air_date": "2024-01-26",
+                "episode_number": 19,
+                "episode_type": "standard",
+                "production_code": "",
+                "runtime": 137,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": null
+            },
+            "name": "Зимородок",
+            "next_episode_to_air": {
+                "id": 5103593,
+                "name": "Эпизод 20",
+                "overview": "",
+                "vote_average": 0,
+                "vote_count": 0,
+                "air_date": "2024-02-02",
+                "episode_number": 20,
+                "episode_type": "standard",
+                "production_code": "",
+                "runtime": null,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": null
+            },
+            "networks": [{
+                "id": 778,
+                "logo_path": "/qWvC2SCqIGhm7hPGtqaPjL4tPvx.png",
+                "name": "Star TV",
+                "origin_country": "TR"
+            }],
+            "number_of_episodes": 56,
+            "number_of_seasons": 2,
+            "origin_country": ["TR"],
+            "original_language": "tr",
+            "original_name": "Yalı Çapkını",
+            "overview": "Ферит – настоящий баловень судьбы. Его отец Халис Ага - состоятельный человек, поэтому герой привык ни в чем себе не отказывать. Жизнь Ферита состоит из постоянных вечеринок и череды новых романов. Не обращая внимания на наставления отца, он проводит время в сомнительных компаниях и не желает меняться. Халис Ага принимает решение женить непутевого наследника, чтобы избежать семейного позора. Он сам выбирает сыну невесту, которая идеально подходит на роль жены. Сейран работает врачом в городской клинике. Девушка красивая и умная. Проблема в том, что она совершенно не хочет замуж, а жених вне себя от услышанной новости...",
+            "popularity": 352.141,
+            "poster_path": "/yE1JPyeczPl8ToGJcxQjwR6Xmlo.jpg",
+            "production_companies": [{
+                "id": 142312,
+                "logo_path": null,
+                "name": "OGM Pictures",
+                "origin_country": "TR",
+                "url": "/company/tv/142312-ogm-pictures"
+            }],
+            "production_countries": [{
+                "iso_3166_1": "TR",
+                "name": "Turkey"
+            }],
+            "seasons": [{
+                "air_date": "2022-09-23",
+                "episode_count": 36,
+                "id": 309862,
+                "name": "Сезон 1",
+                "overview": "",
+                "poster_path": "/kXvU8gNqMTOOMJURaqhCcOb3Dxt.jpg",
+                "season_number": 1,
+                "vote_average": 8.3
+            }, {
+                "air_date": "2023-09-15",
+                "episode_count": 20,
+                "id": 356033,
+                "name": "Сезон 2",
+                "overview": "",
+                "poster_path": "/yKFdT0Lk4tlsPdZjbINbi8sIeCF.jpg",
+                "season_number": 2,
+                "vote_average": 6.5
+            }],
+            "spoken_languages": [{
+                "english_name": "Turkish",
+                "iso_639_1": "tr",
+                "name": "Türkçe"
+            }],
+            "status": "Returning Series",
+            "tagline": "",
+            "type": "Scripted",
+            "vote_average": 9,
+            "vote_count": 28,
+            "source": "tmdb"
+        },
+        "timecode_hash": "1829673556",
+        "videos": {
+            "results": [{
+                "iso_639_1": "en",
+                "iso_3166_1": "US",
+                "name": "Golden Boy, serialul care a cucerit publicul în 2022, se vede din 6 ianuarie, la 20.30, pe Antena1",
+                "key": "Kaa92nVCK2Y",
+                "site": "YouTube",
+                "size": 1080,
+                "type": "Trailer",
+                "official": false,
+                "published_at": "2022-12-22T14:15:01.000Z",
+                "id": "6470a46a5437f501475f1066"
+            }, {
+                "iso_639_1": "ru",
+                "iso_3166_1": "RU",
+                "name": "Yalı Çapkını - 3. Tanıtım (23 Eylül Cuma 20.00'de!)",
+                "key": "SlbgK6KMSG8",
+                "site": "YouTube",
+                "size": 1080,
+                "type": "Teaser",
+                "official": true,
+                "published_at": "2022-09-20T13:29:18.000Z",
+                "id": "63e3facf1283e9008e4894a5"
+            }]
+        },
+        "images": {
+            "backdrops": [{
+                "aspect_ratio": 1.778,
+                "height": 2160,
+                "iso_639_1": "ru",
+                "file_path": "/oANkd5a8UgJEBhvfHH0Wi0Q91fs.jpg",
+                "vote_average": 0,
+                "vote_count": 0,
+                "width": 3840
+            }],
+            "logos": [],
+            "posters": [{
+                "aspect_ratio": 0.667,
+                "height": 3000,
+                "iso_639_1": "ru",
+                "file_path": "/yE1JPyeczPl8ToGJcxQjwR6Xmlo.jpg",
+                "vote_average": 0,
+                "vote_count": 0,
+                "width": 2000
+            }]
+        },
+        "recommendations": {
+            "page": 1,
+            "results": [{
+                "adult": false,
+                "backdrop_path": "/fCwZOi3cTEOi2UkhjJNbFQnl4IW.jpg",
+                "id": 133490,
+                "name": "Правосудие",
+                "original_language": "tr",
+                "original_name": "Yargı",
+                "overview": "На место обнаружения трупа девушки приезжают именитый комиссар Метин Кая и прокурор Йылгаз Кая — отец и сын. Среди улик найдена кредитная карта, которая, как выясняется, принадлежит Метин Каю, но пользуется ей Чинар Кая — младший сын прокурора. Йылгаз немедленно нанимает для брата успешного адвоката Джейлин. Девушка берется за дело, но против Чинар Кая очень много косвенных улик, а убитой оказывается сестра Джейлин. Так переплелись судьбы двух семей, все члены которых, как выяснилось, вовсе не те, кем кажутся.",
+                "poster_path": "/kUOGVUqZ2OagoQjPwIJEU0sGhEp.jpg",
+                "media_type": "tv",
+                "genre_ids": [10751, 18, 80],
+                "popularity": 112.513,
+                "first_air_date": "2021-09-19",
+                "vote_average": 8.4,
+                "vote_count": 25,
+                "origin_country": ["TR"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/lPwCXz5i6GYbzLe23ATjNXgEHPM.jpg",
+                "id": 198189,
+                "name": "Побег",
+                "original_language": "tr",
+                "original_name": "Kaçış",
+                "overview": "Мухаммед и Зейнеп не понаслышке знают о том, что такое работа в горячих точках. Молодые люди выбрали для себя не самую легкую профессию – они оба военные корреспонденты. Им ежедневно приходится рисковать своими жизнями, чтобы добыть информацию.",
+                "poster_path": "/aCQZIvBvMVrJaSq3t49nf9NbjBO.jpg",
+                "media_type": "tv",
+                "genre_ids": [10759, 18],
+                "popularity": 16.968,
+                "first_air_date": "2022-06-14",
+                "vote_average": 6.444,
+                "vote_count": 27,
+                "origin_country": ["TR"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/q5mJ4oKfGc6Cr9reIHFzD0pQzre.jpg",
+                "id": 200709,
+                "name": "Слабый герой",
+                "original_language": "ko",
+                "original_name": "약한영웅",
+                "overview": "Ён Cи Ын — примерный ученик и занимает первое место по успеваемости в школе. Физически Ён Cи Ын выглядит слабым, но, используя свой ум, инструменты и психологию, он борется с насилием, происходящим внутри и за пределами его школы.",
+                "poster_path": "/xRw3akJQdfgqx0x4fiHW7nIkEUJ.jpg",
+                "media_type": "tv",
+                "genre_ids": [10759, 18],
+                "popularity": 52.954,
+                "first_air_date": "2022-11-18",
+                "vote_average": 8.434,
+                "vote_count": 61,
+                "origin_country": ["KR"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/xt0vSamxgyC3nFlWZwJooGLyV9O.jpg",
+                "id": 119267,
+                "name": "Мои братья, мои сестры",
+                "original_language": "tr",
+                "original_name": "Kardeşlerim",
+                "overview": "Кадир, Омер, Асие и Эмель — братья и сестры, чьи родители при подозрительных обстоятельствах погибают в один день. Оставшись одни, они могут рассчитывать только друг на друга.",
+                "poster_path": "/p2wOxI0GAlckcgoGF14r31dYiPr.jpg",
+                "media_type": "tv",
+                "genre_ids": [18],
+                "popularity": 54.036,
+                "first_air_date": "2021-02-20",
+                "vote_average": 7.9,
+                "vote_count": 24,
+                "origin_country": ["TR"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/3IPmnpvYHWspBbSG4ERp45yWdQ4.jpg",
+                "id": 126526,
+                "name": "Элита: короткие истории. Надя и Гусман",
+                "original_language": "es",
+                "original_name": "Elite Histórias Breves: Nadia Guzmán",
+                "overview": "Надя и Гусман поддерживают отношения на расстоянии. Приехав в Испанию на свадьбу сестры, Надя не может решить, стоит ли с ним видеться.",
+                "poster_path": "/z4IpgHHjcFsNEwaP8PubUanVyRj.jpg",
+                "media_type": "tv",
+                "genre_ids": [18],
+                "popularity": 16.568,
+                "first_air_date": "2021-06-15",
+                "vote_average": 7.3,
+                "vote_count": 183,
+                "origin_country": ["ES"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/8xbzRncHdCvgGaO7XZVqFBIZkqR.jpg",
+                "id": 89672,
+                "name": "Теория любви",
+                "original_language": "th",
+                "original_name": "ทฤษฎีจีบเธอ",
+                "overview": "На факультете кинематографии учатся четверо друзей – «Дикая банда». Хоть прозвище у парней и грозное, но сами они очень милые и симпатичные ребята. Когда они собираются вместе, то из них так и брызжут разные идеи, а креатив зашкаливает. Терд скрывает важную для себя тайну, он любит своего друга Кхая. Любит давно, но признаться не может, ведь это разрушит их дружбу. Да и предмет его любви тот еще ловелас, меняет девчонок одну за другой. Все свидания, встречи и разлуки Кхая проходят на глазах у Терда, доставляя ему много душевных переживаний. Постепенно все друзья, кроме Кхая, начинают замечать его чувства, стараются поддержать и как-то ему помочь.",
+                "poster_path": "/8SvjtBxQ3Cc1mWBRlpCK8RuNiMG.jpg",
+                "media_type": "tv",
+                "genre_ids": [18],
+                "popularity": 20.401,
+                "first_air_date": "2019-06-01",
+                "vote_average": 7.5,
+                "vote_count": 29,
+                "origin_country": ["TH"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/sMv9JrbgyDvgsXNepkCooiOJ67q.jpg",
+                "id": 70910,
+                "name": "Youn's Kitchen",
+                "original_language": "ko",
+                "original_name": "윤식당",
+                "overview": "Follow the cast in their journey to Gili Trawangan, a tropical island in Indonesia, where they open a pop-up restaurant for 10 days. Viewers can see the heartwarming struggles the actors go through to start their business, enjoy the gorgeous island backdrop, and laugh at the humorous situations that arise throughout the show.",
+                "poster_path": "/dzIILAFte1NGrrEDxkDViqK2c4h.jpg",
+                "media_type": "tv",
+                "genre_ids": [10764],
+                "popularity": 26.367,
+                "first_air_date": "2017-03-24",
+                "vote_average": 8.9,
+                "vote_count": 16,
+                "origin_country": ["KR"]
+            }, {
+                "adult": false,
+                "backdrop_path": null,
+                "id": 45262,
+                "name": "World's Weirdest Restaurants",
+                "original_language": "en",
+                "original_name": "World's Weirdest Restaurants",
+                "overview": "World's Weirdest Restaurants is a Canadian reality television series produced by Paperny Entertainment that airs on Food Network Canada. The series follows host Bob Blumer as he travels the world searching for weird and unusual restaurants. Several of the Japan episodes featured TV host and arranger La Carmina, who wrote a book about bizarre Tokyo theme restaurants. Among the restaurants featured include a nudist restaurant in New York, a Japanese restaurant with monkey waiters, and Taiwanese restaurant which serves curry from miniature toilets. The series, which premiered April 4, 2012, has filmed in a number of cities around the world, including Tokyo, New York, Taipei, London and Vancouver.",
+                "poster_path": null,
+                "media_type": "tv",
+                "genre_ids": [],
+                "popularity": 1.4,
+                "first_air_date": "",
+                "vote_average": 4.5,
+                "vote_count": 2,
+                "origin_country": ["CA"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/xQv0r4MPawzDHjqrn4vjOqPYwdJ.jpg",
+                "id": 110390,
+                "name": "Royal Nirvana Special",
+                "original_language": "zh",
+                "original_name": "别云间",
+                "overview": "A story about unlocking the years of hurt and resentment that has caused the strained relationship between Xiao Dingquan and his father, the King.\n\nDespite his position as the crown prince, Xiao Dingquan (Luo Jin) was unloved and unfavored by his own father (Huang Zhizhong). Through countless incidents, he has grown into a man of wisdom and courage. After Qi Wang (Jin Han) was sent into exile, Xiao Dingquan intended to leave peacefully with Lu Wenxi (Li Yitong) but discovers that she is being threatened by unknown forces.  Xiao Dingquan no longer wishes to be caught in the endless infighting and rife and hopes to settle the dispute through Zhao Wang's marriage. Xiao Dingquan and Lu Wenxi join hands with Xu Changping (Wang Yu) to change the tides in their favor in order to find the mastermind. As the news of Gu Silin's death spreads and Xiao Dingquan sets out to Changzhou to control the situation, the king finally shows remorse as he apologizes to Xiao Dingquan.",
+                "poster_path": "/cbaBwCpQ8pBRK6j7gSNo2Tllz2c.jpg",
+                "media_type": "tv",
+                "genre_ids": [18],
+                "popularity": 13.58,
+                "first_air_date": "2020-09-22",
+                "vote_average": 9.143,
+                "vote_count": 7,
+                "origin_country": ["CN"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/q7wM3TjmtKj201xtxQxIvY9VAJ7.jpg",
+                "id": 8431,
+                "name": "7 Lives Exposed",
+                "original_language": "en",
+                "original_name": "7 Lives Exposed",
+                "overview": "7 Lives Exposed is an American reality television-themed series produced by Playboy TV. The series was first aired in late 2001, with a second season following in late 2002. The series starred pornographic actress Devinn Lane and was produced by Tom Lazarus.\n\nThe concept of the series is similar to that of Survivor and Big Brother -- contestants must satisfy certain ongoing criteria or risk being \"evicted\"; in this case, Lane herself decides who among a set of couples living together in a Los Angeles-area home stays or goes each episode.\n\nAs the primary audience of the series is heterosexual men, there are both heterosexual and lesbian sex scenes throughout the series. The sex is simulated; however, scenes of oral sex and masturbation are much more explicit in that some contact is shown. Dramatic tension arises from conflicts between the contestants, often related to jealousy and competition.\n\nThe last season aired in 2006, which was Season 5.",
+                "poster_path": "/rXAn2KHI8eYiQEr9nEMZtw38hGm.jpg",
+                "media_type": "tv",
+                "genre_ids": [18],
+                "popularity": 13.037,
+                "first_air_date": "2001-10-21",
+                "vote_average": 4.75,
+                "vote_count": 4,
+                "origin_country": ["US"]
+            }, {
+                "adult": false,
+                "backdrop_path": null,
+                "id": 217083,
+                "name": "İki Arada",
+                "original_language": "tr",
+                "original_name": "İki Arada",
+                "overview": "",
+                "poster_path": null,
+                "media_type": "tv",
+                "genre_ids": [],
+                "popularity": 6.493,
+                "first_air_date": "2002-06-15",
+                "vote_average": 6,
+                "vote_count": 1,
+                "origin_country": ["TR"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/dKYsFIPUvYXZxseTCf1Gp9Ul7nG.jpg",
+                "id": 79876,
+                "name": "Over Water",
+                "original_language": "nl",
+                "original_name": "Over water",
+                "overview": "John Beckers gains one last chance from his wife Marjan and their two children to get his life back on track. After a visit to rehab, John starts his new job at the freight company of his father-in-law. The port of Antwerp is a whole new world for the former TV star. It’s a harsh environment, but also one with its own rules and traditions. John fights his old demons as well as new temptations, but quickly enters a dangerous arena but also a very lucrative trade of the docks: cocaine. John Beckers came to work at the port, but finds increasingly extreme ways to make the port work for him.",
+                "poster_path": "/dBwftNlRGHcCMEWzAbl8dg0APZ7.jpg",
+                "media_type": "tv",
+                "genre_ids": [18, 80],
+                "popularity": 47.859,
+                "first_air_date": "2018-12-16",
+                "vote_average": 6.286,
+                "vote_count": 14,
+                "origin_country": ["BE"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/gX6xYgCVWmEmTU68lGHD0CRDatU.jpg",
+                "id": 137941,
+                "name": "Touch Me If You Can",
+                "original_language": "ko",
+                "original_name": "터치 미 이프 유 캔",
+                "overview": "The story of a succubus girl who faces a crisis in the days of the pandemic.",
+                "poster_path": "/84I9PMK53rtugp2Tj5gZtCntcyO.jpg",
+                "media_type": "tv",
+                "genre_ids": [10765, 18],
+                "popularity": 1.904,
+                "first_air_date": "2020-11-05",
+                "vote_average": 5,
+                "vote_count": 2,
+                "origin_country": ["KR"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/gQwa6X2nmTHkmDgAifU4wacNqp4.jpg",
+                "id": 75820,
+                "name": "Мистер Солнечный Свет",
+                "original_language": "ko",
+                "original_name": "미스터 션샤인",
+                "overview": "История корейского мальчика, перебравшегося в США в 70-е годы 19-го века. Спустя много лет он возвращается на родину, но уже в качестве американского солдата. Он влюбляется в девушку из состоятельной семьи и сталкивается с реалиями жизни в стране, которую он когда-то покинул.",
+                "poster_path": "/iftMALeIzTYYOVmPOCsS1mQvoNz.jpg",
+                "media_type": "tv",
+                "genre_ids": [18],
+                "popularity": 170.685,
+                "first_air_date": "2018-07-07",
+                "vote_average": 8.4,
+                "vote_count": 134,
+                "origin_country": ["KR"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/fTT0jQhynTTVLAQfgEIwQAsuL8s.jpg",
+                "id": 132171,
+                "name": "Образцовая семья",
+                "original_language": "ko",
+                "original_name": "모범가족",
+                "overview": "Университетский преподаватель Пак Тон-ха потратил крупную сумму на взятку профессору, чтобы продвинуться по службе и получать зарплату повыше. Когда профессор попадает в скандал с сексуальными домогательствами, Тон-ха впадает в отчаяние: о новой должности можно забыть, а о возврате денег, которые откладывались на операцию больному сынишке, — тем более. Внезапно на пустынной дороге отчаявшийся мужчина обнаруживает автомобиль с двумя мёртвыми бандитами и мешком денег. Недолго думая, наш семьянин забирает деньги, а тела закапывает у себя во дворе. Теперь Тон-ха придётся не только скрываться от организованной преступности и полицейских, но и выкручиваться перед женой, которая о пропаже семейных сбережений ничего не знает.",
+                "poster_path": "/eRtszL5XtARh2u5JMppmtEtxJmT.jpg",
+                "media_type": "tv",
+                "genre_ids": [18, 80],
+                "popularity": 30.903,
+                "first_air_date": "2022-08-12",
+                "vote_average": 7.5,
+                "vote_count": 50,
+                "origin_country": ["KR"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/2JX5Y4Htnm9NgIMz021ebn3Aip.jpg",
+                "id": 87372,
+                "name": "Сильвия Пиналь... перед тобой",
+                "original_language": "es",
+                "original_name": "Silvia Pinal... frente a tí",
+                "overview": "Сериал рассказывает о жизни знаменитой мексиканской актрисы Сильвии Пиналь.",
+                "poster_path": "/yWl9k3oUbwcCZA6NU6uBsVXpBMz.jpg",
+                "media_type": "tv",
+                "genre_ids": [18],
+                "popularity": 15.145,
+                "first_air_date": "2019-02-22",
+                "vote_average": 6.9,
+                "vote_count": 34,
+                "origin_country": ["MX"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/pHjosQo4kMUS1D1t9zGpVKdAe8i.jpg",
+                "id": 116054,
+                "name": "Rick Stein's Cornwall",
+                "original_language": "en",
+                "original_name": "Rick Stein's Cornwall",
+                "overview": "In this new series Rick Stein reveals the Cornwall that he knows and loves: a unique part of the British isles with a strong sense of identity and a history rooted in its Celtic past. With his famous natural inquisitiveness, Rick shares the road less travelled – championing the food, history, music, art and culture of the county many locals argue should be a country in its own right.",
+                "poster_path": "/s8DZQRTOgUy8iHxxr0npeuvZFRs.jpg",
+                "media_type": "tv",
+                "genre_ids": [99],
+                "popularity": 31.472,
+                "first_air_date": "2021-01-04",
+                "vote_average": 6,
+                "vote_count": 1,
+                "origin_country": ["GB"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/5iRxE0RLGE2nqHkPkcxXTHRw59I.jpg",
+                "id": 125841,
+                "name": "Klaphat",
+                "original_language": "da",
+                "original_name": "Klaphat",
+                "overview": "Hjalte, a soccer enthusiast with muscular dystrophy, wins a trip to the World Cup in Russia. Unfortunately, he has to be accompanied by the fast-talking, overly optimistic fan William Skov, who challenges all of Hjalte's limits.",
+                "poster_path": "/rb5zVETFRXw8en6cbtUEw0JJk2y.jpg",
+                "media_type": "tv",
+                "genre_ids": [35],
+                "popularity": 7.187,
+                "first_air_date": "2018-12-16",
+                "vote_average": 6,
+                "vote_count": 2,
+                "origin_country": ["DK"]
+            }, {
+                "adult": false,
+                "backdrop_path": null,
+                "id": 239014,
+                "name": "HairStyle, The Talent Show (España)",
+                "original_language": "es",
+                "original_name": "HairStyle, The Talent Show (España)",
+                "overview": "",
+                "poster_path": "/bRIBfVJE3rYBAWVAkO4dt790hgD.jpg",
+                "media_type": "tv",
+                "genre_ids": [],
+                "popularity": 2.306,
+                "first_air_date": "2023-11-17",
+                "vote_average": 0,
+                "vote_count": 0,
+                "origin_country": ["ES"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/ivKzdk2smzqevsjEjGgs3KEyz7I.jpg",
+                "id": 102261,
+                "name": "Дивы в деле",
+                "original_language": "en",
+                "original_name": "Dragnificent!",
+                "overview": "Суть шоу заключается в том, что четыре дрэг-квин ездят по городкам Америки и помогают девушкам подготовиться к какому-либо событию, подбирая наряд, макияж, организовывают приём, а главное — помогают обрести девушкам уверенность в себе.",
+                "poster_path": "/6UvlqBlIId0NgTI45IYA5XVtedU.jpg",
+                "media_type": "tv",
+                "genre_ids": [10764],
+                "popularity": 2.32,
+                "first_air_date": "2020-04-18",
+                "vote_average": 7.8,
+                "vote_count": 5,
+                "origin_country": ["US"]
+            }, {
+                "adult": false,
+                "backdrop_path": "/cxySYxWtWkjZS0E0HHQnuGunAI9.jpg",
+                "id": 154233,
+                "name": "Plerng Nang",
+                "original_language": "th",
+                "original_name": "เพลิงนาง",
+                "overview": "This is a story about two people who desire to have the best love in life. One person uses their mind and heart, while the other relies on their beauty and body. However, both find each other and love blooms despite their obvious differences.",
+                "poster_path": "/lYUUU9ptradyIqXvdp0r1jCY97k.jpg",
+                "media_type": "tv",
+                "genre_ids": [],
+                "popularity": 3.899,
+                "first_air_date": "2021-10-10",
+                "vote_average": 10,
+                "vote_count": 1,
+                "origin_country": ["TH"]
+            }],
+            "total_pages": 2,
+            "total_results": 40
+        },
+        "credits": {
+            "cast": [{
+                "adult": false,
+                "gender": 1,
+                "id": 1955840,
+                "known_for_department": "Acting",
+                "name": "Afra Saraçoğlu",
+                "original_name": "Afra Saraçoğlu",
+                "popularity": 61.347,
+                "profile_path": "/fZem0allLKMbuYyhwLac54CJ9NP.jpg",
+                "character": "Seyran Şanlı",
+                "credit_id": "632e375131644b007ee8b4a0",
+                "order": 0
+            }, {
+                "adult": false,
+                "gender": 2,
+                "id": 2545917,
+                "known_for_department": "Acting",
+                "name": "Mert Ramazan Demir",
+                "original_name": "Mert Ramazan Demir",
+                "popularity": 39.351,
+                "profile_path": "/340p9x7W2plNV1khFZfBGi8aIr6.jpg",
+                "character": "Ferit Korhan",
+                "credit_id": "632e376015794a007b760105",
+                "order": 1
+            }, {
+                "adult": false,
+                "gender": 1,
+                "id": 150440,
+                "known_for_department": "Acting",
+                "name": "Gülçin Santırcıoğlu",
+                "original_name": "Gülçin Santırcıoğlu",
+                "popularity": 21.535,
+                "profile_path": "/atR9QGDziiyur9HCsWUXK6xMr9M.jpg",
+                "character": "İfakat Korhan",
+                "credit_id": "632e378b31644b00837dc38b",
+                "order": 2
+            }, {
+                "adult": false,
+                "gender": 2,
+                "id": 935157,
+                "known_for_department": "Acting",
+                "name": "Emre Altuğ",
+                "original_name": "Emre Altuğ",
+                "popularity": 11.061,
+                "profile_path": "/usHVaX5nWwDxZFOtV2kQyfW9jrk.jpg",
+                "character": "Orhan Korhan",
+                "credit_id": "632e3792dd4716008e417a99",
+                "order": 3
+            }, {
+                "adult": false,
+                "gender": 1,
+                "id": 3101815,
+                "known_for_department": "Acting",
+                "name": "Beril Pozam",
+                "original_name": "Beril Pozam",
+                "popularity": 31.425,
+                "profile_path": "/q4uZsgaiSl5TttXD6yZm5B51gZL.jpg",
+                "character": "Suna Şanlı",
+                "credit_id": "633842ea87f3f2007f2e34e2",
+                "order": 4
+            }, {
+                "adult": false,
+                "gender": 1,
+                "id": 1248249,
+                "known_for_department": "Acting",
+                "name": "Gözde Kansu",
+                "original_name": "Gözde Kansu",
+                "popularity": 18.145,
+                "profile_path": "/owCXaIpNyT1dkthoWMeKeON3gv8.jpg",
+                "character": "Gülgün Korhan",
+                "credit_id": "633842fd0b5fd6007c995d9a",
+                "order": 5
+            }, {
+                "adult": false,
+                "gender": 2,
+                "id": 1577495,
+                "known_for_department": "Acting",
+                "name": "Diren Polatoğulları",
+                "original_name": "Diren Polatoğulları",
+                "popularity": 19.904,
+                "profile_path": "/5N03u0pXdJVZTrHAwEIpvFsy3Kl.jpg",
+                "character": "Kazım Şanlı",
+                "credit_id": "6338430d87f3f2007a2f4070",
+                "order": 6
+            }, {
+                "adult": false,
+                "gender": 2,
+                "id": 1948899,
+                "known_for_department": "Acting",
+                "name": "Ersin Arıcı",
+                "original_name": "Ersin Arıcı",
+                "popularity": 18.976,
+                "profile_path": "/5NOZpOapbhcGHPO3GhwTaQIuYc0.jpg",
+                "character": "Abidin",
+                "credit_id": "6338431d87f3f2007f2e34f5",
+                "order": 7
+            }, {
+                "adult": false,
+                "gender": 1,
+                "id": 145424,
+                "known_for_department": "Acting",
+                "name": "Irem Altug",
+                "original_name": "Irem Altug",
+                "popularity": 9.713,
+                "profile_path": "/iAmNfN0NEFwdLvIGeCHMwV3Pb9T.jpg",
+                "character": "Sultan",
+                "credit_id": "633843540b5fd6007932f770",
+                "order": 9
+            }, {
+                "adult": false,
+                "gender": 1,
+                "id": 2417314,
+                "known_for_department": "Acting",
+                "name": "Sezin Bozacı",
+                "original_name": "Sezin Bozacı",
+                "popularity": 9.354,
+                "profile_path": "/5j4u5dFct1GRM0kKhZZur41qlMu.jpg",
+                "character": "Esme Şanlı",
+                "credit_id": "63384369e8131d009152f55f",
+                "order": 10
+            }, {
+                "adult": false,
+                "gender": 1,
+                "id": 1006787,
+                "known_for_department": "Acting",
+                "name": "Hülya Duyar",
+                "original_name": "Hülya Duyar",
+                "popularity": 8.711,
+                "profile_path": "/9JqjWdkOpwx5jRweRYi0wZE11j5.jpg",
+                "character": "Şefika",
+                "credit_id": "6338437c4f33ad0082cdcecc",
+                "order": 11
+            }, {
+                "adult": false,
+                "gender": 1,
+                "id": 142769,
+                "known_for_department": "Acting",
+                "name": "Şerif Sezer",
+                "original_name": "Şerif Sezer",
+                "popularity": 11.333,
+                "profile_path": "/oXyB4z975gWL0xWusL6bjBTKN6c.jpg",
+                "character": "Hattuç Şanlı",
+                "credit_id": "632e377b2a210c007ae49d3b",
+                "order": 13
+            }, {
+                "adult": false,
+                "gender": 2,
+                "id": 93389,
+                "known_for_department": "Acting",
+                "name": "Çetin Tekindor",
+                "original_name": "Çetin Tekindor",
+                "popularity": 11.639,
+                "profile_path": "/hvX7yQmZhssgf7b6ocgC26eIGYB.jpg",
+                "character": "Halis Korhan",
+                "credit_id": "632e376d4c1bb00082b52623",
+                "order": 14
+            }, {
+                "adult": false,
+                "gender": 2,
+                "id": 3723077,
+                "known_for_department": "Acting",
+                "name": "Yigit Tuncay",
+                "original_name": "Yigit Tuncay",
+                "popularity": 2.684,
+                "profile_path": "/hl8zInja53Bhaen8eYOja6nupN9.jpg",
+                "character": "Latif",
+                "credit_id": "633843914f33ad0082cdceda",
+                "order": 16
+            }, {
+                "adult": false,
+                "gender": 0,
+                "id": 3723078,
+                "known_for_department": "Acting",
+                "name": "Selen Özbayrak",
+                "original_name": "Selen Özbayrak",
+                "popularity": 5.886,
+                "profile_path": "/mZH9bRf1cnSrC29BVn0gCMKbbv6.jpg",
+                "character": "Dicle",
+                "credit_id": "633843c9c2ff3d007ad5177c",
+                "order": 18
+            }, {
+                "adult": false,
+                "gender": 1,
+                "id": 115012,
+                "known_for_department": "Acting",
+                "name": "Binnur Kaya",
+                "original_name": "Binnur Kaya",
+                "popularity": 6.346,
+                "profile_path": "/nFUpBkrIQc82ZuyvoDPuNidhzBj.jpg",
+                "character": "Nükhet",
+                "credit_id": "64fe0520fa4046011bf9e7a1",
+                "order": 21
+            }, {
+                "adult": false,
+                "gender": 2,
+                "id": 3004117,
+                "known_for_department": "Acting",
+                "name": "Taro Emir Tekin",
+                "original_name": "Taro Emir Tekin",
+                "popularity": 23.772,
+                "profile_path": "/sieLAz0z0hqwNfBznGjTPpCfLjX.jpg",
+                "character": "Kaya",
+                "credit_id": "64fe0558fa404600e17e7a55",
+                "order": 22
+            }, {
+                "adult": false,
+                "gender": 1,
+                "id": 2022597,
+                "known_for_department": "Acting",
+                "name": "Cemre Gümeli",
+                "original_name": "Cemre Gümeli",
+                "popularity": 10.501,
+                "profile_path": "/lJzvq3U9EWmYMHcxNd5m4iLJGjc.jpg",
+                "character": "Talih",
+                "credit_id": "651c6940c50ad200c91d0f31",
+                "order": 23
+            }],
+            "crew": [{
+                "adult": false,
+                "gender": 0,
+                "id": 1750909,
+                "known_for_department": "Writing",
+                "name": "EKİN AKÇAY",
+                "original_name": "EKİN AKÇAY",
+                "popularity": 0.98,
+                "profile_path": null,
+                "credit_id": "651c68e0c50ad2014dcf5363",
+                "department": "Writing",
+                "job": "Scenario Writer"
+            }, {
+                "adult": false,
+                "gender": 0,
+                "id": 2105270,
+                "known_for_department": "Directing",
+                "name": "Burcu Alptekin",
+                "original_name": "Burcu Alptekin",
+                "popularity": 1.532,
+                "profile_path": null,
+                "credit_id": "632e371bdd4716007cf8c438",
+                "department": "Directing",
+                "job": "Director"
+            }, {
+                "adult": false,
+                "gender": 0,
+                "id": 3074649,
+                "known_for_department": "Sound",
+                "name": "Güldiyar Tanridagli",
+                "original_name": "Güldiyar Tanridagli",
+                "popularity": 1.4,
+                "profile_path": null,
+                "credit_id": "6338447a944a57008425c8a7",
+                "department": "Sound",
+                "job": "Music"
+            }, {
+                "adult": false,
+                "gender": 0,
+                "id": 4304111,
+                "known_for_department": "Writing",
+                "name": "Leyla Uslu Öter",
+                "original_name": "Leyla Uslu Öter",
+                "popularity": 1.62,
+                "profile_path": null,
+                "credit_id": "651c68f774507d00e20fbbd2",
+                "department": "Writing",
+                "job": "Scenario Writer"
+            }]
+        },
+        "similar": {
+            "page": 1,
+            "results": [],
+            "total_pages": 1,
+            "total_results": 0
+        },
+        "keywords": {
+            "results": []
+        },
+        "episodes": {
+            "_id": "64fb65bdf8595800adc901c4",
+            "air_date": "2023-09-15",
+            "episodes": [{
+                "air_date": "2023-09-15",
+                "episode_number": 1,
+                "episode_type": "standard",
+                "id": 4713055,
+                "name": "Эпизод 1",
+                "overview": "",
+                "production_code": "",
+                "runtime": 154,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/gIyLmYvAy3Pn9y5xBNGtxNxVNZC.jpg",
+                "vote_average": 10,
+                "vote_count": 2,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "1465320811"
+            }, {
+                "air_date": "2023-09-22",
+                "episode_number": 2,
+                "episode_type": "standard",
+                "id": 4736253,
+                "name": "Эпизод 2",
+                "overview": "",
+                "production_code": "",
+                "runtime": 141,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/xtvy1NWmcNUYq2JmDV7uTnU5pta.jpg",
+                "vote_average": 4,
+                "vote_count": 1,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "1171917804"
+            }, {
+                "air_date": "2023-09-29",
+                "episode_number": 3,
+                "episode_type": "standard",
+                "id": 4772378,
+                "name": "Эпизод 3",
+                "overview": "",
+                "production_code": "",
+                "runtime": 124,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/lBna8Jk3D5edhraT5SdY7Z0RyUl.jpg",
+                "vote_average": 5,
+                "vote_count": 1,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "878514797"
+            }, {
+                "air_date": "2023-10-06",
+                "episode_number": 4,
+                "episode_type": "standard",
+                "id": 4786863,
+                "name": "Эпизод 4",
+                "overview": "",
+                "production_code": "",
+                "runtime": 141,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/gtDWXIBDWBqRSLeukbbr1zyRmLB.jpg",
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "585111790"
+            }, {
+                "air_date": "2023-10-13",
+                "episode_number": 5,
+                "episode_type": "standard",
+                "id": 4813724,
+                "name": "Эпизод 5",
+                "overview": "",
+                "production_code": "",
+                "runtime": 149,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/6f6vf9oDx1TMlDpZTGOljusMjz2.jpg",
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "291708783"
+            }, {
+                "air_date": "2023-10-26",
+                "episode_number": 6,
+                "episode_type": "standard",
+                "id": 4863564,
+                "name": "Эпизод 6",
+                "overview": "",
+                "production_code": "",
+                "runtime": 144,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/x3OP37ItGm0AlzQmn11pujF3Qyi.jpg",
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "1694224"
+            }, {
+                "air_date": "2023-10-27",
+                "episode_number": 7,
+                "episode_type": "standard",
+                "id": 4863565,
+                "name": "Эпизод 7",
+                "overview": "",
+                "production_code": "",
+                "runtime": 149,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/5sGIYKIqf8XlZ2Jo9i4SGxb5EjK.jpg",
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "295097231"
+            }, {
+                "air_date": "2023-11-03",
+                "episode_number": 8,
+                "episode_type": "standard",
+                "id": 4863566,
+                "name": "Эпизод 8",
+                "overview": "",
+                "production_code": "",
+                "runtime": 149,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/hzL5IOtNmMkd1HXlwvSbOJVGCSI.jpg",
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "588500238"
+            }, {
+                "air_date": "2023-11-10",
+                "episode_number": 9,
+                "episode_type": "standard",
+                "id": 4863567,
+                "name": "Эпизод 9",
+                "overview": "",
+                "production_code": "",
+                "runtime": 137,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/sFdzX8nwqBcazVRg1Yi9WPHtYQD.jpg",
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "881903245"
+            }, {
+                "air_date": "2023-11-17",
+                "episode_number": 10,
+                "episode_type": "standard",
+                "id": 4863568,
+                "name": "Эпизод 10",
+                "overview": "",
+                "production_code": "",
+                "runtime": 140,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/u6Jugypbu6dccjmd0ffrqSlKrsU.jpg",
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "332461565"
+            }, {
+                "air_date": "2023-11-24",
+                "episode_number": 11,
+                "episode_type": "standard",
+                "id": 4946034,
+                "name": "Эпизод 11",
+                "overview": "",
+                "production_code": "",
+                "runtime": 170,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/gbbf8yZxJ6OgmUhLNXOvIoYATwb.jpg",
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "39058558"
+            }, {
+                "air_date": "2023-12-01",
+                "episode_number": 12,
+                "episode_type": "standard",
+                "id": 4967845,
+                "name": "Эпизод 12",
+                "overview": "",
+                "production_code": "",
+                "runtime": 165,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/uaDHFm5fxpuf3p05vaMN2JM3mJ5.jpg",
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "254344449"
+            }, {
+                "air_date": "2023-12-08",
+                "episode_number": 13,
+                "episode_type": "standard",
+                "id": 4979745,
+                "name": "Эпизод 13",
+                "overview": "",
+                "production_code": "",
+                "runtime": 135,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/a5rfMDo0szkd8LC0Yu1oFFFZ8B6.jpg",
+                "vote_average": 7,
+                "vote_count": 1,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "547747456"
+            }, {
+                "air_date": "2023-12-15",
+                "episode_number": 14,
+                "episode_type": "standard",
+                "id": 4996668,
+                "name": "Эпизод 14",
+                "overview": "",
+                "production_code": "",
+                "runtime": 145,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": "/dYBm1hmKk5o751X5pCLJjluvZja.jpg",
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "841150463"
+            }, {
+                "air_date": "2023-12-22",
+                "episode_number": 15,
+                "episode_type": "standard",
+                "id": 4996669,
+                "name": "Эпизод 15",
+                "overview": "",
+                "production_code": "",
+                "runtime": 138,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": null,
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "1134553470"
+            }, {
+                "air_date": "2023-12-29",
+                "episode_number": 16,
+                "episode_type": "standard",
+                "id": 4996672,
+                "name": "Эпизод 16",
+                "overview": "",
+                "production_code": "",
+                "runtime": 145,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": null,
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "1427956477"
+            }, {
+                "air_date": "2024-01-12",
+                "episode_number": 17,
+                "episode_type": "standard",
+                "id": 5069188,
+                "name": "Эпизод 17",
+                "overview": "",
+                "production_code": "",
+                "runtime": 138,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": null,
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "1721359484"
+            }, {
+                "air_date": "2024-01-19",
+                "episode_number": 18,
+                "episode_type": "standard",
+                "id": 5075464,
+                "name": "Эпизод 18",
+                "overview": "",
+                "production_code": "",
+                "runtime": 141,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": null,
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "2014762491"
+            }, {
+                "air_date": "2024-01-26",
+                "episode_number": 19,
+                "episode_type": "standard",
+                "id": 5100771,
+                "name": "Эпизод 19",
+                "overview": "",
+                "production_code": "",
+                "runtime": 137,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": null,
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "1986801798"
+            }, {
+                "air_date": "2024-02-02",
+                "episode_number": 20,
+                "episode_type": "standard",
+                "id": 5103593,
+                "name": "Эпизод 20",
+                "overview": "",
+                "production_code": "",
+                "runtime": null,
+                "season_number": 2,
+                "show_id": 210865,
+                "still_path": null,
+                "vote_average": 0,
+                "vote_count": 0,
+                "crew": [],
+                "guest_stars": [],
+                "timecode_hash": "173097060"
+            }],
+            "name": "Сезон 2",
+            "overview": "",
+            "id": 356033,
+            "poster_path": "/yKFdT0Lk4tlsPdZjbINbi8sIeCF.jpg",
+            "season_number": 2,
+            "vote_average": 6.5
+        },
+        "count_in_bookmars": 3763,
+        "in_collections": []
+    },
+    "genres": {
+        "tv": [{
+            "id": 10759,
+            "name": "Боевик и Приключения",
+            "hru": "action",
+            "title": "Лучшие боевики: Адреналин, экшн и напряжение",
+            "description": "В мире бескомпромиссных действий и беспрекословной борьбы – наши лучшие фильмы в жанре боевик! Погрузитесь в мир захватывающих столкновений, невероятных поединков и несгибаемой воли героев. Откройте для себя удивительные истории и непередаваемую атмосферу, которую приносят боевики. Готовы к адреналиновому кикку?"
+        }, {
+            "id": 16,
+            "name": "Мультфильм",
+            "hru": "cartoon",
+            "title": "Волшебство анимации: Лучшие мультфильмы для детей и взрослых",
+            "description": "Добро пожаловать в захватывающий мир анимации! Наши лучшие мультфильмы приносят радость и вдохновение детям и взрослым. От сердец маленьких зрителей до взрослых фанатов, у нас есть мультфильмы, которые заставят вас смеяться, плакать и мечтать. Откройте для себя магию анимации сегодня."
+        }, {
+            "id": 35,
+            "name": "Комедия",
+            "hru": "comedy",
+            "title": "Смеховая терапия: Лучшие комедии",
+            "description": "От смешных моментов до комедийных шедевров - наши фильмы подарят вам незабываемые моменты и долю юмора."
+        }, {
+            "id": 80,
+            "name": "Криминал",
+            "hru": "crime",
+            "title": "Темные улицы: Криминальные загадки",
+            "description": "Раскройте тайны и следите за увлекательными криминальными расследованиями в наших фильмах в жанре криминала."
+        }, {
+            "id": 99,
+            "name": "Документальный",
+            "hru": "documentary",
+            "title": "Истории настоящего: Документальные фильмы",
+            "description": "Узнайте правдивые и захватывающие истории из реальной жизни с нашими документальными фильмами."
+        }, {
+            "id": 18,
+            "name": "Драма",
+            "hru": "drama",
+            "title": "Истории сердца: Глубокие драмы",
+            "description": "Проникнитесь эмоциями, переживаниями и интригой с нашими драматическими фильмами. Исследуйте человеческую природу во всех ее аспектах."
+        }, {
+            "id": 10751,
+            "name": "Семейный",
+            "hru": "family",
+            "title": "Все в семье: Лучшие семейные фильмы",
+            "description": "Соберите вместе всю семью и отправьтесь в захватывающие путешествия с нашими семейными фильмами, подходящими для всех возрастов."
+        }, {
+            "id": 10762,
+            "name": "Детский",
+            "hru": "childish",
+            "title": "Волшебное детство: Лучшие детские фильмы",
+            "description": "Подарите вашим детям удивительные моменты и уроки жизни с нашими лучшими детскими фильмами."
+        }, {
+            "id": 9648,
+            "name": "Детектив",
+            "hru": "detective",
+            "title": "Загадочные истории: Лучшие детективы",
+            "description": "Раскрывайте загадки и разгадывайте интриги с нашими детективными фильмами, полными загадочных сюжетов и неожиданных поворотов."
+        }, {
+            "id": 10763,
+            "name": "Новости",
+            "hru": "news",
+            "title": "Всегда в курсе: Горячие новости",
+            "description": "Будьте в курсе последних событий, трендов и новостей со всего мира с нашими информативными новостями."
+        }, {
+            "id": 10764,
+            "name": "Реалити-шоу",
+            "hru": "reality_show",
+            "title": "В жизни и в кадре: Реалити-шоу",
+            "description": "Откройте жизнь обычных людей и следите за их приключениями и испытаниями с нашими реалити-шоу."
+        }, {
+            "id": 10765,
+            "name": "НФ и Фэнтези",
+            "hru": "sci_fi",
+            "title": "Будущее сегодня: НФ и фэнтези",
+            "description": "Погрузитесь в мир научной фантастики и фантастических миров, предоставленных нашими фильмами в жанре НФ и фэнтези."
+        }, {
+            "id": 10766,
+            "name": "Мыльная опера",
+            "hru": "opera",
+            "title": "Любовь и интриги: Мыльные оперы",
+            "description": "Погрузитесь в мир страсти, интриг и межличностных отношений с нашими популярными мыльными операми."
+        }, {
+            "id": 10767,
+            "name": "Ток-шоу",
+            "hru": "talk_show",
+            "title": "Голоса и мнения: Ток-шоу",
+            "description": "Слушайте разные голоса и точки зрения наших гостей и экспертов в наших захватывающих ток-шоу."
+        }, {
+            "id": 10768,
+            "name": "Война и Политика",
+            "hru": "war_and_politics"
+        }, {
+            "id": 37,
+            "name": "Вестерн",
+            "hru": "western",
+            "title": "Дикий Запад: Лучшие вестерны",
+            "description": "Путешествуйте в прошлое, на дикий Запад, и столкнитесь с приключениями, характерными для вестернов, вместе с нашими фильмами в жанре вестерн."
+        }],
+        "movie": [{
+            "id": 28,
+            "name": "Боевик",
+            "hru": "action",
+            "title": "Лучшие боевики: Адреналин, экшн и напряжение",
+            "description": "В мире бескомпромиссных действий и беспрекословной борьбы – наши лучшие фильмы в жанре боевик! Погрузитесь в мир захватывающих столкновений, невероятных поединков и несгибаемой воли героев. Откройте для себя удивительные истории и непередаваемую атмосферу, которую приносят боевики. Готовы к адреналиновому кикку?"
+        }, {
+            "id": 12,
+            "name": "Приключения",
+            "hru": "adventures",
+            "title": "За гранью фантазии: Приключения ждут",
+            "description": "Погрузитесь в мир удивительных приключений, волнения и неизведанных тайн с нашими захватывающими фильмами в жанре приключений."
+        }, {
+            "id": 16,
+            "name": "Мультфильм",
+            "hru": "cartoon",
+            "title": "Волшебство анимации: Лучшие мультфильмы для детей и взрослых",
+            "description": "Добро пожаловать в захватывающий мир анимации! Наши лучшие мультфильмы приносят радость и вдохновение детям и взрослым. От сердец маленьких зрителей до взрослых фанатов, у нас есть мультфильмы, которые заставят вас смеяться, плакать и мечтать. Откройте для себя магию анимации сегодня."
+        }, {
+            "id": 35,
+            "name": "Комедия",
+            "hru": "comedy",
+            "title": "Смеховая терапия: Лучшие комедии",
+            "description": "От смешных моментов до комедийных шедевров - наши фильмы подарят вам незабываемые моменты и долю юмора."
+        }, {
+            "id": 80,
+            "name": "Криминал",
+            "hru": "crime",
+            "title": "Темные улицы: Криминальные загадки",
+            "description": "Раскройте тайны и следите за увлекательными криминальными расследованиями в наших фильмах в жанре криминала."
+        }, {
+            "id": 99,
+            "name": "Документальный",
+            "hru": "documentary",
+            "title": "Истории настоящего: Документальные фильмы",
+            "description": "Узнайте правдивые и захватывающие истории из реальной жизни с нашими документальными фильмами."
+        }, {
+            "id": 18,
+            "name": "Драма",
+            "hru": "drama",
+            "title": "Истории сердца: Глубокие драмы",
+            "description": "Проникнитесь эмоциями, переживаниями и интригой с нашими драматическими фильмами. Исследуйте человеческую природу во всех ее аспектах."
+        }, {
+            "id": 10751,
+            "name": "Семейный",
+            "hru": "family",
+            "title": "Все в семье: Лучшие семейные фильмы",
+            "description": "Соберите вместе всю семью и отправьтесь в захватывающие путешествия с нашими семейными фильмами, подходящими для всех возрастов."
+        }, {
+            "id": 14,
+            "name": "Фэнтези",
+            "hru": "fantasy",
+            "title": "Волшебные миры: Путешествие в фэнтези",
+            "description": "Откройте дверь в волшебные миры, полные фантастических существ и невероятных приключений вместе с нашими фильмами в жанре фэнтези."
+        }, {
+            "id": 36,
+            "name": "История",
+            "hru": "history",
+            "title": "Сказания прошлого: Исторические фильмы",
+            "description": "Путешествуйте во времени и узнайте о важных событиях прошлого с нашими историческими фильмами."
+        }, {
+            "id": 27,
+            "name": "Ужасы",
+            "hru": "horror",
+            "title": "Мрак и страх: Лучшие ужасы",
+            "description": "Приготовьтесь к трепетному взрыву страха и ужаса. Наши фильмы удовлетворят даже самые искушенные жажды ужасов."
+        }, {
+            "id": 10402,
+            "name": "Музыка",
+            "hru": "music",
+            "title": "Звуки волшебства: Лучшие музыкальные фильмы",
+            "description": "Очарование музыки оживает в наших музыкальных фильмах. Откройте мир мелодии и ритма."
+        }, {
+            "id": 9648,
+            "name": "Детектив",
+            "hru": "detective",
+            "title": "Загадочные истории: Лучшие детективы",
+            "description": "Раскрывайте загадки и разгадывайте интриги с нашими детективными фильмами, полными загадочных сюжетов и неожиданных поворотов."
+        }, {
+            "id": 10749,
+            "name": "Мелодрама",
+            "hru": "melodrama",
+            "title": "Романтические моменты: Лучшие мелодрамы",
+            "description": "Прочувствуйте эмоции, страсть и любовь с нашими мелодрамами, которые прикоснутся к вашим сердцам."
+        }, {
+            "id": 878,
+            "name": "Фантастика",
+            "hru": "fiction",
+            "title": "Вне границ реальности: Лучшие фантастика",
+            "description": "Откройте для себя неисчерпаемые возможности фантастических миров и увлекательных путешествий с нашими фильмами в жанре фантастики."
+        }, {
+            "id": 10770,
+            "name": "Телевизионный фильм",
+            "hru": "television"
+        }, {
+            "id": 53,
+            "name": "Триллер",
+            "hru": "thriller",
+            "title": "Напряжение на пределе: Лучшие триллеры",
+            "description": "Всегда на грани напряжения! Наши триллеры предлагают захватывающие сюжеты, непредсказуемые повороты и волнующие моменты."
+        }, {
+            "id": 10752,
+            "name": "Военный",
+            "hru": "military",
+            "title": "Боевая история: Лучшие военные фильмы",
+            "description": "Погрузитесь в мир военных стратегий, героизма и мужества с нашими лучшими военными фильмами."
+        }, {
+            "id": 37,
+            "name": "Вестерн",
+            "hru": "western",
+            "title": "Дикий Запад: Лучшие вестерны",
+            "description": "Путешествуйте в прошлое, на дикий Запад, и столкнитесь с приключениями, характерными для вестернов, вместе с нашими фильмами в жанре вестерн."
+        }]
+    },
+    "tmdb": {
+        "key": "4ef0d7355d9ffb5151e987764708ce96",
+        "api": "//api.themoviedb.org/3/",
+        "image": "//imagetmdb.cub.red/t/p/"
+    },
+    "profile_icons": {
+        "a": [{
+            "name": "a_1",
+            "path": "/img/profiles/a_1.png"
+        }, {
+            "name": "a_10",
+            "path": "/img/profiles/a_10.png"
+        }, {
+            "name": "a_11",
+            "path": "/img/profiles/a_11.png"
+        }, {
+            "name": "a_12",
+            "path": "/img/profiles/a_12.png"
+        }, {
+            "name": "a_13",
+            "path": "/img/profiles/a_13.png"
+        }, {
+            "name": "a_14",
+            "path": "/img/profiles/a_14.png"
+        }, {
+            "name": "a_15",
+            "path": "/img/profiles/a_15.png"
+        }, {
+            "name": "a_16",
+            "path": "/img/profiles/a_16.png"
+        }, {
+            "name": "a_19",
+            "path": "/img/profiles/a_19.png"
+        }, {
+            "name": "a_2",
+            "path": "/img/profiles/a_2.png"
+        }, {
+            "name": "a_20",
+            "path": "/img/profiles/a_20.png"
+        }, {
+            "name": "a_21",
+            "path": "/img/profiles/a_21.png"
+        }, {
+            "name": "a_22",
+            "path": "/img/profiles/a_22.png"
+        }, {
+            "name": "a_23",
+            "path": "/img/profiles/a_23.png"
+        }, {
+            "name": "a_24",
+            "path": "/img/profiles/a_24.png"
+        }, {
+            "name": "a_25",
+            "path": "/img/profiles/a_25.png"
+        }, {
+            "name": "a_26",
+            "path": "/img/profiles/a_26.png"
+        }, {
+            "name": "a_3",
+            "path": "/img/profiles/a_3.png"
+        }, {
+            "name": "a_4",
+            "path": "/img/profiles/a_4.png"
+        }, {
+            "name": "a_5",
+            "path": "/img/profiles/a_5.png"
+        }, {
+            "name": "a_6",
+            "path": "/img/profiles/a_6.png"
+        }, {
+            "name": "a_7",
+            "path": "/img/profiles/a_7.png"
+        }, {
+            "name": "a_8",
+            "path": "/img/profiles/a_8.png"
+        }, {
+            "name": "a_9",
+            "path": "/img/profiles/a_9.png"
+        }],
+        "c": [{
+            "name": "c_1",
+            "path": "/img/profiles/c_1.png"
+        }, {
+            "name": "c_2",
+            "path": "/img/profiles/c_2.png"
+        }, {
+            "name": "c_3",
+            "path": "/img/profiles/c_3.png"
+        }],
+        "f": [{
+            "name": "f_1",
+            "path": "/img/profiles/f_1.png"
+        }, {
+            "name": "f_10",
+            "path": "/img/profiles/f_10.png"
+        }, {
+            "name": "f_11",
+            "path": "/img/profiles/f_11.png"
+        }, {
+            "name": "f_12",
+            "path": "/img/profiles/f_12.png"
+        }, {
+            "name": "f_13",
+            "path": "/img/profiles/f_13.png"
+        }, {
+            "name": "f_14",
+            "path": "/img/profiles/f_14.png"
+        }, {
+            "name": "f_15",
+            "path": "/img/profiles/f_15.png"
+        }, {
+            "name": "f_16",
+            "path": "/img/profiles/f_16.png"
+        }, {
+            "name": "f_2",
+            "path": "/img/profiles/f_2.png"
+        }, {
+            "name": "f_3",
+            "path": "/img/profiles/f_3.png"
+        }, {
+            "name": "f_4",
+            "path": "/img/profiles/f_4.png"
+        }, {
+            "name": "f_5",
+            "path": "/img/profiles/f_5.png"
+        }, {
+            "name": "f_6",
+            "path": "/img/profiles/f_6.png"
+        }, {
+            "name": "f_7",
+            "path": "/img/profiles/f_7.png"
+        }, {
+            "name": "f_8",
+            "path": "/img/profiles/f_8.png"
+        }, {
+            "name": "f_9",
+            "path": "/img/profiles/f_9.png"
+        }],
+        "h": [{
+            "name": "h_1",
+            "path": "/img/profiles/h_1.png"
+        }, {
+            "name": "h_10",
+            "path": "/img/profiles/h_10.png"
+        }, {
+            "name": "h_2",
+            "path": "/img/profiles/h_2.png"
+        }, {
+            "name": "h_3",
+            "path": "/img/profiles/h_3.png"
+        }, {
+            "name": "h_4",
+            "path": "/img/profiles/h_4.png"
+        }, {
+            "name": "h_5",
+            "path": "/img/profiles/h_5.png"
+        }, {
+            "name": "h_6",
+            "path": "/img/profiles/h_6.png"
+        }, {
+            "name": "h_7",
+            "path": "/img/profiles/h_7.png"
+        }, {
+            "name": "h_8",
+            "path": "/img/profiles/h_8.png"
+        }, {
+            "name": "h_9",
+            "path": "/img/profiles/h_9.png"
+        }],
+        "l": [{
+            "name": "l_1",
+            "path": "/img/profiles/l_1.png"
+        }, {
+            "name": "l_2",
+            "path": "/img/profiles/l_2.png"
+        }, {
+            "name": "l_3",
+            "path": "/img/profiles/l_3.png"
+        }, {
+            "name": "l_4",
+            "path": "/img/profiles/l_4.png"
+        }, {
+            "name": "l_5",
+            "path": "/img/profiles/l_5.png"
+        }, {
+            "name": "l_6",
+            "path": "/img/profiles/l_6.png"
+        }]
+    },
+    "limits": {
+        "notifications": [35, 5],
+        "bots": [8, 1],
+        "profiles": [8, 3],
+        "bookmarks": [1680, 120],
+        "history": [500, 100],
+        "timelines": [10000, 1000]
+    },
+    "admin": false,
+    "ip": "'185.59.246.48'",
+    "bookmarks_collect": ["look", "viewed", "scheduled", "thrown"]
+}
