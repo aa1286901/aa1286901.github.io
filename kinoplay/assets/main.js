@@ -496,7 +496,7 @@ function _isContains(json, value) {
 
 function showPlayer(num, id) {
     if (num == 1) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://api.lessornot.ws/embed/imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://api.linktodo.ws/embed/imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 2) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://player.cdnvideohub.com/playerjs?partner=9&kid=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 3) {
