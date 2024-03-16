@@ -513,7 +513,7 @@ function showPlayer(num, id) {
                 console.log(error);
             });
     } else if (num == 4) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://kinoplay1.site/iplayer/videodb.php?kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://kinoplay2.site/iplayer/videodb.php?kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 5) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://allo.cdnlbox.club/?token=f688111d44220009e894da7069031c&kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 6) {
