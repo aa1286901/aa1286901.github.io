@@ -10,11 +10,11 @@
    
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
-          '/online.js',
-          '/tmdbproxy.js',
-          '/collections.js', 
-          '/tracks.js',
-          '/cors.js'
+          'online.js',
+          'tmdbproxy.js',
+          'collections.js', 
+          'tracks.js',
+          'cors.js'
           ], function () {});
 
 	/*Удаляем ненужное из меню настроек*/
