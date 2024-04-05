@@ -3,9 +3,8 @@
     'use strict';
     
     Lampa.Platform.tv();
-  //  localStorage.clear();*/
+   // localStorage.clear();
     Lampa.Storage.set('parser_use', 'true');
-    Lampa.Storage.set('language', 'ru');
     Lampa.Storage.set('jackett_url', 'jacred.xyz');
    
 	/*Запуск сторонних плагинов*/
@@ -14,7 +13,9 @@
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
-          './cors.js'
+          './cors.js',
+          './rating.js',
+          './radio.js'
           ], function () {});
 
 	/*Удаляем ненужное из меню настроек*/
