@@ -14,7 +14,8 @@
           './collections.js', 
           './tracks.js',
           './cors.js',
-          './radio.js'
+          './radio.js',
+	  './rating.js'
           ], function () {});
 
 	/*Удаляем ненужное из меню настроек*/
