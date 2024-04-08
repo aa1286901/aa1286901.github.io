@@ -9,7 +9,7 @@
    
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
-	  'https://nb557.github.io/plugins/online_mod.js',
+	  'http://bwa.to/cloud.js',
         //  './online.js',
           './tmdbproxy.js',
           './collections.js', 
