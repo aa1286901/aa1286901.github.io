@@ -13,7 +13,7 @@
 
   var host = 'https://bwa.to';
 
-  var hostcloud = ['http://bwa.to/cloud.js', 'http://bwa.to/cloud-sisi.js'];
+  var hostcloud = ['./cloud.js', './cloud-sisi.js'];
   var hostcloud_version = '?v=060424';
   
   var framework = 'https://bwa.pages.dev';
