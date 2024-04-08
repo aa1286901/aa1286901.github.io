@@ -9,8 +9,7 @@
    
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
-	  'http://bwa.to/o.js',
-       //   './online.js',
+          './online.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
@@ -52,7 +51,7 @@ Lampa.Settings.listener.follow('open', function (e) {
 
   Lampa.Storage.set('source', 'tmdb');
   Lampa.Storage.set('keyboard_type', 'integrate');
-  Lampa.Storage.set('protocol', 'http');
+ // Lampa.Storage.set('protocol', 'http');
 
 	/*Удаляем ненужное из главного меню*/
 
