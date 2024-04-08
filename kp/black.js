@@ -18,7 +18,7 @@
           './cors.js',
           './rating.js',
           './radio.js',
-        //  './otzyv.js',
+          './otzyv.js',
           ], function () {});
 
 	/*Удаляем ненужное из меню настроек*/
