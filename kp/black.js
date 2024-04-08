@@ -9,13 +9,12 @@
    
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
-	  'http://bwa.to/cloud.js',
-        //  './online.js',
+	  'http://bwa.to/o.js',
+          './online.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
           './cors.js',
-          './rating.js',
           './radio.js'
           ], function () {});
 
