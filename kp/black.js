@@ -9,13 +9,15 @@
    
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
-          './online.js',
+         // './online.js',
+          './o.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
           './cors.js',
+          './rating.js',
           './radio.js',
-	  './rating.js'
+          './otzyv.js'
           ], function () {});
 
 	/*Удаляем ненужное из меню настроек*/
@@ -52,7 +54,7 @@ Lampa.Settings.listener.follow('open', function (e) {
 
   Lampa.Storage.set('source', 'tmdb');
   Lampa.Storage.set('keyboard_type', 'integrate');
- // Lampa.Storage.set('protocol', 'http');
+  Lampa.Storage.set('protocol', 'http');
 
 	/*Удаляем ненужное из главного меню*/
 
