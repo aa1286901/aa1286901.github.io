@@ -10,7 +10,7 @@
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
 	  'https://bwa.to/o',
-          './online.js',
+        //  './online.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
