@@ -1,0 +1,7 @@
+{
+    "name": "KinoDrix",
+    "short_name": "KinoDrix",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#1e1e1e"
+  }

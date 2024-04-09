@@ -960,7 +960,6 @@ body.light--version .wrap__left {
 }
 
 body.true--mobile .head__logo-icon,
-body.true--mobile .head__action.open--search,
 body.true--mobile .head__action.open--settings {
   display: none;
 }

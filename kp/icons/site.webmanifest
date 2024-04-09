@@ -1,19 +1,19 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "KinoDrix",
+    "short_name": "KinoDrix",
     "icons": [
         {
-            "src": "android-chrome-192x192.png",
-            "sizes": "192x192",
+            "src": "logo_16x167.png",
+            "sizes": "167x167",
             "type": "image/png"
         },
         {
-            "src": "android-chrome-384x384.png",
-            "sizes": "384x384",
+            "src": "logo_180x180.png",
+            "sizes": "180x180",
             "type": "image/png"
         }
     ],
-    "theme_color": "#1d1f20",
-    "background_color": "#1d1f20",
+    "theme_color": "#1e1e1e",
+    "background_color": "#1e1e1e",
     "display": "standalone"
 }

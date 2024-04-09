@@ -16,7 +16,6 @@
     <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
     <link rel="manifest" href="icons/site.webmanifest">
-    <link rel="mask-icon" href="icons/safari-pinned-tab.svg" color="#5bbad5">
     <link rel="shortcut icon" href="icons/favicon.ico">
     <meta name="msapplication-TileColor" content="#1d1f20">
     <meta name="msapplication-config" content="icons/browserconfig.xml">
@@ -26,8 +25,6 @@
     
     <link rel="stylesheet" href="vender/scrollbar/jquery.scrollbar.css">
     <link rel="stylesheet" href="vender/keypad/style.css">
-
-    <link rel="stylesheet" href="css/app.css?v=4.00">
 </head>
 <body>
     <div class="welcome"></div>
@@ -46,7 +43,7 @@
     <script src="vender/scrollbar/jquery.scrollbar.js"></script>
     <script src="vender/navigator/navigator.js"></script>
     <script src="vender/keypad/keypad.js"></script>
-    <script src="iframe_api" async=""></script>
+    <script src="//www.youtube.com/iframe_api" async=""></script>
 
     <script>
     function putScript(scripts){
@@ -89,7 +86,7 @@
 
         add(scripts);
     }
-
+    document.head.innerHTML += '<link rel="stylesheet" href="css/app.css?v=' + Math.random() + '">';
     putScript('app.min.js?v=' + Math.random());
     </script>
 </body>
