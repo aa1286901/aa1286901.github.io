@@ -53,7 +53,7 @@ Lampa.Settings.listener.follow('open', function (e) {
 	/*Удаляем верхние кнопки */
 
    setTimeout(function(){
-     $('.open--feed').remove();
+    // $('.open--feed').remove();
      $('.open--premium').remove();
      $('.open--broadcast').remove();
      $('.head__time').remove();
