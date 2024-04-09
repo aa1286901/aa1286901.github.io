@@ -3647,7 +3647,7 @@
 
       if (!window.mod_filmix) {
         window.mod_filmix = {
-          max_qualitie: 720,
+          max_qualitie: 2160,
           is_max_qualitie: false
         };
       }
@@ -14384,49 +14384,36 @@
       };
       var obj_filter_sources = [{
         name: 'videocdn',
-        title: 'VideoCDN'
-      }, {
-        name: 'rezka',
-        title: 'Voidboost'
-      }, {
-        name: 'rezka2',
-        title: 'HDrezka'
-      }, {
-        name: 'kinobase',
-        title: 'Kinobase'
+        title: '#1 VideoCDN'
       }, {
         name: 'collaps',
-        title: 'Collaps'
+        title: '#2 Collaps'
       }, {
-        name: 'cdnmovies',
-        title: 'CDNMovies'
+        name: 'rezka2',
+        title: '#3 HDrezka'
       }, {
-        name: 'filmix',
-        title: 'Filmix'
+        name: 'rezka',
+        title: '#4 Voidboost'
+      }, {
+        name: 'alloha',
+        title: '#5 Alloha'
+      }, {
+        name: 'kinobase',
+        title: '#6 Kinobase'
       }, {
         name: 'redheadsound',
-        title: 'RedHeadSound'
+        title: '#7 RedHeadSound'
       }, {
         name: 'cdnvideohub',
-        title: 'CDNVideoHub'
+        title: '#8 CDNVideoHub'
       }, {
         name: 'anilibria',
-        title: 'AniLibria'
+        title: '#9 AniLibria'
       }, {
         name: 'kodik',
-        title: 'Kodik'
+        title: '#10 Kodik'
       }];
-
-      if (Utils.isDebug()) {
-        //obj_filter_sources.push({name: 'kinopub', title: 'KinoPub'})
-        //obj_filter_sources.push({name: 'filmix2', title: 'Filmix 4K'})
-        obj_filter_sources.push({
-          name: 'alloha',
-          title: 'Alloha'
-        }); //obj_filter_sources.push({name: 'hdvb', title: 'HDVB'})
-        //obj_filter_sources.push({name: 'videodb', title: 'VideoDB'})
-        //obj_filter_sources.push({name: 'zetflix', title: 'Zetflix'})
-      }
+      
 
       var filter_sources = obj_filter_sources.map(function (s) {
         return s.name;
@@ -15632,9 +15619,9 @@
         zh: '您需要通过验证码。 尝试使用镜子而不是代理'
       },
       online_mod_balanser: {
-        ru: 'Балансер',
-        uk: 'Балансер',
-        be: 'Балансер',
+        ru: 'Источники',
+        uk: 'Источники',
+        be: 'Источники',
         en: 'Balancer',
         zh: '平衡器'
       },
@@ -15681,9 +15668,9 @@
         zh: '在线的'
       },
       online_mod_title_full: {
-        ru: 'Онлайн Мод',
-        uk: 'Онлайн Мод',
-        be: 'Анлайн Мод',
+        ru: 'Онлайн',
+        uk: 'Онлайн',
+        be: 'Онлайн',
         en: 'Online Mod',
         zh: '在线的 Mod'
       },
@@ -16281,7 +16268,7 @@
 
     function addSettingsOnlineMod() {
       if (Lampa.Settings.main && Lampa.Settings.main() && !Lampa.Settings.main().render().find('[data-component="online_mod"]').length) {
-        var field = $(Lampa.Lang.translate("<div class=\"settings-folder selector\" data-component=\"online_mod\">\n            <div class=\"settings-folder__icon\">\n                <svg height=\"260\" viewBox=\"0 0 244 260\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                <path d=\"M242,88v170H10V88h41l-38,38h37.1l38-38h38.4l-38,38h38.4l38-38h38.3l-38,38H204L242,88L242,88z M228.9,2l8,37.7l0,0 L191.2,10L228.9,2z M160.6,56l-45.8-29.7l38-8.1l45.8,29.7L160.6,56z M84.5,72.1L38.8,42.4l38-8.1l45.8,29.7L84.5,72.1z M10,88 L2,50.2L47.8,80L10,88z\" fill=\"white\"/>\n                </svg>\n            </div>\n            <div class=\"settings-folder__name\">#{online_mod_title_full}</div>\n        </div>"));
+        var field = $(Lampa.Lang.translate("<div class=\"settings-folder selector\" data-component=\"online_mod\">\n            <div class=\"settings-folder__icon\">\n                <svg viewBox=\"0 0 32 32\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\" enable-background=\"new 0 0 32 32\"><path d=\"m17 14.5 4.2-4.5L4.9 1.2c-.1-.1-.3-.1-.6-.2L17 14.5zM23 21l5.9-3.2c.7-.4 1.1-1 1.1-1.8s-.4-1.5-1.1-1.8L23 11l-4.7 5 4.7 5zM2.4 1.9c-.3.3-.4.7-.4 1.1v26c0 .4.1.8.4 1.2L15.6 16 2.4 1.9zM17 17.5 4.3 31c.2 0 .4-.1.6-.2L21.2 22 17 17.5z\" fill=\"currentColor\" fill=\"#ffffff\" class=\"fill-000000\"></path></svg>\n            </div>\n            <div class=\"settings-folder__name\">#{online_mod_title_full}</div>\n        </div>"));
         Lampa.Settings.main().render().find('[data-component="more"]').after(field);
         Lampa.Settings.main().update();
       }

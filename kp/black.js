@@ -6,12 +6,21 @@
    // localStorage.clear();
     Lampa.Storage.set('parser_use', 'true');
     Lampa.Storage.set('jackett_url', 'jacred.xyz');
+    // Прокси для Онлайн мод
+    Lampa.Storage.set('online_mod_proxy_kodik', 'true');
+    Lampa.Storage.set('online_mod_proxy_zetflix', 'true');
+    Lampa.Storage.set('online_mod_proxy_kinopub', 'true');
+    Lampa.Storage.set('online_mod_proxy_rezka2', 'true');
+    Lampa.Storage.set('online_mod_proxy_alloha', 'true');
+    Lampa.Storage.set('online_mod_proxy_kinobase', 'true');
+    Lampa.Storage.set('online_mod_proxy_anilibria', 'true');
+    Lampa.Storage.set('online_mod_proxy_redheadsound', 'true');
+    Lampa.Storage.set('online_mod_proxy_rezka', 'true');
+    Lampa.Storage.set('online_mod_proxy_cdnmovies', 'true');
    
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
           './online_mod.js',
-          //'./online.js',
-          //'./o.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
@@ -34,10 +43,9 @@ Lampa.Settings.listener.follow('open', function (e) {
      $('div[data-component="tmdb"]').remove();
      $('div[data-component="sisi"]').remove();
      $('div[data-component="my_iptv2"]').remove();
-     $('div[data-component="parser"]').remove();
-     $('div[data-component="server"]').remove();
+   //  $('div[data-component="parser"]').remove();
+   //  $('div[data-component="server"]').remove();
      $('div[data-component="parental_control"]').remove();
-     $('div[data-component="online_mod"]').remove();
      $('div[data-component="filmix"]').remove();
    }, 5)
  }
