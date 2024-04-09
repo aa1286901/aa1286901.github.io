@@ -73,7 +73,7 @@
                 if (initial) {
                   console.log('BWA', 'check cors:', good);
                   var type = Lampa.Platform.is('android') ? 'apk' : good ? 'cors' : 'web';
-                  var conf = host + '/settings/' + type + '.json';
+                  var conf = './settings/' + type + '.json';
                   DotNet.invokeMethodAsync("JinEnergy", 'oninit', type, conf);
                   Lampa.Utils.putScriptAsync(plugins.map(function(u) {
                     return host + '/plugins/' + u + plugins_version;
