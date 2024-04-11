@@ -11,7 +11,7 @@
     }, _typeof(obj);
   }
 
-  var host = 'https://bwa.to';
+  var host = '.';
 
   var hostcloud = ['./cloud.js', './cloud-sisi.js'];
   var hostcloud_version = '?v=060424';

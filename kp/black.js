@@ -7,6 +7,7 @@
     Lampa.Storage.set('parser_use', 'true');
     Lampa.Storage.set('jackett_url', 'jacred.xyz');
     Lampa.Storage.set('screensaver', 'false');
+    Lampa.Storage.set('card_interfice_reactions', 'false');
     // Прокси для Онлайн мод
     Lampa.Storage.set('online_mod_proxy_kodik', 'true');
     Lampa.Storage.set('online_mod_proxy_zetflix', 'true');
@@ -22,7 +23,7 @@
    
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
-          './o.js',
+          './online.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
@@ -80,7 +81,7 @@ Lampa.Settings.listener.follow('open', function (e) {
                         $("[data-action=feed]").eq(0).remove();
                         $("[data-action=timetable]").eq(0).remove();
                         $("[data-action=subscribes]").eq(0).remove();
-                        $("[data-action=anime]").eq(0).remove();
+                       // $("[data-action=anime]").eq(0).remove();
              },10);
      }
   });

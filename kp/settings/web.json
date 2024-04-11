@@ -19,11 +19,11 @@
   },
   "Ebalovo": {
     "host": "https://www.ebalovo.pro",
-    "enable": false
+    "enable": true
   },
   "HQporner": {
     "host": "https://m.hqporner.com",
-    "enable": false
+    "enable": true
   },
   "Eporner": {
     "overridehost": "https://bwa-cloud.apn.monster/epr",
@@ -57,13 +57,13 @@
   },
   "Kinobase": {
     "host": "https://kinobase.org",
-    "enable": false
+    "enable": true
   },
   "Rezka": {
     "host": "https://hdrezka.me",
 	"uacdn": "https://prx-ams.ukrtelcdn.net",
     "enable": true,
-	"hls": false,
+	"hls": true,
     "corseu": true
   },
   "Voidboost": {
@@ -82,11 +82,11 @@
   },
   "Eneyida": {
     "overridehost": "https://bwa-cloud.apn.monster/lite/eneyida",
-    "enable": false
+    "enable": true
   },
   "Kinoukr": {
     "overridehost": "https://bwa-cloud.apn.monster/lite/kinoukr",
-    "enable": false
+    "enable": true
   },
   "Kinotochka": {
     "host": "https://kinovibe.co",
@@ -108,23 +108,23 @@
     "host": "http://filmixapp.cyou",
     "enable": true,
     "token": "",
-    "pro": false
+    "pro": true
   },
   "VoKino": {
-    "enable": false,
+    "enable": true,
     "host": "http://api.vokino.tv",
     "token": ""
   },
   "Zetflix": {
     "overridehost": "https://bwa-cloud.apn.monster/lite/zetflix",
     "enable": true,
-	"hls": false
+	"hls": true
   },
   "VideoDB": {
 	"overridehost": "https://bwa-cloud.apn.monster/lite/videodb",
-	"enable": false,
-    "corseu": false,
-	"hls": false
+	"enable": true,
+    "corseu": true,
+	"hls": true
   },
   "CDNmovies": {
     "host": "https://coldcdn.xyz",
@@ -133,7 +133,7 @@
   },
   "VDBmovies": {
     "host": "https://skinny-wilderness.cdnmovies-stream.online",
-    "enable": false,
+    "enable": true,
     "corseu": false
   },
   "VCDN": {
@@ -141,7 +141,7 @@
 	"apihost": "https://videocdn.tv",
 	"token": "3i40G5TSECmLF77oAqnEgbx61ZWaOYaE",
     "enable": true,
-	"hls": false,
+	"hls": true,
     "corseu": false
   },
   "Kodik": {
@@ -153,7 +153,7 @@
     "corseu": true
   },
   "KinoPub": {
-    "enable": false,
+    "enable": true,
     "host": "https://api.srvkp.com",
     "filetype": "hls4",
     "token": ""
