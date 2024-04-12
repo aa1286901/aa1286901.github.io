@@ -23,7 +23,7 @@
    
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
-          './online_mod.js',
+          './o.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
@@ -81,7 +81,7 @@ Lampa.Settings.listener.follow('open', function (e) {
                         $("[data-action=feed]").eq(0).remove();
                         $("[data-action=timetable]").eq(0).remove();
                         $("[data-action=subscribes]").eq(0).remove();
-                       // $("[data-action=anime]").eq(0).remove();
+                        $("[data-action=anime]").eq(0).remove();
              },10);
      }
   });
