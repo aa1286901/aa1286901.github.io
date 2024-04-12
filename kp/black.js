@@ -3,7 +3,7 @@
     'use strict';
     
     Lampa.Platform.tv();
-    localStorage.clear();
+    //localStorage.clear();
     Lampa.Storage.set('parser_use', 'true');
     Lampa.Storage.set('jackett_url', 'jacred.xyz');
     Lampa.Storage.set('screensaver', 'false');
@@ -23,7 +23,7 @@
    
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
-          './o.js',
+          './online.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
