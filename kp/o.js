@@ -11,13 +11,13 @@
     }, _typeof(obj);
   }
 
-  var host = '.';
+  var host = 'https://bwa.to';
 
-  var hostcloud = ['./cloud.js', './cloud-sisi.js'];
+  var hostcloud = ["http://bwa.to/cloud.js"];
   var hostcloud_version = '?v=060424';
   
   var framework = 'https://bwa.pages.dev';
-  var framework_version = '?v=060424';
+  var framework_version = '?v=120424';
 
   var plugins = ["o.js"];
   var plugins_version = '?v=060424-14';
@@ -73,7 +73,7 @@
                 if (initial) {
                   console.log('BWA', 'check cors:', good);
                   var type = Lampa.Platform.is('android') ? 'apk' : good ? 'cors' : 'web';
-                  var conf = './settings/' + type + '.json';
+                  var conf = host + '/settings/' + type + '.json';
                   DotNet.invokeMethodAsync("JinEnergy", 'oninit', type, conf);
                   Lampa.Utils.putScriptAsync(plugins.map(function(u) {
                     return host + '/plugins/' + u + plugins_version;
