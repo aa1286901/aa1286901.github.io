@@ -23,7 +23,8 @@
    
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
-          //'./o.js',
+          './o.js',
+        'https://lampame.github.io/main/pubtorr.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
