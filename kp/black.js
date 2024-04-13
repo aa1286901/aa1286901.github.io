@@ -24,7 +24,6 @@
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
           'https://bwa.to/o',
-          'https://skaztv.online/js/tricks.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
