@@ -24,7 +24,7 @@
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
           //'./o.js',
-          './showy.js',
+          'http://showy.online/m.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
