@@ -24,7 +24,6 @@
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
           //'./o.js',
-          './showy.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
@@ -88,7 +87,7 @@ Lampa.Settings.listener.follow('open', function (e) {
   });
 
 	/*Заменяем иконки и названия в кнопках Онлайн и Трейлеры
-               Убираем кнопки из раздела смотреть
+               Убираем кнопки из раздела смотреть*/
 
    Lampa.Listener.follow('full', function(e) {
       if (e.type == 'complite') {
