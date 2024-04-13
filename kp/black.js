@@ -121,11 +121,11 @@ Lampa.Settings.listener.follow('open', function (e) {
 if (!Lampa.Storage.get('player_def')) {
   Lampa.Storage.set('player','inner');
   Lampa.Storage.set('player_iptv','inner');
-    if (Lampa.Platform.is('apple'))
-    {
-    Lampa.Storage.set('player_iptv','ios');
-    Lampa.Storage.set('player','ios');
-    } 
+    //if (Lampa.Platform.is('apple'))
+  //  {
+  //  Lampa.Storage.set('player_iptv','ios');
+  //  Lampa.Storage.set('player','ios');
+   // } 
  Lampa.Storage.set('player_def', true);
 }
 
