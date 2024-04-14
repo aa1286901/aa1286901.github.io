@@ -8,19 +8,7 @@
     Lampa.Storage.set('jackett_url', 'jacred.xyz');
     Lampa.Storage.set('screensaver', 'false');
     Lampa.Storage.set('card_interfice_reactions', 'false');
-    // Прокси для Онлайн мод
-    Lampa.Storage.set('online_mod_proxy_kodik', 'true');
-    Lampa.Storage.set('online_mod_proxy_zetflix', 'true');
-    Lampa.Storage.set('online_mod_proxy_kinopub', 'true');
-    Lampa.Storage.set('online_mod_proxy_rezka2', 'true');
-    Lampa.Storage.set('online_mod_proxy_alloha', 'true');
-    Lampa.Storage.set('online_mod_proxy_kinobase', 'true');
-    Lampa.Storage.set('online_mod_proxy_anilibria', 'true');
-    Lampa.Storage.set('online_mod_proxy_redheadsound', 'true');
-    Lampa.Storage.set('online_mod_proxy_rezka', 'true');
-    Lampa.Storage.set('online_mod_proxy_cdnmovies', 'true');
-    Lampa.Storage.set('online_mod_save_last_balanser', 'true');
-   
+    
 	/*Запуск сторонних плагинов*/
     Lampa.Utils.putScriptAsync([
           './online_mod.js',
