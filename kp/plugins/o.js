@@ -2,11 +2,11 @@
   'use strict';
 
   var Defined = {
-    api: 'pwa',
-    localhost: '{localhost}/',
+    api: 'lampac',
+    localhost: 'http://45.67.228.34:9118/',
     apn: 'https://apn.watch/'
   };
-
+  
   function BlazorNet() {
     this.net = new Lampa.Reguest();
     this.timeout = function(time) {

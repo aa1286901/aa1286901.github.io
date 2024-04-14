@@ -1,4 +1,4 @@
-//09.04.2024 - Fix
+//13.04.2024 - Zetflix
 
 (function () {
     'use strict';
@@ -603,7 +603,6 @@
             if (quality[preferably]) file = quality[preferably];
           }
         }
-
         return {
           file: file,
           quality: quality
@@ -3620,7 +3619,7 @@
         }
 
         var url = Utils.decodeSecret([80, 68, 77, 68, 64, 3, 27, 31, 86, 79, 81, 23, 64, 92, 22, 64, 85, 89, 72, 31, 81, 85, 64, 81, 82, 89, 89, 81, 72, 23, 64, 75, 77]);
-
+        
         if (!url.startsWith('http')) {
           if (callback) callback();
           return;
@@ -3647,7 +3646,7 @@
 
       if (!window.mod_filmix) {
         window.mod_filmix = {
-          max_qualitie: 2160,
+          max_qualitie: 720,
           is_max_qualitie: false
         };
       }
@@ -3875,7 +3874,6 @@
           for (var ID in pl_links.movie) {
             var file = pl_links.movie[ID];
             var stream_url = file.link || '';
-
             if (file.translation === 'Заблокировано правообладателем!' && stream_url.indexOf('/abuse_') !== -1) {
               var found = stream_url.match(/https?:\/\/[^\/]+(\/s\/[^\/]*\/)/);
 
@@ -3990,6 +3988,8 @@
 
             var _stream_url = _file.link || '';
 
+            var _stream_url = _stream_url.replace(/\/s\/(.*?)\//g, "/s/FHwo_f_yrEyK57iGFyzmay8kFBQUFBSU5ST0VFUjBGTFJBUERWbEJBaw.tDljHLtkeCBPHtBxOAXW_xRZ99_2JtUj5lS_yA/");
+            alert(_stream_url);
             if (prefer_http) _stream_url = _stream_url.replace('https://', 'http://');
 
             if (secret) {
@@ -4611,12 +4611,8 @@
       var select_title = '';
       var select_id = '';
       var prefer_http = Lampa.Storage.field('online_mod_prefer_http') === true;
-      var prox = component.proxy('zetflix');
-      var host = 'https://zeflix.online';
-      var ref = host + '/';
-      var embed = prox + ref + 'iplayer/videodb.php';
-      var iframe_proxy = !prox && Lampa.Storage.field('online_mod_iframe_proxy') === true && !window.location.protocol.startsWith('http');
-      var logged_in = !prox;
+      component.proxy('zetflix');
+      var embed = (prefer_http ? 'http://bwa-cloud.cfhttp.top/' : 'https://bwa-cloud.apn.monster/') + 'lite/zetflix';
       var filter_items = {};
       var choice = {
         season: 0,
@@ -4653,8 +4649,9 @@
           return;
         }
 
-        var url = Lampa.Utils.addUrlComponent(embed, 'kp=' + select_id);
-        if (s) url = Lampa.Utils.addUrlComponent(url, 'season=' + s);
+        var url = Lampa.Utils.addUrlComponent(embed, 'kinopoisk_id=' + select_id);
+        if (s) url = Lampa.Utils.addUrlComponent(url, 's=' + s);
+        url = Lampa.Utils.addUrlComponent(url, 'origsource=true');
 
         var call_success = function call_success(str) {
           parse(str);
@@ -4664,9 +4661,7 @@
           component.empty(network.errorDecode(a, c));
         };
 
-        if (iframe_proxy) {
-          component.proxyCall3('GET', url, 10000, null, call_success, call_error, logged_in);
-        } else {
+        {
           var meta = $('head meta[name="referrer"]');
           var referrer = meta.attr('content') || 'never';
           meta.attr('content', 'origin');
@@ -4674,13 +4669,8 @@
           try {
             network.clear();
             network.timeout(10000);
-            network["native"](url, call_success, call_error, false, {
-              dataType: 'text',
-              withCredentials: logged_in,
-              headers: Lampa.Platform.is('android') ? {
-                'Origin': host,
-                'Referer': ref
-              } : {}
+            network.silent(url, call_success, call_error, false, {
+              dataType: 'text'
             });
           } finally {
             meta.attr('content', referrer);
@@ -12411,7 +12401,7 @@
       var prefer_http = Lampa.Storage.field('online_mod_prefer_http') === true;
       var prefer_mp4 = false;
       var prox = component.proxy('kodik');
-      var embed = prox + (prefer_http || prox ? 'http:' : 'https:') + '//kodikapi.com/search';
+      var embed = prox + 'https://kodikapi.com/search';
       var token = atob('NDVjNTM1NzhmMTFlY2ZiNzRlMzEyNjdiNjM0Y2M2YTg=');
       var last_player = '';
       var last_info = '';
@@ -14329,7 +14319,7 @@
         mask: true,
         over: true
       });
-      var files = new Lampa.Files(object);
+      var files = new Lampa.Explorer(object);
       var filter = new Lampa.Filter(object);
       var balanser = Lampa.Storage.get('online_mod_balanser', 'videocdn');
       var last_bls = Lampa.Storage.field('online_mod_save_last_balanser') === true ? Lampa.Storage.cache('online_mod_last_balanser', 200, {}) : {};
@@ -14374,7 +14364,6 @@
         hdvb: new hdvb(this, object)
       };
       var last;
-      var last_filter;
       var extended;
       var selected_id;
       var filter_translate = {
@@ -14384,39 +14373,52 @@
       };
       var obj_filter_sources = [{
         name: 'videocdn',
-        title: '#1 VideoCDN'
-      }, {
-        name: 'collaps',
-        title: '#2 Collaps'
-      }, {
+        title: 'VideoCDN'
+      }, //{name: 'rezka',        title: 'Voidboost'},
+      {
         name: 'rezka2',
-        title: '#3 HDrezka'
-      }, {
-        name: 'rezka',
-        title: '#4 Voidboost'
-      }, {
-        name: 'alloha',
-        title: '#5 Alloha'
-      }, {
-        name: 'filmix2',
-        title: '#6 Filmix'
+        title: 'HDrezka 4K'
       }, {
         name: 'kinobase',
-        title: '#7 Kinobase'
+        title: 'Kinobase'
+      }, {
+        name: 'collaps',
+        title: 'Collaps'
+      }, {
+        name: 'cdnmovies',
+        title: 'CDNMovies'
+      }, {
+        name: 'filmix2',
+        title: 'Filmix 4K'
+      }, {
+        name: 'zetflix',
+        title: 'Zetflix'
       }, {
         name: 'redheadsound',
-        title: '#8 RedHeadSound'
+        title: 'RedHeadSound'
       }, {
+        name: 'hdvb', 
+        title: 'HDVB'
+      },{
         name: 'cdnvideohub',
-        title: '#9 CDNVideoHub'
+        title: 'CDNVideoHub'
       }, {
         name: 'anilibria',
-        title: '#10 AniLibria'
+        title: 'AniLibria'
       }, {
         name: 'kodik',
-        title: '#11 Kodik'
+        title: 'Kodik'
       }];
-      
+
+      if (Utils.isDebug()) {
+        //obj_filter_sources.push({name: 'kinopub', title: 'KinoPub'})
+        //obj_filter_sources.push({name: 'filmix2', title: 'Filmix 4K'})
+        obj_filter_sources.push({
+          name: 'alloha',
+          title: 'Alloha'
+        }); //obj_filter_sources.push({name: 'hdvb', title: 'HDVB'})
+        //obj_filter_sources.push({name: 'videodb', title: 'VideoDB'})
+      }
 
       var filter_sources = obj_filter_sources.map(function (s) {
         return s.name;
@@ -14428,13 +14430,7 @@
       }
 
       scroll.body().addClass('torrent-list');
-
-      function minus() {
-        scroll.minus(window.innerWidth > 580 ? false : files.render().find('.files__left'));
-      }
-
-      window.addEventListener('resize', minus, false);
-      minus();
+      scroll.minus(files.render().find('.explorer__files-head'));
       /**
        * Подготовка
        */
@@ -14456,11 +14452,6 @@
           _this.start();
         };
 
-        filter.render().find('.selector').on('hover:focus', function (e) {
-          last_filter = e.target;
-          scroll.update($(e.target), true);
-        });
-
         filter.onSelect = function (type, a, b) {
           if (type == 'filter') {
             if (a.reset) {
@@ -14476,9 +14467,8 @@
         };
 
         filter.render().find('.filter--sort span').text(Lampa.Lang.translate('online_mod_balanser'));
-        filter.render();
-        files.append(scroll.render());
-        scroll.append(filter.render());
+        files.appendHead(filter.render());
+        files.appendFiles(scroll.render());
         this.search();
         return this.render();
       };
@@ -15106,11 +15096,10 @@
 
       this.reset = function () {
         contextmenu_all = [];
-        last = false;
+        last = filter.render().find('.selector').eq(0)[0];
         scroll.render().find('.empty').remove();
-        filter.render().detach();
         scroll.clear();
-        scroll.append(filter.render());
+        scroll.reset();
       };
       /**
        * Загрузка
@@ -15120,7 +15109,7 @@
       this.loading = function (status) {
         if (status) this.activity.loader(true);else {
           this.activity.loader(false);
-          if (Lampa.Controller.enabled().name === 'content') this.activity.toggle();
+          if (Lampa.Activity.active().activity === this.activity) this.activity.toggle();
         }
       };
       /**
@@ -15414,7 +15403,7 @@
 
         if (first_select) {
           var last_views = scroll.render().find('.selector.online').find('.torrent-item__viewed').parent().last();
-          if (object.movie.number_of_seasons && last_views.length) last = last_views.eq(0)[0];else last = scroll.render().find('.selector').eq(3)[0];
+          if (object.movie.number_of_seasons && last_views.length) last = last_views.eq(0)[0];else last = scroll.render().find('.selector').eq(0)[0];
         }
 
         Lampa.Background.immediately(Lampa.Utils.cardImgBackground(object.movie));
@@ -15425,9 +15414,7 @@
           },
           up: function up() {
             if (Navigator.canmove('up')) {
-              if (scroll.render().find('.selector').slice(3).index(last) == 0 && last_filter) {
-                Lampa.Controller.collectionFocus(last_filter, scroll.render());
-              } else Navigator.move('up');
+              Navigator.move('up');
             } else Lampa.Controller.toggle('head');
           },
           down: function down() {
@@ -15478,11 +15465,10 @@
         sources.kinopub.destroy();
         sources.filmix2.destroy();
         sources.hdvb.destroy();
-        window.removeEventListener('resize', minus);
       };
     }
 
-    var mod_version = '09.04.2024';
+    var mod_version = '13.04.2024';
     var isMSX = !!(window.TVXHost || window.TVXManager);
     var isTizen = navigator.userAgent.toLowerCase().indexOf('tizen') !== -1;
     var isIFrame = window.parent !== window;
@@ -15500,6 +15486,8 @@
 
     Lampa.Storage.set('online_mod_proxy_videocdn', 'false');
     Lampa.Storage.set('online_mod_proxy_collaps', 'false');
+    Lampa.Storage.set('online_mod_proxy_videodb', 'false');
+    Lampa.Storage.set('online_mod_proxy_zetflix', 'false');
     Lampa.Storage.set('online_mod_proxy_kinopub', 'true');
     Lampa.Storage.set('online_mod_proxy_alloha', 'false');
     Lampa.Storage.set('online_mod_proxy_hdvb', 'false');
@@ -15622,9 +15610,9 @@
         zh: '您需要通过验证码。 尝试使用镜子而不是代理'
       },
       online_mod_balanser: {
-        ru: 'Источники',
-        uk: 'Источники',
-        be: 'Источники',
+        ru: 'Балансер',
+        uk: 'Балансер',
+        be: 'Балансер',
         en: 'Balancer',
         zh: '平衡器'
       },
@@ -15671,9 +15659,9 @@
         zh: '在线的'
       },
       online_mod_title_full: {
-        ru: 'Онлайн',
-        uk: 'Онлайн',
-        be: 'Онлайн',
+        ru: 'Онлайн Мод',
+        uk: 'Онлайн Мод',
+        be: 'Анлайн Мод',
         en: 'Online Mod',
         zh: '在线的 Mod'
       },
@@ -16021,7 +16009,7 @@
       }
     };
     Lampa.Manifest.plugins = manifest;
-    var button = "<div class=\"full-start__button selector view--online\" data-subtitle=\"online_mod " + mod_version + "\">\n    <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:svgjs=\"http://svgjs.com/svgjs\" version=\"1.1\" width=\"512\" height=\"512\" x=\"0\" y=\"0\" viewBox=\"0 0 244 260\" style=\"enable-background:new 0 0 512 512\" xml:space=\"preserve\" class=\"\">\n    <g xmlns=\"http://www.w3.org/2000/svg\">\n        <path d=\"M242,88v170H10V88h41l-38,38h37.1l38-38h38.4l-38,38h38.4l38-38h38.3l-38,38H204L242,88L242,88z M228.9,2l8,37.7l0,0 L191.2,10L228.9,2z M160.6,56l-45.8-29.7l38-8.1l45.8,29.7L160.6,56z M84.5,72.1L38.8,42.4l38-8.1l45.8,29.7L84.5,72.1z M10,88 L2,50.2L47.8,80L10,88z\" fill=\"currentColor\"/>\n    </g></svg>\n\n    <span>#{online_mod_title}</span>\n    </div>";
+    var button = "<div class=\"full-start__button selector view--online_mod\" data-subtitle=\"online_mod " + mod_version + "\">\n    <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:svgjs=\"http://svgjs.com/svgjs\" version=\"1.1\" width=\"512\" height=\"512\" x=\"0\" y=\"0\" viewBox=\"0 0 244 260\" style=\"enable-background:new 0 0 512 512\" xml:space=\"preserve\" class=\"\">\n    <g xmlns=\"http://www.w3.org/2000/svg\">\n        <path d=\"M242,88v170H10V88h41l-38,38h37.1l38-38h38.4l-38,38h38.4l38-38h38.3l-38,38H204L242,88L242,88z M228.9,2l8,37.7l0,0 L191.2,10L228.9,2z M160.6,56l-45.8-29.7l38-8.1l45.8,29.7L160.6,56z M84.5,72.1L38.8,42.4l38-8.1l45.8,29.7L84.5,72.1z M10,88 L2,50.2L47.8,80L10,88z\" fill=\"currentColor\"/>\n    </g></svg>\n\n    <span>#{online_mod_title}</span>\n    </div>";
     Lampa.Listener.follow('full', function (e) {
       if (e.type == 'complite') {
         var btn = $(Lampa.Lang.translate(button));
@@ -16271,7 +16259,7 @@
 
     function addSettingsOnlineMod() {
       if (Lampa.Settings.main && Lampa.Settings.main() && !Lampa.Settings.main().render().find('[data-component="online_mod"]').length) {
-        var field = $(Lampa.Lang.translate("<div class=\"settings-folder selector\" data-component=\"online_mod\">\n            <div class=\"settings-folder__icon\">\n                <svg viewBox=\"0 0 32 32\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\" enable-background=\"new 0 0 32 32\"><path d=\"m17 14.5 4.2-4.5L4.9 1.2c-.1-.1-.3-.1-.6-.2L17 14.5zM23 21l5.9-3.2c.7-.4 1.1-1 1.1-1.8s-.4-1.5-1.1-1.8L23 11l-4.7 5 4.7 5zM2.4 1.9c-.3.3-.4.7-.4 1.1v26c0 .4.1.8.4 1.2L15.6 16 2.4 1.9zM17 17.5 4.3 31c.2 0 .4-.1.6-.2L21.2 22 17 17.5z\" fill=\"currentColor\" fill=\"#ffffff\" class=\"fill-000000\"></path></svg>\n            </div>\n            <div class=\"settings-folder__name\">#{online_mod_title_full}</div>\n        </div>"));
+        var field = $(Lampa.Lang.translate("<div class=\"settings-folder selector\" data-component=\"online_mod\">\n            <div class=\"settings-folder__icon\">\n                <svg height=\"260\" viewBox=\"0 0 244 260\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                <path d=\"M242,88v170H10V88h41l-38,38h37.1l38-38h38.4l-38,38h38.4l38-38h38.3l-38,38H204L242,88L242,88z M228.9,2l8,37.7l0,0 L191.2,10L228.9,2z M160.6,56l-45.8-29.7l38-8.1l45.8,29.7L160.6,56z M84.5,72.1L38.8,42.4l38-8.1l45.8,29.7L84.5,72.1z M10,88 L2,50.2L47.8,80L10,88z\" fill=\"white\"/>\n                </svg>\n            </div>\n            <div class=\"settings-folder__name\">#{online_mod_title_full}</div>\n        </div>"));
         Lampa.Settings.main().render().find('[data-component="more"]').after(field);
         Lampa.Settings.main().update();
       }

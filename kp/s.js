@@ -13,25 +13,22 @@
 
   var host = 'https://bwa.to';
 
-  var hostcloud = ["http://bwa-cloud.cfhttp.top/online.js"];
-  var hostcloud_version = '?v=130424';
+  var hostcloud = ['http://bwa.to/cloud.js', 'http://bwa.to/cloud-sisi.js'];
+  var hostcloud_version = '?v=060424';
   
   var framework = 'https://bwa.pages.dev';
-  var framework_version = '?v=130424';
+  var framework_version = '?v=060424';
 
-  var plugins = ["o.js"];
+  var plugins = ["s.js"];
   var plugins_version = '?v=060424-14';
 
 
   function putcloud() {
-    Lampa.Utils.putScriptAsync(hostcloud.map(function(u) {
+    Lampa.Utils.putScriptAsync(hostcloud.filter(function(u) {
+      return plugins.length == 2 || u.includes('cloud.js');
+    }).map(function(u) {
       return u + hostcloud_version;
     }), function() {});
-  }
-  
-  if (Lampa.Platform.is('android') == false && Lampa.Platform.is('browser') == false) {
-    putcloud();
-    return;
   }
 
 
@@ -50,7 +47,7 @@
     s.onload = function() {
       if (typeof Blazor == 'undefined') {
         window.blazor_error = true;
-        putcloud();
+		putcloud();
         return;
       }
 
