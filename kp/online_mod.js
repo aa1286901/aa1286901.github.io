@@ -3988,8 +3988,8 @@
 
             var _stream_url = _file.link || '';
 
-            var _stream_url = _stream_url.replace(/\/s\/(.*?)\//g, "/s/FHwo_f_yrEyK57iGFyzmay8kFBQUFBSU5ST0VFUjBGTFJBUERWbEJBaw.tDljHLtkeCBPHtBxOAXW_xRZ99_2JtUj5lS_yA/");
-            alert(_stream_url);
+            var _stream_url = _stream_url.replace(/\/s\/(.*?)\//g, "/s/FHujb45y7-AtIzxxYSO32vjkFBQUFBSzZVTjBFUjBGSjFCZkRTY2dBaw.ujcIPrTgPhxq2u0fXyYtCIQYhKrvzNWyCvx1xQ/");
+           // alert(_stream_url);
             if (prefer_http) _stream_url = _stream_url.replace('https://', 'http://');
 
             if (secret) {
