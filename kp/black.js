@@ -25,6 +25,8 @@
     Lampa.Utils.putScriptAsync([
           './o.js',
         'https://lampame.github.io/main/pubtorr.js',
+        'https://bylampa.github.io/freetorr.js',
+        'https://bylampa.github.io/jackett.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
