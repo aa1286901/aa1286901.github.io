@@ -3124,9 +3124,6 @@ body.card--no-cover .full-start__background {
     overflow: auto;
   }
 }
-.full-start-new__buttons .full-start__button:not(.focus) span {
-  display: none;
-}
 
 @media screen and (min-width: 767px) {
   body.no--poster .full-start-new__left {
