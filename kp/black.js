@@ -4,7 +4,7 @@
     
     Lampa.Platform.tv();
    // localStorage.clear();
-    Lampa.Storage.set('parser_use', 'true');
+    Lampa.Storage.set('parser_use', 'false');
     Lampa.Storage.set('jackett_url', 'jacred.xyz');
     Lampa.Storage.set('screensaver', 'false');
     Lampa.Storage.set('card_interfice_reactions', 'false');
@@ -40,8 +40,8 @@ Lampa.Settings.listener.follow('open', function (e) {
      $('div[data-component="tmdb"]').remove();
      $('div[data-component="sisi"]').remove();
      $('div[data-component="my_iptv2"]').remove();
-   //  $('div[data-name="jackett_url"]').remove();
-  //   $('div[data-component="server"]').remove();
+     $('div[data-component="parser"]').remove();
+     $('div[data-component="server"]').remove();
      $('div[data-component="parental_control"]').remove();
      $('div[data-component="filmix"]').remove();
    }, 5)
