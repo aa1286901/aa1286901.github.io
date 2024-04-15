@@ -14,6 +14,7 @@
     Lampa.Storage.set('online_mod_proxy_videodb', 'true');
     Lampa.Storage.set('online_mod_proxy_kinobase', 'true');
     Lampa.Storage.set('online_mod_proxy_cdnmovies', 'true');
+    Lampa.Storage.set('online_mod_balanser', 'rezka2');
 
 	/*Запуск сторонних плагинов*/   
     Lampa.Utils.putScriptAsync([
@@ -40,7 +41,7 @@ Lampa.Settings.listener.follow('open', function (e) {
      $('div[data-component="sisi"]').remove();
      $('div[data-component="my_iptv2"]').remove();
    //  $('div[data-name="jackett_url"]').remove();
-     $('div[data-component="server"]').remove();
+  //   $('div[data-component="server"]').remove();
      $('div[data-component="parental_control"]').remove();
      $('div[data-component="filmix"]').remove();
    }, 5)

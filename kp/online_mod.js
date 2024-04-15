@@ -14371,37 +14371,12 @@
       voice: Lampa.Lang.translate('torrent_parser_voice'),
       source: Lampa.Lang.translate('settings_rest_source')
     };
-    var obj_filter_sources = [{
-      name: 'videocdn',
-      title: 'VideoCDN'
-    }, {
-      name: 'rezka2',
-      title: 'HDrezka'
-    }, {
-      name: 'collaps',
-      title: 'Collaps'
-    }, {
-      name: 'cdnmovies',
-      title: 'CDNMovies'
-    }, {
-      name: 'filmix2',
-      title: 'Filmix'
-    }, {
-      name: 'zetflix',
-      title: 'Zetflix'
-    }, {
-      name: 'redheadsound',
-      title: 'RedHeadSound'
-    }, {
-      name: 'cdnvideohub',
-      title: 'CDNVideoHub'
-    }, {
-      name: 'anilibria',
-      title: 'AniLibria'
-    }, {
-      name: 'kodik',
-      title: 'Kodik'
-    }];
+    var obj_filter_sources = []
+    obj_filter_sources.push({name: 'filmix2', title: 'Filmix ~ 4K'})
+    obj_filter_sources.push({name: 'rezka2', title: 'HDrezka ~ 2K'})
+    obj_filter_sources.push({name: 'zetflix', title: 'Zetflix ~ 1080p'})
+    obj_filter_sources.push({name: 'collaps', title: 'Collaps ~ 720p'})
+    obj_filter_sources.push({name: 'kodik', title: 'Kodik ~ 720p'})
     //obj_filter_sources.push({name: 'videodb', title: 'VideoDB'})
     //obj_filter_sources.push({name: 'alloha', title: 'Alloha'})
     //obj_filter_sources.push({name: 'rezka', title: 'Voidboost'})
