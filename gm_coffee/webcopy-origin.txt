@@ -1,0 +1,48 @@
+Uri: https://espresso-app.uiinitiative.com/
+File Name: C:\Downloaded Web Sites\espresso-app.uiinitiative.com\index.htm
+Content Type: text/html
+
+Uri: https://espresso-app.uiinitiative.com/assets/Framework7Icons-Regular.a42aa071.woff2
+File Name: C:\Downloaded Web Sites\espresso-app.uiinitiative.com\assets\Framework7Icons-Regular.a42aa071.woff2
+Content Type: font/woff2
+
+Uri: https://espresso-app.uiinitiative.com/assets/Framework7Icons-Regular.eba1e821.woff
+File Name: C:\Downloaded Web Sites\espresso-app.uiinitiative.com\assets\Framework7Icons-Regular.eba1e821.woff
+Content Type: font/woff
+
+Uri: https://espresso-app.uiinitiative.com/assets/index.9b75cbd9.css
+File Name: C:\Downloaded Web Sites\espresso-app.uiinitiative.com\assets\index.9b75cbd9.css
+Content Type: text/css
+
+Uri: https://espresso-app.uiinitiative.com/assets/index.baec4168.js
+File Name: C:\Downloaded Web Sites\espresso-app.uiinitiative.com\assets\index.baec4168.js
+Content Type: application/javascript
+
+Uri: https://espresso-app.uiinitiative.com/assets/manifest.057254d6.json
+File Name: C:\Downloaded Web Sites\espresso-app.uiinitiative.com\assets\manifest.057254d6.json
+Content Type: application/json
+
+Uri: https://espresso-app.uiinitiative.com/assets/material-icons.75ea7773.woff
+File Name: C:\Downloaded Web Sites\espresso-app.uiinitiative.com\assets\material-icons.75ea7773.woff
+Content Type: font/woff
+
+Uri: https://espresso-app.uiinitiative.com/assets/material-icons.ff253fe1.woff2
+File Name: C:\Downloaded Web Sites\espresso-app.uiinitiative.com\assets\material-icons.ff253fe1.woff2
+Content Type: font/woff2
+
+Uri: https://espresso-app.uiinitiative.com/assets/vendor.a9949477.js
+File Name: C:\Downloaded Web Sites\espresso-app.uiinitiative.com\assets\vendor.a9949477.js
+Content Type: application/javascript
+
+Uri: https://espresso-app.uiinitiative.com/icons/apple-touch-icon.png
+File Name: C:\Downloaded Web Sites\espresso-app.uiinitiative.com\icons\apple-touch-icon.png
+Content Type: image/png
+
+Uri: https://espresso-app.uiinitiative.com/icons/favicon.png
+File Name: C:\Downloaded Web Sites\espresso-app.uiinitiative.com\icons\favicon.png
+Content Type: image/png
+
+Uri: https://static.cloudflareinsights.com/beacon.min.js
+File Name: C:\Downloaded Web Sites\espresso-app.uiinitiative.com\beacon.min.js
+Content Type: text/javascript
+

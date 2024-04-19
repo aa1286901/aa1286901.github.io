@@ -1,0 +1,118 @@
+    
+ [
+ {
+        "id": 1,
+        "title": "Espresso",
+        "description":
+          "Our smooth signature Espresso Roast with rich flavor and caramelly sweetness is at the very heart of everything we do.",
+        "ingredients": ["Brewed Espresso"],
+        "image": "images/catalog/1.jpg",
+        "price": 1.6,
+        "categoryId": 1
+      },
+      {
+        "id": 2,
+        "title": "Espresso Con Panna",
+        "description":
+          "Espresso meets a dollop of whipped cream to enhance the rich and caramelly flavors of a straight-up shot.",
+        "ingredients": ["Brewed Espresso", "Whipped Cream", "Vanilla Syrup"],
+        "image": "images/catalog/2.jpg",
+        "price": 1.75,
+        "categoryId": 1
+      },
+      {
+        "id": 3,
+        "title": "Pumpkin Spice Latte",
+        "description":
+          "Our signature espresso and steamed milk with the celebrated flavor combination of pumpkin, cinnamon, nutmeg and clove. Enjoy it topped with whipped cream and real pumpkin-pie spices.",
+        "ingredients": [
+          "Milk",
+          "Pumpkin Spice Sauce",
+          "Brewed Espresso",
+          "Whipped Cream"
+        ],
+        "image": "images/catalog/3.jpg",
+        "price": 2.55,
+        "categoryId": 3
+      },
+      {
+        "id": 4,
+        "title": "Honey Oatmilk Latte",
+        "description":
+          "Oatmilk and signature espresso are intentionally combined with a hint of honey and a toasted honey topping—a savory tribute to all things sweet and salty.",
+        "ingredients": [
+          "Oatmilk",
+          "Brewed Espresso",
+          "Honey Blend",
+          "Toasted Honey Topping"
+        ],
+        "image": "images/catalog/4.jpg",
+        "price": 2.6,
+        "categoryId": 3
+      },
+      {
+        "id": 5,
+        "title": "Caffè Latte",
+        "description":
+          "Our dark, rich espresso balanced with steamed milk and a light layer of foam. A perfect milk-forward warm-up.",
+        "ingredients": ["Milk", "Brewed Espresso"],
+        "image": "images/catalog/5.jpg",
+        "categoryId": 3,
+        "price": 2.4
+      },
+      {
+        "id": 6,
+        "title": "Cinnamon Dolce Latte",
+        "description":
+          "We add freshly steamed milk and cinnamon dolce-flavored syrup to our classic espresso, topped with sweetened whipped cream and a cinnamon dolce topping to bring you specialness in a treat.",
+        "ingredients": [
+          "Milk",
+          "Brewed Espresso",
+          "Cinnamon Dolce Syrup",
+          "Whipped Cream"
+        ],
+        "image": "images/catalog/6.jpg",
+        "categoryId": 3,
+        "price": 2.85
+      },
+      {
+        "id": 7,
+        "title": "Latte",
+        "description":
+          "Small-lot espresso balanced with steamed milk and a light layer of foam forms a perfectly handcrafted latte.",
+        "ingredients": ["Milk", "Brewed Espresso"],
+        "image": "images/catalog/7.jpg",
+        "categoryId": 3,
+        "price": 2.5
+      },
+      {
+        "id": 8,
+        "title": "Hazelnut Bianco Latte",
+        "description":
+          "House-made hazelnut-praline-infused milk combined with our small-lot  espresso—a true character of sweetly nut love.",
+        "ingredients": ["Milk", "Brewed Espresso"],
+        "image": "images/catalog/8.jpg",
+        "categoryId": 3,
+        "price": 3.1
+      },
+      {
+        "id": 9,
+        "title": "Blonde Vanilla Latte",
+        "description":
+          "Extra-smooth espresso, velvety steamed milk and vanilla syrup come together to create a delightful new twist on a beloved espresso classic. An ideal cup for those who prefer a lighter-roasted coffee.",
+        "ingredients": ["Milk", "Brewed Espresso", "Vanilla Syrup"],
+        "image": "images/catalog/9.jpg",
+        "categoryId": 3,
+        "price": 3.2
+      },
+      {
+        "id": 10,
+        "title": "Cappuccino",
+        "description":
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        "ingredients": ["Milk", "Brewed Espresso"],
+        "image": "images/catalog/10.jpg",
+        "categoryId": 2,
+        "price": 1.9
+      }
+    ]
