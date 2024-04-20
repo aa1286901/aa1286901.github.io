@@ -213,15 +213,256 @@ const h = p({
           "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
         ingredients: ["Milk", "Brewed Espresso"],
         image: "images/catalog/no.jpg",
-        categoryId: 4,
+        categoryId: 1,
         price: 50,
+      },
+      {
+        id: 11,
+        title: "Гляссе",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 3,
+        price: 100,
+      },
+      {
+        id: 12,
+        title: "Фраппе",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 3,
+        price: 150,
+      },
+      {
+        id: 13,
+        title: "Айс Фюри",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 3,
+        price: 200,
+      },
+      {
+        id: 14,
+        title: "Айс Латте",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 3,
+        price: 150,
+      },
+      {
+        id: 15,
+        title: "Бамбл на соке",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 3,
+        price: 150,
+      },
+      {
+        id: 16,
+        title: "Колд Брю",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 3,
+        price: 100,
+      },
+      {
+        id: 17,
+        title: "Орео",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 4,
+        price: 150,
+      },
+      {
+        id: 18,
+        title: "Сникерс",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 4,
+        price: 150,
+      },
+      {
+        id: 19,
+        title: "Пеликан",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 4,
+        price: 150,
+      },
+      {
+        id: 20,
+        title: "Черника",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 4,
+        price: 180,
+      },
+      {
+        id: 21,
+        title: "Малина",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 4,
+        price: 180,
+      },
+      {
+        id: 22,
+        title: "Клубника",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 4,
+        price: 180,
+      },
+      {
+        id: 23,
+        title: "Ежевика",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 4,
+        price: 180,
+      },
+      {
+        id: 24,
+        title: "Ягодный микс",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 4,
+        price: 200,
+      },
+      {
+        id: 25,
+        title: "Молочно банановый",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 4,
+        price: 150,
+      },
+      {
+        id: 26,
+        title: "Шоколадно банановый",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 4,
+        price: 150,
+      },
+      {
+        id: 27,
+        title: "Махито классический",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 5,
+        price: 150,
+      },
+      {
+        id: 28,
+        title: "Махито клубничный",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 5,
+        price: 150,
+      },
+      {
+        id: 29,
+        title: "Махито апельсин",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 5,
+        price: 150,
+      },
+      {
+        id: 30,
+        title: "Голубая лагуна",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 5,
+        price: 150,
+      },
+      {
+        id: 31,
+        title: "Апельсин маракуя",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 5,
+        price: 150,
+      },
+      {
+        id: 32,
+        title: "Манго маракуя",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 5,
+        price: 150,
+      },
+      {
+        id: 33,
+        title: "Апельсиновый сок",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 5,
+        price: 100,
+      },
+      {
+        id: 34,
+        title: "Гранатовый сок",
+        description:
+          "Dark, rich espresso lies in wait under a smoothed and stretched layer of thick milk foam. An alchemy of barista artistry and craft.",
+        ingredients: ["Milk", "Brewed Espresso"],
+        image: "images/catalog/no.jpg",
+        categoryId: 5,
+        price: 100,
       },
     ],
     categories: [
       { id: 1, title: "Черное кофе" },
       { id: 2, title: "Кофе с молоком" },
       { id: 3, title: "Холодное кофе" },
-      { id: 4, title: "Напитки" },
+      { id: 4, title: "Коктейли" },
+      { id: 5, title: "Напитки" },
     ],
     filterCategoryId: null,
     cart:

@@ -1,8 +1,8 @@
 {
-  "name": "Espresso App",
-  "short_name": "Espresso App",
-  "description": "Espresso App",
-  "lang": "en-US",
+  "name": "GM Coffee",
+  "short_name": "GM Coffee",
+  "description": "GM Coffee",
+  "lang": "ru-RU",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#EE350F",
