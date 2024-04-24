@@ -9,17 +9,21 @@
     Lampa.Storage.set('screensaver', 'false');
     Lampa.Storage.set('card_interfice_reactions', 'false');
     Lampa.Storage.set('language', 'ru');
+    Lampa.Storage.set('tmdb_lang', 'ru');
     // Прокси для Онлайн мод
-    //Lampa.Storage.set('online_mod_proxy_rezka', 'true');
-   // Lampa.Storage.set('online_mod_proxy_rezka2', 'true');
-   // Lampa.Storage.set('online_mod_proxy_videodb', 'true');
-   // Lampa.Storage.set('online_mod_proxy_kinobase', 'true');
-  //  Lampa.Storage.set('online_mod_proxy_cdnmovies', 'true');
-  //  Lampa.Storage.set('online_mod_balanser', 'rezka2');
+    Lampa.Storage.set('online_mod_proxy_rezka', 'true');
+    Lampa.Storage.set('online_mod_proxy_rezka2', 'true');
+    Lampa.Storage.set('online_mod_proxy_videodb', 'true');
+    Lampa.Storage.set('online_mod_proxy_kinobase', 'true');
+    Lampa.Storage.set('online_mod_proxy_fancdn', 'true');
+    Lampa.Storage.set('online_mod_proxy_alloha', 'true');
+    Lampa.Storage.set('online_mod_proxy_cdnmovies', 'true');
+    Lampa.Storage.set('online_mod_proxy_redheadsound', 'true');
+    Lampa.Storage.set('online_mod_balanser', 'rezka2');
 
 	/*Запуск сторонних плагинов*/   
     Lampa.Utils.putScriptAsync([
-          './online_mod.js',
+          './online_mod1.js',
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
