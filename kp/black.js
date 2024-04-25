@@ -40,7 +40,7 @@
 Lampa.Settings.listener.follow('open', function (e) {
  if (e.name == 'main') {
    setTimeout(function() {
-     $('div[data-component="plugins"]').remove();
+   //  $('div[data-component="plugins"]').remove();
      $('div[data-component="my_iptv"]').remove();
      $('div[data-component="tmdb"]').remove();
      $('div[data-component="sisi"]').remove();
