@@ -498,8 +498,6 @@ function showPlayer(num, id) {
     if (num == 1) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://api.linktodo.ws/embed/imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 2) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://player.cdnvideohub.com/playerjs?partner=9&kid=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
-    } else if (num == 3) {
         fetch('https://apivb.info/api/videos.json?id_kp=' + id + '&token=f84860deb66d9bac149fdc8c8edba1d4')
             .then(res => res.json())
             .then(function (obj) {
@@ -512,10 +510,12 @@ function showPlayer(num, id) {
             .catch(function (error) {
                 console.log(error);
             });
-    } else if (num == 4) {
+    } else if (num == 3) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://kinoplay2.site/iplayer/videodb.php?kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
-    } else if (num == 5) {
+    } else if (num == 4) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://allo.cdnlbox.club/?token=f688111d44220009e894da7069031c&kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+    } else if (num == 5) {
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://fancdn.net/ember/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 6) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://voidboost.tv/embed/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 7) {
@@ -532,7 +532,7 @@ function showPlayer(num, id) {
                 console.log(error);
             });
     } else if (num == 8) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//militorys.net/van/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://skinny-wilderness.cdnmovies-stream.online/kinopoisk/' + id + '/iframe" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 9) {
         fetch('https://kodikapi.com/search?token=0c9a72daf8747f4eacc2beba552b40ef&limit=1&imdb_id=' + id)
             .then(res => res.json())
@@ -546,6 +546,10 @@ function showPlayer(num, id) {
             .catch(function (error) {
                 console.log(error);
             });
+    } else if (num == 10) {
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://player.cdnvideohub.com/playerjs?partner=9&kid=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+    } else if (num == 11) {
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//militorys.net/van/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     }
 }
 
@@ -589,11 +593,13 @@ function kpid(id) {
     fetch('https://videocdn.tv/api/short?api_token=3i40G5TSECmLF77oAqnEgbx61ZWaOYaE&imdb_id=' + id)
         .then(res => res.json())
         .then(function (data) {
-            document.getElementById("showPlayer2").setAttribute("onclick", "showPlayer(3,'" + data['data']['0']['kp_id'] + "')");
-            document.getElementById("showPlayer3").setAttribute("onclick", "showPlayer(4,'" + data['data']['0']['kp_id'] + "')");
-            document.getElementById("showPlayer4").setAttribute("onclick", "showPlayer(5,'" + data['data']['0']['kp_id'] + "')");
-            document.getElementById("showPlayer8").setAttribute("onclick", "showPlayer(2,'" + data['data']['0']['kp_id'] + "')");
-            document.getElementById("showPlayer9").setAttribute("onclick", "showPlayer(8,'" + data['data']['0']['kp_id'] + "')");
+            document.getElementById("showPlayer2").setAttribute("onclick", "showPlayer(2,'" + data['data']['0']['kp_id'] + "')");
+            document.getElementById("showPlayer3").setAttribute("onclick", "showPlayer(3,'" + data['data']['0']['kp_id'] + "')");
+            document.getElementById("showPlayer4").setAttribute("onclick", "showPlayer(4,'" + data['data']['0']['kp_id'] + "')");
+            document.getElementById("showPlayer5").setAttribute("onclick", "showPlayer(5,'" + data['data']['0']['kp_id'] + "')");
+            document.getElementById("showPlayer8").setAttribute("onclick", "showPlayer(8,'" + data['data']['0']['kp_id'] + "')");
+            document.getElementById("showPlayer10").setAttribute("onclick", "showPlayer(10,'" + data['data']['0']['kp_id'] + "')");
+            document.getElementById("showPlayer11").setAttribute("onclick", "showPlayer(11,'" + data['data']['0']['kp_id'] + "')");
             document.getElementById("showTrayler3").setAttribute("onclick", "showTrayler(3,'" + data['data']['0']['kp_id'] + "')");
             document.getElementById("showTrayler5").setAttribute("onclick", "showTrayler(5,'" + data['data']['0']['kp_id'] + "')");
         })
@@ -711,14 +717,16 @@ function apiItem(id) {
                 <label for="pl" id="show-player" >Показать плеер</label>\
                 <div id="show_pl" class="dropdown-content" style="text-align: left;">\
                     <a id="showPlayer1" onclick="showPlayer(1,\'' + obj['external_ids']['imdb_id'] + '\')">Плеер #1 <span style="font-size:6px">(Callaps)</span></a>\
-                    <a id="showPlayer2" onclick="showPlayer(3,\'' + kp_id + '\')">Плеер #2 <span style="font-size:6px">(DBHDVB)</span></a>\
-                    <a id="showPlayer3" onclick="showPlayer(4,\'' + kp_id + '\')">Плеер #3 <span style="font-size:6px">(VideoDB)</span></a>\
-                    <a id="showPlayer4" onclick="showPlayer(5,\'' + kp_id + '\')">Плеер #4 <span style="font-size:6px">(Alloha)</span></a>\
-                    <a id="showPlayer5" onclick="showPlayer(6,\'' + obj['external_ids']['imdb_id'] + '\')">Плеер #5 <span style="font-size:6px">(HDRezha)</span></a>\
-                    <a id="showPlayer6" onclick="showPlayer(7,\'' + obj['external_ids']['imdb_id'] + '\')">Плеер #6 <span style="font-size:6px">(VideoCDN)</span></a>\
-                    <a id="showPlayer7" onclick="showPlayer(9,\'' + obj['external_ids']['imdb_id'] + '\')">Плеер #7 <span style="font-size:6px">(KodikBD)</span></a>\
-                    <a id="showPlayer8" onclick="showPlayer(2,\'' + kp_id + '\')">Плеер #8 <span style="font-size:6px">(RedHeadSound)</span></a>\
-                    <a id="showPlayer9" onclick="showPlayer(8,\'' + kp_id + '\')">Плеер #9 <span style="font-size:6px">(Militorys)</span></a>\
+                    <a id="showPlayer2" onclick="showPlayer(2,\'' + kp_id + '\')">Плеер #2 <span style="font-size:6px">(DBHDVB)</span></a>\
+                    <a id="showPlayer3" onclick="showPlayer(3,\'' + kp_id + '\')">Плеер #3 <span style="font-size:6px">(VideoDB)</span></a>\
+                    <a id="showPlayer4" onclick="showPlayer(4,\'' + kp_id + '\')">Плеер #4 <span style="font-size:6px">(Alloha)</span></a>\
+                    <a id="showPlayer5" onclick="showPlayer(5,\'' + kp_id + '\')">Плеер #5 <span style="font-size:6px">(FanCDN)</span></a>\
+                    <a id="showPlayer6" onclick="showPlayer(6,\'' + obj['external_ids']['imdb_id'] + '\')">Плеер #6 <span style="font-size:6px">(HDRezha)</span></a>\
+                    <a id="showPlayer7" onclick="showPlayer(7,\'' + obj['external_ids']['imdb_id'] + '\')">Плеер #7 <span style="font-size:6px">(VideoCDN)</span></a>\
+                    <a id="showPlayer8" onclick="showPlayer(8,\'' + kp_id + '\')">Плеер #8 <span style="font-size:6px">(CDNMovies)</span></a>\
+                    <a id="showPlayer9" onclick="showPlayer(9,\'' + obj['external_ids']['imdb_id'] + '\')">Плеер #9 <span style="font-size:6px">(KodikBD)</span></a>\
+                    <a id="showPlayer10" onclick="showPlayer(10,\'' + kp_id + '\')">Плеер #10 <span style="font-size:6px">(RedHeadSound)</span></a>\
+                    <a id="showPlayer11" onclick="showPlayer(11,\'' + kp_id + '\')">Плеер #11 <span style="font-size:6px">(Militorys)</span></a>\
                 </div>\
                 <input type="checkbox" class="show_tr" id="tr" style="display:none">\
                 <label for="tr" id="show-player" >Показать трейлер</label>\
