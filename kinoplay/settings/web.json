@@ -1,0 +1,177 @@
+{
+  "apn": "https://apn.watch",
+  "corsehost": "https://cors.apn.monster",
+  "sisi": {
+    "rsize": true,
+	"heightPicture": 200
+  },
+  "online": {
+    "checkOnlineSearch": false
+  },
+  "BongaCams": {
+    "overridehost": "https://bwa-cloud.apn.monster/bgs",
+    "enable": true
+  },
+  "Chaturbate": {
+    "host": "https://m.chaturbate.com",
+    "enable": true,
+    "corseu": true
+  },
+  "Ebalovo": {
+    "host": "https://www.ebalovo.pro",
+    "enable": true
+  },
+  "HQporner": {
+    "host": "https://m.hqporner.com",
+    "enable": true
+  },
+  "Eporner": {
+    "overridehost": "https://bwa-cloud.apn.monster/epr",
+    "enable": true
+  },
+  "Porntrex": {
+    "host": "https://www.porntrex.com",
+    "enable": true
+  },
+  "Spankbang": {
+    "host": "https://ru.spankbang.com",
+    "enable": true
+  },
+  "PornHub": {
+    "host": "https://rt.pornhub.com",
+    "enable": true,
+    "corseu": true
+  },
+  "Xhamster": {
+    "host": "https://ru.xhamster.com",
+    "enable": true,
+    "corseu": true
+  },
+  "Xnxx": {
+    "overridehost": "https://bwa-cloud.apn.monster/xnx",
+    "enable": true
+  },
+  "Xvideos": {
+    "overridehost": "https://bwa-cloud.apn.monster/xds",
+    "enable": true
+  },
+  "Kinobase": {
+    "host": "https://kinobase.org",
+    "enable": true
+  },
+  "Rezka": {
+    "host": "https://hdrezka.me",
+	"uacdn": "https://prx-ams.ukrtelcdn.net",
+    "enable": true,
+	"hls": true,
+    "corseu": true
+  },
+  "Voidboost": {
+    "host": "https://voidboost.net",
+    "enable": true,
+	"hls": true,
+    "corseu": true
+  },
+  "Collaps": {
+    "host": "https://api.delivembd.ws",
+    "enable": true
+  },
+  "Ashdi": {
+    "host": "https://cors.apn.monster/https://base.ashdi.vip",
+    "enable": true
+  },
+  "Eneyida": {
+    "overridehost": "https://bwa-cloud.apn.monster/lite/eneyida",
+    "enable": true
+  },
+  "Kinoukr": {
+    "overridehost": "https://bwa-cloud.apn.monster/lite/kinoukr",
+    "enable": true
+  },
+  "Kinotochka": {
+    "host": "https://kinovibe.co",
+    "enable": true,
+    "corseu": true
+  },
+  "Redheadsound": {
+    "host": "https://redheadsound.studio",
+    "enable": true,
+    "corseu": true
+  },
+  "iRemux": {
+    "host": "https://remux.host",
+    "enable": true,
+	"corseu": true,
+	"geostreamproxy": ["UA"]
+  },
+  "Filmix": {
+    "host": "http://filmixapp.cyou",
+    "enable": true,
+    "token": "",
+    "pro": true
+  },
+  "VoKino": {
+    "enable": true,
+    "host": "http://api.vokino.tv",
+    "token": ""
+  },
+  "Zetflix": {
+    "overridehost": "https://bwa-cloud.apn.monster/lite/zetflix",
+    "enable": true,
+	"hls": true
+  },
+  "VideoDB": {
+	"overridehost": "https://bwa-cloud.apn.monster/lite/videodb",
+	"enable": true,
+    "corseu": true,
+	"hls": true
+  },
+  "CDNmovies": {
+    "host": "https://coldcdn.xyz",
+    "enable": true,
+    "corseu": true
+  },
+  "VDBmovies": {
+    "host": "https://skinny-wilderness.cdnmovies-stream.online",
+    "enable": true,
+    "corseu": false
+  },
+  "VCDN": {
+    "host": "http://36246.svetacdn.in/0HlZgU1l1mw5",
+	"apihost": "https://videocdn.tv",
+	"token": "3i40G5TSECmLF77oAqnEgbx61ZWaOYaE",
+    "enable": true,
+	"hls": true,
+    "corseu": false
+  },
+  "Kodik": {
+    "enable": true,
+    "apihost": "https://kodikapi.com",
+    "linkhost": "https://kodik.info",
+    "token": "71d163b40d50397a86ca54c366f33b72",
+	"hls": true,
+    "corseu": true
+  },
+  "KinoPub": {
+    "enable": true,
+    "host": "https://api.srvkp.com",
+    "filetype": "hls4",
+    "token": ""
+  },
+  "AnilibriaOnline": {
+    "host": "https://api.anilibria.tv",
+    "enable": true
+  },
+  "Animevost": {
+    "overridehost": "https://bwa-cloud.apn.monster/lite/animevost",
+    "enable": true
+  },
+  "AniMedia": {
+    "overridehost": "https://bwa-cloud.apn.monster/lite/animedia",
+    "enable": true
+  },
+  "HDVB": {
+    "overridehost": "https://bwa-cloud.apn.monster/lite/hdvb",
+    "enable": true
+  }
+}
