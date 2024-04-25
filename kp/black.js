@@ -4,12 +4,10 @@
     
     Lampa.Platform.tv();
    // localStorage.clear();
-    Lampa.Storage.set('parser_use', 'true');
+    Lampa.Storage.set('parser_use', 'false');
     Lampa.Storage.set('jackett_url', 'jacred.xyz');
     Lampa.Storage.set('screensaver', 'false');
     Lampa.Storage.set('card_interfice_reactions', 'false');
-    Lampa.Storage.set('language', 'ru');
-    Lampa.Storage.set('tmdb_lang', 'ru');
     // Прокси для Онлайн мод
     Lampa.Storage.set('online_mod_proxy_rezka', 'true');
     Lampa.Storage.set('online_mod_proxy_rezka2', 'true');
@@ -22,14 +20,16 @@
     Lampa.Storage.set('online_mod_balanser', 'rezka2');
 
 	/*Запуск сторонних плагинов*/   
-    Lampa.Utils.putScriptAsync([
-          './online_mod1.js',
+  Lampa.Utils.putScriptAsync(['./online_mod.js'], function() {})  
+  Lampa.Utils.putScriptAsync([
           './tmdbproxy.js',
           './collections.js', 
           './tracks.js',
           './pubtorr.js',
           './cors.js',
           './radio.js',
+          './rating.js',
+          './otzyv.js',
           ], function () {});
 
 	/*Удаляем ненужное из меню настроек*/
@@ -40,13 +40,14 @@
 Lampa.Settings.listener.follow('open', function (e) {
  if (e.name == 'main') {
    setTimeout(function() {
-   //  $('div[data-component="plugins"]').remove();
+     $('div[data-component="plugins"]').remove();
      $('div[data-component="my_iptv"]').remove();
      $('div[data-component="tmdb"]').remove();
      $('div[data-component="sisi"]').remove();
      $('div[data-component="my_iptv2"]').remove();
      $('div[data-name="jackett_url"]').remove();
      $('div[data-component="server"]').remove();
+     $('div[data-component="parser"]').remove();
      $('div[data-component="parental_control"]').remove();
      $('div[data-component="filmix"]').remove();
    }, 5)
@@ -98,7 +99,7 @@ Lampa.Settings.listener.follow('open', function (e) {
          $('.view--trailer').insertBefore($('.button--play'));
            $('.view--torrent').insertBefore($('.view--trailer'));
 	 $('.button--play').remove();
-   $('.view--torrent').remove();
+  // $('.view--torrent').remove();
 	 $(".view--online_mod", Lampa.Activity.active().activity.render()).empty().append('<svg viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 32 32"><path d="m17 14.5 4.2-4.5L4.9 1.2c-.1-.1-.3-.1-.6-.2L17 14.5zM23 21l5.9-3.2c.7-.4 1.1-1 1.1-1.8s-.4-1.5-1.1-1.8L23 11l-4.7 5 4.7 5zM2.4 1.9c-.3.3-.4.7-.4 1.1v26c0 .4.1.8.4 1.2L15.6 16 2.4 1.9zM17 17.5 4.3 31c.2 0 .4-.1.6-.2L21.2 22 17 17.5z" fill="currentColor" fill="#ffffff" class="fill-000000"></path></svg>&nbsp;&nbsp;Смотреть Онлайн');
           Lampa.Controller.toggle('full_start');
        },10);
@@ -136,10 +137,13 @@ if (!Lampa.Storage.get('player_def')) {
            var mult = $('<li class="menu__item selector" data-action="mult"><div class="menu__ico">' + ico + '</div><div class="menu__text">Мультфильмы</div></li>');
            mult.on('hover:enter', function() { Lampa.Activity.push({"url":"movie","title":"Мультфильмы","component":"category","genres":16,"id":16,"source":"source","card_type":true,"page":1}) });
                 $('.menu .menu__list').eq(0).append(mult);
-                  setTimeout(function() {$("[data-action=mult]").insertBefore($("[data-action=catalog]"));}, 2000)
+                  setTimeout(function() {$("[data-action=mult]").insertBefore($("[data-action=catalog]"));}, 1000)
            }
-  setTimeout(function() { multstart() },2000)
+  setTimeout(function() { multstart() },1000)
    
+  //////////////////////////////////
+  
+
       /*Start FIX*/
     
     
