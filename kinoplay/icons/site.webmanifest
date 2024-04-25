@@ -1,0 +1,19 @@
+{
+    "name": "KinoDrix",
+    "short_name": "KinoDrix",
+    "icons": [
+        {
+            "src": "logo_16x167.png",
+            "sizes": "167x167",
+            "type": "image/png"
+        },
+        {
+            "src": "logo_180x180.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#1e1e1e",
+    "background_color": "#1e1e1e",
+    "display": "standalone"
+}
