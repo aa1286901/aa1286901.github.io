@@ -496,7 +496,7 @@ function _isContains(json, value) {
 
 function showPlayer(num, id) {
     if (num == 1) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://api.linktodo.ws/embed/imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//api.linktodo.ws/embed/imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 2) {
         fetch('https://apivb.info/api/videos.json?id_kp=' + id + '&token=f84860deb66d9bac149fdc8c8edba1d4')
             .then(res => res.json())
@@ -511,13 +511,13 @@ function showPlayer(num, id) {
                 console.log(error);
             });
     } else if (num == 3) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://kinoplay2.site/iplayer/videodb.php?kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//kinoplay2.site/iplayer/videodb.php?kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 4) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://allo.cdnlbox.club/?token=f688111d44220009e894da7069031c&kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//allohavideo.net/?token=f688111d44220009e894da7069031c&kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 5) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://fancdn.net/ember/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//fancdn.net/ember/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 6) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://voidboost.tv/embed/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//voidboost.tv/embed/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 7) {
         fetch('https://videocdn.tv/api/short?api_token=3i40G5TSECmLF77oAqnEgbx61ZWaOYaE&imdb_id=' + id)
             .then(res => res.json())
@@ -532,7 +532,7 @@ function showPlayer(num, id) {
                 console.log(error);
             });
     } else if (num == 8) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://skinny-wilderness.cdnmovies-stream.online/kinopoisk/' + id + '/iframe" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//skinny-wilderness.cdnmovies-stream.online/kinopoisk/' + id + '/iframe" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 9) {
         fetch('https://kodikapi.com/search?token=0c9a72daf8747f4eacc2beba552b40ef&limit=1&imdb_id=' + id)
             .then(res => res.json())
@@ -547,7 +547,7 @@ function showPlayer(num, id) {
                 console.log(error);
             });
     } else if (num == 10) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://player.cdnvideohub.com/playerjs?partner=9&kid=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//player.cdnvideohub.com/playerjs?partner=9&kid=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 11) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//militorys.net/van/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     }
@@ -572,7 +572,7 @@ function showTrayler(num, id) {
             .then(res => res.json())
             .then(function (obj) {
                 if (_isContains(obj, "YouTube") == true) {
-                    document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://www.youtube.com/embed/' + obj['results'][0]['key'] + '?fs=1&modestbranding=1&autoplay=1&showinfo=0&rel=0&iv_load_policy=3" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+                    document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//www.youtube.com/embed/' + obj['results'][0]['key'] + '?fs=1&modestbranding=1&autoplay=1&showinfo=0&rel=0&iv_load_policy=3" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
                 } else {
                     document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="./error.html" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
                 }
@@ -583,9 +583,10 @@ function showTrayler(num, id) {
     } else if (num == 4) {
         document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//api.embr.ws/embed/trailer-imdb/' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 5) {
-        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="https://polati.newplayjj.com:9443/t/?token=2820224373db9f144b6c9feb75e345&kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//allohavideo.net/t/?token=2820224373db9f144b6c9feb75e345&kp=' + id + '" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
     } else if (num == 3) {
-        window.open('https://widgets.kinopoisk.ru/discovery/film/' + id + '/?noAd=1&onlyPlayer=1', '_blank').focus();
+        document.getElementById('Content-img').innerHTML = '<iframe class="iframe" src="//widgets.kinopoisk.ru/discovery/film/' + id + '/?noAd=1&onlyPlayer=1" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen="" seamless></iframe>';
+    	//window.open('https://widgets.kinopoisk.ru/discovery/film/' + id + '/?noAd=1&onlyPlayer=1', '_blank').focus();
     }
 }
 
