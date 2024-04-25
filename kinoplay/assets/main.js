@@ -115,7 +115,7 @@ window.onclick = function (event) {
 function apiSearch() {
     var input = document.getElementById('search_input');
     if (input.value.length > 0) {
-        fetch(`https://apitmdb.cub.red/3/search/multi?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru&query=` + encodeURI(input.value))
+        fetch(`https://tmdb.ab2024.ru/3/search/multi?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru&query=` + encodeURI(input.value))
             .then(res => res.json())
             .then(function (data) {
                 const mainContent = document.getElementById('mainContent');
@@ -183,7 +183,7 @@ function apiSections() {
     mainContent.innerHTML = '<div class="loader" id="loader" style="margin-bottom: 100%"></div>';
 
     //////// Сегодня в тренде ////////        
-    fetch(`https://apitmdb.cub.red/3/trending/movie/day?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
+    fetch(`https://tmdb.ab2024.ru/3/trending/movie/day?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
         .then(res => res.json())
         .then(function (data) {
             var divtitle = '<div class="title-wrap">\
@@ -228,7 +228,7 @@ function apiSections() {
         });
 
     ///////// В тренде за неделю ////////
-    fetch(`https://apitmdb.cub.red/3/trending/movie/week?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
+    fetch(`https://tmdb.ab2024.ru/3/trending/movie/week?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
         .then(res => res.json())
         .then(function (data) {
             var divtitle = '<div class="title-wrap">\
@@ -273,7 +273,7 @@ function apiSections() {
         });
 
     ///////// Популярные фильмы ////////
-    fetch(`https://apitmdb.cub.red/3/movie/popular?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
+    fetch(`https://tmdb.ab2024.ru/3/movie/popular?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
         .then(res => res.json())
         .then(function (data) {
             var divtitle = '<div class="title-wrap">\
@@ -318,7 +318,7 @@ function apiSections() {
         });
 
     ///////// Популярные  сериалы ////////
-    fetch(`https://apitmdb.cub.red/3/trending/tv/week?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
+    fetch(`https://tmdb.ab2024.ru/3/trending/tv/week?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
         .then(res => res.json())
         .then(function (data) {
             var divtitle = '<div class="title-wrap">\
@@ -366,7 +366,7 @@ function apiSections() {
         });
 
     ///////// Топ фильмы ////////
-    fetch(`https://apitmdb.cub.red/3/movie/top_rated?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
+    fetch(`https://tmdb.ab2024.ru/3/movie/top_rated?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
         .then(res => res.json())
         .then(function (data) {
             var divtitle = '<div class="title-wrap">\
@@ -412,7 +412,7 @@ function apiSections() {
 
 
     ///////// Топ сериалы ////////
-    fetch(`https://apitmdb.cub.red/3/tv/top_rated?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
+    fetch(`https://tmdb.ab2024.ru/3/tv/top_rated?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru`)
         .then(res => res.json())
         .then(function (data) {
             var divtitle = '<div class="title-wrap">\
@@ -551,7 +551,7 @@ function showPlayer(num, id) {
 
 function showTrayler(num, id) {
     if (num == 1) {
-        fetch('https://apitmdb.cub.red/3/' + id + '/videos?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru')
+        fetch('https://tmdb.ab2024.ru/3/' + id + '/videos?api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru')
             .then(res => res.json())
             .then(function (obj) {
                 if (_isContains(obj, "YouTube") == true) {
@@ -564,7 +564,7 @@ function showTrayler(num, id) {
                 console.log(error);
             });
     } else if (num == 2) {
-        fetch('https://apitmdb.cub.red/3/' + id + '/videos?api_key=4ef0d7355d9ffb5151e987764708ce96&language=en')
+        fetch('https://tmdb.ab2024.ru/3/' + id + '/videos?api_key=4ef0d7355d9ffb5151e987764708ce96&language=en')
             .then(res => res.json())
             .then(function (obj) {
                 if (_isContains(obj, "YouTube") == true) {
@@ -613,7 +613,7 @@ function getCookie(name) {
 function apiItem(id) {
     const mainContent = document.getElementById('mainContent');
     mainContent.innerHTML = '<div class="loader"></div>';
-    fetch('https://apitmdb.cub.red/3/' + id + '?append_to_response=content_ratings,release_dates,credits,similar,external_ids,keywords&api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru')
+    fetch('https://tmdb.ab2024.ru/3/' + id + '?append_to_response=content_ratings,release_dates,credits,similar,external_ids,keywords&api_key=4ef0d7355d9ffb5151e987764708ce96&language=ru')
         .then(res => res.json())
         .then(function (obj) {
             if (id.includes('movie')) {
