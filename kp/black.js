@@ -20,7 +20,7 @@
     Lampa.Storage.set('online_mod_balanser', 'rezka2');
 
 	/*Запуск сторонних плагинов*/   
-  Lampa.Utils.putScriptAsync(['./online_mod.js'], function() {})  
+  Lampa.Utils.putScriptAsync(['https://nb557.github.io/plugins/online_mod.js'], function() {})  
   Lampa.Utils.putScriptAsync([
           './tmdbproxy.js',
           './collections.js', 
