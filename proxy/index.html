@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,37 +7,58 @@
     <title>Список прокси для Telegram</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f4f4f4;
+            background-color: #f9f9f9;
+            color: #333;
         }
         h1 {
             text-align: center;
+            color: #4CAF50;
+            margin-bottom: 30px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 5px 0;
-            font-size: 14px;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px;
             text-align: center;
         }
         th {
             background-color: #4CAF50;
             color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        tr {
+            transition: background-color 0.3s;
         }
         tr:nth-child(even) {
             background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #eaeaea;
+        }
+        p {
+            font-size: 16px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .note {
+            font-style: italic;
+            color: #777;
         }
     </style>
 </head>
 <body>
 
-**Список прокси серверов для Telegram**
+<h1>Список прокси серверов для Telegram</h1>
 
 <table>
     <thead>
@@ -57,9 +79,7 @@
     </tbody>
 </table>
 
-**Обновление списка прокси**
-
-<p>Список прокси серверов обновляется каждые 24 часа. Пожалуйста, проверяйте статус перед использованием.</p>
+<p class="note">Список прокси серверов обновляется каждые 24 часа. Пожалуйста, проверяйте статус перед использованием.</p>
 
 </body>
 </html>
