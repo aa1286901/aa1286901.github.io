@@ -1,0 +1,146 @@
+body {
+    font-family: "Arial", sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.status-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 400px;
+    height: 90%;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+/* Цвет вспышки для правильного ответа */
+.status-container.success {
+    background-color: rgba(37, 211, 102, 0.8);
+}
+
+/* Цвет вспышки для неправильного ответа */
+.status-container.error {
+    background-color: rgba(220, 53, 69, 0.8);
+}
+
+.status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 10px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.username {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.time {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.status-content {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.word {
+    font-size: 50px;
+    font-weight: bold;
+    color: #25d366;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+    animation: fadeIn 0.5s linear;
+}
+
+#guessInput {
+    padding: 12px 20px;
+    font-size: 18px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 25px;
+    text-align: center;
+    outline: none;
+    width: 100%;
+    max-width: 300px;
+    transition: all 0.3s ease;
+}
+
+#guessInput:focus {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #25d366;
+    box-shadow: 0 0 10px rgba(37, 211, 102, 0.5);
+}
+
+button {
+    background: #25d366;
+    border: none;
+    color: white;
+    font-size: 18px;
+    padding: 12px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background: #1da359;
+    transform: scale(1.05);
+}
+
+#result {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
