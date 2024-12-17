@@ -13,25 +13,6 @@ const words = [
     { arabic: "هَاتِ", translation: "дай" }
 ];
 
-// Функция для перемешивания массива
-function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
-
-// Перемешиваем массив
-const shuffledWords = shuffle(words);
-
-// Выводим слова в случайном порядке
-shuffledWords.forEach(word => {
-    console.log(`Арабский: ${word.arabic} - Перевод: ${word.translation}`);
-});
-
-
-
 // Переменные для управления состоянием
 let currentIndex = 0;
 
@@ -41,6 +22,14 @@ function showWord() {
     arabicWord.textContent = words[currentIndex].arabic;
     document.getElementById("guessInput").value = ""; // Очистка ввода
     document.getElementById("result").textContent = ""; // Очистка результата
+    document.getElementById("hint").textContent = ""; // Очистка подсказки
+}
+
+// Функция для отображения подсказки (перевода)
+function showHint() {
+    const hint = document.getElementById("hint");
+    hint.textContent = `Подсказка: ${words[currentIndex].translation}`;
+    hint.style.color = "#007bff"; // Синий цвет для подсказки
 }
 
 // Функция для обработки вспышки
