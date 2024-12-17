@@ -1,16 +1,19 @@
 // Массив с арабскими словами и их переводами
 const words = [
-    { arabic: "كِتَابٌ", translation: "книга" },
-    { arabic: "مِحْبَرَةٌ", translation: "чернильница" },
-    { arabic: "كُرَّاسٌ", translation: "брошюра" },
-    { arabic: "نَشَّافَةٌ", translation: "полотенце" },
-    { arabic: "وَرَقٌ", translation: "листок" },
-    { arabic: "هَذَا", translation: "это" },
-    { arabic: "خُذْ", translation: "возьми" },
-    { arabic: "لَوْحٌ", translation: "доска" },
-    { arabic: "مِسْطَرٌ", translation: "линейка" },
-    { arabic: "أَيْنَ", translation: "где?" },
-    { arabic: "هَاتِ", translation: "дай" }
+    { arabic: "كَرَاسِيٌّ", translation: "стулья" },
+    { arabic: "مُعَلِّمُونَ", translation: "учителя" },
+    { arabic: "اِشْتِرَاءٌ", translation: "покупка" },
+    { arabic: "بَيْعٌ", translation: "продажа" },
+    { arabic: "اَلْآنَ", translation: "сейчас" },
+    { arabic: "فَقَطْ", translation: "только" },
+    { arabic: "الْمِصْبَاحُ", translation: "светильник" },
+    { arabic: "رُؤْيَةٌ", translation: "видение" },
+    { arabic: "صَاحِبٌ", translation: "хозяин" },
+    { arabic: "مَعَ", translation: "вместе" },
+    { arabic: "كَتَبْنَا", translation: "мы написали" },
+    { arabic: "قَرَأْتُمْ", translation: "вы прочли" },
+    { arabic: "ذَهَبُوا", translation: "они отправились" },
+    { arabic: "ثُمَّ", translation: "потом" }
 ];
 
 // Переменные для управления состоянием
