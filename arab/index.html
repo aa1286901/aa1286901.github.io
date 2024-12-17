@@ -20,11 +20,14 @@
         </div>
         <div class="status-content">
             <div class="word" id="arabicWord"></div>
-            <input type="text" id="guessInput" placeholder="Введите перевод">
-            <button onclick="checkGuess()">Проверить</button>
-        </div>
-        <div id="result"></div>
-    </div>
+<div id="statusContainer">
+    <h2 id="arabicWord"></h2>
+    <input id="guessInput" placeholder="Введите перевод" type="text" />
+    <button onclick="checkGuess()">Проверить</button>
+    <button onclick="showHint()">Подсказать</button>
+    <p id="result"></p>
+    <p id="hint" style="font-style: italic;"></p>
+</div>
     <script src="script.js"></script>
 </body>
 </html>
