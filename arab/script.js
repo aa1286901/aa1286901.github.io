@@ -13,7 +13,25 @@ const words = [
     { arabic: "كَتَبْنَا", translation: "мы написали" },
     { arabic: "قَرَأْتُمْ", translation: "вы прочли" },
     { arabic: "ذَهَبُوا", translation: "они отправились" },
-    { arabic: "ثُمَّ", translation: "потом" }
+    { arabic: "ثُمَّ", translation: "потом" },
+    ///////
+    { arabic: "طَبَّاخٌ", translation: "повар" },
+    { arabic: "مَطْبَخٌ", translation: "кухня" },
+    { arabic: "اِلْتِفَاتٌ", translation: "поворачивание" },
+    { arabic: "اِحْتِرَامٌ", translation: "уважение" },
+    { arabic: "قَوْلٌ", translation: "слово" },
+    { arabic: "طَبْخٌ", translation: "варить" },
+    { arabic: "سُوق", translation: "рынок" },
+    { arabic: "سَمَاعٌ", translation: "слушание" },
+    { arabic: "دَائِمًا", translation: "постоянно" },
+    { arabic: "خَادِمٌ", translation: "слуга" },
+    { arabic: "خَادِمَةٌ", translation: "служанка" },
+    { arabic: "يَمِينٌ", translation: "правый" },
+    { arabic: "شِمَالٌ", translation: "левый" },
+    { arabic: "مَخَابِرُ", translation: "лаборатории" },
+    { arabic: "لا تَلْعَبْ", translation: "не играй" },
+    { arabic: "لاَ تَلْعَبُوا", translation: "не играйте" }
+
 ];
 
 // Переменные для управления состоянием
