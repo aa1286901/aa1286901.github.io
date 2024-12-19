@@ -176,3 +176,23 @@ body {
 .stats-container p {
     margin: 5px 0;
 }
+
+.footer {
+    position: fixed;
+    text-align: center;
+    bottom: calc(0% + 10px);
+    padding: 10px;
+    color: rgba(255, 255, 255, 0.6); /* Прозрачный белый цвет */
+    font-size: 8px; /* Уменьшенный размер текста */
+    font-family: 'Roboto', sans-serif;
+}
+
+.footer strong {
+    color: #25d366; /* Основной акцентный цвет */
+    font-weight: 500; /* Средний вес текста */
+}
+
+.footer p {
+    margin: 0; /* Убираем отступы сверху и снизу */
+    line-height: 1.5; /* Удобное расстояние между строками */
+}
