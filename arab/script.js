@@ -2,7 +2,7 @@
 function shuffleArray(array) {
     return array.sort(() => Math.random() - 0.5);
 }
-
+shuffleArray(words);
 // Состояние для текущего выбранного урока
 let selectedLesson = 'all'; // По умолчанию показываем все уроки
 
@@ -83,7 +83,7 @@ function checkAnswer(selectedTranslation, filteredWords) {
         }, 1000);
     } else {
         incorrectAnswers++;
-        result.textContent = "❌ Неправильно. Попробуйте ещё раз.";
+        result.textContent = "❌ Неправильно!";
         result.style.color = "#dc3545"; // Красный цвет
         flashEffect("error");
     }
@@ -94,8 +94,8 @@ function checkAnswer(selectedTranslation, filteredWords) {
 function updateStats() {
     const statsContainer = document.getElementById("stats");
     statsContainer.innerHTML = `
-        <p>Правильных ответов: <strong>${correctAnswers}</strong></p>
-        <p>Неправильных ответов: <strong>${incorrectAnswers}</strong></p>
+        <p>✅ Правильных ответов: <strong>${correctAnswers}</strong></p>
+        <p>❌ Неправильных ответов: <strong>${incorrectAnswers}</strong></p>
     `;
 }
 
@@ -114,3 +114,9 @@ window.onload = () => {
     showWord();
     updateStats();
 };
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+        .then(() => console.log('Service Worker зарегистрирован'))
+        .catch((error) => console.error('Ошибка регистрации Service Worker:', error));
+}
