@@ -1,35 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1d1f20">
-
-    <meta name="referrer" content="never">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arabic by Ahmedov</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="words.js"></script>
 </head>
 <body>
     <div class="status-container" id="statusContainer">
         <div class="status-header">
             <div class="user-info">
                 <div class="avatar"></div>
-                <div class="username">مبدأ القراءة </div>
+                <div class="username">مبدأ القراءة</div>
             </div>
-            <div class="time">1 - 1 урок</div>
+            <div class="lesson-selector">
+                <select id="lessonSelect" onchange="updateLesson()">
+                    <option value="15">Урок 15</option>
+<option value="16">Урок 16</option>
+<option value="17">Урок 17</option>
+<option value="18">Урок 18</option>
+<option value="19">Урок 19</option>
+<option value="20">Урок 20</option>
+<option value="21">Урок 21</option>
+<option value="22">Урок 22</option>
+<option value="23">Урок 23</option>
+<option value="24">Урок 24</option>
+<option value="25">Урок 25</option>
+<option value="26">Урок 26</option>
+<option value="27">Урок 27</option>
+<option value="28">Урок 28</option>
+<option value="29">Урок 29</option>
+<option value="30">Урок 30</option>
+<option value="31">Урок 31</option>
+<option value="32">Урок 32</option>
+<option value="33">Урок 33</option>
+<option value="34">Урок 34</option>
+<option value="35">Урок 35</option>
+                    <option value="all">Все уроки</option>
+                </select>
+            </div>
         </div>
         <div class="status-content">
             <div class="word" id="arabicWord"></div>
-<div id="statusContainer">
-    <h2 id="arabicWord"></h2>
-    <input id="guessInput" placeholder="Введите перевод" type="text" />
-    <button onclick="checkGuess()">Проверить</button>
-    <button onclick="showHint()">Подсказать</button>
-    <p id="result"></p>
-    <p id="hint" style="font-style: italic;"></p>
-</div>
+            <div id="optionsContainer"></div> <!-- Контейнер для вариантов ответа --><div id="stats" class="stats-container"></div>
+            <p id="result"></p>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
-
-
