@@ -14,16 +14,22 @@
             text-align: center;
         }
         header {
-            padding: 20px 0;
-            font-size: 28px;
+color: #FBEADA;
+            padding: 10px 0 0 10px;
+            font-size: 30px;
             font-weight: bold;
-            color: #f5f5f5;
-            background: linear-gradient(135deg, #d9534f, #007bff);
+            background: linear-gradient(135deg, #d2b48c, #8b4513);
             background-clip: text;
             -webkit-background-clip: text;
             text-fill-color: transparent;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Добавим тень */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); 
         }
+    .subheader {
+            font-size: 16px;
+            margin-bottom: 30px;
+            color: #8A8178;
+        }
+       
         .payment-form {
             width: 80%;
             max-width: 300px;
@@ -32,22 +38,14 @@
             background-color: #1C1A16;
             border-radius: 15px;
         }
-        .payment-form p {
-            margin: 0;
-            font-size: 20px;
-            font-weight: bold;
-            color: #f5f5f5;
-        }
         .payment-form input {
             width: 80%;
-            max-width: 300px;
-            border: 1px;
+            border: none;
             border-radius: 8px;
             font-size: 38px;
             text-align: center;
             background-color: transparent;
             color: #f5f5f5;
-            letter-spacing: 0px;
         }
         .number-buttons {
             display: grid;
@@ -80,11 +78,11 @@
             border-radius: 12px;
             cursor: pointer;
             color: #ffffff;
-            background-color: #007bff;
+            background-color: #367A48;
             transition: background-color 0.2s;
         }
         .action-buttons button:hover {
-            background-color: #0056b3;
+            background-color: #367A48;
         }
         #clear {
             background-color: #d9534f;
@@ -98,10 +96,27 @@
         #delete:hover {
             background-color: #ec971f;
         }
+        
+        .footer {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            color: #8A8178;
+            font-size: 10px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .footer strong {
+            color: #367A48;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
-    <header>GM Coffee - Оплата</header>
+    <header>GM Coffee</header>
+   <div class="subheader">Вкус так же хорош, как и запах.</div>
+
     <div class="payment-form">
         <form id="paymentForm">
             <input type="text" id="amount" placeholder="0.00" readonly>
@@ -117,46 +132,45 @@
                 <button type="button" data-value="9">9</button>
                 <button type="button" id="clear">C</button>
                 <button type="button" data-value="0">0</button>
-                <button type="button" id="delete">←</button> <!-- Кнопка удаления последнего символа -->
+                <button type="button" id="delete" data-value="delete">←</button>
             </div>
             <div class="action-buttons">
                 <button type="button" id="payButton">Оплатить</button>
             </div>
         </form>
     </div>
-
+    <footer class="footer">
+        <p>Сайт разработал <strong>Ahmedov</strong> с помощью <strong>ChatGPT</strong></p>
+    </footer>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const amountInput = document.getElementById('amount');
             const numberButtons = document.querySelectorAll('.number-buttons button');
             const clearButton = document.getElementById('clear');
-            const deleteButton = document.getElementById('delete'); // Кнопка удаления
             const payButton = document.getElementById('payButton');
 
-            // Обработчик для цифр
             numberButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     const value = button.getAttribute('data-value');
-                    amountInput.value += value;
+                    if (value === "delete") {
+                        if (amountInput.value.length > 0) {
+                            amountInput.value = amountInput.value.slice(0, -1);
+                        }
+                    } else if (value === "0" && amountInput.value === "") {
+                        // Блокируем ввод 0 в начале
+                        return;
+                    } else {
+                        amountInput.value += value;
+                    }
                 });
             });
 
-            // Обработчик для очистки
             clearButton.addEventListener('click', () => amountInput.value = '');
-
-            // Обработчик для удаления последнего символа
-            deleteButton.addEventListener('click', () => {
-                amountInput.value = amountInput.value.slice(0, -1);
-            });
-
-            // Обработчик для кнопки оплаты
             payButton.addEventListener('click', () => {
                 const amount = parseFloat(amountInput.value);
-                if (amount && amount > 0) {
-                    alert(`Вы собираетесь оплатить ${amount.toFixed(2)} рублей.`);
-                } else {
-                    alert('Пожалуйста, введите корректную сумму.');
-                }
+                alert(amount > 0
+                    ? `Вы собираетесь оплатить ${amount.toFixed()} рублей.`
+                    : 'Пожалуйста, введите корректную сумму.');
             });
         });
     </script>
