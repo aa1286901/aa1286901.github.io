@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="manifest" href="manifest.json">
     <script src="words.js"></script>
 </head>
+
 <body>
     <div class="status-container" id="statusContainer">
         <div class="status-header">
@@ -18,24 +20,29 @@
             </div>
             <div class="lesson-selector">
                 <select id="lessonSelect" onchange="updateLesson()">
-                    <option value="15">Урок 15-20 (96 слов)</option>
-<option value="21">Урок 21-25 (85 слов)</option>
-<option value="26">Урок 26-30 (72 слов)</option>
-<option value="31">Урок 31-35 (64 слов)</option>
-                    <option value="all" selected>Все уроки (317 слов)</option>
+                    <option value="1">Урок 1-5 (71 слов)</option>
+                    <option value="6">Урок 6-10 (68 слов)</option>
+                    <option value="11">Урок 11-15 (62 слов)</option>
+                    <option value="16">Урок 16-20 (82 слов)</option>
+                    <option value="21">Урок 21-25 (85 слов)</option>
+                    <option value="26">Урок 26-30 (72 слов)</option>
+                    <option value="31">Урок 31-35 (64 слов)</option>
+                    <option value="all" selected>Все уроки (504 слов)</option>
                 </select>
             </div>
         </div>
         <div class="status-content">
             <div class="word" id="arabicWord"></div>
-            <div id="optionsContainer"></div> <!-- Контейнер для вариантов ответа --><div id="stats" class="stats-container"></div>
+            <div id="optionsContainer"></div>
+            <div id="stats" class="stats-container"></div>
             <p id="result"></p>
         </div>
 
-    <footer class="footer">
-        <p>Сайт разработал <strong>Ahmedov</strong> с помощью <strong>ChatGPT</strong></p>
-    </footer>
+        <footer class="footer">
+            <p>Сайт разработал <strong>Ahmedov</strong> с помощью <strong>ChatGPT</strong></p>
+        </footer>
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>

@@ -1,494 +1,1427 @@
-const words = [
-
+const words = [{
+    "arabic": "كِتَابٌ",
+    "translation": "книга",
+    "lesson": 1
+  },
+  {
+    "arabic": "مِحْبَرَةٌ",
+    "translation": "чернильница",
+    "lesson": 1
+  },
+  {
+    "arabic": "رِيشَةٌ",
+    "translation": "перо",
+    "lesson": 1
+  },
+  {
+    "arabic": "لَوْحٌ",
+    "translation": "доска",
+    "lesson": 1
+  },
+  {
+    "arabic": "قَلَمٌ",
+    "translation": "карандаш",
+    "lesson": 1
+  },
+  {
+    "arabic": "مِسْطَرَةٌ",
+    "translation": "линейка",
+    "lesson": 1
+  },
+  {
+    "arabic": "نَشَافَةٌ",
+    "translation": "полотенце",
+    "lesson": 1
+  },
+  {
+    "arabic": "كُرَّاسٌ",
+    "translation": "брошюра",
+    "lesson": 1
+  },
+  {
+    "arabic": "وَرَقٌ",
+    "translation": "листок",
+    "lesson": 1
+  },
+  {
+    "arabic": "هٰذَا",
+    "translation": "это",
+    "lesson": 1
+  },
+  {
+    "arabic": "هَاتِ",
+    "translation": "дай",
+    "lesson": 1
+  },
+  {
+    "arabic": "خُذْ",
+    "translation": "возьми",
+    "lesson": 1
+  },
+  {
+    "arabic": "أَيْنَ؟",
+    "translation": "где?",
+    "lesson": 1
+  },
+  {
+    "arabic": "مَا؟",
+    "translation": "что? то что",
+    "lesson": 1
+  },
+  {
+    "arabic": "مَقْعَدُ التِّلْمِيذِ",
+    "translation": "парта ученика",
+    "lesson": 1
+  },
+  {
+    "arabic": "يَكْتُبُ",
+    "translation": "пишет",
+    "lesson": 1
+  },
+  {
+    "arabic": "كُرْسِيٌّ",
+    "translation": "стул",
+    "lesson": 1
+  },
+  {
+    "arabic": "تِلْمِيذٌ",
+    "translation": "ученик",
+    "lesson": 1
+  },
+  {
+    "arabic": "مُعَلِّمٌ",
+    "translation": "учитель",
+    "lesson": 1
+  },
+  {
+    "arabic": "مَدْرَسَةٌ",
+    "translation": "школа, мадраса",
+    "lesson": 1
+  },
+  {
+    "arabic": "فَصْلٌ",
+    "translation": "класс",
+    "lesson": 1
+  },
+  {
+    "arabic": "مَكْتَبُ الْمُعَلِّمِ",
+    "translation": "стол учителя",
+    "lesson": 1
+  },
+  {
+    "arabic": "دَرْسٌ",
+    "translation": "урок",
+    "lesson": 1
+  },
+  {
+    "arabic": "مِمْحَاةٌ",
+    "translation": "ластик",
+    "lesson": 1
+  },
+  {
+    "arabic": "حِبْرٌ",
+    "translation": "чернило",
+    "lesson": 1
+  },
+  {
+    "arabic": "يَقْرَأُ",
+    "translation": "он читает",
+    "lesson": 1
+  },
+  {
+    "arabic": "هُنَا",
+    "translation": "здесь",
+    "lesson": 1
+  },
+  {
+    "arabic": "فِي",
+    "translation": "в",
+    "lesson": 1
+  },
+  {
+    "arabic": "مَاسِكَةٌ",
+    "translation": "ручка; крепеж",
+    "lesson": 1
+  },
+  {
+    "arabic": "مَحْفَظَةٌ",
+    "translation": "портфель, сумка",
+    "lesson": 1
+  },
+  {
+    "arabic": "مِبْرَاةٌ",
+    "translation": "перочинный нож",
+    "lesson": 1
+  },
+  {
+    "arabic": "شَبَّاكٌ (نَافِذَةٌ)",
+    "translation": "окно; окошко",
+    "lesson": 1
+  },
+  {
+    "arabic": "مِقْلَمَةٌ",
+    "translation": "пенал",
+    "lesson": 1
+  },
+  {
+    "arabic": "سَاعَةٌ",
+    "translation": "час",
+    "lesson": 1
+  },
+  {
+    "arabic": "مِصْبَاحٌ",
+    "translation": "светильник, лампа",
+    "lesson": 1
+  },
+  {
+    "arabic": "كِبْرِيتٌ",
+    "translation": "сера",
+    "lesson": 1
+  },
+  {
+    "arabic": "حُجْرَةٌ (غُرْفَةٌ)",
+    "translation": "комната",
+    "lesson": 1
+  },
+  {
+    "arabic": "إِقْرَأْ",
+    "translation": "читай",
+    "lesson": 1
+  },
+  {
+    "arabic": "اُدْخُلْ",
+    "translation": "входи",
+    "lesson": 1
+  },
+  {
+    "arabic": "اِفْهَمْ",
+    "translation": "пойми",
+    "lesson": 1
+  },
+  {
+    "arabic": "اِقْعُدْ",
+    "translation": "садись",
+    "lesson": 1
+  },
+  {
+    "arabic": "مَنْ",
+    "translation": "кто",
+    "lesson": 1
+  },
+  {
+    "arabic": "عَلَى",
+    "translation": "на, над",
+    "lesson": 1
+  },
+  {
+    "arabic": "طَبَاشِيرُ",
+    "translation": "мел",
+    "lesson": 1
+  },
+  {
+    "arabic": "فِنْجَانٌ",
+    "translation": "чашка (кружка)",
+    "lesson": 1
+  },
+  {
+    "arabic": "سَخَّانَةُ الشَّايِ",
+    "translation": "заварочный чайник",
+    "lesson": 1
+  },
+  {
+    "arabic": "سَخَّانَةُ الْمَاءِ",
+    "translation": "самовар",
+    "lesson": 1
+  },
+  {
+    "arabic": "بَيْتٌ",
+    "translation": "дом",
+    "lesson": 1
+  },
+  {
+    "arabic": "دَارٌ",
+    "translation": "дом, двор",
+    "lesson": 1
+  },
+  {
+    "arabic": "رَفٌّ",
+    "translation": "полка",
+    "lesson": 1
+  },
+  {
+    "arabic": "وَلَدٌ",
+    "translation": "ребёнок; сын",
+    "lesson": 1
+  },
+  {
+    "arabic": "طَعِيمٌ",
+    "translation": "еда",
+    "lesson": 1
+  },
+  {
+    "arabic": "شَايٌ",
+    "translation": "чай",
+    "lesson": 1
+  },
+  {
+    "arabic": "قَهْوَةٌ",
+    "translation": "кофе",
+    "lesson": 1
+  },
+  {
+    "arabic": "سُكَّرٌ",
+    "translation": "сахар",
+    "lesson": 1
+  },
+  {
+    "arabic": "يَأْكُلُ",
+    "translation": "кушает",
+    "lesson": 1
+  },
+  {
+    "arabic": "يَشْرَبُ",
+    "translation": "пьёт",
+    "lesson": 1
+  },
+  {
+    "arabic": "يَا",
+    "translation": "о!",
+    "lesson": 1
+  },
+  {
+    "arabic": "بِ",
+    "translation": "предлог «с»",
+    "lesson": 1
+  },
+  {
+    "arabic": "خِزَانَةٌ",
+    "translation": "шкаф",
+    "lesson": 1
+  },
+  {
+    "arabic": "سَرِيرٌ",
+    "translation": "кровать",
+    "lesson": 1
+  },
+  {
+    "arabic": "يَنَامُ",
+    "translation": "(он) спит",
+    "lesson": 1
+  },
+  {
+    "arabic": "رُدْهَةٌ",
+    "translation": "зал-фойе",
+    "lesson": 1
+  },
+  {
+    "arabic": "هُنَاكَ",
+    "translation": "там",
+    "lesson": 1
+  },
+  {
+    "arabic": "مُصَلًّى",
+    "translation": "молельня",
+    "lesson": 1
+  },
+  {
+    "arabic": "مِسْوَاكٌ",
+    "translation": "зубочистка",
+    "lesson": 1
+  },
+  {
+    "arabic": "لَحْمٌ",
+    "translation": "мясо",
+    "lesson": 1
+  },
+  {
+    "arabic": "خُبْزٌ",
+    "translation": "хлеб",
+    "lesson": 1
+  },
+  {
+    "arabic": "تَعَالَ",
+    "translation": "иди",
+    "lesson": 1
+  },
+  {
+    "arabic": "إِحْفَظْ",
+    "translation": "выучи, запомни",
+    "lesson": 1
+  },
+  {
+    "arabic": "بَابٌ",
+    "translation": "дверь",
+    "lesson": 1
+  },
+  {
+    "arabic": "ثَوْرٌ",
+    "translation": "бык",
+    "lesson": 6
+  },
+  {
+    "arabic": "دِيكٌ",
+    "translation": "петух",
+    "lesson": 6
+  },
+  {
+    "arabic": "كَلْبٌ",
+    "translation": "собака",
+    "lesson": 6
+  },
+  {
+    "arabic": "فَرَسٌ",
+    "translation": "лошадь",
+    "lesson": 6
+  },
+  {
+    "arabic": "مُهْرٌ",
+    "translation": "жеребёнок",
+    "lesson": 6
+  },
+  {
+    "arabic": "يَرْكُضُ",
+    "translation": "скачет; бегает",
+    "lesson": 6
+  },
+  {
+    "arabic": "بَقَرَةٌ",
+    "translation": "корова",
+    "lesson": 6
+  },
+  {
+    "arabic": "عِجْلٌ",
+    "translation": "телёнок",
+    "lesson": 6
+  },
+  {
+    "arabic": "يَصِيحُ",
+    "translation": "кричит",
+    "lesson": 6
+  },
+  {
+    "arabic": "دَجَاجَةٌ",
+    "translation": "курица",
+    "lesson": 6
+  },
+  {
+    "arabic": "أَنَا",
+    "translation": "я",
+    "lesson": 6
+  },
+  {
+    "arabic": "أَنْتَ",
+    "translation": "ты",
+    "lesson": 6
+  },
+  {
+    "arabic": "هُوَ",
+    "translation": "он",
+    "lesson": 6
+  },
+  {
+    "arabic": "إِخْرُجْ",
+    "translation": "выйди, выходи",
+    "lesson": 6
+  },
+  {
+    "arabic": "مِنْ",
+    "translation": "из",
+    "lesson": 6
+  },
+  {
+    "arabic": "مَتَى",
+    "translation": "когда",
+    "lesson": 6
+  },
+  {
+    "arabic": "سِكِّينٌ",
+    "translation": "нож",
+    "lesson": 6
+  },
+  {
+    "arabic": "قِنِّينَةٌ",
+    "translation": "флакон",
+    "lesson": 6
+  },
+  {
+    "arabic": "يَسْبَحُ",
+    "translation": "плавает",
+    "lesson": 6
+  },
+  {
+    "arabic": "كُرَةٌ",
+    "translation": "мяч; шар",
+    "lesson": 6
+  },
+  {
+    "arabic": "سَمَكٌ",
+    "translation": "рыба",
+    "lesson": 6
+  },
+  {
+    "arabic": "مَاءٌ",
+    "translation": "вода",
+    "lesson": 6
+  },
+  {
+    "arabic": "لَبَنٌ",
+    "translation": "молоко",
+    "lesson": 6
+  },
+  {
+    "arabic": "بَعْدَ",
+    "translation": "после",
+    "lesson": 6
+  },
+  {
+    "arabic": "قَبْلَ",
+    "translation": "до",
+    "lesson": 6
+  },
+  {
+    "arabic": "هَلْ",
+    "translation": "разве?",
+    "lesson": 6
+  },
+  {
+    "arabic": "نَعَمْ",
+    "translation": "да",
+    "lesson": 6
+  },
+  {
+    "arabic": "يَقُومُ",
+    "translation": "(он) встаёт",
+    "lesson": 6
+  },
+  {
+    "arabic": "يَنْظُرُ",
+    "translation": "(он) смотрит",
+    "lesson": 6
+  },
+  {
+    "arabic": "يَلْعَبُ",
+    "translation": "(он) играет",
+    "lesson": 6
+  },
+  {
+    "arabic": "اِبْنٌ",
+    "translation": "сын",
+    "lesson": 6
+  },
+  {
+    "arabic": "أَبٌ",
+    "translation": "отец",
+    "lesson": 6
+  },
+  {
+    "arabic": "أُمٌّ",
+    "translation": "мать",
+    "lesson": 6
+  },
+  {
+    "arabic": "بِنْتٌ",
+    "translation": "дочь",
+    "lesson": 6
+  },
+  {
+    "arabic": "أُخْتٌ",
+    "translation": "сестра",
+    "lesson": 6
+  },
+  {
+    "arabic": "أَخٌ",
+    "translation": "брат",
+    "lesson": 6
+  },
+  {
+    "arabic": "يُحِبُّ",
+    "translation": "(он) любит",
+    "lesson": 6
+  },
+  {
+    "arabic": "يُطِيعُ",
+    "translation": "(он) слушается",
+    "lesson": 6
+  },
+  {
+    "arabic": "ي",
+    "translation": "мой",
+    "lesson": 6
+  },
+  {
+    "arabic": "كَ",
+    "translation": "твой",
+    "lesson": 6
+  },
+  {
+    "arabic": "هُ",
+    "translation": "его",
+    "lesson": 6
+  },
+  {
+    "arabic": "قَلَمُ مَحْمُودٍ",
+    "translation": "карандаш Махмуда",
+    "lesson": 6
+  },
+  {
+    "arabic": "ذِئْبٌ",
+    "translation": "волк",
+    "lesson": 6
+  },
+  {
+    "arabic": "دُبٌّ",
+    "translation": "медведь",
+    "lesson": 6
+  },
+  {
+    "arabic": "غَابٌ",
+    "translation": "лес",
+    "lesson": 6
+  },
+  {
+    "arabic": "جَنَّةٌ",
+    "translation": "сад (садик)",
+    "lesson": 6
+  },
+  {
+    "arabic": "مَكْتُوبٌ",
+    "translation": "письмо",
+    "lesson": 6
+  },
+  {
+    "arabic": "قَارِ",
+    "translation": "мышь",
+    "lesson": 6
+  },
+  {
+    "arabic": "هِرٌّ",
+    "translation": "кошка",
+    "lesson": 6
+  },
+  {
+    "arabic": "حِمَارٌ",
+    "translation": "осёл",
+    "lesson": 6
+  },
+  {
+    "arabic": "حِصَانٌ",
+    "translation": "лошадь",
+    "lesson": 6
+  },
+  {
+    "arabic": "فَتْحٌ",
+    "translation": "открывать",
+    "lesson": 6
+  },
+  {
+    "arabic": "يَجِدُ",
+    "translation": "находить",
+    "lesson": 6
+  },
+  {
+    "arabic": "رَكِبْتُ",
+    "translation": "я сел верхом",
+    "lesson": 6
+  },
+  {
+    "arabic": "إِلَىٰ",
+    "translation": "в, к, на",
+    "lesson": 6
+  },
+  {
+    "arabic": "ذَهَبْتَ",
+    "translation": "ты отправился",
+    "lesson": 6
+  },
+  {
+    "arabic": "مِلْعَقَةٌ",
+    "translation": "ложка",
+    "lesson": 6
+  },
+  {
+    "arabic": "مِمْلَحَةٌ",
+    "translation": "солянка",
+    "lesson": 6
+  },
+  {
+    "arabic": "شَوْكَةٌ",
+    "translation": "вилка",
+    "lesson": 6
+  },
+  {
+    "arabic": "طَبَقٌ",
+    "translation": "тарелка",
+    "lesson": 6
+  },
+  {
+    "arabic": "مِلْحٌ",
+    "translation": "соль",
+    "lesson": 6
+  },
+  {
+    "arabic": "سُكُوتٌ",
+    "translation": "молчание",
+    "lesson": 6
+  },
+  {
+    "arabic": "لِمَ",
+    "translation": "почему?",
+    "lesson": 6
+  },
+  {
+    "arabic": "مَرْكَبٌ",
+    "translation": "бричка",
+    "lesson": 6
+  },
+  {
+    "arabic": "يَضْحَكُ",
+    "translation": "(он) смеётся",
+    "lesson": 6
+  },
+  {
+    "arabic": "يَبْكِي",
+    "translation": "(он) плачет",
+    "lesson": 6
+  },
+  {
+    "arabic": "فَوْقَ",
+    "translation": "над",
+    "lesson": 6
+  },
+  {
+    "arabic": "تَحْتَ",
+    "translation": "под",
+    "lesson": 6
+  },
+  {
+    "arabic": "عَطَشٌ",
+    "translation": "жажда",
+    "lesson": 11
+  },
+  {
+    "arabic": "قَلِيلٌ",
+    "translation": "мало",
+    "lesson": 11
+  },
+  {
+    "arabic": "قَطْعٌ",
+    "translation": "разрез, резание",
+    "lesson": 11
+  },
+  {
+    "arabic": "مِقَصٌّ",
+    "translation": "ножницы",
+    "lesson": 11
+  },
+  {
+    "arabic": "كَثِيرٌ",
+    "translation": "много",
+    "lesson": 11
+  },
+  {
+    "arabic": "قَدَحٌ",
+    "translation": "кубок, стакан",
+    "lesson": 11
+  },
+  {
+    "arabic": "غَنِيٌّ",
+    "translation": "богатый",
+    "lesson": 11
+  },
+  {
+    "arabic": "فَقِيرٌ",
+    "translation": "бедный",
+    "lesson": 11
+  },
+  {
+    "arabic": "ذَلِكَ",
+    "translation": "тот",
+    "lesson": 11
+  },
+  {
+    "arabic": "رَجُلٌ",
+    "translation": "мужчина",
+    "lesson": 11
+  },
+  {
+    "arabic": "أَمَامَ",
+    "translation": "впереди",
+    "lesson": 11
+  },
+  {
+    "arabic": "وَرَاءَ",
+    "translation": "сзади",
+    "lesson": 11
+  },
+  {
+    "arabic": "كُتُبٌ",
+    "translation": "книги",
+    "lesson": 11
+  },
+  {
+    "arabic": "أَقْلَامٌ",
+    "translation": "карандаши",
+    "lesson": 11
+  },
+  {
+    "arabic": "يَقْرَؤُونَ",
+    "translation": "(они) читают (м.ч., м.р.)",
+    "lesson": 11
+  },
+  {
+    "arabic": "جَدٌّ",
+    "translation": "дедушка",
+    "lesson": 11
+  },
+  {
+    "arabic": "أَجْدَادٌ",
+    "translation": "дедушки",
+    "lesson": 11
+  },
+  {
+    "arabic": "جَدَّةٌ",
+    "translation": "бабушка",
+    "lesson": 11
+  },
+  {
+    "arabic": "جَدَّاتٌ",
+    "translation": "бабушки",
+    "lesson": 11
+  },
+  {
+    "arabic": "سَاعَاتٌ",
+    "translation": "часы",
+    "lesson": 11
+  },
+  {
+    "arabic": "أَوْرَاقٌ",
+    "translation": "листы",
+    "lesson": 11
+  },
+  {
+    "arabic": "مَدَارِسُ",
+    "translation": "школы, мадраса",
+    "lesson": 11
+  },
+  {
+    "arabic": "فُصُولٌ",
+    "translation": "классы",
+    "lesson": 11
+  },
+  {
+    "arabic": "شَبَابِيكَ",
+    "translation": "окна",
+    "lesson": 11
+  },
+  {
+    "arabic": "آبَاءٌ",
+    "translation": "отцы",
+    "lesson": 11
+  },
+  {
+    "arabic": "أُمَّهَاتٌ",
+    "translation": "матери",
+    "lesson": 11
+  },
+  {
+    "arabic": "إِخْوَةٌ",
+    "translation": "братья",
+    "lesson": 11
+  },
+  {
+    "arabic": "أَخَوَاتٌ",
+    "translation": "сёстры",
+    "lesson": 11
+  },
+  {
+    "arabic": "أَبْنَاءٌ",
+    "translation": "сыновья",
+    "lesson": 11
+  },
+  {
+    "arabic": "بَنَاتٌ",
+    "translation": "дочери",
+    "lesson": 11
+  },
+  {
+    "arabic": "أَوْلَادٌ",
+    "translation": "дети",
+    "lesson": 11
+  },
+  {
+    "arabic": "نَا",
+    "translation": "нам",
+    "lesson": 11
+  },
+  {
+    "arabic": "كُمْ",
+    "translation": "вам",
+    "lesson": 11
+  },
+  {
+    "arabic": "هُمْ",
+    "translation": "им",
+    "lesson": 11
+  },
+  {
+    "arabic": "هَؤُلَاءِ",
+    "translation": "эти",
+    "lesson": 11
+  },
+  {
+    "arabic": "أَيُّهَا",
+    "translation": "о вы!",
+    "lesson": 11
+  },
+  {
+    "arabic": "بَلَدٌ",
+    "translation": "город",
+    "lesson": 11
+  },
+  {
+    "arabic": "فَنَاجِينُ",
+    "translation": "чашки",
+    "lesson": 11
+  },
+  {
+    "arabic": "سَكَاكِينُ",
+    "translation": "ножи",
+    "lesson": 11
+  },
+  {
+    "arabic": "مَلَاعِقُ",
+    "translation": "ложки",
+    "lesson": 11
+  },
+  {
+    "arabic": "كِلاَبٌ",
+    "translation": "собаки",
+    "lesson": 11
+  },
+  {
+    "arabic": "أَفْرَاسٌ",
+    "translation": "лошади",
+    "lesson": 11
+  },
+  {
+    "arabic": "تَعَلُّمٌ",
+    "translation": "обучаться, учёба",
+    "lesson": 11
+  },
+  {
+    "arabic": "مَجِيءٌ",
+    "translation": "приходить",
+    "lesson": 11
+  },
+  {
+    "arabic": "بَرَى",
+    "translation": "точить, заострять",
+    "lesson": 11
+  },
+  {
+    "arabic": "وَضْعُ",
+    "translation": "вставление, поставить",
+    "lesson": 11
+  },
+  {
+    "arabic": "مَشْيٌ",
+    "translation": "ходьба, ходить",
+    "lesson": 11
+  },
+  {
+    "arabic": "أَيْضًا",
+    "translation": "так же",
+    "lesson": 11
+  },
   {
     "arabic": "مُعَلِّمُونَ",
     "translation": "учителя",
-    "lesson": 15
+    "lesson": 11
   },
   {
     "arabic": "كَرَاسِيٌّ",
     "translation": "стулья",
-    "lesson": 15
+    "lesson": 11
   },
   {
     "arabic": "يَبِيعُ",
     "translation": "продажа",
-    "lesson": 15
+    "lesson": 11
   },
   {
     "arabic": "الْآنَ",
     "translation": "сейчас",
-    "lesson": 15
+    "lesson": 11
   },
   {
     "arabic": "فَقَطْ",
     "translation": "только",
-    "lesson": 15
+    "lesson": 11
   },
   {
     "arabic": "الْمِصْبَاحُ",
     "translation": "светильник, лампа",
-    "lesson": 15
+    "lesson": 11
   },
   {
     "arabic": "رُؤْيَةٌ",
     "translation": "видение",
-    "lesson": 15
+    "lesson": 11
   },
   {
     "arabic": "إِشْتِرَاءٌ",
     "translation": "покупка",
-    "lesson": 15
+    "lesson": 11
   },
   {
     "arabic": "ثُمَّ",
     "translation": "потом, затем",
-    "lesson": 15
+    "lesson": 11
   },
   {
     "arabic": "ذَهَبُوا",
     "translation": "они отправились, ушли (м.р.)",
-    "lesson": 15
+    "lesson": 11
   },
   {
     "arabic": "قَرَأْتُمْ",
     "translation": "вы прочли (м.р.)",
-    "lesson": 15
+    "lesson": 11
   },
   {
     "arabic": "كَتَبْنَا",
     "translation": "мы написали",
-    "lesson": 15
+    "lesson": 11
   },
   {
     "arabic": "مَعَ",
     "translation": "вместе",
-    "lesson": 15
+    "lesson": 11
   },
   {
     "arabic": "صَاحِبٌ",
     "translation": "хозяин, друг",
-    "lesson": 15
+    "lesson": 11
   },
 
 
   {
     "arabic": "طَبَّاخٌ",
     "translation": "повар",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مَطْبَخٌ",
     "translation": "кухня",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "إِلْتِفَاتٌ",
     "translation": "поворачивание",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "إِحْتِرَامٌ",
     "translation": "уважение",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "قَوْلٌ",
     "translation": "слово",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "سُوقٌ",
     "translation": "рынок, базар",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "سَمَاعٌ",
     "translation": "слушание",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "دَائِماً",
     "translation": "постоянно, всегда",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "طَبْخٌ",
     "translation": "варить, готовить пищу",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "خَادِمٌ",
     "translation": "слуга",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "خَادِمَةٌ",
     "translation": "служанка",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "يَمِينٌ",
     "translation": "правый",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "شِمَالٌ",
     "translation": "левый",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مَخَابِرُ",
     "translation": "лаборатории",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "لَا تَلْعَبْ",
     "translation": "(ты) не играй",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "لَا تَلْعَبُوا",
     "translation": "(вы) не играйте (мн. ч. м.р.)",
-    "lesson": 15
+    "lesson": 16
   },
 
 
   {
     "arabic": "فَأْسٌ",
     "translation": "топор",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مِنْشَارٌ",
     "translation": "пила",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مِكْنَسَةٌ",
     "translation": "веник, метла",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مِطْرَقَةٌ",
     "translation": "молоток",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مُجْتَهِدٌ",
     "translation": "прилежный",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "كَسْلَانُ",
     "translation": "ленивый",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "كَبِيرٌ",
     "translation": "большой",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "صَغِيرٌ",
     "translation": "маленький",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "طَوِيلٌ",
     "translation": "высокий (длинный)",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "قَصِيرٌ",
     "translation": "низкий (короткий)",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "جَدِيدٌ",
     "translation": "новый",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "قَدِيمٌ",
     "translation": "старый",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "حَادٌّ",
     "translation": "острый",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "كَهَامٌ",
     "translation": "тупой",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "كَنَسَ",
     "translation": "мести, подметать",
-    "lesson": 15
+    "lesson": 16
   },
 
 
   {
     "arabic": "قُفْلٌ",
     "translation": "замок",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "صُنْدُوقٌ",
     "translation": "сундук",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مِخْرَزٌ",
     "translation": "шило",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مِفْتَاحٌ",
     "translation": "ключ",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مَفَاتِيحُ",
     "translation": "ключи",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "صَنَادِيقُ",
     "translation": "сундуки",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "وَاسِعٌ",
     "translation": "широкий",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "ضَيِّقٌ",
     "translation": "узкий",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "وَضِيعٌ",
     "translation": "униженный",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "رَفِيعٌ",
     "translation": "возвышенный",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "جَمِيلٌ",
     "translation": "красивый",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "قَبِيحٌ",
     "translation": "некрасивый",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مُؤَدَّبٌ",
     "translation": "воспитанный",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "غَيْرُ مُؤَدَّبٍ",
     "translation": "невоспитанный",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مُطِيعٌ",
     "translation": "послушный",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "عَاصٍ",
     "translation": "грешный",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "خَشَبٌ",
     "translation": "древесина",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "نَشَرَ",
     "translation": "пилить",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "أَقْفَلَ",
     "translation": "закрывать на замок",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "فِيَّ",
     "translation": "меня",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "كَ",
     "translation": "тебя",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "هُ",
     "translation": "его",
-    "lesson": 15
+    "lesson": 16
   },
 
 
   {
     "arabic": "مِظَلَّةٌ",
     "translation": "зонтик",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "سُلَّمٌ مِعْرَاجٌ",
     "translation": "лестница",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "شَارِعٌ",
     "translation": "улица",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مُرُورٌ",
     "translation": "проходить",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مُقْفَلٌ",
     "translation": "закрытый",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مَفْتُوحٌ",
     "translation": "открытый",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مُتَأَخِّرًا",
     "translation": "поздно",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "بَاكِرًا",
     "translation": "рано",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مَحْبُوبٌ",
     "translation": "любимый",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مَمْقُوتٌ",
     "translation": "ненавистный",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "جَيِّدًا",
     "translation": "хорошо, отлично",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "سُقُوطٌ",
     "translation": "падать, падение",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "اللَّيْلَةَ",
     "translation": "сегодня ночью",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "الْيَوْمَ",
     "translation": "сегодня днем",
-    "lesson": 15
+    "lesson": 16
   },
 
 
   {
     "arabic": "بِكُلِّ سُرُورٍ",
     "translation": "с большим удовольствием",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "بِكُلِّ إِرْتِيَاحٍ",
     "translation": "с большим удовольствием",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "لِيَكْتُبَ",
     "translation": "чтобы написать",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "لِيَقْرَأَ",
     "translation": "чтобы прочитать",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "لِـ",
     "translation": "для, чтобы",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "لَذِيذٌ",
     "translation": "вкусный",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "مُرٌّ",
     "translation": "горький",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "رِطْلٌ",
     "translation": "мера веса, равная 144 дирхама",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "جِدًّا",
     "translation": "очень",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "عِنَبٌ",
     "translation": "виноград",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "بُرْتُقَالٌ",
     "translation": "апельсины",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "تُفَّاحٌ",
     "translation": "яблоки",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "لَيْمُونٌ",
     "translation": "лимоны",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "بِطِّيخٌ",
     "translation": "арбуз",
-    "lesson": 15
+    "lesson": 16
   },
   {
     "arabic": "شَمَّامٌ",
     "translation": "дыня",
-    "lesson": 15
+    "lesson": 16
   },
 
 
@@ -543,8 +1476,8 @@ const words = [
     "lesson": 21
   },
   {
-    "arabic": "مِلِيمٌ",
-    "translation": "меллим",
+    "arabic": "مَلِّيمٌ",
+    "translation": "монета",
     "lesson": 21
   },
   {
@@ -590,7 +1523,7 @@ const words = [
     "lesson": 21
   },
   {
-    "arabic": "إِشْتَغَلَ",
+    "arabic": "اِﺷْﺘِﻐَﺎلٌ",
     "translation": "работать, заняться чем-либо",
     "lesson": 21
   },
@@ -1634,6 +2567,4 @@ const words = [
     "translation": "и другие",
     "lesson": 31
   }
-
-
 ]

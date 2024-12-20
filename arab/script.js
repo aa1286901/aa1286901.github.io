@@ -3,6 +3,8 @@ function shuffleArray(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 shuffleArray(words);
+shuffleArray(words);
+shuffleArray(words);
 // Состояние для текущего выбранного урока
 let selectedLesson = 'all'; // По умолчанию показываем все уроки
 
