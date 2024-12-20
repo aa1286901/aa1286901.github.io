@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+    <title>GM Coffee - Оплата</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            color: #f5f5f5;
+            text-align: center;
+        }
+        header {
+            padding: 20px 0;
+            font-size: 38px;
+            font-weight: bold;
+            color: #f5f5f5;
+            background: linear-gradient(135deg, #d9534f, #007bff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            text-fill-color: transparent;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Добавим тень */
+        }
+        .payment-form {
+            width: 80%;
+            max-width: 300px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #1C1A16;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+        .payment-form p {
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+            color: #f5f5f5;
+        }
+        .payment-form input {
+            padding: 15px 0;
+            margin: 15px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 24px;
+            text-align: center;
+            background-color: transparent;
+            color: #f5f5f5;
+            letter-spacing: 0px;
+        }
+        .number-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .number-buttons button {
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: #333333;
+            color: #ffffff;
+            transition: background-color 0.2s;
+        }
+        .number-buttons button:hover {
+            background-color: #4caf50;
+        }
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .action-buttons button {
+            width: 100%;
+            padding: 20px 40px;
+            font-size: 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            color: #ffffff;
+            background-color: #007bff;
+            transition: background-color 0.2s;
+        }
+        .action-buttons button:hover {
+            background-color: #0056b3;
+        }
+        #clear {
+            background-color: #d9534f;
+        }
+        #clear:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+    <header>GM Coffee</header>
+    <div class="payment-form">
+        <form id="paymentForm">
+            <p>Ведите сумму для оплаты</p>
+            <input type="text" id="amount" placeholder="0.00" readonly>
+            <div class="number-buttons">
+                <button type="button" data-value="1">1</button>
+                <button type="button" data-value="2">2</button>
+                <button type="button" data-value="3">3</button>
+                <button type="button" data-value="4">4</button>
+                <button type="button" data-value="5">5</button>
+                <button type="button" data-value="6">6</button>
+                <button type="button" data-value="7">7</button>
+                <button type="button" data-value="8">8</button>
+                <button type="button" data-value="9">9</button>
+                <button type="button" id="clear">C</button>
+                <button type="button" data-value="0">0</button>
+            </div>
+            <div class="action-buttons">
+                <button type="button" id="payButton">Оплатить</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const amountInput = document.getElementById('amount');
+            const numberButtons = document.querySelectorAll('.number-buttons button');
+            const clearButton = document.getElementById('clear');
+            const payButton = document.getElementById('payButton');
+
+            // Обработчик для цифр
+            numberButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const value = button.getAttribute('data-value');
+                    amountInput.value += value;
+                });
+            });
+
+            // Обработчик для очистки
+            clearButton.addEventListener('click', () => amountInput.value = '');
+
+            // Обработчик для кнопки оплаты
+            payButton.addEventListener('click', () => {
+                const amount = parseFloat(amountInput.value);
+                if (amount && amount > 0) {
+                    alert(`Вы собираетесь оплатить ${amount.toFixed(2)} рублей.`);
+                } else {
+                    alert('Пожалуйста, введите корректную сумму.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
