@@ -2330,7 +2330,7 @@ const words = [{
 
   {
     "arabic": "تَنْظِيفٌ",
-    "translation": "протирание, чистка",
+    "translation": "очишение, чистка",
     "lesson": 33
   },
   {
@@ -2355,7 +2355,7 @@ const words = [{
   },
   {
     "arabic": "مَسْحٌ",
-    "translation": "протирать, чистить",
+    "translation": "протирание, чистка",
     "lesson": 33
   },
   {
