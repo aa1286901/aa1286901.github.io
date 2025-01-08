@@ -2289,109 +2289,109 @@ const words = [{
   {
     "arabic": "مِشْطٌ",
     "translation": "расчёска",
-    "lesson": 31
+    "lesson": 32
   },
   {
     "arabic": "تَرَابِيزَةٌ",
     "translation": "стол (таблица)",
-    "lesson": 31
+    "lesson": 32
   },
   {
     "arabic": "مِرْآةٌ",
     "translation": "зеркало",
-    "lesson": 31
+    "lesson": 32
   },
   {
     "arabic": "هَا",
     "translation": "ей",
-    "lesson": 31
+    "lesson": 32
   },
   {
     "arabic": "كِ",
     "translation": "тебе (ж.р.)",
-    "lesson": 31
+    "lesson": 32
   },
   {
     "arabic": "تَعَالِي",
     "translation": "иди (ж.р.)",
-    "lesson": 31
+    "lesson": 32
   },
   {
     "arabic": "اُكْتُبِي يَا عَائِشَةُ",
     "translation": "напиши, о Аиша",
-    "lesson": 31
+    "lesson": 32
   },
   {
     "arabic": "تُمَشِّطُ",
     "translation": "расчёсываться",
-    "lesson": 31
+    "lesson": 32
   },
 
 
   {
     "arabic": "تَنْظِيفٌ",
     "translation": "протирание, чистка",
-    "lesson": 31
+    "lesson": 33
   },
   {
     "arabic": "نَظِيفٌ",
     "translation": "чистый",
-    "lesson": 31
+    "lesson": 33
   },
   {
     "arabic": "يَكُونُ",
     "translation": "будет",
-    "lesson": 31
+    "lesson": 33
   },
   {
     "arabic": "تَلْوِيثٌ",
     "translation": "пачкать, загрязнять",
-    "lesson": 31
+    "lesson": 33
   },
   {
     "arabic": "وَسِخٌ",
     "translation": "быть грязным",
-    "lesson": 31
+    "lesson": 33
   },
   {
     "arabic": "مَسْحٌ",
     "translation": "протирать, чистить",
-    "lesson": 31
+    "lesson": 33
   },
   {
     "arabic": "أَمَّا",
     "translation": "что касается",
-    "lesson": 31
+    "lesson": 33
   },
   {
     "arabic": "لِبَاسٌ",
     "translation": "одежда",
-    "lesson": 31
+    "lesson": 33
   },
   {
     "arabic": "هَاتِي",
     "translation": "дай (ж.р.)",
-    "lesson": 31
+    "lesson": 33
   },
   {
     "arabic": "كُنْ",
     "translation": "будь",
-    "lesson": 31
+    "lesson": 33
   },
   {
     "arabic": "مِنْدِيلٌ",
     "translation": "носовой платок",
-    "lesson": 31
+    "lesson": 33
   },
   {
     "arabic": "فِرَاشٌ",
     "translation": "постель",
-    "lesson": 31
+    "lesson": 33
   },
   {
     "arabic": "تَكْتُبِينَ",
     "translation": "(ты) пишешь (ед.ч., ж.р.)",
-    "lesson": 31
+    "lesson": 33
   },
 
 
@@ -2399,77 +2399,77 @@ const words = [{
   {
     "arabic": "شَجَرٌ",
     "translation": "дерево",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "حَجَرٌ",
     "translation": "камень",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "لَبِنٌ",
     "translation": "кирпичи, саман (молоко)",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "نَبْتٌ",
     "translation": "растение, трава",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "تَنْوِيمٌ",
     "translation": "усыпление, укладывание спать",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "إِحْضَارٌ",
     "translation": "принести",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "حَاضِنَةٌ",
     "translation": "кормилица",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "إِعْطَاءٌ",
     "translation": "отдавать, раздача",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "لَعِبَتْ",
     "translation": "она играла",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "لَعِبْتَ",
     "translation": "ты играл(а)",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "مَا كَتَبْتُ بَعْدَ",
     "translation": "я не писал после",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "وَلِيدٌ",
     "translation": "ребёнок",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "مَهْدٌ",
     "translation": "колыбель",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "قِمَاطٌ",
     "translation": "пелёнка",
-    "lesson": 31
+    "lesson": 34
   },
   {
     "arabic": "قِمَاطٌ",
     "translation": "пеленать",
-    "lesson": 31
+    "lesson": 34
   },
 
 
@@ -2480,91 +2480,91 @@ const words = [{
   {
     "arabic": "قِدْرٌ",
     "translation": "котёл",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "بَرْمِيلٌ",
     "translation": "бочка",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "كَمَّاشَةٌ",
     "translation": "щипцы, клещи",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "مِبْرَدٌ",
     "translation": "напильник",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "مِجْرَفَةٌ",
     "translation": "лопата, грабли",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "لِجَامٌ",
     "translation": "уздечка",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "سَرْجٌ",
     "translation": "седло",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "إِسْرَاجٌ",
     "translation": "седлать",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "إِلْجَامٌ",
     "translation": "обуздывать",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "حَدِيدٌ",
     "translation": "железо",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "نُحَاسٌ",
     "translation": "медь",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "قَصْدِيرٌ",
     "translation": "олово",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "فُولَاذٌ",
     "translation": "сталь",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "مُوسَى",
     "translation": "лезвие",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "آلَةٌ",
     "translation": "инструмент",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "صَنْعَةٌ",
     "translation": "ремесло",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "مَاذَا",
     "translation": "что",
-    "lesson": 31
+    "lesson": 35
   },
   {
     "arabic": "وَغَيْرُ ذَلِكَ",
     "translation": "и другие",
-    "lesson": 31
+    "lesson": 35
   }
 ]
