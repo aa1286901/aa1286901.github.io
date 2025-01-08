@@ -1,10 +1,16 @@
 {
-  "name": "Apps by Ahmedov",
-  "identifier": "ru.byahmedovrepo",
+  "name": "Design | Apps by Ahmedov",
+  "identifier": "design.byahmedovrepo",
   "iconURL": "https://github.com/aa1286901/aa1286901.github.io/blob/master/images/avatar.png?raw=true",
   "apps": [
-      {
-        
-      }
+        {
+          "name": "InShot Pro\n| #Design",
+          "iconURL": "https://play-lh.googleusercontent.com/mjmbWruxfo8oYHsBNI7b76KLj1AEJQo7hXwlmi05EvfFwubOjo8nQJrVEHRe4Vbgpo8",
+          "version": "v.1.80.2",
+          "subtitle": "Активирован Pro",
+          "versionDate": "2024-11-14T13:27:37+00:00",
+          "bundleIdentifier": "ru.byahmedovrepo",
+          "downloadURL": "https://vk.com/doc143128865_685052636?hash=pIZ3WhbV0m7lzcEzQ0oaAwrdR0hFDEZ7Yprn7LNZwkP&dl=RLgzvICQDvZSEOwWhGFnUi7ENlYAEz24zx3zlpG5S1z&api=1&no_preview=1"
+      },
   ]
 }
