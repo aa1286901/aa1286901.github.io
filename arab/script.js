@@ -122,3 +122,14 @@ if ('serviceWorker' in navigator) {
         .then(() => console.log('Service Worker зарегистрирован'))
         .catch((error) => console.error('Ошибка регистрации Service Worker:', error));
 }
+
+
+document.getElementById('openModal').addEventListener('click', () => {
+  const modal = document.getElementById('modal');
+  modal.classList.add('open');
+});
+
+document.getElementById('closeModal').addEventListener('click', () => {
+  const modal = document.getElementById('modal');
+  modal.classList.remove('open');
+});
