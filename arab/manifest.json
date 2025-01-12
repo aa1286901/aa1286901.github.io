@@ -2,7 +2,7 @@
     "name": "Arabic by Ahmedov",
     "short_name": "Arabic",
     "description": "Учите арабский язык с помощью интерактивных уроков.",
-    "start_url": "/arab/",
+    "start_url": ".",
     "display": "standalone",
     "background_color": "#128c7e",
     "theme_color": "#25d366",
