@@ -254,7 +254,7 @@ const words = [{
     "lesson": 1
   },
   {
-    "arabic": "طَعِيمٌ",
+    "arabic": "طَبِيخٌ",
     "translation": "еда",
     "lesson": 1
   },
