@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=0.65, maximum-scale=0.65">
+        <title>Apps by Ahmedov</title>
+        <link rel="stylesheet" href="Styles/Style.css">
+    </head>
+    <body>
+        <nav class="menu__wrapper">
+            <div class="logo__wrapper">
+                <a href="https://aa1286901.github.io/app" title="Logo" class="logo">
+                <img id="avatar-navbar" class="avatar-profile" src="Images/Avatar.png" alt="Profile">
+                </a>
+                <a href="https://aa1286901.github.io/app" class="page__title">
+                    Apps by Ahmedov
+                </a>
+            </div>
+            <div class="action-buttons">
+            </div>
+        </nav>
+        <div class="search-settings-wrapper">
+            <input type="text" id="search" placeholder="🔍  Поиск...">
+            
+            <div id="overlay" class="overlay"></div>
+            
+            <div id="settingsMenu" class="settings-menu">
+                <button class="close-btn" id="closeBtn">✖</button>
+
+                <div class="settings-options">
+                    <label>
+                        <input type="radio" name="categoryApps" value="Social"> Соц.Сети и Мессенджеры
+                    </label>
+                    <label>
+                        <input type="radio" name="categoryApps" value="Music"> Музыка
+                    </label>
+                    <label>
+                        <input type="radio" name="categoryApps" value="Video"> Видео и Фильмы
+                    </label>
+                    <label>
+                        <input type="radio" name="categoryApps" value="Design"> Редакторы, Камеры и Шаблоны
+                    </label>
+                    <label>
+                        <input type="radio" name="categoryApps" value="Network"> VPN, Сети и Браузеры
+                    </label>
+                    <label>
+                        <input type="radio" name="categoryApps" value="Study"> Учеба, Книги и Навыки
+                    </label>
+                    <label>
+                        <input type="radio" name="categoryApps" value="Life"> Спорт и Здоровье
+                    </label>
+                    <label>
+                        <input type="radio" name="categoryApps" value="Money"> Банки и Финансы
+                    </label>
+                    <label>
+                        <input type="radio" name="categoryApps" value="Office"> Офис, Заметки и Календари
+                    </label>
+                    <label>
+                        <input type="radio" name="categoryApps" value="Travel"> Карты, Погода и Авто
+                    </label>
+                    <label>
+                        <input type="radio" name="categoryApps" value="Other"> Другие приложения
+                    </label>
+                    <label>
+                        <input type="radio" name="categoryApps" value="Kids"> Для детей
+                    </label>
+                    <label>
+                        <input type="radio" name="categoryApps" value="Games"> Игры
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="full_time_buttons">
+            <div class="button-wrapper">
+                <button id="full-list-btn" class="full-button">Полный список</button>
+                <button id="settingsBtn" class="time-button">По категориям</button>
+            </div>
+        </div>
+        
+        <div class="app-container" id="app-list"></div>
+        <div class="pagination" id="pagination"></div>
+
+        <script src="Scripts/Script.js"></script>
+        <script src="Scripts/Repository.js"></script>
+    </body>
+</html>
