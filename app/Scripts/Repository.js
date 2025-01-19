@@ -1,3 +1,6 @@
+let pat = /\#/g;
+let hashCat = new URL(document.URL).hash.replace(pat, "");
+
 const appList = document.getElementById('app-list');
 const pagination = document.getElementById('pagination');
 const searchInput = document.getElementById('search');
@@ -6,7 +9,7 @@ let currentPage = 1;
 const maxVisiblePages = 3;
 let displayMode = 'full';
 let itemsPerPage = 50;
-let selectedCategory = '';
+let selectedCategory = hashCat;
 
 document.addEventListener("DOMContentLoaded", function() {
     const settingsMenu = document.getElementById("settingsMenu");
