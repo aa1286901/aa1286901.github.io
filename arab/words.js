@@ -2678,4 +2678,395 @@ const words = [{
   
   
   
+  {
+    "arabic": "طاقِيَّة",
+    "translation": "шапочка",
+    "lesson": 37
+  },
+  {
+    "arabic": "خُفّ",
+    "translation": "туфли",
+    "lesson": 37
+  },
+  {
+    "arabic": "بَنِيقَة",
+    "translation": "воротничок",
+    "lesson": 37
+  },
+  {
+    "arabic": "أُبْنَة",
+    "translation": "узел, сучок",
+    "lesson": 37
+  },
+  {
+    "arabic": "زِرّ",
+    "translation": "застёгивание",
+    "lesson": 37
+  },
+  {
+    "arabic": "قَلَنْسُوَة",
+    "translation": "головной убор, шапка",
+    "lesson": 37
+  },
+  {
+    "arabic": "عِمَامَة",
+    "translation": "чалма",
+    "lesson": 37
+  },
+  {
+    "arabic": "جَيْب",
+    "translation": "карман",
+    "lesson": 37
+  },
+  {
+    "arabic": "حِذَاء",
+    "translation": "сапог",
+    "lesson": 37
+  },
+  {
+    "arabic": "جَرْمُوق",
+    "translation": "ботик",
+    "lesson": 37
+  },
+  {
+    "arabic": "زِرّ",
+    "translation": "пуговица",
+    "lesson": 37
+  },
+  {
+    "arabic": "إِمَام",
+    "translation": "имам",
+    "lesson": 37
+  },
+  {
+    "arabic": "مُؤَذِّن",
+    "translation": "муэдзин",
+    "lesson": 37
+  },
+  {
+    "arabic": "أَرْخَص",
+    "translation": "очень дешёвый",
+    "lesson": 37
+  },
+  {
+    "arabic": "أَغْلَى",
+    "translation": "очень дорогой",
+    "lesson": 37
+  },
+  {
+    "arabic": "سَمْعًا وَطَاعَة",
+    "translation": "слушаюсь и повинуюсь",
+    "lesson": 37
+  },
+  {
+    "arabic": "عِنْدَمَا",
+    "translation": "когда",
+    "lesson": 37
+  },
+  {
+    "arabic": "عِنْدَمَا أَذْهَب",
+    "translation": "когда я уйду",
+    "lesson": 37
+  },
+  {
+    "arabic": "فَرْوَة",
+    "translation": "шуба, мех",
+    "lesson": 37
+  },
+  {
+    "arabic": "عُرْوَة",
+    "translation": "петля",
+    "lesson": 37
+  },
+  
+  
+  
+  
+  {
+    "arabic": "قُبَّعَةٌ",
+    "translation": "шляпа",
+    "lesson": 38
+  },
+  {
+    "arabic": "نَقْدٌ",
+    "translation": "нал. деньги",
+    "lesson": 38
+  },
+  {
+    "arabic": "نُقُودٌ",
+    "translation": "деньги (м.ч.)",
+    "lesson": 38
+  },
+  {
+    "arabic": "قُطْنٌ",
+    "translation": "хлопок",
+    "lesson": 38
+  },
+  {
+    "arabic": "دِفَاءٌ",
+    "translation": "теплая одежда (печь)",
+    "lesson": 38
+  },
+  {
+    "arabic": "جَوْرَبٌ",
+    "translation": "чулок",
+    "lesson": 38
+  },
+  {
+    "arabic": "تَاجِرٌ",
+    "translation": "торговец",
+    "lesson": 38
+  },
+  {
+    "arabic": "صُوفٌ",
+    "translation": "шерсть",
+    "lesson": 38
+  },
+  {
+    "arabic": "مَتَاعٌ",
+    "translation": "багаж",
+    "lesson": 38
+  },
+  {
+    "arabic": "دُكَّانٌ",
+    "translation": "лавка",
+    "lesson": 38
+  },
+  {
+    "arabic": "قُفَّازٌ",
+    "translation": "перчатки",
+    "lesson": 38
+  },
+  {
+    "arabic": "جَزْمَةٌ",
+    "translation": "ботинки, сапоги",
+    "lesson": 38
+  },
+  {
+    "arabic": "ذِرَاعٌ",
+    "translation": "локоть",
+    "lesson": 38
+  },
+  {
+    "arabic": "يَقْرَأُ",
+    "translation": "читают",
+    "lesson": 38
+  },
+  {
+    "arabic": "كَسْرٌ",
+    "translation": "поломать, ломание",
+    "lesson": 38
+  },
+  {
+    "arabic": "كَتَبَ",
+    "translation": "написал",
+    "lesson": 38
+  },
+  {
+    "arabic": "مَخْزَنٌ",
+    "translation": "магазин",
+    "lesson": 38
+  },
+  {
+    "arabic": "بَائِعٌ",
+    "translation": "продавец",
+    "lesson": 38
+  },
+  
+  
+  
+  
+  {
+    "arabic": "جرس",
+    "translation": "звонок",
+    "lesson": 39
+  },
+  {
+    "arabic": "دق",
+    "translation": "стучать",
+    "lesson": 39
+  },
+  {
+    "arabic": "سفر",
+    "translation": "путешествие",
+    "lesson": 39
+  },
+  {
+    "arabic": "مسافر",
+    "translation": "путешественник",
+    "lesson": 39
+  },
+  {
+    "arabic": "حقيبة",
+    "translation": "сумка",
+    "lesson": 39
+  },
+  {
+    "arabic": "ساعة الجدار",
+    "translation": "настенные часы",
+    "lesson": 39
+  },
+  {
+    "arabic": "ساعة الجيب",
+    "translation": "карманные часы",
+    "lesson": 39
+  },
+  {
+    "arabic": "ساعة منبهه",
+    "translation": "будильник",
+    "lesson": 39
+  },
+  {
+    "arabic": "جدار",
+    "translation": "стена",
+    "lesson": 39
+  },
+  {
+    "arabic": "سقف",
+    "translation": "потолок",
+    "lesson": 39
+  },
+  {
+    "arabic": "من زمان",
+    "translation": "уже давно",
+    "lesson": 39
+  },
+  {
+    "arabic": "أ؟",
+    "translation": "вопрос",
+    "lesson": 39
+  },
+  {
+    "arabic": "أنت؟",
+    "translation": "ты ли?",
+    "lesson": 39
+  },
+  {
+    "arabic": "أ زيد؟",
+    "translation": "Зейд ли?",
+    "lesson": 39
+  },
+  {
+    "arabic": "أم",
+    "translation": "или",
+    "lesson": 39
+  },
+  {
+    "arabic": "أما فتح",
+    "translation": "разве не он открыл",
+    "lesson": 39
+  },
+
+
+
+  {
+    "arabic": "سَمَاء",
+    "translation": "небо",
+    "lesson": 40
+  },
+  {
+    "arabic": "أَرْض",
+    "translation": "земля",
+    "lesson": 40
+  },
+  {
+    "arabic": "شَمْس",
+    "translation": "солнце",
+    "lesson": 40
+  },
+  {
+    "arabic": "كَوْكَب",
+    "translation": "звезда",
+    "lesson": 40
+  },
+  {
+    "arabic": "قَمَر",
+    "translation": "луна",
+    "lesson": 40
+  },
+  {
+    "arabic": "ثَلْج",
+    "translation": "снег",
+    "lesson": 40
+  },
+  {
+    "arabic": "مَطَر",
+    "translation": "дождь",
+    "lesson": 40
+  },
+  {
+    "arabic": "بَحْر",
+    "translation": "море",
+    "lesson": 40
+  },
+  {
+    "arabic": "بُحَيْرَة",
+    "translation": "озеро",
+    "lesson": 40
+  },
+  {
+    "arabic": "جَبَل",
+    "translation": "гора",
+    "lesson": 40
+  },
+  {
+    "arabic": "نَهْر",
+    "translation": "река",
+    "lesson": 40
+  },
+  {
+    "arabic": "طُلُوع",
+    "translation": "восход",
+    "lesson": 40
+  },
+  {
+    "arabic": "غُرُوب",
+    "translation": "заход",
+    "lesson": 40
+  },
+  {
+    "arabic": "نُزُول",
+    "translation": "спускаться",
+    "lesson": 40
+  },
+  {
+    "arabic": "صُعُود",
+    "translation": "подниматься",
+    "lesson": 40
+  },
+  {
+    "arabic": "يَوْم مُمْطِر",
+    "translation": "дождливый день",
+    "lesson": 40
+  },
+  {
+    "arabic": "يَوْم مُصْح",
+    "translation": "ясный день",
+    "lesson": 40
+  },
+  {
+    "arabic": "نَضِج",
+    "translation": "поспевать",
+    "lesson": 40
+  },
+  {
+    "arabic": "جُمُود",
+    "translation": "замерзание, твердость",
+    "lesson": 40
+  },
+  {
+    "arabic": "شَدِيد",
+    "translation": "сильный",
+    "lesson": 40
+  },
+  {
+    "arabic": "بَرْد",
+    "translation": "холод",
+    "lesson": 40
+  },
+  {
+    "arabic": "حَرّ",
+    "translation": "жара",
+    "lesson": 40
+  }
 ]
