@@ -2566,5 +2566,116 @@ const words = [{
     "arabic": "وَغَيْرُ ذَلِكَ",
     "translation": "и другие",
     "lesson": 31
-  }
+  },
+  
+  
+  
+  {
+    "arabic": "لِبَاسٌ",
+    "translation": "одежда",
+    "lesson": 36
+  },
+  {
+    "arabic": "أَلْبِسَةٌ",
+    "translation": "одежды",
+    "lesson": 36
+  },
+  {
+    "arabic": "قَمِيصٌ",
+    "translation": "рубашка",
+    "lesson": 36
+  },
+  {
+    "arabic": "سِرْوَالٌ",
+    "translation": "шаровары",
+    "lesson": 36
+  },
+  {
+    "arabic": "صُدْرَةٌ",
+    "translation": "жилет",
+    "lesson": 36
+  },
+  {
+    "arabic": "دِرَاعَةٌ",
+    "translation": "куртка",
+    "lesson": 36
+  },
+  {
+    "arabic": "بِنْطَالٌ",
+    "translation": "брюки",
+    "lesson": 36
+  },
+  {
+    "arabic": "قِمَاشٌ",
+    "translation": "ткань",
+    "lesson": 36
+  },
+  {
+    "arabic": "رِدَاءٌ",
+    "translation": "плащ",
+    "lesson": 36
+  },
+  {
+    "arabic": "طَرْبُوشٌ",
+    "translation": "феска",
+    "lesson": 36
+  },
+  {
+    "arabic": "تَغَدَّى",
+    "translation": "завтракать",
+    "lesson": 36
+  },
+  {
+    "arabic": "تَعَشَّى",
+    "translation": "ужинать",
+    "lesson": 36
+  },
+  {
+    "arabic": "غَدَاءٌ",
+    "translation": "завтрак",
+    "lesson": 36
+  },
+  {
+    "arabic": "عَشَاءٌ",
+    "translation": "ужин",
+    "lesson": 36
+  },
+  {
+    "arabic": "لَمَّا",
+    "translation": "тогда, как",
+    "lesson": 36
+  },
+  {
+    "arabic": "أَكْبَرُ",
+    "translation": "старший, самый великий",
+    "lesson": 36
+  },
+  {
+    "arabic": "أَصْغَرُ",
+    "translation": "младше",
+    "lesson": 36
+  },
+  {
+    "arabic": "لَبِسَ",
+    "translation": "одеваться",
+    "lesson": 36
+  },
+  {
+    "arabic": "نَزَعَ",
+    "translation": "снимать",
+    "lesson": 36
+  },
+  {
+    "arabic": "تَقْدِيمٌ",
+    "translation": "преподношение",
+    "lesson": 36
+  },
+  {
+    "arabic": "خِيَاطَةٌ",
+    "translation": "шитьё",
+    "lesson": 36
+  },
+  
+  
+  
 ]
