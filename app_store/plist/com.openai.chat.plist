@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+       "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+        <dict>
+            <key>items</key>
+            <array>
+                <dict>
+                    <key>assets</key>
+                    <array>
+                        <dict>
+                            <key>kind</key>
+                            <string>software-package</string>
+                            <key>url</key>
+                            <string>https://vk.com/doc143128865_685817608?hash=hemzCjTqlrNi32HuDjOaOLGAzQoKkgg5a8PgJE0CC3w&dl=gBQUSNzzfyHwmXpz9LLgVhlnArYpE9otSaSSKct9Bu4&api=1&no_preview=1</string>
+                       	</dict>
+                        <dict>
+                            <key>kind</key>
+                            <string>display-image</string>
+                            <key>url</key>
+                            <string>https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0b/47/24/0b4724ef-343c-b7bc-7aec-48d35079d624/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.png</string>
+			            </dict>
+                        <dict>
+                            <key>kind</key>
+                            <string>full-size-image</string>
+                            <key>url</key>
+                            <string>https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0b/47/24/0b4724ef-343c-b7bc-7aec-48d35079d624/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.png</string>
+			            </dict>
+                    </array>
+                    <key>metadata</key>
+                    <dict>
+                        <key>bundle-identifier</key>
+                        <string>com.openai.chat</string>
+                        <key>bundle-version</key>
+                        <string>1.2025.031</string>
+                        <key>kind</key>
+                        <string>software</string>
+                        <key>title</key>
+                        <string>ChatGPT</string>
+                    </dict>
+                </dict>
+            </array>
+        </dict>
+    </plist>
