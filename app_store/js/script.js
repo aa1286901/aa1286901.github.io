@@ -18,9 +18,6 @@ function renderApps(filter = "#Social") {
         <h2>${app.name}</h2>
         <p>${app.description}</p>
       </div>
-      <a href="${app.link}" class="download-button" target="_blank">
-        <i class="fas fa-cloud-download-alt"></i>
-      </a>
     `;
 
     appList.appendChild(appCard);
