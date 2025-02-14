@@ -3,7 +3,7 @@ const appList = document.getElementById("app-list");
 const categories = document.querySelectorAll(".category");
 
 // Функция для отображения приложений
-function renderApps(filter = "#All") {
+function renderApps(filter = "#Social") {
   appList.innerHTML = ""; // Очистка списка перед отрисовкой
 
   const filteredApps = apps.filter((app) => app.category === filter);

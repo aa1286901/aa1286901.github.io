@@ -1,0 +1,11 @@
+const apps = [
+    {
+        "name": "ChatGPT",
+        "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b0/a2/01/b0a20166-127b-76ae-f08c-eec5f8308295/AppIcon-0-0-1x_U007epad-0-1-85-220.png/600x600bb.jpg",
+        "link": "itms-services://?action=download-manifest&url=plist/com.budgetonline.ios.plist",
+        "description": "OpenAI LLC",
+        "category": "#All"
+    },
+
+
+]

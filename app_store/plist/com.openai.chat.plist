@@ -1,44 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-       "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-    <plist version="1.0">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>items</key>
+    <array>
+      <dict>
+        <key>assets</key>
+        <array>
+          <dict>
+            <key>kind</key>
+            <string>software-package</string>
+            <key>url</key>
+            <string>https://iosapps.itunes.apple.com/itunes-assets/Purple221/v4/b5/52/53/b5525327-dc6b-0c9f-aa46-21ec5f754ac0/pre-thinned6345118362576698095.lc.2623815633020095.RIYXW5LBXCISK.signed.dpkg.ipa?accessKey=1738723980_2308934891562309431_blDzLQ%2BvgSsOUKLBHs2CI9SHuw3QQ1eUq0rkEcCiF5LBy831jM9OFVUTJrab4m4EvJJRFAWO1iknSrkICKZalaQVZxvCCVfAnAB9lfq631Ap7wbJOFwo%2F1HLcI19fpk1wHBBm6q88zxpHQaBti5Fox9Z0CQEdig5TB2J%2FrJnSDzjUCu%2BCOfHRIio5paBUanLadB5LfoGfvpHk2MN0ArcRCGm9m3thN85ebcBpc%2FA5dVfm1AcWyc12S6VNMu%2Bce6H</string>
+          </dict>
+          <dict>
+            <key>kind</key>
+            <string>display-image</string>
+            <key>url</key>
+            <string>https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b0/a2/01/b0a20166-127b-76ae-f08c-eec5f8308295/AppIcon-0-0-1x_U007epad-0-1-85-220.png/600x600bb.jpg</string>
+          </dict>
+          <dict>
+            <key>kind</key>
+            <string>full-size-image</string>
+            <key>url</key>
+            <string>https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b0/a2/01/b0a20166-127b-76ae-f08c-eec5f8308295/AppIcon-0-0-1x_U007epad-0-1-85-220.png/600x600bb.jpg</string>
+          </dict>
+        </array>
+        <key>metadata</key>
         <dict>
-            <key>items</key>
-            <array>
-                <dict>
-                    <key>assets</key>
-                    <array>
-                        <dict>
-                            <key>kind</key>
-                            <string>software-package</string>
-                            <key>url</key>
-                            <string>https://psv4.userapi.com/s/v1/d/sfNec9fQwXN07LDG4LFxeUCHUJl92u-Kg6Ckp8X9DAAU8U4HxXUlRoDBEKIedw-YR0ngkrx2n8rJVHe7-nJoxawVp2Ms9yR7wvYPRMlPcT8ZL08y/com_openai_chat.ipa</string>
-                       	</dict>
-                        <dict>
-                            <key>kind</key>
-                            <string>display-image</string>
-                            <key>url</key>
-                            <string>https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0b/47/24/0b4724ef-343c-b7bc-7aec-48d35079d624/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.png</string>
-			            </dict>
-                        <dict>
-                            <key>kind</key>
-                            <string>full-size-image</string>
-                            <key>url</key>
-                            <string>https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0b/47/24/0b4724ef-343c-b7bc-7aec-48d35079d624/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.png</string>
-			            </dict>
-                    </array>
-                    <key>metadata</key>
-                    <dict>
-                        <key>bundle-identifier</key>
-                        <string>com.openai.chat</string>
-                        <key>bundle-version</key>
-                        <string>1.2025.031</string>
-                        <key>kind</key>
-                        <string>software</string>
-                        <key>title</key>
-                        <string>ChatGPT</string>
-                    </dict>
-                </dict>
-            </array>
+          <key>bundle-identifier</key>
+          <string>com.openai.chat</string>
+          <key>kind</key>
+          <string>software</string>
+          <key>title</key>
+          <string>ChatGPT</string>
         </dict>
-    </plist>
+      </dict>
+    </array>
+  </dict>
+</plist>
