@@ -24,8 +24,8 @@ function renderApps(filter = "#Social") {
 
   const filteredApps = apps.filter((app) => {
     // Проверяем, есть ли категория в названии приложения
-    const categories = app.appName.split("|").map((s) => s.trim());
-    return categories.includes(filter);
+    const appCategories = app.appName.split("|").map((s) => s.trim()); 
+    return appCategories.includes(filter);
   });
 
   if (filteredApps.length === 0) {
@@ -37,10 +37,13 @@ function renderApps(filter = "#Social") {
     const appCard = document.createElement("div");
     appCard.classList.add("app-card");
 
+    // Получаем название категории из `app.appName`
+    const appCategories = app.appName.split("|").map((s) => s.trim()); 
+
     appCard.innerHTML = `
       <img src="${app.appImage}" alt="${app.appName}" class="app-icon">
       <div class="app-info">
-        <h2>${categories[0]}</h2> 
+        <h2>${appCategories[0]}</h2> <!-- Теперь тут правильное название -->
         <p>${app.appDescription}</p>
         <small>Версия: ${app.appVersion}</small>
       </div>
