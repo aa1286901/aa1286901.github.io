@@ -8,7 +8,7 @@ let apps = [];
 // Функция загрузки данных из apps.json
 async function loadApps() {
   try {
-    const response = await fetch("apps.json"); // Загружаем JSON
+    const response = await fetch("https://raw.githubusercontent.com/IAppsRepo/IAppsRepo.github.io/refs/heads/main/Repo.json"); // Загружаем JSON
     if (!response.ok) throw new Error("Ошибка загрузки JSON");
     apps = await response.json(); // Преобразуем в объект
 
