@@ -1,41 +1,70 @@
-// Получение элементов
+// Получаем элементы
 const appList = document.getElementById("app-list");
 const categories = document.querySelectorAll(".category");
 
-// Функция для отображения приложений
-function renderApps(filter = "#Social") {
-  appList.innerHTML = ""; // Очистка списка перед отрисовкой
+// Глобальная переменная для приложений
+let apps = [];
 
-  const filteredApps = apps.filter((app) => app.category === filter);
+// Функция загрузки данных из apps.json
+async function loadApps() {
+  try {
+    const response = await fetch("https://raw.githubusercontent.com/IAppsRepo/IAppsRepo.github.io/refs/heads/main/Repo.json"); // Загружаем JSON
+    if (!response.ok) throw new Error("Ошибка загрузки JSON");
+    apps = await response.json(); // Преобразуем в объект
+
+    renderApps("#Social"); // Отображаем категорию по умолчанию
+  } catch (error) {
+    console.error("Ошибка загрузки приложений:", error);
+  }
+}
+
+// Функция для рендера списка приложений
+function renderApps(filter = "#Social") {
+  appList.innerHTML = ""; // Очищаем список
+
+  const filteredApps = apps.filter((app) => {
+    // Проверяем, есть ли категория в названии приложения
+    const categories = app.appName.split("|").map((s) => s.trim());
+    return categories.includes(filter);
+  });
+
+  if (filteredApps.length === 0) {
+    appList.innerHTML = "<p>Нет приложений в этой категории</p>";
+    return;
+  }
 
   filteredApps.forEach((app) => {
     const appCard = document.createElement("div");
     appCard.classList.add("app-card");
-
+    const appCategories = app.appName.split("|").map((s) => s.trim()); 
+    
     appCard.innerHTML = `
-      <img src="${app.image}" alt="${app.name} Icon" class="app-icon">
+   <div class="app-header">
+      <img src="${app.appImage}" alt="${app.appName}" class="app-icon">
       <div class="app-info">
-        <h2>${app.name}</h2>
-        <p>${app.description}</p>
+        <h2>${appCategories[0]}</h2>
+        <small>Версия: ${app.appVersion}</small>
       </div>
+   </div>
+   <p class="app-description">${app.appDescription}</p>
     `;
 
     appList.appendChild(appCard);
   });
 }
 
-// Слушатели для категорий
+// Добавляем слушатели на кнопки категорий
 categories.forEach((category) => {
   category.addEventListener("click", () => {
-    // Удаляем активный класс у всех категорий
     categories.forEach((cat) => cat.classList.remove("active"));
     category.classList.add("active");
 
-    // Получаем категорию и отображаем
     const filter = category.getAttribute("data-category");
     renderApps(filter);
   });
 });
 
-// Первоначальная отрисовка
-renderApps();
+// Запускаем загрузку JSON после загрузки DOM
+document.addEventListener("DOMContentLoaded", () => {
+  loadApps();
+});
