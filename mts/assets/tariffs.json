@@ -1,0 +1,102 @@
+[
+    {
+      "name": "SMART ДЛЯ СВОИХ 300",
+      "price": "300 руб/мес",
+      "data": "20 ГБ",
+      "minutes": "500 мин",
+      "sms": "200 SMS",
+      "prices": "2 800",
+      "logo": "assets/mts.svg"
+    },
+    {
+      "name": "SMART ДЛЯ СВОИХ",
+      "price": "500 руб/мес",
+      "data": "Безлимитный интернет",
+      "minutes": "500 мин",
+      "sms": "200 SMS",
+      "prices": "3 200",
+      "logo": "assets/mts.svg"
+    },
+    {
+      "name": "SMART MINI",
+      "price": "150 руб/мес",
+      "data": "35 ГБ",
+      "minutes": "800 мин",
+      "sms": "500 SMS",
+      "prices": "3 500",
+      "logo": "assets/mts.svg"
+    },
+    {
+      "name": "SMART MEDIUM",
+      "price": "250 руб/мес",
+      "data": "60 ГБ",
+      "minutes": "1600 мин",
+      "sms": "1000 SMS",
+      "prices": "3 500",
+      "logo": "assets/mts.svg"
+    },
+    {
+      "name": "SMART MAX",
+      "price": "400 руб/мес",
+      "data": "60 ГБ",
+      "minutes": "5000 мин",
+      "sms": "1000 SMS",
+      "prices": "3 500",
+      "logo": "assets/mts.svg"
+    },
+    {
+      "name": "УМНЫЙ MEDIUM",
+      "price": "320 руб/мес",
+      "data": "60 ГБ",
+      "minutes": "1600 мин",
+      "sms": "1000 SMS",
+      "prices": "3 000",
+      "logo": "assets/mts.svg"
+    },
+    {
+      "name": "УМНЫЙ MAX",
+      "price": "624 руб/мес",
+      "data": "60 ГБ",
+      "minutes": "5000 мин",
+      "sms": "1000 SMS",
+      "prices": "3 000",
+      "logo": "assets/mts.svg"
+    },
+    {
+      "name": "ДИЛЛЕР 2.0",
+      "price": "245 руб/мес <span style=\"font-size:10px;margin-botton:-20px\">(с 7 месяца 350 руб/мес)</span>",
+      "data": "30 ГБ",
+      "minutes": "500 мин",
+      "sms": "100 SMS",
+      "prices": "1 500",
+      "logo": "assets/mts.svg"
+    },
+    {
+      "name": "ДИЛЛЕР 2.0 UNLIM",
+      "price": "245 руб/мес <span style=\"font-size:10px;margin-botton:-20px\">(с 7 месяца 350 руб/мес)</span>",
+      "data": "Безлимитный интернет",
+      "minutes": "500 мин",
+      "sms": "100 SMS",
+      "prices": "3 500",
+      "logo": "assets/mts.svg"
+    },
+    {
+      "name": "NIGHT UNLIM",
+      "price": "299 руб/мес",
+      "data": "80 Гб (Безлимит с 00:00 до 07:00)",
+      "minutes": "от 1.5 руб/минута",
+      "sms": "2 руб/смс",
+      "prices": "1 500",
+      "logo": "assets/mts.svg"
+    },
+    {
+      "name": "УМНОЕ УСТРОЙСТВО",
+      "price": "129 руб/мес",
+      "data": "10 Гб",
+      "minutes": "от 1.5 руб/минута",
+      "sms": "2 руб/смс",
+      "prices": "800",
+      "logo": "assets/mts.svg"
+    }
+  ]
+  
