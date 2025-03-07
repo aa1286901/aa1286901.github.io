@@ -27,6 +27,9 @@ fetch('assets/tariffs.json')
             <i class="fa-solid fa-comment-dots"></i>
             <span>${tariff.sms}</span>
           </p>
+          <p class="info" style="margin-top:-10px">
+            <span>Цена подключения: ${tariff.prices} руб.</span>
+          </p>
         </div>
         <div class="mts-logo" style="background-image: url('${tariff.logo}');"></div>
       </div>
