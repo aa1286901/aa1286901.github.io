@@ -38,6 +38,10 @@ function renderApps(filter = "#Social") {
     appCard.classList.add("app-card");
     const appCategories = app.appName.split("|").map((s) => s.trim()); 
     
+    const formattedDescription = app.appDescription
+    .replace(/<\/?[^>]+(>|$)/g, "") // Убираем все HTML-теги
+    .replace(/\n/g, "<br>"); // Заменяем \n на <br>
+    
     appCard.innerHTML = `
    <div class="app-header">
       <img src="${app.appImage}" alt="${app.appName}" class="app-icon">
@@ -46,7 +50,7 @@ function renderApps(filter = "#Social") {
         <small>Версия: ${app.appVersion}</small>
       </div>
    </div>
-   <p class="app-description">${app.appDescription}</p>
+   <p class="app-description">${formattedDescription}</p>
     `;
 
     appList.appendChild(appCard);
