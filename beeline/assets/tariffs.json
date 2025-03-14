@@ -1,6 +1,6 @@
 [
     {
-      "name": "ВТДС",
+      "name": "ATOM 250",
       "price": "280-360 руб/мес",
       "data": "Безлимитный интернет <span style=\"font-size:10px\">(Безлимитная раздача)</span>",
       "minutes": "500 мин",
@@ -8,7 +8,7 @@
       "prices": "4 000",
       "logo": "assets/beeline.svg"
     },{
-      "name": "ГИБКИЙ 35",
+      "name": "FLEX 35",
       "price": "350 руб/мес",
       "data": "35 ГБ <span style=\"font-size:10px\">(Безлимитные мессенджеры, навигаторы)</span>",
       "minutes": "1400 мин",
@@ -16,7 +16,7 @@
       "prices": "3 000",
       "logo": "assets/beeline.svg"
     },{
-      "name": "ГИБКИЙ 45",
+      "name": "FLEX 45",
       "price": "350 руб/мес",
       "data": "35 ГБ <span style=\"font-size:10px\">(Безлимитные мессенджеры, навигаторы)</span>",
       "minutes": "1200 мин",
@@ -24,7 +24,7 @@
       "prices": "3 000",
       "logo": "assets/beeline.svg"
     },{
-      "name": "ГИБКИЙ 55",
+      "name": "FLEX 55",
       "price": "350 руб/мес",
       "data": "55 ГБ <span style=\"font-size:10px\">(Безлимитные мессенджеры, навигаторы)</span>",
       "minutes": "1000 мин",
