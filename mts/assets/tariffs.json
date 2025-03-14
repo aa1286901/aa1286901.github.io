@@ -1,6 +1,6 @@
 [
     {
-      "name": "SMART ДЛЯ СВОИХ 300",
+      "name": "SMART 300",
       "price": "300 руб/мес",
       "data": "20 ГБ",
       "minutes": "500 мин",
@@ -9,7 +9,7 @@
       "logo": "assets/mts.svg"
     },
     {
-      "name": "SMART ДЛЯ СВОИХ",
+      "name": "SMART",
       "price": "500 руб/мес",
       "data": "Безлимитный интернет",
       "minutes": "500 мин",
@@ -45,7 +45,7 @@
       "logo": "assets/mts.svg"
     },
     {
-      "name": "УМНЫЙ MEDIUM",
+      "name": "MEDIUM",
       "price": "320 руб/мес",
       "data": "60 ГБ",
       "minutes": "1600 мин",
@@ -54,7 +54,7 @@
       "logo": "assets/mts.svg"
     },
     {
-      "name": "УМНЫЙ MAX",
+      "name": "MAX",
       "price": "624 руб/мес",
       "data": "60 ГБ",
       "minutes": "5000 мин",
@@ -63,7 +63,7 @@
       "logo": "assets/mts.svg"
     },
     {
-      "name": "ДИЛЛЕР 2.0",
+      "name": "DILLER 2.0",
       "price": "245 руб/мес <span style=\"font-size:10px;margin-botton:-20px\">(с 7 месяца 350 руб/мес)</span>",
       "data": "30 ГБ",
       "minutes": "500 мин",
@@ -72,7 +72,7 @@
       "logo": "assets/mts.svg"
     },
     {
-      "name": "ДИЛЛЕР 2.0 UNLIM",
+      "name": "DILLER 2.0 UNLIM",
       "price": "245 руб/мес <span style=\"font-size:10px;margin-botton:-20px\">(с 7 месяца 350 руб/мес)</span>",
       "data": "Безлимитный интернет",
       "minutes": "500 мин",
@@ -90,7 +90,7 @@
       "logo": "assets/mts.svg"
     },
     {
-      "name": "УМНОЕ УСТРОЙСТВО",
+      "name": "SMART DEVICE",
       "price": "129 руб/мес",
       "data": "10 Гб",
       "minutes": "от 1.5 руб/минута",
