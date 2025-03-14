@@ -17,8 +17,6 @@
 }
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
 .sim-card {
-  width: 340px;
-  height: 210px;
   background: #f2f2f2;
   border: 1px solid #ffd700;
   border-radius: 20px;
