@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>items</key>
+    <array>
+      <dict>
+        <key>assets</key>
+        <array>
+          <dict>
+            <key>kind</key>
+            <string>software-package</string>
+            <key>url</key>
+            <string>https://iosapps.itunes.apple.com/itunes-assets/Purple211/v4/93/39/32/9339328e-c819-842b-cfc5-5ce17bdff1a3/extDirjvaockhfbhblbzcs.lc.739833703380390.HAQERG6JW3GP6.signed.dpkg.ipa?accessKey=1742443164_5387302635307397467_IsWLvE%2F6koA5qLk5N9sMqffvpoUx%2FDAxswHDcEF5OY%2FDXUV7sYfb39n2cwPBdgVNQhJ3p8IspGNT1damiEIEjZqYvJspb%2Bkw8N8bhqc8gOLE3f3RMDE52m2Z%2BitTIrHs1QHDtL3MsdW%2BhZn3%2BSi6w%2FqVn3t8%2FuqHyeT1EalTvX0cVOwO%2FkzLEB5SRx0MjH%2BSNSFjZFc71ytR1XVIuiAUOE2vquvPPrWgSviHC9eCAck%3D</string>
+          </dict>
+          <dict>
+            <key>kind</key>
+            <string>display-image</string>
+            <key>url</key>
+            <string>https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/cf/a8/36/cfa836b7-6db3-5926-f455-c8620c26b113/AppIcon-0-0-1x_U007ephone-0-0-85-220.png/600x600bb.jpg</string>
+          </dict>
+          <dict>
+            <key>kind</key>
+            <string>full-size-image</string>
+            <key>url</key>
+            <string>https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/cf/a8/36/cfa836b7-6db3-5926-f455-c8620c26b113/AppIcon-0-0-1x_U007ephone-0-0-85-220.png/600x600bb.jpg</string>
+          </dict>
+        </array>
+        <key>metadata</key>
+        <dict>
+          <key>bundle-identifier</key>
+          <string>com.bdgt.online</string>
+          <key>kind</key>
+          <string>software</string>
+          <key>title</key>
+          <string>Online</string>
+        </dict>
+      </dict>
+    </array>
+  </dict>
+</plist>
