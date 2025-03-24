@@ -40,7 +40,8 @@ function renderApps(filter = "#Social") {
     
     const formattedDescription = app.appDescription
     .replace(/<\/?[^>]+(>|$)/g, "") // Убираем все HTML-теги
-    .replace(/\n/g, "<br>"); // Заменяем \n на <br>
+    .replace(/\n/g, "<br>")
+    .replace(/iApps Store/g, "Apps by Ahmedov"); // Заменяем \n на <br>
     
     appCard.innerHTML = `
    <div class="app-header">
