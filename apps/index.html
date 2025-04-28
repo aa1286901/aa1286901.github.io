@@ -118,7 +118,7 @@
     }
     function getQR(fi, rlkey) {
       document.getElementById("qr").href = 'itms-services://?action=download-manifest&url=https://install.getappbox.com/install/scl/fi/'+fi+'/queryparam-rlkey-value-'+rlkey+'/manifest.plist';
-      document.getElementById("imgqr").src = 'http://qrcoder.ru/code/?itms-services%3A%2F%2F%3Faction%3Ddownload-manifest%26url%3Dhttps%3A%2F%2Finstall.getappbox.com%2Finstall%2Fscl%2Ffi%2F'+fi+'%2Fqueryparam-rlkey-value-'+rlkey+'%2Fmanifest.plist&4&0';
+      document.getElementById("imgqr").src = 'https://qr-coder.ru/generate.php?type=web&web_url=itms-services://?action=download-manifest&url=https://install.getappbox.com/install/scl/fi/'+fi+'/queryparam-rlkey-value-'+rlkey+'/manifest.plist&ecc=Low&block_size=20&margin_blocks=1&img_format=PNG';
       document.getElementById('qr').style.display = 'block';
       document.getElementById('cl').style.display = 'block';
     }
