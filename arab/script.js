@@ -1,6 +1,8 @@
 // Перемешиваем массив
 function shuffleArray(array) {
     return array.sort(() => Math.random() - 0.5);
+    return array.sort(() => Math.random() - 0.5);
+    return array.sort(() => Math.random() - 0.5);
 }
 shuffleArray(words);
 shuffleArray(words);
