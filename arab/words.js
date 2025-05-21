@@ -3068,5 +3068,22 @@ const words = [{
     "arabic": "حَرّ",
     "translation": "жара",
     "lesson": 36
-  }
+  },
+
+  {"arabic": "قَرِيبٌ", "translation": "близкий", "lesson": 41},
+  {"arabic": "بَعِيدٌ", "translation": "далёкий", "lesson": 41},
+  {"arabic": "صَعْبٌ", "translation": "трудный", "lesson": 41},
+  {"arabic": "سَهْلٌ", "translation": "лёгкий", "lesson": 41},
+  {"arabic": "مِيزَانٌ", "translation": "весы", "lesson": 41},
+  {"arabic": "وَزْنٌ", "translation": "вес", "lesson": 41},
+  {"arabic": "مَسْأَلَةٌ", "translation": "вопрос", "lesson": 41},
+  {"arabic": "إِرَادَةٌ", "translation": "желание", "lesson": 41},
+  {"arabic": "مُنْذُ", "translation": "с", "lesson": 41},
+  {"arabic": "سَلَّةٌ", "translation": "корзина", "lesson": 41},
+  {"arabic": "يَجِبُ عَلَيْكَ", "translation": "тебе необходимо", "lesson": 41},
+  {"arabic": "أَنْ", "translation": "чтобы", "lesson": 41},
+  {"arabic": "إِذَا", "translation": "когда", "lesson": 41},
+  {"arabic": "إِذَا جَاءَ", "translation": "когда он пришёл", "lesson": 41},
+  {"arabic": "قَطُّ", "translation": "совсем", "lesson": 41},
+  {"arabic": "يَجِبُ عَلَيْكَ أَنْ تَقْرَأَ دَرْسَكَ", "translation": "тебе необходимо прочесть твой урок", "lesson": 41},
 ]
