@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=0.8, maximum-scale=0.8"/>
+  <title>Arabic by Ahmedov</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="status-container" id="statusContainer">
+    <div class="status-header">
+      <div class="user-info">
+        <div class="avatar"></div>
+<div class="username">تَرْكِيبُ الْجُمْلَةِ</div>
+      </div>
+    </div>
+
+    <div class="status-content">
+<div class="word" id="sentence"></div>
+      <input type="text" id="translationInput" placeholder="Введи перевод" />
+<div id="result" class="result"></div>
+      <button onclick="checkTranslation()">Проверить</button>
+<button onclick="showParts()">Показать разбор</button>
+      <button onclick="nextSentence()">Следующее предложение</button>
+    </div>
+<div id="slideUpPanel" class="slide-panel">
+  <button class="close-btn" onclick="hideParts()">✖</button>
+  <div id="slidePartsContent" class="slide-content"></div>
+</div>
+    <footer class="footer">
+      <p>Сайт разработал <strong>Ahmedov</strong> с помощью <strong>ChatGPT</strong></p>
+    </footer>
+  </div>
+</body>
+</html>
