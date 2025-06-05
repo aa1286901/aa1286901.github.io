@@ -1,5 +1,12 @@
 {
   "routes":[{
+      "title":"Авито",
+      "img":"./img/app20/icon.png",
+      "rlkey":"w7opxl4ft67o7h969ufj37z0f",
+      "fi":"bq1ufq9196ppew7irj8vg",
+      "acc": "aa...@gmail.com",
+      "category":"IOS 15.2+ | v. 200.5"
+    },{
       "title":"Онлайн (Сбербанк Онлайн)",
       "img":"./img/app20/icon.png",
       "rlkey":"8fp0fa0r7mep3281wdlwcgzb1",
@@ -74,8 +81,8 @@
     {
       "title": "МТС Банк",
       "img": "./img/app7/icon.png",
-      "rlkey":"yq5apixauldzl76b2q9g1l31o",
-      "fi":"kuuiy5uvv6tzvig2xm5l1",
+      "rlkey":"2mjavnjdevdkp8eq3fswcakxk",
+      "fi":"urzgxu4g9gu0ejouadex9",
       "acc": "aa...@gmail.com",
       "category":"IOS 14.0+ | v. 1.62.0"
     },
