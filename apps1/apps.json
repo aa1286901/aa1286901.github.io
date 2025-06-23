@@ -1,18 +1,17 @@
 {
   "routes":[{
-      "title":"Бюджет Онлайн (Сбербанк)",
-      "img":"https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/cf/a8/36/cfa836b7-6db3-5926-f455-c8620c26b113/AppIcon-0-0-1x_U007ephone-0-0-85-220.png/600x600bb.jpg",
-      "rlkey":"com.bdgt.online",
-      "fi":"h9eedk5sjw5b21jwrxsjs",
-      "acc": "aa1286901@gmail.com",
-      "category":"IOS 14.0+ | v. 15.3.0"
-    },
-	{
-      "title":"Онлайн (Сбербанк)",
+      "title":"Авито",
+      "img":"./img/app21/icon.png",
+      "rlkey":"e6mzft5130excs4yj0zts4udw",
+      "fi":"kdjly98n3va4zxq27wv1k",
+      "acc": "aa...@gmail.com",
+      "category":"IOS 15.2+ | v. 200.5"
+    },{
+      "title":"Онлайн (Сбербанк Онлайн)",
       "img":"./img/app20/icon.png",
       "rlkey":"8fp0fa0r7mep3281wdlwcgzb1",
       "fi":"h9eedk5sjw5b21jwrxsjs",
-      "acc": "aa1286901@mail.ru",
+      "acc": "aa...@mail.com",
       "category":"IOS 14.0+ | v. 15.3.0"
     },
     {
@@ -30,6 +29,14 @@
       "fi":"661ed3bt5dsyrddcryr9x",
       "acc": "aa...@mail.com",
       "category":"IOS 14.0+ | v. 6.13.5"
+    },
+    {
+      "title": "DocStorage (Т-Банк)",
+      "img": "./img/app14/icon.png",
+      "rlkey":"gn276quhkffenknvk2c2pgzvw",
+      "fi":"6h95owfb7n31s4ismyr6l",
+      "acc": "aa...@gmail.com",
+      "category":"IOS 14.0+ | v. 6.22"
     },
     {
       "title": "Тинькофф Бизнес",
@@ -74,8 +81,8 @@
     {
       "title": "МТС Банк",
       "img": "./img/app7/icon.png",
-      "rlkey":"yq5apixauldzl76b2q9g1l31o",
-      "fi":"kuuiy5uvv6tzvig2xm5l1",
+      "rlkey":"2mjavnjdevdkp8eq3fswcakxk",
+      "fi":"urzgxu4g9gu0ejouadex9",
       "acc": "aa...@gmail.com",
       "category":"IOS 14.0+ | v. 1.62.0"
     },
@@ -86,14 +93,6 @@
       "fi":"51s47a61qj85uebbz6jwf",
       "acc": "aa...@gmail.com",
       "category":"IOS 12.0+ | v. 22.10.2"
-    },
-    {
-      "title": "DocStorage (Тинькофф Банк)",
-      "img": "./img/app14/icon.png",
-      "rlkey":"gn276quhkffenknvk2c2pgzvw",
-      "fi":"6h95owfb7n31s4ismyr6l",
-      "acc": "aa...@gmail.com",
-      "category":"IOS 14.0+ | v. 6.22"
     },
     {
       "title": "ЮMoney",
