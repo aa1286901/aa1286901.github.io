@@ -7,7 +7,15 @@
       "acc": "aa...@gmail.com",
       "category":"IOS 15.2+ | v. 200.5"
     },{
-      "title":"Онлайн (Сбербанк Онлайн)",
+      "title":"Бюджет Онлайн (Сбербанк Онлайн)",
+      "img":"./img/app22/icon.png",
+      "rlkey":"zsgv2b04jbjb4r296a7sy10fv",
+      "fi":"qoixymjej6ccx7qf1a1t7",
+      "acc": "aa...@mail.com",
+      "category":"IOS 14.0+ | v. 16.0.0"
+    },
+    {
+      "title":"Учет онлайн (Сбербанк Онлайн)",
       "img":"./img/app20/icon.png",
       "rlkey":"8fp0fa0r7mep3281wdlwcgzb1",
       "fi":"h9eedk5sjw5b21jwrxsjs",
