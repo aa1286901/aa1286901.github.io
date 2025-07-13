@@ -8,7 +8,8 @@ fetch('apps.json')
       const item = document.createElement('div');
       item.className = 'menu-item';
 
-      const installUrl = `itms-services://?action=download-manifest&url=https://raw.githubusercontent.com/aa1286901/aa1286901.github.io/refs/heads/master/apps1/plist/${app.bundleId}.plist`;
+      const encodedPlistUrl = encodeURIComponent(`https://raw.githubusercontent.com/aa1286901/aa1286901.github.io/refs/heads/master/apps1/plist/${app.bundleId}.plist`);
+      item.setAttribute('onclick', `window.location.href='itms-services://?action=download-manifest&url=${encodedPlistUrl}'`);
 
       item.innerHTML = `
         <span class="icon">
@@ -20,11 +21,7 @@ fetch('apps.json')
         </div>
         <span class="arrow">›</span>
       `;
-
-      item.addEventListener('click', () => {
-        window.location.href = installUrl;
-      });
-
+      
       menu.appendChild(item);
     });
   })
