@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>items</key>
+        <array>
+                <dict>
+                        <key>assets</key>
+                        <array>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>software-package</string>
+                                        <key>url</key>
+                                        <string>https://dl.dropboxusercontent.com/scl/fi/gd1o96c8c4b79d0705n7b/Online-15.3.0-aa...-mail.ru.ipa?rlkey=mx28mc8xiy9a10h0jllw5lip1&dl=0</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>display-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/68/77/bc/6877bc7c-671e-2a9b-cc52-26770090f50d/AppIcon-1x_U007ephone-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>full-size-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/68/77/bc/6877bc7c-671e-2a9b-cc52-26770090f50d/AppIcon-1x_U007ephone-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                        </array>
+                        <key>metadata</key>
+                        <dict>
+                                <key>bundle-identifier</key>
+                                <string>com.accountingonline.app</string>
+                                <key>bundle-version</key>
+                                <string>15.3.0</string>
+                                <key>kind</key>
+                                <string>software</string>
+                                <key>title</key>
+                                <string>Online</string>
+                        </dict>
+                </dict>
+        </array>
+</dict>
+</plist>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>items</key>
+        <array>
+                <dict>
+                        <key>assets</key>
+                        <array>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>software-package</string>
+                                        <key>url</key>
+                                        <string>https://dl.dropboxusercontent.com/scl/fi/613hg5ascairkar4fpri9/ChatGPT-1.2025.168-aa...-mail.ru.ipa?rlkey=ojqg2f6iki1ldt0g3dpc234o2&dl=0</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>display-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b3/fd/3d/b3fd3d71-5cc3-6663-1654-63934e3bc692/AppIcon-0-0-1x_U007epad-0-0-0-1-0-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>full-size-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b3/fd/3d/b3fd3d71-5cc3-6663-1654-63934e3bc692/AppIcon-0-0-1x_U007epad-0-0-0-1-0-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                        </array>
+                        <key>metadata</key>
+                        <dict>
+                                <key>bundle-identifier</key>
+                                <string>com.openai.chat</string>
+                                <key>bundle-version</key>
+                                <string>1.2025.168</string>
+                                <key>kind</key>
+                                <string>software</string>
+                                <key>title</key>
+                                <string>ChatGPT</string>
+                        </dict>
+                </dict>
+        </array>
+</dict>
+</plist>

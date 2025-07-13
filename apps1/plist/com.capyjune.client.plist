@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>items</key>
+        <array>
+                <dict>
+                        <key>assets</key>
+                        <array>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>software-package</string>
+                                        <key>url</key>
+                                        <string>https://dl.dropboxusercontent.com/scl/fi/8gilca5xg2tfbwfx2p2ru/T-Help-6.33-aa...-mail.ru.ipa?rlkey=zjgauz8g0ntznwpc1rrpnwezw&dl=0</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>display-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/20/5c/97/205c9700-def2-7b1a-88c7-2c614dd991cf/THelpAppIcon-1x_U007emarketing-0-7-0-0-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>full-size-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/20/5c/97/205c9700-def2-7b1a-88c7-2c614dd991cf/THelpAppIcon-1x_U007emarketing-0-7-0-0-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                        </array>
+                        <key>metadata</key>
+                        <dict>
+                                <key>bundle-identifier</key>
+                                <string>com.capyjune.client</string>
+                                <key>bundle-version</key>
+                                <string>6.33</string>
+                                <key>kind</key>
+                                <string>software</string>
+                                <key>title</key>
+                                <string>T-Help</string>
+                        </dict>
+                </dict>
+        </array>
+</dict>
+</plist>

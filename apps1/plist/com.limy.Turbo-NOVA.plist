@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>items</key>
+        <array>
+                <dict>
+                        <key>assets</key>
+                        <array>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>software-package</string>
+                                        <key>url</key>
+                                        <string>https://dl.dropboxusercontent.com/scl/fi/elvk2otskc23fxxtg3ks6/VPN-1.4-aa...-mail.ru.ipa?rlkey=vb8o7vl10wecry0fq9gy2d9e1&dl=0</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>display-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9a/cb/c5/9acbc549-38c7-c154-c71a-26cce2837b6e/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>full-size-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9a/cb/c5/9acbc549-38c7-c154-c71a-26cce2837b6e/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                        </array>
+                        <key>metadata</key>
+                        <dict>
+                                <key>bundle-identifier</key>
+                                <string>com.limy.Turbo-NOVA</string>
+                                <key>bundle-version</key>
+                                <string>1.4</string>
+                                <key>kind</key>
+                                <string>software</string>
+                                <key>title</key>
+                                <string>Дед VPN</string>
+                        </dict>
+                </dict>
+        </array>
+</dict>
+</plist>

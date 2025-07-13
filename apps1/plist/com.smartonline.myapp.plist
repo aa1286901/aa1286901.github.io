@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>items</key>
+        <array>
+                <dict>
+                        <key>assets</key>
+                        <array>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>software-package</string>
+                                        <key>url</key>
+                                        <string>https://dl.dropboxusercontent.com/scl/fi/mlxieonc547qy8omyyki3/Online-15.10.0-aa...-mail.ru.ipa?rlkey=y0xhehupo4v73uzz101yjyhn5&dl=0</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>display-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/eb/81/6f/eb816f2b-7444-3b3e-2ce9-8937be2c9ef8/AppIcon-0-0-1x_U007ephone-0-0-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>full-size-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/eb/81/6f/eb816f2b-7444-3b3e-2ce9-8937be2c9ef8/AppIcon-0-0-1x_U007ephone-0-0-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                        </array>
+                        <key>metadata</key>
+                        <dict>
+                                <key>bundle-identifier</key>
+                                <string>com.smartonline.myapp</string>
+                                <key>bundle-version</key>
+                                <string>15.10.0</string>
+                                <key>kind</key>
+                                <string>software</string>
+                                <key>title</key>
+                                <string>Online</string>
+                        </dict>
+                </dict>
+        </array>
+</dict>
+</plist>

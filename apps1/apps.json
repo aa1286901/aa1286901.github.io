@@ -1,0 +1,64 @@
+{
+  "routes": [
+    {
+      "title": "Авито",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/f3/ac/14/f3ac141b-fb83-54d1-36c4-4db235025cc8/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/114x114bb.jpg",
+      "bundleId": "ru.avito.app",
+      "category": "v. 200.5"
+    },
+    {
+      "title": "Бюджет Онлайн (Сбер)",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/cf/a8/36/cfa836b7-6db3-5926-f455-c8620c26b113/AppIcon-0-0-1x_U007ephone-0-0-85-220.png/114x114bb.jpg",
+      "bundleId": "com.bdgt.online",
+      "category": "v. 16.0.0"
+    },
+    {
+      "title": "Учет Онлайн (Сбер)",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/68/77/bc/6877bc7c-671e-2a9b-cc52-26770090f50d/AppIcon-1x_U007ephone-85-220.png/114x114bb.jpg",
+      "bundleId": "com.accountingonline.app",
+      "category": "v. 15.3.0"
+    },
+    {
+      "title": "Онлайн (Сбер)",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/eb/81/6f/eb816f2b-7444-3b3e-2ce9-8937be2c9ef8/AppIcon-0-0-1x_U007ephone-0-0-85-220.png/114x114bb.jpg",
+      "bundleId": "com.smartonline.myapp",
+      "category": "v. 15.10.0"
+    },
+    {
+      "title": "T-Help (Т-Банк)",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/20/5c/97/205c9700-def2-7b1a-88c7-2c614dd991cf/THelpAppIcon-1x_U007emarketing-0-7-0-0-85-220.png/114x114bb.jpg",
+      "bundleId": "com.capyjune.client",
+      "category": "v. 6.33"
+    },
+    {
+      "title": "Тинькофф (Т-Банк)",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/ef/63/5b/ef635b1d-82c1-d770-a5a4-cfc7fd650d81/AppIcon-0-1x_U007emarketing-0-7-0-85-220.png/114x114bb.jpg",
+      "bundleId": "ru.tcsbank.mobileclient",
+      "category": "v. 6.13.5"
+    },
+    {
+      "title": "Тинькофф Инвестиции",
+      "img": "https://is2-ssl.mzstatic.com/image/thumb/Purple116/v4/ca/2e/a4/ca2ea432-66c9-fd52-9514-4468ec233278/AppIcon-0-1x_U007emarketing-0-7-0-0-85-220.png/114x114bb.jpg",
+      "bundleId": "ru.tcsbank.Investing",
+      "category": "v. 6.3.2"
+    },
+    {
+      "title": "Дед VPN",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9a/cb/c5/9acbc549-38c7-c154-c71a-26cce2837b6e/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/114x114bb.jpg",
+      "bundleId": "com.limy.Turbo-NOVA",
+      "category": "v. 1.4"
+    },
+    {
+      "title": "ChatGPT",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b3/fd/3d/b3fd3d71-5cc3-6663-1654-63934e3bc692/AppIcon-0-0-1x_U007epad-0-0-0-1-0-85-220.png/114x114bb.jpg",
+      "bundleId": "com.openai.chat",
+      "category": "v. 1.2025.168"
+    },
+    {
+      "title": "Keenetic",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9c/cf/64/9ccf6401-dee5-b2dc-3d6a-cd67c9ca9b77/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/114x114bb.jpg",
+      "bundleId": "com.keenetic.app",
+      "category": "v. 62"
+    }
+  ]
+}
