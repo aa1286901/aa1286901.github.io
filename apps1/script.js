@@ -1,5 +1,5 @@
 // Загрузка приложений из apps.json
-fetch('apps.json')
+fetch('apps.json?'+ Math.random())
   .then(response => response.json())
   .then(data => {
     const menu = document.getElementById('menu-list');
