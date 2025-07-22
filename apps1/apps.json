@@ -25,6 +25,12 @@
       "category": "v. 15.10.0"
     },
     {
+      "title": "Поровну (Альфа)",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/67/a4/7e/67a47e74-9e24-4cf5-b7e5-fa357143397b/AppIcon-0-0-1x_U007epad-0-1-85-220.png/114x114bb.jpg",
+      "bundleId": "com.splitactivities.app",
+      "category": "v. 28052025.3"
+    },
+    {
       "title": "T-Help (Т-Банк)",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/20/5c/97/205c9700-def2-7b1a-88c7-2c614dd991cf/THelpAppIcon-1x_U007emarketing-0-7-0-0-85-220.png/114x114bb.jpg",
       "bundleId": "com.capyjune.client",
