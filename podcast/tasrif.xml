@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
+  <channel>
+    <title>Уроки GM Coffee</title>
+    <link>https://yourusername.github.io</link>
+    <description>Мои подкасты об обучении</description>
+    <language>ru-ru</language>
+    <itunes:author>Ahmedov</itunes:author>
+    <itunes:image href="https://yourusername.github.io/cover.jpg"/>
+    <itunes:category text="Education"/>
+    <item>
+      <title>Урок 1: Введение</title>
+      <enclosure url="https://yourdomain.com/lessons/lesson1.mp3" length="12345678" type="audio/mpeg"/>
+      <guid>lesson1</guid>
+      <pubDate>Wed, 24 Jul 2025 12:00:00 +0000</pubDate>
+      <itunes:duration>10:15</itunes:duration>
+    </item>
+  </channel>
+</rss>
