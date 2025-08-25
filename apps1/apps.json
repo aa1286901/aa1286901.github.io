@@ -7,6 +7,12 @@
       "category": "v. 200.5"
     },
     {
+      "title": "Активы Онлайн (Сбер)",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/2d/e0/fd/2de0fd84-a982-766b-95f4-d78ef24cf557/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/114x114bb.jpg",
+      "bundleId": "com.assetsonline.ios",
+      "category": "v. 16.13.0"
+    },
+    {
       "title": "Бюджет Онлайн (Сбер)",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/cf/a8/36/cfa836b7-6db3-5926-f455-c8620c26b113/AppIcon-0-0-1x_U007ephone-0-0-85-220.png/114x114bb.jpg",
       "bundleId": "com.bdgt.online",
