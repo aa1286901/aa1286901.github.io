@@ -3,35 +3,93 @@
 <head>
   <meta charset="UTF-8" />
   <title>KRAFFT • Учёт продаж</title>
-  <meta name="viewport" content="width=device-width, initial-scale=0.9" />
+  <meta name="viewport" content="width=device-width, initial-scale=0.8" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body{margin:0;font-family:sans-serif;background:#0f1113;color:#f7f8fa;}
-    header{background:#14171b;padding:10px 16px;font-weight:700;font-size:18px;}
-    main{max-width:900px;margin:0 auto;padding:16px;display:grid;gap:16px;}
-    .btn-main{padding:12px 16px;border:0;border-radius:10px;cursor:pointer;
-      background:linear-gradient(180deg,#ff9b3a,#ff6a00);color:#141414;font-weight:700;}
-    .card{background:#15181c;border:1px solid #23272d;border-radius:12px;padding:16px;}
-    .table-wrapper{overflow-x:auto;}
-    table{width:100%;border-collapse:collapse;font-size:14px;}
-    thead{background:#1a1d21;}
-    th,td{padding:8px;border-bottom:1px solid #23272d;}
-    tbody tr:nth-child(even){background:#181b20;}
-    td div.small{font-size:12px;color:#aaa;}
-    td div.big{font-size:18px;font-weight:700;}
+    :root {
+      --bg:#0f1113; --card:#15181c; --muted:#9aa3ad; --line:#23272d;
+      --accent:#ff6a00; --accent-2:#ff9b3a; --good:#2ecc71; --bad:#e74c3c; --text:#f7f8fa;
+      --shadow:0 10px 30px rgba(255,106,0,.12); --radius:14px;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto;background:var(--bg);color:var(--text);}
+    header{background:#0f1113;border-bottom:1px solid var(--line);}
+    .wrap{max-width:980px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+    .wrap img{width:40px;height:40px;} .wrap h1{margin:0;font-size:18px;font-weight:700}
+    .wrap small{color:var(--muted)}
+    main{max-width:980px;margin:0 auto;padding:16px;display:grid;gap:16px;}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;}
+    .card h2{margin:0 0 12px;font-size:18px;}
+    .btn-main{padding:12px 16px;border:0;border-radius:12px;cursor:pointer;font-weight:700;
+      background:linear-gradient(180deg,var(--accent-2),var(--accent));color:#141414;box-shadow:0 8px 24px rgba(255,106,0,.25);}
+    .btn-sec{flex:1;min-width:120px;padding:8px;border-radius:10px;border:1px solid var(--line);
+      background:#101316;color:var(--text);cursor:pointer;font-weight:600;}
+
+    /* таблица */
+    .table-wrapper {overflow-x: auto;border-radius: 12px;border: 1px solid var(--line);}
+    table {width: 100%;border-collapse: collapse;background: #0f1215;font-size: 14px;}
+    thead {background: #12161a;position: sticky;top: 0;z-index: 2;}
+    thead th {padding: 8px;font-size: 12px;color: var(--muted);text-align: left;}
+    tbody td {padding: 8px;border-bottom: 1px solid #1d2126;vertical-align: top;}
+    tbody tr:nth-child(even) {background: #14171b;}
+    tbody tr:hover {background: rgba(255,106,0,0.1);transition: 0.2s;}
+    td div.small {font-size:12px;color:#aaa;}
+    td div.big {font-size:18px;font-weight:700;}
+
+    /* ширина колонок */
+    #salesTable th:nth-child(1), #salesTable td:nth-child(1) { /* Дата */
+      width: 12%; min-width: 60px; text-align: center;
+    }
+    #salesTable th:nth-child(2), #salesTable td:nth-child(2) { /* Товар */
+      width: 46%;
+    }
+    #salesTable th:nth-child(3), #salesTable td:nth-child(3) { /* Продажа */
+      width: 20%;
+    }
+    #salesTable th:nth-child(4), #salesTable td:nth-child(4) { /* Расходы */
+      width: 22%;
+    }
+
+    /* аналитика */
+    .switcher{display:flex;gap:8px;margin-bottom:12px;}
+    .tab{flex:1;padding:10px;border-radius:10px;cursor:pointer;border:1px solid var(--line);
+      background:#101316;color:var(--muted);font-weight:600;text-align:center;}
+    .tab.active{color:#141414;background:linear-gradient(180deg,var(--accent-2),var(--accent));}
+
+    .stats-grid{display:grid;gap:10px;}
+    .stats-3{grid-template-columns:repeat(3,1fr);}
+    .stat{background:#0f1215;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;}
+    .stat .k{font-size:18px;font-weight:800;}
+    .stat .t{color:var(--muted);font-size:12px;}
+    .stat.good .k{color:var(--good);} 
+    .stat.bad .k{color:var(--bad);} 
+    canvas{width:100%!important;height:auto!important;}
+
+    /* ===== Модальное окно ===== */
     .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);
       display:none;align-items:center;justify-content:center;z-index:100;}
     .modal.active{display:flex;}
-    .modal-content{background:#15181c;padding:20px;border-radius:12px;width:90%;max-width:400px;position:relative;}
-    .close-btn{position:absolute;top:10px;right:10px;border:none;background:none;color:#aaa;font-size:22px;cursor:pointer;}
-    form label{display:block;font-size:12px;color:#aaa;margin:6px 0 4px;}
-    input,select{width:100%;padding:8px;border-radius:8px;border:1px solid #23272d;background:#0f1113;color:#f7f8fa;}
-    .btn{margin-top:10px;width:100%;padding:12px;border:0;border-radius:10px;
-      background:linear-gradient(180deg,#ff9b3a,#ff6a00);color:#141414;font-weight:700;cursor:pointer;}
+    .modal-content{background:var(--card);border-radius:var(--radius);padding:20px;max-width:420px;width:90%;position:relative;box-shadow:var(--shadow);}
+    .modal-content h2{margin-top:0;}
+    .close-btn{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
+    form label{display:block;font-size:12px;color:var(--muted);margin:6px 0 4px;}
+    select,input[type="number"],input[type="text"]{width:100%;padding:10px;background:#0d0f12;color:var(--text);
+      border:1px solid var(--line);border-radius:10px;}
+    .btn{width:100%;padding:12px;margin-top:10px;border:0;border-radius:12px;cursor:pointer;font-weight:700;
+      background:linear-gradient(180deg,var(--accent-2),var(--accent));color:#141414;}
   </style>
 </head>
 <body>
-  <header>KRAFFT — учёт продаж</header>
+  <header>
+    <div class="wrap">
+      <img src="logo.jpeg" alt="KRAFFT">
+      <div>
+        <h1>KRAFFT — учёт продаж</h1>
+        <small>инструменты • маркетплейсы • аналитика</small>
+      </div>
+    </div>
+  </header>
+
   <main>
     <button class="btn-main" onclick="openModal()">➕ Добавить продажу</button>
 
@@ -50,6 +108,28 @@
           <tbody></tbody>
         </table>
       </div>
+      <div style="display:flex;justify-content:center;gap:10px;margin-top:10px;">
+        <button class="btn-sec" onclick="prevPage()">← Назад</button>
+        <span id="pageInfo" style="align-self:center;color:#aaa"></span>
+        <button class="btn-sec" onclick="nextPage()">Вперёд →</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="switcher">
+        <button id="todayBtn" class="tab active" onclick="setFilter('today')">Сегодня</button>
+        <button id="weekBtn" class="tab" onclick="setFilter('week')">Неделя</button>
+        <button id="allBtn" class="tab" onclick="setFilter('all')">Все</button>
+      </div>
+
+      <div class="stats-grid stats-3" id="platformStats"></div>
+      <div class="stats-grid stats-3" id="expenseStats" style="margin-top:12px;"></div>
+      <div class="stats-grid stats-3" style="margin-top:12px;">
+        <div class="stat"><div class="k" id="statCount">0</div><div class="t">Заказы</div></div>
+        <div class="stat"><div class="k" id="statIncome">0 ₽</div><div class="t">Выручка</div></div>
+        <div class="stat good"><div class="k" id="statProfit">0 ₽</div><div class="t">Чистая прибыль</div></div>
+      </div>
+      <canvas id="salesChart" height="120" style="margin-top:16px;"></canvas>
     </section>
   </main>
 
@@ -66,110 +146,113 @@
           <option value="Avito">Avito</option>
         </select>
         <label>Название товара</label>
-        <input type="text" id="productName" required>
+        <input type="text" id="productName" placeholder="Шуруповерт Krafft" required>
         <label>Цена продажи</label>
-        <input type="number" id="price" required>
+        <input type="number" id="price" required placeholder="₽">
         <label>Цена закупа</label>
-        <input type="number" id="buyPrice" required>
+        <input type="number" id="friendPayment" required placeholder="₽">
         <label>Реклама</label>
-        <input type="number" id="ads">
+        <input type="number" id="ads" placeholder="₽">
         <label>Доставка</label>
-        <input type="number" id="delivery">
+        <input type="number" id="delivery" placeholder="₽">
         <button class="btn" type="submit">Сохранить</button>
       </form>
     </div>
   </div>
 
-<script>
-const REPO = "ТВОЙ_GITHUB_USERNAME/ТВОЙ_REPO"; 
-const FILE_PATH = "data.json"; 
-const BRANCH = "main"; 
-const TOKEN = "ghp_ТВОЙ_ТОКЕН"; // ⚠️ Вставь свой токен
+  <script>
+    const CURRENCY=new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:0});
+    const number=n=>Number(n||0);
+    let sales=JSON.parse(localStorage.getItem("sales")||"[]"); 
+    let currentFilter="today"; 
+    let chart;
+    let currentPage=1; 
+    const perPage=10;
 
-const CURRENCY=new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:0});
-const number=n=>Number(n||0);
-let sales=[];
+    function todayStr(){const d=new Date();return String(d.getDate()).padStart(2,'0')+"."+String(d.getMonth()+1).padStart(2,'0')+"."+d.getFullYear();}
+    function parseDate(str){const [d,m,y]=str.split(".");return new Date(y,m-1,d);}
+    function getDay(dateStr){return Number(dateStr.split(".")[0]);}
+    function getMonthName(dateStr){const m=Number(dateStr.split(".")[1]);const months=["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"];return months[m-1];}
 
-function todayStr(){
-  const d=new Date();
-  return String(d.getDate()).padStart(2,"0")+"."+String(d.getMonth()+1).padStart(2,"0")+"."+d.getFullYear();
-}
-function getDay(dateStr){return Number(dateStr.split(".")[0]);}
-function getMonthName(dateStr){
-  const m=Number(dateStr.split(".")[1]);
-  const months=["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"];
-  return months[m-1];
-}
+    function renderTable(){
+      const tbody=document.querySelector("#salesTable tbody");
+      tbody.innerHTML="";
+      const totalPages=Math.ceil(sales.length/perPage)||1;
+      if(currentPage>totalPages) currentPage=totalPages;
+      const start=(currentPage-1)*perPage;
+      const end=start+perPage;
+      const pageSales=sales.slice().reverse().slice(start,end); // последние сверху
+      pageSales.forEach(sale=>{
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
+          <td><div class="big">${getDay(sale.date)}</div><div class="small">${getMonthName(sale.date)}</div></td>
+          <td><div style="font-weight:600">${sale.product}</div><div class="small">${sale.platform}</div></td>
+          <td><div style="font-weight:600">${CURRENCY.format(sale.price)}</div><div class="small">${CURRENCY.format(sale.friendPayment)}</div></td>
+          <td><div style="font-weight:600">${CURRENCY.format(number(sale.ads)+number(sale.delivery))}</div><div class="small">${CURRENCY.format(sale.ads)} + ${CURRENCY.format(sale.delivery)}</div></td>
+        `;
+        tbody.appendChild(tr);
+      });
+      document.getElementById("pageInfo").textContent=`${currentPage} / ${totalPages}`;
+      renderAnalytics();
+    }
 
-async function getFile() {
-  const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`, {
-    headers: { Authorization: `token ${TOKEN}` }
-  });
-  return await res.json();
-}
+    function nextPage(){const totalPages=Math.ceil(sales.length/perPage)||1;if(currentPage<totalPages){currentPage++;renderTable();}}
+    function prevPage(){if(currentPage>1){currentPage--;renderTable();}}
 
-async function saveFile(newData) {
-  const file = await getFile();
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(newData, null, 2))));
-  const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`, {
-    method: "PUT",
-    headers: {
-      "Authorization": `token ${TOKEN}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      message: "update data.json",
-      content: content,
-      sha: file.sha,
-      branch: BRANCH
-    })
-  });
-  return await res.json();
-}
+    function filterSales(){const today=new Date();
+      if(currentFilter==="today"){return sales.filter(s=>s.date===todayStr());}
+      else if(currentFilter==="week"){const weekAgo=new Date();weekAgo.setDate(today.getDate()-7);
+        return sales.filter(s=>{const d=parseDate(s.date);return d>=weekAgo&&d<=today;});}
+      return sales;}
 
-async function loadSales(){
-  const file=await getFile();
-  sales=JSON.parse(decodeURIComponent(escape(atob(file.content))));
-  renderTable();
-}
+    function renderAnalytics(){
+      const filtered=filterSales();
+      let income=0,toFriend=0,adsSum=0,delSum=0;
+      let platformData={Ozon:{count:0,sum:0},Wildberries:{count:0,sum:0},Avito:{count:0,sum:0}};
+      filtered.forEach(s=>{
+        income+=number(s.price);
+        toFriend+=number(s.friendPayment);
+        adsSum+=number(s.ads); delSum+=number(s.delivery);
+        if(platformData[s.platform]){platformData[s.platform].count++;platformData[s.platform].sum+=number(s.price);}
+      });
+      const profit=income-toFriend-adsSum-delSum;
+      document.getElementById("statCount").textContent=filtered.length;
+      document.getElementById("statIncome").textContent=CURRENCY.format(income);
+      document.getElementById("statProfit").textContent=CURRENCY.format(profit);
+      const platformStats=document.getElementById("platformStats");
+      platformStats.innerHTML="";
+      Object.keys(platformData).forEach(p=>{
+        platformStats.innerHTML+=`
+          <div class="stat"><div class="k">${platformData[p].count}</div><div class="t">${p}</div><div class="t">${CURRENCY.format(platformData[p].sum)}</div></div>`;
+      });
+      const expenseStats=document.getElementById("expenseStats");
+      expenseStats.innerHTML=`
+        <div class="stat"><div class="k">${CURRENCY.format(adsSum)}</div><div class="t">Реклама</div></div>
+        <div class="stat"><div class="k">${CURRENCY.format(delSum)}</div><div class="t">Доставка</div></div>
+        <div class="stat bad"><div class="k">${CURRENCY.format(adsSum+delSum)}</div><div class="t">Общие расходы</div></div>
+      `;
+      const byDate={}; filtered.forEach(s=>{byDate[s.date]=(byDate[s.date]||0)+number(s.price);});
+      const labels=Object.keys(byDate).sort((a,b)=>parseDate(a)-parseDate(b)); const data=labels.map(l=>byDate[l]);
+      if(chart)chart.destroy();
+      chart=new Chart(document.getElementById("salesChart"),{type:"bar",data:{labels,datasets:[{data,backgroundColor:"rgba(255,106,0,.85)"}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+    }
 
-function renderTable(){
-  const tbody=document.querySelector("#salesTable tbody");
-  tbody.innerHTML="";
-  sales.slice().reverse().forEach(sale=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td><div class="big">${getDay(sale.date)}</div><div class="small">${getMonthName(sale.date)}</div></td>
-      <td><div style="font-weight:600">${sale.product}</div><div class="small">${sale.platform}</div></td>
-      <td><div style="font-weight:600">${CURRENCY.format(number(sale.price))}</div><div class="small">${CURRENCY.format(number(sale.buyPrice))}</div></td>
-      <td><div style="font-weight:600">${CURRENCY.format(number(sale.ads)+number(sale.delivery))}</div><div class="small">${CURRENCY.format(sale.ads)} + ${CURRENCY.format(sale.delivery)}</div></td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+    function setFilter(f){currentFilter=f;document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+      document.getElementById(f+"Btn").classList.add("active");renderAnalytics();}
 
-document.getElementById("saleForm").addEventListener("submit",async e=>{
-  e.preventDefault();
-  const sale={
-    date:todayStr(),
-    platform:platform.value,
-    product:productName.value,
-    price:number(price.value),
-    buyPrice:number(buyPrice.value),
-    ads:number(ads.value),
-    delivery:number(delivery.value)
-  };
-  sales.push(sale);
-  await saveFile(sales);
-  await loadSales();
-  closeModal();
-  e.target.reset();
-});
+    document.getElementById("saleForm").addEventListener("submit",e=>{
+      e.preventDefault();
+      const sale={date:todayStr(),platform:platform.value,product:productName.value,price:number(price.value),friendPayment:number(friendPayment.value),ads:number(ads.value),delivery:number(delivery.value)};
+      sales.push(sale); localStorage.setItem("sales",JSON.stringify(sales)); 
+      currentPage=Math.ceil(sales.length/perPage); // перейти на последнюю страницу
+      renderTable(); closeModal(); e.target.reset();
+    });
 
-function openModal(){document.getElementById("modal").classList.add("active");}
-function closeModal(){document.getElementById("modal").classList.remove("active");}
+    function openModal(){document.getElementById("modal").classList.add("active");}
+    function closeModal(){document.getElementById("modal").classList.remove("active");}
 
-loadSales();
-</script>
+    currentPage=Math.ceil(sales.length/perPage)||1; // стартуем с последней страницы
+    renderTable();
+  </script>
 </body>
 </html>
