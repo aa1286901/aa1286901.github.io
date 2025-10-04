@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>KRAFFT • Учёт продаж</title>
+  <meta name="viewport" content="width=device-width, initial-scale=0.9" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body{margin:0;font-family:sans-serif;background:#0f1113;color:#f7f8fa;}
+    header{background:#14171b;padding:10px 16px;font-weight:700;font-size:18px;}
+    main{max-width:900px;margin:0 auto;padding:16px;display:grid;gap:16px;}
+    .btn-main{padding:12px 16px;border:0;border-radius:10px;cursor:pointer;
+      background:linear-gradient(180deg,#ff9b3a,#ff6a00);color:#141414;font-weight:700;}
+    .card{background:#15181c;border:1px solid #23272d;border-radius:12px;padding:16px;}
+    .table-wrapper{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;font-size:14px;}
+    thead{background:#1a1d21;}
+    th,td{padding:8px;border-bottom:1px solid #23272d;}
+    tbody tr:nth-child(even){background:#181b20;}
+    td div.small{font-size:12px;color:#aaa;}
+    td div.big{font-size:18px;font-weight:700;}
+    .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);
+      display:none;align-items:center;justify-content:center;z-index:100;}
+    .modal.active{display:flex;}
+    .modal-content{background:#15181c;padding:20px;border-radius:12px;width:90%;max-width:400px;position:relative;}
+    .close-btn{position:absolute;top:10px;right:10px;border:none;background:none;color:#aaa;font-size:22px;cursor:pointer;}
+    form label{display:block;font-size:12px;color:#aaa;margin:6px 0 4px;}
+    input,select{width:100%;padding:8px;border-radius:8px;border:1px solid #23272d;background:#0f1113;color:#f7f8fa;}
+    .btn{margin-top:10px;width:100%;padding:12px;border:0;border-radius:10px;
+      background:linear-gradient(180deg,#ff9b3a,#ff6a00);color:#141414;font-weight:700;cursor:pointer;}
+  </style>
+</head>
+<body>
+  <header>KRAFFT — учёт продаж</header>
+  <main>
+    <button class="btn-main" onclick="openModal()">➕ Добавить продажу</button>
+
+    <section class="card">
+      <h2>Список продаж</h2>
+      <div class="table-wrapper">
+        <table id="salesTable">
+          <thead>
+            <tr>
+              <th>Дата</th>
+              <th>Товар</th>
+              <th>Продажа</th>
+              <th>Расходы</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Модальное окно -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeModal()">×</button>
+      <h2>Добавить продажу</h2>
+      <form id="saleForm">
+        <label>Площадка</label>
+        <select id="platform" required>
+          <option value="Ozon">Ozon</option>
+          <option value="Wildberries">Wildberries</option>
+          <option value="Avito">Avito</option>
+        </select>
+        <label>Название товара</label>
+        <input type="text" id="productName" required>
+        <label>Цена продажи</label>
+        <input type="number" id="price" required>
+        <label>Цена закупа</label>
+        <input type="number" id="buyPrice" required>
+        <label>Реклама</label>
+        <input type="number" id="ads">
+        <label>Доставка</label>
+        <input type="number" id="delivery">
+        <button class="btn" type="submit">Сохранить</button>
+      </form>
+    </div>
+  </div>
+
+<script>
+const REPO = "ТВОЙ_GITHUB_USERNAME/ТВОЙ_REPO"; 
+const FILE_PATH = "data.json"; 
+const BRANCH = "main"; 
+const TOKEN = "ghp_ТВОЙ_ТОКЕН"; // ⚠️ Вставь свой токен
+
+const CURRENCY=new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:0});
+const number=n=>Number(n||0);
+let sales=[];
+
+function todayStr(){
+  const d=new Date();
+  return String(d.getDate()).padStart(2,"0")+"."+String(d.getMonth()+1).padStart(2,"0")+"."+d.getFullYear();
+}
+function getDay(dateStr){return Number(dateStr.split(".")[0]);}
+function getMonthName(dateStr){
+  const m=Number(dateStr.split(".")[1]);
+  const months=["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"];
+  return months[m-1];
+}
+
+async function getFile() {
+  const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`, {
+    headers: { Authorization: `token ${TOKEN}` }
+  });
+  return await res.json();
+}
+
+async function saveFile(newData) {
+  const file = await getFile();
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(newData, null, 2))));
+  const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `token ${TOKEN}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message: "update data.json",
+      content: content,
+      sha: file.sha,
+      branch: BRANCH
+    })
+  });
+  return await res.json();
+}
+
+async function loadSales(){
+  const file=await getFile();
+  sales=JSON.parse(decodeURIComponent(escape(atob(file.content))));
+  renderTable();
+}
+
+function renderTable(){
+  const tbody=document.querySelector("#salesTable tbody");
+  tbody.innerHTML="";
+  sales.slice().reverse().forEach(sale=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td><div class="big">${getDay(sale.date)}</div><div class="small">${getMonthName(sale.date)}</div></td>
+      <td><div style="font-weight:600">${sale.product}</div><div class="small">${sale.platform}</div></td>
+      <td><div style="font-weight:600">${CURRENCY.format(number(sale.price))}</div><div class="small">${CURRENCY.format(number(sale.buyPrice))}</div></td>
+      <td><div style="font-weight:600">${CURRENCY.format(number(sale.ads)+number(sale.delivery))}</div><div class="small">${CURRENCY.format(sale.ads)} + ${CURRENCY.format(sale.delivery)}</div></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+document.getElementById("saleForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const sale={
+    date:todayStr(),
+    platform:platform.value,
+    product:productName.value,
+    price:number(price.value),
+    buyPrice:number(buyPrice.value),
+    ads:number(ads.value),
+    delivery:number(delivery.value)
+  };
+  sales.push(sale);
+  await saveFile(sales);
+  await loadSales();
+  closeModal();
+  e.target.reset();
+});
+
+function openModal(){document.getElementById("modal").classList.add("active");}
+function closeModal(){document.getElementById("modal").classList.remove("active");}
+
+loadSales();
+</script>
+</body>
+</html>
