@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>items</key>
+        <array>
+                <dict>
+                        <key>assets</key>
+                        <array>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>software-package</string>
+                                        <key>url</key>
+                                        <string>https://dl.dropboxusercontent.com/scl/fi/zv58n7k0zpx90iqvnu3x5/17.0.0-aa...-mail.ru.ipa?rlkey=ukrt13j83n8lkzflvon1bw9cf</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>display-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/33/bd/c4/33bdc466-70f0-0b85-db0c-982201dbf5e7/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>full-size-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/33/bd/c4/33bdc466-70f0-0b85-db0c-982201dbf5e7/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                        </array>
+                        <key>metadata</key>
+                        <dict>
+                                <key>bundle-identifier</key>
+                                <string>com.digit.budg</string>
+                                <key>bundle-version</key>
+                                <string>17.0.0</string>
+                                <key>kind</key>
+                                <string>software</string>
+                                <key>title</key>
+                                <string>Online</string>
+                        </dict>
+                </dict>
+        </array>
+</dict>
+</plist>
