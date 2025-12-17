@@ -31,6 +31,12 @@
       "category": "v. 6.33"
     },
     {
+      "title": "Tинькофф (Т-Банк)",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/ef/63/5b/ef635b1d-82c1-d770-a5a4-cfc7fd650d81/AppIcon-0-1x_U007emarketing-0-7-0-85-220.png/114x114bb.jpg",
+      "bundleId": "ru.tcsbank.mobileclient",
+      "category": "v. 6.13.5"
+    },
+    {
       "title": "Тинькофф Инвестиции",
       "img": "https://is2-ssl.mzstatic.com/image/thumb/Purple116/v4/ca/2e/a4/ca2ea432-66c9-fd52-9514-4468ec233278/AppIcon-0-1x_U007emarketing-0-7-0-0-85-220.png/114x114bb.jpg",
       "bundleId": "ru.tcsbank.Investing",
