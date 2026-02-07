@@ -710,7 +710,7 @@ function apiItem(id) {
             <div class="entity-desc-value is-rating" id="israting">\
         	        <span title="TMDB" class="entity-rating-tmdb">Рейтинг: ' + obj['vote_average'].toFixed(1) + ' (голосов: ' + obj['vote_count'] + ')</span>\
             </div>\
-            <div class="entity-desc-item">Жанр: ' + genres + budget + '</div>\
+            <div class="entity-desc-item">Жанр: ' + genres + '</div>\
             <div class="entity-desc-item">Дата: ' + new Intl.DateTimeFormat('ru-Ru').format(new Date(date)) + ' | Время: ' + new Date(time).getTime() + ' мин.</div>\
             </div>\
             <div class="dropdown" id="dropdown" style="display: inline-flex;">\
