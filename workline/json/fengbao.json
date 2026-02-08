@@ -1,0 +1,309 @@
+[
+  {
+    "id": 1,
+    "cat": "sets",
+    "name": "Набор 4 в 1 | 21V | 6.0Ah",
+    "desc": "5230 | 21-13 | 280 | 05-24",
+    "price": "15 500 ₽"
+  },
+  {
+    "id": 2,
+    "cat": "sets",
+    "name": "Набор 4 в 1 | 21V | 6.0Ah",
+    "desc": "5230 | 650 | 21-13 | 05-24",
+    "price": "15 500 ₽"
+  },
+  {
+    "id": 3,
+    "cat": "sets",
+    "name": "Набор 4 в 1 | 21V | 8.0Ah",
+    "desc": "20-125 | 20-13 | 688 | 05-24",
+    "price": "21 500 ₽",
+    "isNew": true
+  },
+  {
+    "id": 4,
+    "cat": "sets",
+    "name": "Набор 3 в 1 | 21V | 6.0Ah",
+    "desc": "5230 | 688 | 05-24",
+    "price": "13 000 ₽",
+    "isNew": true
+  },
+  {
+    "id": 5,
+    "cat": "sets",
+    "name": "Набор 3 в 1 | 21V | 6.0Ah",
+    "desc": "5230 | 1321 | 1280",
+    "price": "10 800 ₽"
+  },
+  {
+    "id": 6,
+    "cat": "sets",
+    "name": "Набор 3 в 1 | 21V | 6.0Ah",
+    "desc": "150 | 20-13A | 8205",
+    "price": "11 500 ₽"
+  },
+  {
+    "id": 7,
+    "cat": "sets",
+    "name": "Набор 3 в 1 | 21V | 9.0Ah",
+    "desc": "5230 | 8026 | 1280",
+    "price": "16 000 ₽"
+  },
+  {
+    "id": 8,
+    "cat": "sets",
+    "name": "Набор 2 в 1 | 21V | 6.0Ah",
+    "desc": "5230 | 21-13",
+    "price": "6 500 ₽"
+  },
+  {
+    "id": 9,
+    "cat": "sets",
+    "name": "Набор 2 в 1 | 21V | 9.0Ah",
+    "desc": "5230 | 1280",
+    "price": "11 000 ₽"
+  },
+  {
+    "id": 10,
+    "cat": "sets",
+    "name": "Набор 2 в 1 | 21V | 8.0Ah",
+    "desc": "20-125 | 688",
+    "price": "11 500 ₽",
+    "isNew": true
+  },
+
+  {
+    "id": 11,
+    "cat": "impact",
+    "name": "FB-2280 Гайковерт",
+    "desc": "21V | 9.0Ah",
+    "price": "15 300 ₽"
+  },
+  {
+    "id": 12,
+    "cat": "impact",
+    "name": "FB-1280 Гайковерт",
+    "desc": "21V | 6.0Ah",
+    "price": "6 900 ₽"
+  },
+  {
+    "id": 13,
+    "cat": "impact",
+    "name": "FBH-688 Гайковерт",
+    "desc": "800Hm | 21V | 4.0Ah",
+    "price": "6 000 ₽",
+    "isNew": true
+  },
+  {
+    "id": 14,
+    "cat": "impact",
+    "name": "FB-280 Винтоверт",
+    "desc": "21V | 4.0Ah",
+    "price": "4 400 ₽"
+  },
+  {
+    "id": 15,
+    "cat": "drill",
+    "name": "FBH-20-13A Шуруповерт",
+    "desc": "Ударный | 21V | 4.0Ah",
+    "price": "5 800 ₽",
+    "isNew": true
+  },
+  {
+    "id": 16,
+    "cat": "drill",
+    "name": "FB-13-21 Шуруповерт",
+    "desc": "Ударный | 21V | 4.0Ah",
+    "price": "4 200 ₽"
+  },
+  {
+    "id": 17,
+    "cat": "drill",
+    "name": "FB-21-13 Шуруповерт",
+    "desc": "21V | 2.0Ah",
+    "price": "3 400 ₽"
+  },
+  {
+    "id": 18,
+    "cat": "drill",
+    "name": "FB-16-10A Шуруповерт",
+    "desc": "16V | 2.5Ah",
+    "price": "3 400 ₽",
+    "isNew": true
+  },
+  {
+    "id": 19,
+    "cat": "drill",
+    "name": "FB-16-10 Шуруповерт",
+    "desc": "16V | 2.5Ah",
+    "price": "2 800 ₽"
+  },
+  {
+    "id": 20,
+    "cat": "drill",
+    "name": "FB-05-24 Перфоратор",
+    "desc": "3-режима | 21V | 8.0Ah",
+    "price": "10 400 ₽",
+    "isNew": true
+  },
+  {
+    "id": 21,
+    "cat": "grinder",
+    "name": "FBH-20-125 УШМ",
+    "desc": "21V | 8.0Ah",
+    "price": "8 300 ₽",
+    "isNew": true
+  },
+  {
+    "id": 22,
+    "cat": "grinder",
+    "name": "FB-5230 УШМ",
+    "desc": "21V | 6.0Ah",
+    "price": "5 200 ₽"
+  },
+  {
+    "id": 23,
+    "cat": "laser",
+    "name": "FB-205 Лазерный уровень",
+    "desc": "Уличный | 42V | 4.5Ah",
+    "price": "4 000 ₽"
+  },
+  {
+    "id": 24,
+    "cat": "laser",
+    "name": "FB-DC16 Лазерный уровень",
+    "desc": "Со штативом | 42V | 4.5Ah",
+    "price": "4 000 ₽"
+  },
+  {
+    "id": 25,
+    "cat": "grinder",
+    "name": "FBH-20-150 Циркулярная пила",
+    "desc": "21V | 6.0Ah",
+    "price": "7 000 ₽",
+    "isNew": true
+  },
+  {
+    "id": 26,
+    "cat": "grinder",
+    "name": "FB-8355 Цепная пила",
+    "desc": "21V | 9.0Ah",
+    "price": "9 500 ₽"
+  },
+  {
+    "id": 27,
+    "cat": "grinder",
+    "name": "FBH-40-16 Цепная пила",
+    "desc": "40V | 4.0Ah",
+    "price": "8 800 ₽",
+    "isNew": true
+  },
+  {
+    "id": 28,
+    "cat": "grinder",
+    "name": "FB-8305 Цепная пила",
+    "desc": "21V | 5.0Ah",
+    "price": "5 200 ₽"
+  },
+  {
+    "id": 29,
+    "cat": "grinder",
+    "name": "FB-8205 Цепная пила",
+    "desc": "21V | 6.0Ah",
+    "price": "4 300 ₽"
+  },
+  {
+    "id": 30,
+    "cat": "other",
+    "name": "FB-6240 Секатор",
+    "desc": "21V | 4.0Ah",
+    "price": "6 000 ₽"
+  },
+  {
+    "id": 31,
+    "cat": "grinder",
+    "name": "FBH-02-28 Сабельная пила",
+    "desc": "21V | 4.0Ah",
+    "price": "5 900 ₽",
+    "isNew": true
+  },
+  {
+    "id": 32,
+    "cat": "other",
+    "name": "FB-8621 Воздуходувка",
+    "desc": "21V | 4.0Ah",
+    "price": "4 600 ₽"
+  },
+  {
+    "id": 33,
+    "cat": "other",
+    "name": "FB-808 Заклепочник",
+    "desc": "21V | 4.0Ah",
+    "price": "5 800 ₽"
+  },
+  {
+    "id": 34,
+    "cat": "other",
+    "name": "FBH-01S Отвертка",
+    "desc": "10Hm | 4V | 2.0Ач",
+    "price": "1 900 ₽",
+    "isNew": true
+  },
+  {
+    "id": 35,
+    "cat": "accessory",
+    "name": "FengBao Диск отрезной",
+    "desc": "125 мм",
+    "price": "40 ₽"
+  },
+  {
+    "id": 36,
+    "cat": "laser",
+    "name": "Лазерный дальномер",
+    "desc": "50 м",
+    "price": "1 600 ₽"
+  },
+  {
+    "id": 37,
+    "cat": "laser",
+    "name": "Лазерный Дальномер",
+    "desc": "100 м",
+    "price": "1 900 ₽"
+  },
+  {
+    "id": 38,
+    "cat": "accessory",
+    "name": "Цепь на FB 8305",
+    "desc": "12 узкая шина",
+    "price": "270 ₽"
+  },
+  {
+    "id": 39,
+    "cat": "accessory",
+    "name": "Цепь на FB 8305",
+    "desc": "12` широкая шина",
+    "price": "270 ₽"
+  },
+  {
+    "id": 40,
+    "cat": "accessory",
+    "name": "Цепь на FB 8205",
+    "desc": "8` шина",
+    "price": "200 ₽"
+  },
+  {
+    "id": 41,
+    "cat": "accessory",
+    "name": "Цепь на FB 8355",
+    "desc": "16` шина",
+    "price": "300 ₽"
+  },
+  {
+    "id": 42,
+    "cat": "accessory",
+    "name": "Цепь на FBH-40-16",
+    "desc": "16` шина",
+    "price": "350 ₽"
+  }
+]

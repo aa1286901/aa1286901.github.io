@@ -1,0 +1,336 @@
+/* --- ПЕРЕМЕННЫЕ (Стиль Apple Dark) --- */
+:root {
+  --bg-color: #000000; /* Основной фон */
+  --card-bg: #1c1c1e; /* Карточки (темно-серый) */
+  --text-primary: #ffffff;
+  --text-secondary: #8e8e93;
+
+  --accent-red: #d32f2f; /* Красный из логотипа */
+  --pill-bg: #2c2c2e; /* Фон фильтров */
+  --pill-active: #d32f2f;
+
+  --tab-bar-height: 50px;
+  --header-height: 50px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Helvetica,
+    sans-serif;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 100px; /* Отступ снизу чтобы не перекрывала корзина */
+}
+
+/* --- Header --- */
+.header {
+  background: rgba(28, 28, 30, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.logo {
+  font-size: 24px;
+  font-weight: 800;
+  color: #b0b0b5;
+  letter-spacing: -0.5px;
+}
+.logo .red {
+  color: var(--accent-red);
+}
+
+/* --- Фильтры (Категории) --- */
+.category-container {
+  top: var(--header-height);
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 10px 0px;
+  display: grid;
+  text-align: center;
+}
+.category-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 16px;
+  scrollbar-width: none;
+}
+.category-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.cat-pill {
+  background: var(--pill-bg);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+.cat-pill.active {
+  background: var(--pill-active);
+  color: white;
+  box-shadow: 0 0 10px rgba(211, 47, 47, 0.4);
+}
+
+/* --- Сетка товаров --- */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 0 16px 16px 16px;
+  max-width: 1000px;
+  margin: 0 auto;
+  transition: opacity 0.2s ease;
+}
+.product-grid.fade-out {
+  opacity: 0;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.badge-new {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--accent-red);
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 4px;
+  z-index: 10;
+}
+
+.card-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: #2c2c2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+.card-content {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+}
+.card-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0 0 12px 0;
+  flex-grow: 1;
+}
+
+.card-actions {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+}
+
+/* --- Степпер (Кнопки количества) --- */
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #3a3a3c; /* Серый фон контейнера */
+  border-radius: 8px;
+  width: 100%;
+  height: 36px; /* ФИКСИРОВАННАЯ ВЫСОТА (как у кнопки) */
+  overflow: hidden; /* Чтобы углы не обрезались */
+  transition: background 0.2s ease;
+}
+
+.stepper-btn {
+  width: 40px; /* Одинаковая ширина для + и - */
+  height: 100%; /* Растягиваем на всю высоту */
+  border: none;
+  background: transparent; /* Убираем фон самих кнопок */
+  color: white;
+  font-size: 20px;
+  font-weight: 400; /* Тонкий шрифт для плюса/минуса смотрится аккуратнее */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* Убираем лишние отступы */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Эффект нажатия на +/- */
+.stepper-btn:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.stepper-val {
+  flex-grow: 1; /* Занимает все свободное место в центре */
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  line-height: 1; /* Чтобы цифра стояла ровно по центру */
+}
+
+/* --- Состояние "0" (Красная кнопка "В корзину") --- */
+.stepper.is-zero {
+  background: var(--accent-red); /* Красный фон */
+}
+
+.stepper.is-zero .stepper-btn.minus,
+.stepper.is-zero .stepper-val {
+  display: none; /* Скрываем минус и цифру */
+}
+
+.stepper.is-zero .stepper-btn.plus {
+  width: 100%; /* Плюс растягиваем на всю ширину */
+  font-size: 14px;
+  font-weight: 600;
+  background: transparent;
+}
+
+/* Трюк с заменой текста */
+.stepper.is-zero .stepper-btn.plus span {
+  display: none;
+}
+.stepper.is-zero .stepper-btn.plus::after {
+  content: "В корзину";
+}
+
+/* --- Корзина (Bottom Floating Bar) --- */
+.cart-bar {
+  position: fixed;
+  bottom: 55px;
+  left: 16px;
+  right: 16px;
+  background: rgba(44, 44, 46, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 12px 16px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 1100;
+  transform: translateY(500%);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 14px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.cart-bar.active {
+  transform: translateY(0);
+}
+.cart-info {
+  display: flex;
+  flex-direction: column;
+}
+.cart-count {
+  font-size: 11px;
+  color: #8e8e93;
+}
+.cart-total {
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
+}
+.cart-btn {
+  background: #25d366;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* --- Tab Bar --- */
+.tab-bar {
+  height: var(--tab-bar-height);
+  background: rgba(28, 28, 30, 1);
+  backdrop-filter: blur(20px);
+  border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1000px;
+  padding: 0 14px;
+  display: flex;
+  justify-content: space-around;
+  border-radius: 14px;
+}
+.tab-item {
+  background: none;
+  border: none;
+  flex: 1;
+  color: #636366;
+  cursor: pointer;
+  transition: color 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.tab-item.active {
+  color: var(--accent-red);
+}
+.tab-label {
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: 500;
+}
