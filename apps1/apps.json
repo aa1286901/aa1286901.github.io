@@ -49,6 +49,12 @@
       "category": "v. 1.4"
     },
     {
+      "title": "VPN MIR",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/be/96/4f/be964f51-1ce5-1618-2824-e17e50189f52/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/114x114bb.jpg",
+      "bundleId": "com.vpnmir.app",
+      "category": "v. 2.4.1"
+    },
+    {
       "title": "ChatGPT",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b3/fd/3d/b3fd3d71-5cc3-6663-1654-63934e3bc692/AppIcon-0-0-1x_U007epad-0-0-0-1-0-85-220.png/114x114bb.jpg",
       "bundleId": "com.openai.chat",
