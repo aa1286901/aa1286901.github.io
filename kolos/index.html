@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Колос — Пекарня. Свежая выпечка, хинкал, горячие блюда. Электронное меню с заказом онлайн">
+    <meta name="theme-color" content="#0A0A0A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Шрифты -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Стили -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+
+    <title>Колос | Пекарня — Меню</title>
+</head>
+<body>
+
+    <!-- ===================== ШАПКА ===================== -->
+    <header class="header">
+        <div class="header-top">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <img src="assets/images/logo.png" alt="Колос">
+                </div>
+            </div>
+        </div>
+
+        <!-- Инфо -->
+        <div class="header-info">
+            <div class="info-item">
+                <i class="fas fa-clock"></i>
+                <span>08:00—21:30</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-phone"></i>
+                <span>8 (989) 650-61-31</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>с. Сагаси Дейбук ул. Пионерская 5/1</span>
+            </div>
+        </div>
+
+        <!-- Поиск -->
+        <div class="search-wrap">
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Поиск по меню..." autocomplete="off">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================== КАТЕГОРИИ ===================== -->
+    <nav class="categories-section">
+        <div class="categories-scroll">
+            <button class="category-btn active" data-category="all">
+                <i class="fas fa-list"></i>
+                <span>Все</span>
+            </button>
+            <button class="category-btn" data-category="fabric">
+                <i class="fas fa-utensils"></i>
+                <span>Полуфабрикаты</span>
+            </button>
+            <button class="category-btn" data-category="hot">
+                <i class="fas fa-fire"></i>
+                <span>Горячие блюда</span>
+            </button>
+            <button class="category-btn" data-category="chudu">
+                <i class="fas fa-pizza-slice"></i>
+                <span>Чуду</span>
+            </button>
+            <button class="category-btn" data-category="bakery">
+                <i class="fas fa-cheese"></i>
+                <span>Выпечка</span>
+            </button>
+            <button class="category-btn" data-category="pies">
+                <i class="fas fa-cookie-bite"></i>
+                <span>Пирожки</span>
+            </button>
+        </div>
+    </nav>
+    <!-- ===================== МЕНЮ ===================== -->
+    <main class="main-content">
+        <div id="menuContainer">
+            <!-- Генерируется через JS -->
+        </div>
+
+        <!-- Нет результатов -->
+        <div class="hidden" id="noResults" style="text-align: center; padding: 60px 20px;">
+            <i class="fas fa-search" style="font-size: 36px; color: var(--text-muted); margin-bottom: 12px; opacity: 0.4;"></i>
+            <p style="color: var(--text-secondary); font-size: 16px;">Ничего не найдено</p>
+            <p style="color: var(--text-muted); font-size: 14px; margin-top: 6px;">Попробуйте изменить запрос</p>
+        </div>
+    </main>
+
+    <!-- ===================== ЗАКАЗ ===================== -->
+    <section class="order-section">
+        <h2 class="order-title">Свяжитесь с нами</h2>
+        <p class="order-text">Закажите свежую выпечку удобным способом</p>
+        <div class="order-links">
+            <a href="tel:+79896506131" class="order-link" aria-label="Позвонить">
+                <span class="order-link-icon"><i class="fas fa-phone"></i></span>
+                <span class="order-link-label">Позвонить</span>
+            </a>
+            <a href="https://instagram.com/_kolos_05" target="_blank" rel="noopener" class="order-link" aria-label="Instagram">
+                <span class="order-link-icon"><i class="fab fa-instagram"></i></span>
+                <span class="order-link-label">Instagram</span>
+            </a>
+            <a href="https://wa.me/79896506131" target="_blank" rel="noopener" class="order-link" aria-label="WhatsApp">
+                <span class="order-link-icon"><i class="fab fa-whatsapp"></i></span>
+                <span class="order-link-label">WhatsApp</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ===================== ПОДВАЛ ===================== -->
+    <footer class="footer">
+        <p class="footer-text">© 2026 Все права защищены</p>
+        <p class="footer-dev"><a href="https://wa.me/79634150424" target="_blank" rel="noopener" style="color: var(--gold);">Разработал сайт Ahmedov</a></p>
+    </footer>
+
+    <!-- ===================== JS ===================== -->
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

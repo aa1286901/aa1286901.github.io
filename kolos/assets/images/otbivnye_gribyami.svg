@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2B1F14"/>
+      <stop offset="100%" style="stop-color:#1A1209"/>
+    </linearGradient>
+    <linearGradient id="meat" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4B080"/>
+      <stop offset="100%" style="stop-color:#A0825C"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <!-- Тарелка -->
+  <ellipse cx="200" cy="285" rx="150" ry="48" fill="#3A2815" opacity="0.5"/>
+  <ellipse cx="200" cy="280" rx="140" ry="42" fill="#4A3520" opacity="0.3"/>
+  <!-- Мясо -->
+  <ellipse cx="200" cy="245" rx="90" ry="50" fill="url(#meat)" opacity="0.75"/>
+  <ellipse cx="185" cy="235" rx="45" ry="30" fill="#D4B080" opacity="0.6"/>
+  <ellipse cx="215" cy="250" rx="40" ry="28" fill="#A0825C" opacity="0.55"/>
+  <!-- Текстура мяса -->
+  <path d="M150 240 Q200 225 250 240" stroke="#A0825C" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M160 250 Q200 235 240 250" stroke="#A0825C" stroke-width="1.5" fill="none" opacity="0.25"/>
+  <!-- Гарнир -->
+  <circle cx="140" cy="255" r="8" fill="#8B6914" opacity="0.4"/>
+  <circle cx="260" cy="250" r="7" fill="#8B6914" opacity="0.35"/>
+  <circle cx="155" cy="265" r="6" fill="#A0522D" opacity="0.3"/>
+  <circle cx="245" cy="265" r="6" fill="#A0522D" opacity="0.3"/>
+  <!-- Зелень -->
+  <ellipse cx="130" cy="240" rx="12" ry="6" fill="#4A7C3A" opacity="0.35"/>
+  <ellipse cx="270" cy="245" rx="10" ry="5" fill="#4A7C3A" opacity="0.3"/>
+  <!-- Блеск -->
+  <ellipse cx="190" cy="225" rx="20" ry="8" fill="#F0D6A0" opacity="0.15"/>
+</svg>

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="hbg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2B1F14"/>
+      <stop offset="100%" style="stop-color:#1A1209"/>
+    </linearGradient>
+    <linearGradient id="hbread" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4A855"/>
+      <stop offset="50%" style="stop-color:#C8956C"/>
+      <stop offset="100%" style="stop-color:#9B6B45"/>
+    </linearGradient>
+    <radialGradient id="hglow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#C69A5A;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#C69A5A;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#hbg)"/>
+  <rect width="800" height="600" fill="url(#hglow)"/>
+  <!-- Корзина -->
+  <ellipse cx="400" cy="430" rx="280" ry="80" fill="#3A2815" opacity="0.4"/>
+  <ellipse cx="400" cy="420" rx="260" ry="70" fill="#4A3520" opacity="0.3"/>
+  <!-- Буханки -->
+  <ellipse cx="320" cy="370" rx="110" ry="60" fill="url(#hbread)" opacity="0.8"/>
+  <ellipse cx="480" cy="380" rx="100" ry="55" fill="url(#hbread)" opacity="0.7"/>
+  <ellipse cx="400" cy="330" rx="120" ry="65" fill="url(#hbread)" opacity="0.9"/>
+  <!-- Узоры на хлебе -->
+  <path d="M340 310 Q400 295 460 310" stroke="#8B6B4A" stroke-width="3" fill="none" opacity="0.4"/>
+  <path d="M350 320 Q400 305 450 320" stroke="#8B6B4A" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M280 360 Q320 350 360 360" stroke="#8B6B4A" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M440 370 Q480 360 520 370" stroke="#8B6B4A" stroke-width="2" fill="none" opacity="0.3"/>
+  <!-- Мука -->
+  <circle cx="350" cy="300" r="4" fill="#F0D6A0" opacity="0.3"/>
+  <circle cx="420" cy="295" r="3" fill="#F0D6A0" opacity="0.25"/>
+  <circle cx="460" cy="305" r="3.5" fill="#F0D6A0" opacity="0.3"/>
+  <circle cx="300" cy="340" r="2.5" fill="#F0D6A0" opacity="0.2"/>
+  <circle cx="500" cy="345" r="3" fill="#F0D6A0" opacity="0.25"/>
+  <!-- Колосья пшеницы -->
+  <g transform="translate(580, 150)" opacity="0.4">
+    <path d="M0 200 Q-5 150 5 100 Q10 50 0 0" stroke="#C69A5A" fill="none" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="-15" cy="20" rx="7" ry="12" transform="rotate(-25 -15 20)" stroke="#C69A5A" fill="none" stroke-width="1.5"/>
+    <ellipse cx="-10" cy="45" rx="7" ry="12" transform="rotate(-20 -10 45)" stroke="#C69A5A" fill="none" stroke-width="1.5"/>
+    <ellipse cx="-10" cy="70" rx="6" ry="11" transform="rotate(-15 -10 70)" stroke="#C69A5A" fill="none" stroke-width="1.5"/>
+    <ellipse cx="15" cy="15" rx="7" ry="12" transform="rotate(25 15 15)" stroke="#C69A5A" fill="none" stroke-width="1.5"/>
+    <ellipse cx="10" cy="40" rx="7" ry="12" transform="rotate(20 10 40)" stroke="#C69A5A" fill="none" stroke-width="1.5"/>
+    <ellipse cx="10" cy="65" rx="6" ry="11" transform="rotate(15 10 65)" stroke="#C69A5A" fill="none" stroke-width="1.5"/>
+  </g>
+  <g transform="translate(180, 150)" opacity="0.3">
+    <path d="M0 200 Q5 150 -5 100 Q-10 50 0 0" stroke="#C69A5A" fill="none" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="15" cy="20" rx="7" ry="12" transform="rotate(25 15 20)" stroke="#C69A5A" fill="none" stroke-width="1.5"/>
+    <ellipse cx="10" cy="45" rx="7" ry="12" transform="rotate(20 10 45)" stroke="#C69A5A" fill="none" stroke-width="1.5"/>
+    <ellipse cx="-15" cy="15" rx="7" ry="12" transform="rotate(-25 -15 15)" stroke="#C69A5A" fill="none" stroke-width="1.5"/>
+    <ellipse cx="-10" cy="40" rx="7" ry="12" transform="rotate(-20 -10 40)" stroke="#C69A5A" fill="none" stroke-width="1.5"/>
+  </g>
+</svg>
