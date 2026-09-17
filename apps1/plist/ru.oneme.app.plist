@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>items</key>
+        <array>
+                <dict>
+                        <key>assets</key>
+                        <array>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>software-package</string>
+                                        <key>url</key>
+                                        <string>https://dl.dropboxusercontent.com/scl/fi/dmrwfh6phjy57y5rv66on/MAX-mail.ru.ipa?rlkey=p5j2lj1ef5vzlqdtgrfgwbm04</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>display-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3c/78/4c/3c784c95-2fc7-270b-2d64-f224e96decb4/AppIcon-0-0-1x_U007ephone-0-1-sRGB-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>full-size-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3c/78/4c/3c784c95-2fc7-270b-2d64-f224e96decb4/AppIcon-0-0-1x_U007ephone-0-1-sRGB-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                        </array>
+                        <key>metadata</key>
+                        <dict>
+                                <key>bundle-identifier</key>
+                                <string>ru.oneme.app</string>
+                                <key>bundle-version</key>
+                                <string>26.17.3</string>
+                                <key>kind</key>
+                                <string>software</string>
+                                <key>title</key>
+                                <string>Online</string>
+                        </dict>
+                </dict>
+        </array>
+</dict>
+</plist>
