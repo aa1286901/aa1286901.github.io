@@ -7,6 +7,12 @@
       "category": "v. 200.5"
     },
     {
+      "title": "Вконтакте",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/d7/b7/8f/d7b78f62-cb03-c29e-fce3-a5504be4b43c/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/114x114bb.jpg",
+      "bundleId": "com.vk.vkclient",
+      "category": "v. 8.183.1"
+    },
+    {
       "title": "Финансы Онлайн (Сбер)",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/33/bd/c4/33bdc466-70f0-0b85-db0c-982201dbf5e7/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/114x114bb.jpg",
       "bundleId": "com.digit.budg",
