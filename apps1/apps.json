@@ -7,10 +7,22 @@
       "category": "v. 200.5"
     },
     {
+      "title": "Мах",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3c/78/4c/3c784c95-2fc7-270b-2d64-f224e96decb4/AppIcon-0-0-1x_U007ephone-0-1-sRGB-85-220.png/114x114bb.jpg",
+      "bundleId": "ru.oneme.app",
+      "category": "v. 26.17.3"
+    },
+    {
       "title": "Вконтакте",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/d7/b7/8f/d7b78f62-cb03-c29e-fce3-a5504be4b43c/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/114x114bb.jpg",
       "bundleId": "com.vk.vkclient",
       "category": "v. 8.183.1"
+    },
+    {
+      "title": "Сириус (ВТБ)",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/7a/4a/e1/7a4ae123-f112-8c8b-aab7-0be6399aa982/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/114x114bb.jpg",
+      "bundleId": "com.sm.FlowTime",
+      "category": "v. 2.0.1"
     },
     {
       "title": "Финансы Онлайн (Сбер)",
