@@ -144,19 +144,20 @@ body {
 
     direction: rtl;
 
-    text-align: right;
+    text-align: left;
 
     font-family:
         Georgia,
         "Times New Roman",
         serif;
 
-    font-size: 29px;
+    font-size: 26px;
 
-    line-height: 1.25;
+    line-height: 1.2;
 
     font-weight: 700;
 
+    width: 100%;
 }
 
 /* =========================================================
@@ -294,6 +295,14 @@ body {
 
     margin-bottom: 27px;
 
+    min-height: 1.2em;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
 }
 
 /* Перевод */
@@ -310,6 +319,14 @@ body {
 
     max-width: 90%;
 
+    min-height: 1.25em;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
 }
 
 /* Часть речи */
@@ -323,6 +340,8 @@ body {
     font-size: 15px;
 
     text-align: center;
+
+    min-height: 1.1em;
 
 }
 
@@ -739,7 +758,9 @@ body {
 
     .lesson-title {
 
-        font-size: 27px;
+        font-size: 24px;
+
+        text-align: left;
 
     }
 
@@ -1972,17 +1993,22 @@ function updateWord() {
 
     const word = words[currentWord];
 
-    document
-        .getElementById("arabicWord")
-        .textContent = word.arabic;
+    const arabicWordEl = document.getElementById("arabicWord");
+    const translationEl = document.getElementById("translation");
+    const partOfSpeechEl = document.getElementById("partOfSpeech");
 
-    document
-        .getElementById("translation")
-        .textContent = word.translation;
+    // Сначала очищаем старое содержимое, чтобы при быстром свайпе
+    // никогда не оставался фрагмент предыдущего слова.
+    arabicWordEl.textContent = "";
+    translationEl.textContent = "";
+    partOfSpeechEl.textContent = "";
 
-    document
-        .getElementById("partOfSpeech")
-        .textContent = word.type;
+    // Затем атомарно подставляем только текущую карточку.
+    requestAnimationFrame(() => {
+        arabicWordEl.textContent = word.arabic;
+        translationEl.textContent = word.translation;
+        partOfSpeechEl.textContent = word.type;
+    });
 
     document
         .getElementById("wordCounter")
