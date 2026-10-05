@@ -72,7 +72,7 @@ function renderWord() {
   $("arabicWord").textContent = w.arabic;
   $("translation").textContent = w.translation;
   $("partOfSpeech").textContent = w.type;
-  $("topCounter").textContent = `${current + 1} / ${words.length}`;
+  $("topCounter").textContent = `${arDigits(current + 1)} / ${arDigits(words.length)}`;
 }
 function speakArabic(text, button) {
   if (!("speechSynthesis" in window)) {
