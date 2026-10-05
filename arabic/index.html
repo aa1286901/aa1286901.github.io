@@ -1,19 +1,84 @@
 <!DOCTYPE html>
 <html lang="ru" dir="ltr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>عاقبة الجشع — Урок 3</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body><div class="app">
-<header class="header"><div class="lesson-number">УРОК 3</div><div class="lesson-title">عَاقِبَةُ الْجَشَعِ</div><button class="header-menu" id="menuBtn" aria-label="Выбрать урок">•••</button></header>
-<main class="content">
-<div class="mode-switch" role="tablist" aria-label="Режим урока"><button class="mode-btn active" id="wordsTab" role="tab" aria-selected="true">Слова</button><button class="mode-btn" id="storyTab" role="tab" aria-selected="false">Текст</button></div>
-<section class="screen word-screen active" id="wordsScreen"><div class="word-card" id="wordCard"><div class="card-count" id="topCounter">١ / ٣٣</div><div class="arabic-word" id="arabicWord"></div><div class="translation" id="translation"></div><div class="part-of-speech" id="partOfSpeech"></div><button class="pronounce-btn" id="pronounceWord" type="button"><span class="pronounce-icon">◖</span><span>Прослушать</span></button<div class="card-nav"><button class="arrow" id="prevWord" aria-label="Предыдущее слово">‹</button><button class="random" id="randomWord"><span>⤨</span> Случайное слово</button><button class="arrow next" id="nextWord" aria-label="Следующее слово">›</button></div></div></section>
-<section class="screen story-screen" id="storyScreen"><div class="story-card"><div class="story-scroll"><div class="story-text" id="storyText"></div></div></div></section></main>
-<div class="drawer-overlay" id="drawerOverlay"></div><aside class="lesson-drawer" id="lessonDrawer" aria-hidden="true"><div class="drawer-head"><div class="drawer-title">Уроки</div><button class="drawer-close" id="drawerClose" aria-label="Закрыть">×</button></div><div class="lesson-list"><button class="lesson-item active"><strong>Урок 3</strong><span>عَاقِبَةُ الْجَشَعِ</span></button><button class="lesson-item"><strong>Урок 2</strong><span>الدرس الثاني</span></button><button class="lesson-item"><strong>Урок 1</strong><span>الدرس الأول</span></button></div></aside>
-<div class="word-popup" id="wordPopup"><div class="popup-arabic" id="popupArabic"></div><div class="popup-translation" id="popupTranslation"></div><div class="popup-type" id="popupType"></div><button class="popup-pronounce" id="popupPronounce" type="button">◖ Прослушать</button></div></div>
 
-</div><script src="app.js"></script>
-</body></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+    <title>عاقبة الجشع — Урок 3</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="view-welcome">
+    <!-- Экран выбора урока: адрес / -->
+    <section class="welcome" id="welcomeScreen">
+        <button class="welcome-menu" id="welcomeMenuBtn" aria-label="Выбрать урок" title="Выбрать урок">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
+        <div class="welcome-body">
+            <div class="welcome-mark">ع</div>
+            <h1 class="welcome-title">Выберите урок</h1>
+            <p class="welcome-subtitle">اختر الدرس</p>
+        </div>
+    </section>
+    <div class="app" id="mainContent">
+        <header class="header">
+            <div class="lesson-number" id="lessonNumber">УРОК 3</div>
+            <div class="lesson-title" id="lessonTitle">عَاقِبَةُ الْجَشَعِ</div><button class="header-menu" id="menuBtn"
+                aria-label="Выбрать урок">
+                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+        </header>
+        <main class="content">
+            <div class="mode-switch" role="tablist" aria-label="Режим урока"><button class="mode-btn active"
+                    id="wordsTab" role="tab" aria-selected="true">Слова</button><button class="mode-btn" id="storyTab"
+                    role="tab" aria-selected="false">Текст</button></div>
+            <section class="screen word-screen active" id="wordsScreen">
+                <div class="word-card" id="wordCard">
+                    <div class="card-count" id="topCounter">1 / 33</div>
+                    <div class="arabic-word" id="arabicWord"></div>
+                    <div class="translation" id="translation"></div>
+                    <div class="part-of-speech" id="partOfSpeech"></div>
+                    <button class="pronounce-btn" id="pronounceWord" type="button"><span class="pronounce-icon">◖</span><span>Прослушать</span></button>
+                    <div class="card-nav"><button class="arrow" id="prevWord"
+                            aria-label="Предыдущее слово">‹</button><button class="random"
+                            id="randomWord"><span>⤨</span> Случайное слово</button><button class="arrow next"
+                            id="nextWord" aria-label="Следующее слово">›</button>
+                    </div>
+                </div>
+            </section>
+            <section class="screen story-screen" id="storyScreen">
+                <div class="story-card">
+                    <div class="story-scroll">
+                        <div class="story-text" id="storyText"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <aside class="lesson-drawer" id="lessonDrawer" aria-hidden="true">
+        <div class="drawer-head">
+            <div class="drawer-title">Уроки</div><button class="drawer-close" id="drawerClose"
+                aria-label="Закрыть">×</button>
+        </div>
+        <div class="lesson-list">
+            <button class="lesson-item" data-lesson="3"><strong>Урок 3</strong><span>عَاقِبَة الْجَشَعِ</span></button>
+        </div>
+    </aside>
+    <div class="word-popup" id="wordPopup">
+        <div class="popup-arabic" id="popupArabic"></div>
+        <div class="popup-translation" id="popupTranslation"></div>
+        <div class="popup-type" id="popupType"></div><button class="popup-pronounce" id="popupPronounce" type="button">◖
+            Прослушать</button>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>
