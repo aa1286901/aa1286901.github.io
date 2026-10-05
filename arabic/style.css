@@ -186,6 +186,7 @@ button {
     font-size: clamp(62px, 17vw, 82px);
     line-height: 1.15;
     font-weight: 700;
+    min-height: 1.5em
 }
 
 .translation {
