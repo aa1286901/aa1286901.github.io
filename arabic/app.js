@@ -1,18 +1,220 @@
-const words=[['خَرَجَ','вышел / отправился','глагол'],['غَابَة','лес','существительное'],['صَيَّاد','охотник','существительное'],['قَوْس','лук','существительное'],['سَهْم','стрела','существительное'],['جُرْح','рана','существительное'],['بَلِيغ','глубокий / тяжёлый','прилагательное'],['بُرْهَة','короткий промежуток времени','существительное'],['خِنْزِير','кабан','существительное'],['فَرِحَ','обрадовался','глагол'],['رَمَى','бросил / метнул','глагол'],['قَتَلَ','убил','глагол'],['رَأَى','увидел','глагол'],['أَبْصَرَ','увидел / заметил','глагол'],['حَمَلَ','понёс','глагол'],['تَوَجَّهَ','направился','глагол'],['وَسَط','середина','существительное'],['طَرِيق','дорога','существительное'],['أَرْض','земля','существительное'],['ضَرَبَ','ударил','глагол'],['وَقَعَ','упал','глагол'],['ذِئْب','волк','существительное'],['مَكَان','место','существительное'],['زَمَن','время','существительное'],['شَهْر','месяц','существительное'],['يَوْم','день','существительное'],['قَرِيب','близкий','прилагательное'],['جَشَع','жадность','существительное'],['عَاقِبَة','последствие','существительное'],['سُرُور','радость','существительное'],['قُوت','пища / пропитание','существительное'],['يَزِيدُ','увеличивается / становится больше','глагол'],['أَكَلَ','ел','глагол']].map(([arabic,translation,type])=>({arabic,translation,type}));
-const story=[[['يُحْكَى','рассказывают / повествуется','глагол'],['أَنَّ','что','частица'],['صَيَّادًا','охотник','существительное'],['خَرَجَ','вышел / отправился','глагол'],['يَوْمًا','однажды','наречие'],['إِلَى غَابَةٍ','в лес','существительное'],['لِلصَّيْدِ','для охоты','существительное'],['وَمَعَهُ','и с ним','союз + местоимение'],['قَوْسُهُ','его лук','существительное'],['وَسِهَامُهُ','и его стрелы','существительное']],[['فَلَمْ يَجَاوِزْ','он не прошёл','глагол'],['غَيْرَ بَعِيدٍ','далеко','наречие'],['حَتَّى رَأَى','пока не увидел','глагол'],['ظَبْيًا','оленя','существительное']],[['رَمَاهُ','бросил / метнул','глагол'],['بِسَهْمٍ','стрелой','существительное'],['فَقَتَلَهُ','и убил его','глагол'],['فِي مَكَانِهِ','на его месте','существительное']],[['فَسُرَّ','обрадовался','глагол'],['الصَّيَّادُ','охотник','существительное'],['بِذَلِكَ','этим','местоимение'],['سُرُورًا عَظِيمًا','сильной радостью','существительное'],['وَحَمَلَهُ','понёс его','глагол'],['وَتَوَجَّهَ','и направился','глагол'],['إِلَى قَرْيَتِهِ','к своей деревне','существительное']],[['وَفِيمَا','и когда','союз'],['هُوَ','он был','глагол'],['فِي وَسَطِ','посреди','существительное'],['الطَّرِيقِ','дороги','существительное'],['إِذْ أَبْصَرَ','увидел','глагол'],['خِنْزِيرًا بَرِّيًّا','дикого кабана','существительное'],['مُقْبِلًا عَلَيْهِ','идущего навстречу','глагол']],[['فَأَلْقَى الظَّبْيَ','бросил оленя','глагол'],['إِلَى الْأَرْضِ','на землю','существительное'],['وَصَوَّبَ عَلَيْهِ قَوْسَهُ','направил на него свой лук','глагол'],['وَرَمَاهُ','и бросил в него','глагол'],['بِسَهْمٍ','стрелой','существительное'],['فَنَفَذَ فِيهِ','пронзила его','глагол'],['وَجَرَحَهُ جُرْحًا بَلِيغًا','и нанес ему тяжёлую рану','глагол']],[['فَهَجَمَ عَلَيْهِ','напал на него','глагол'],['الْخِنْزِيرُ','кабан','существительное'],['بِغَيْظٍ وَحَنَقٍ زَائِدَيْنِ','с сильной яростью','существительное'],['وَضَرَبَهُ','и ударил его','глагол'],['بِأَنْيَابِهِ','своими клыками','существительное'],['ضَرْبَةً','ударом','существительное'],['أَطَارَتْ مِنْ يَدِهِ الْقَوْسَ','выбившим лук из его руки','глагол'],['وَوَقَعَا مَيِّتَيْنِ','и оба упали мёртвыми','глагол']],[['وَبَعْدَ بُرْهَةٍ مِنَ الزَّمَنِ','через некоторое время','существительное'],['أَتَى','пришёл','глагол'],['ذِئْبٌ','волк','существительное'],['إِلَى هَذَا الْمَكَانِ','к этому месту','существительное'],['فَطَارَ فَرَحًا','и обрадовался','глагол'],['بِمَا رَأَى','тому, что увидел','глагол']],[['وَقَالَ','и сказал','глагол'],['هَذَا الرَّجُلُ وَالظَّبْيُ وَالْخِنْزِيرُ','этот человек, олень и кабан','существительное'],['تَكُونُ قُوتًا لِي','будут мне пищей','глагол'],['مُدَّةَ شَهْرٍ أَوْ يَزِيدُ','на месяц или больше','существительное']],[['فَآكُلُ الْيَوْمَ','сегодня я съем','глагол'],['هَذَا الْوَتَرَ','эту тетиву','существительное'],['وَأَدَّخِرُ الْبَاقِيَ','а остальное сохраню','глагол'],['إِلَى غَدٍ فَمَا وَرَاءَهُ','на завтра и последующие дни','существительное']],[['ثُمَّ إِنَّهُ','затем он','союз + местоимение'],['أَخَذَ يَقْطَعُ الْوَتَرَ','начал перерезать тетиву','глагол'],['فَعَالَجَهُ','и стал работать с ней','глагол'],['حَتَّى قَطَعَهُ','пока не перерезал её','глагол']],[['فَلَمَّا انْقَطَعَ','когда она оборвалась','глагол'],['طَارَتْ سِيَةُ الْقَوْسِ','конец лука отлетел','глагол'],['فَضَرَبَتْ حَلْقَهُ','и ударил его в горло','глагол'],['فَمَاتَ','и он умер','глагол']]];
-const arDigits=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);let current=0;const $=id=>document.getElementById(id);
-function renderWord(){const w=words[current];$('arabicWord').textContent=w.arabic;$('translation').textContent=w.translation;$('partOfSpeech').textContent=w.type;const n=`${arDigits(current+1)} / ${arDigits(words.length)}`;$('topCounter').textContent=n}
-let nativeTranslator=null;let nativeTranslatorKey='';
-async function translateNative(text){if(!('Translator'in window))throw new Error('Translator API unavailable');const key='ar-ru';if(!nativeTranslator||nativeTranslatorKey!==key){const availability=await Translator.availability({sourceLanguage:'ar',targetLanguage:'ru'});if(availability==='unavailable')throw new Error('Translation unavailable');nativeTranslator=await Translator.create({sourceLanguage:'ar',targetLanguage:'ru'});nativeTranslatorKey=key}return await nativeTranslator.translate(text)}
-async function translateWordNative(){const btn=$('nativeTranslate');const box=$('nativeTranslationBox');btn.classList.add('loading');const label=btn.querySelector('span:last-child');if(label)label.textContent='Перевод…';try{const result=await translateNative(words[current].arabic);box.innerHTML='<div class="native-translation-label">Встроенный перевод</div>'+result;$('wordPopup').classList.add('show')}catch(e){box.innerHTML='<div class="native-translation-label">Встроенный перевод</div>Недоступно в этом браузере';$('wordPopup').classList.add('show')}finally{btn.classList.remove('loading');if(label)label.textContent='Перевести'}}
-function speakArabic(text,button){if(!('speechSynthesis'in window)){if(button)button.textContent='Недоступно';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='ar-SA';u.rate=.78;u.pitch=1;const voices=speechSynthesis.getVoices();const v=voices.find(x=>/^ar(-|_)/i.test(x.lang));if(v)u.voice=v;if(button){button.classList.add('speaking');const label=button.querySelector('span:last-child');if(label)label.textContent='Воспроизведение';u.onend=()=>{button.classList.remove('speaking');if(label)label.textContent='Прослушать'};u.onerror=()=>{button.classList.remove('speaking');if(label)label.textContent='Прослушать'}}speechSynthesis.speak(u)}
-function renderStory(){$('storyText').innerHTML=story.map(line=>`<span class="story-line">${line.map(([arabic,translation,type])=>`<span class="story-word" data-arabic="${arabic.replace(/"/g,'&quot;')}" data-translation="${translation.replace(/"/g,'&quot;')}" data-type="${type.replace(/"/g,'&quot;')}">${arabic}</span>`).join(' ')}</span>`).join('')}
-function showWord(i){current=(i+words.length)%words.length;renderWord()}
-function setMode(mode){const wordsMode=mode==='words';$('wordsScreen').classList.toggle('active',wordsMode);$('storyScreen').classList.toggle('active',!wordsMode);$('wordsTab').classList.toggle('active',wordsMode);$('storyTab').classList.toggle('active',!wordsMode);$('wordsTab').setAttribute('aria-selected',wordsMode);$('storyTab').setAttribute('aria-selected',!wordsMode)}
-$('prevWord').onclick=()=>showWord(current-1);$('nextWord').onclick=()=>showWord(current+1);$('randomWord').onclick=()=>{let n;do n=Math.floor(Math.random()*words.length);while(n===current&&words.length>1);showWord(n)};$('pronounceWord').onclick=()=>speakArabic(words[current].arabic,$('pronounceWord'));$('nativeTranslate').onclick=()=>translateWordNative();
-$('wordsTab').onclick=()=>setMode('words');$('storyTab').onclick=()=>setMode('story');
-function toggleDrawer(open){$('lessonDrawer').classList.toggle('open',open);$('drawerOverlay').classList.toggle('show',open);$('lessonDrawer').setAttribute('aria-hidden',String(!open))}
-$('menuBtn').onclick=()=>toggleDrawer(true);$('drawerClose').onclick=()=>toggleDrawer(false);$('drawerOverlay').onclick=()=>toggleDrawer(false);
-$('storyText').addEventListener('click',e=>{const el=e.target.closest('.story-word');if(!el)return;document.querySelectorAll('.story-word.selected').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');$('popupArabic').textContent=el.dataset.arabic;$('popupTranslation').textContent=el.dataset.translation;$('popupType').textContent=el.dataset.type;$('wordPopup').classList.add('show');clearTimeout(window.popupTimer);window.popupTimer=setTimeout(()=>$('wordPopup').classList.remove('show'),2200);speakArabic(el.dataset.arabic,el)});$('popupPronounce').onclick=()=>speakArabic($('popupArabic').textContent,$('popupPronounce'));
-let startX=0;$('wordCard').addEventListener('touchstart',e=>{startX=e.changedTouches[0].clientX},{passive:true});$('wordCard').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-startX;if(Math.abs(dx)>45)showWord(current+(dx<0?1:-1))},{passive:true});
-renderWord();renderStory();
+// Данные урока (words, story) вынесены в lesson_<id>.json
+const LESSONS = [
+  { id: 3, title: "عَاقِبَة الْجَشَعِ" },
+];
+
+let words = [];
+let story = [];
+let current = 0;
+const $ = (id) => document.getElementById(id);
+const arDigits = (n) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);
+
+// ── Hash-роутер: #lesson-N ──────────────────────────────
+function parseHash() {
+  const m = location.hash.match(/^#lesson-(\d+)$/);
+  return m ? Number(m[1]) : null;
+}
+
+function showWelcome() {
+  document.body.classList.add("view-welcome");
+}
+
+function showLesson(id) {
+  document.body.classList.remove("view-welcome");
+  const lesson = LESSONS.find((l) => l.id === id);
+  if (lesson) {
+    $("lessonNumber").textContent = "УРОК " + arDigits(id);
+    $("lessonTitle").textContent = lesson.title;
+  }
+  markActiveLesson(id);
+}
+
+async function openLesson(id) {
+  try {
+    const res = await fetch(`lesson_${id}.json`);
+    if (!res.ok) throw new Error(`Файл lesson_${id}.json не найден`);
+    const data = await res.json();
+    if (!Array.isArray(data.words) || !Array.isArray(data.story))
+      throw new Error("Неверная структура JSON");
+    words = data.words;
+    story = data.story;
+    current = 0;
+    renderWord();
+    renderStory();
+    initHandlers();
+    showLesson(id);
+  } catch (err) {
+    alert(err.message);
+    location.hash = "";
+  }
+}
+
+async function route() {
+  const id = parseHash();
+  if (id === null) {
+    showWelcome();
+  } else {
+    const lessonExists = LESSONS.some((lesson) => lesson.id === id);
+    if (lessonExists) await openLesson(id);
+    else {
+      alert("Этот урок пока недоступен");
+      location.hash = "";
+    }
+  }
+}
+
+window.addEventListener("hashchange", route);
+
+// ── Рендер ──────────────────────────────────────────────
+function renderWord() {
+  if (!words.length) return;
+  const w = words[current];
+  $("arabicWord").textContent = w.arabic;
+  $("translation").textContent = w.translation;
+  $("partOfSpeech").textContent = w.type;
+  $("topCounter").textContent = `${current + 1} / ${words.length}`;
+}
+function speakArabic(text, button) {
+  if (!("speechSynthesis" in window)) {
+    if (button) button.textContent = "Недоступно";
+    return;
+  }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "ar-SA";
+  u.rate = 0.78;
+  u.pitch = 1;
+  const voices = speechSynthesis.getVoices();
+  const v = voices.find((x) => /^ar(-|_)/i.test(x.lang));
+  if (v) u.voice = v;
+  if (button) {
+    button.classList.add("speaking");
+    const label = button.querySelector("span:last-child");
+    if (label) label.textContent = "Воспроизведение";
+    u.onend = () => {
+      button.classList.remove("speaking");
+      if (label) label.textContent = "Прослушать";
+    };
+    u.onerror = () => {
+      button.classList.remove("speaking");
+      if (label) label.textContent = "Прослушать";
+    };
+  }
+  speechSynthesis.speak(u);
+}
+function renderStory() {
+  $("storyText").innerHTML = story
+    .map(
+      (line) =>
+        `<span class="story-line">${line.map(({ arabic, translation, type }) => `<span class="story-word" data-arabic="${arabic.replace(/"/g, "&quot;")}" data-translation="${translation.replace(/"/g, "&quot;")}" data-type="${type.replace(/"/g, "&quot;")}">${arabic}</span>`).join(" ")}.</span>`,
+    )
+    .join(" ");
+}
+function showWord(i) {
+  if (!words.length) return;
+  current = (i + words.length) % words.length;
+  renderWord();
+}
+function setMode(mode) {
+  const wordsMode = mode === "words";
+  $("wordsScreen").classList.toggle("active", wordsMode);
+  $("storyScreen").classList.toggle("active", !wordsMode);
+  $("wordsTab").classList.toggle("active", wordsMode);
+  $("storyTab").classList.toggle("active", !wordsMode);
+  $("wordsTab").setAttribute("aria-selected", wordsMode);
+  $("storyTab").setAttribute("aria-selected", !wordsMode);
+}
+
+// ── Боковое меню уроков ─────────────────────────────────
+// Навешивается сразу: drawer должен открываться и с экрана
+// «Выберите урок», и из урока.
+function toggleDrawer(open) {
+  $("lessonDrawer").classList.toggle("open", open);
+  $("drawerOverlay").classList.toggle("show", open);
+  $("lessonDrawer").setAttribute("aria-hidden", String(!open));
+  $("menuBtn").setAttribute("aria-expanded", String(open));
+  $("welcomeMenuBtn").setAttribute("aria-expanded", String(open));
+}
+
+function markActiveLesson(id) {
+  document.querySelectorAll(".lesson-item").forEach((btn) => {
+    btn.classList.toggle("active", Number(btn.dataset.lesson) === id);
+  });
+}
+
+$("menuBtn").onclick = () => toggleDrawer(true);
+$("welcomeMenuBtn").onclick = () => toggleDrawer(true);
+$("drawerClose").onclick = () => toggleDrawer(false);
+$("drawerOverlay").onclick = () => toggleDrawer(false);
+
+// Выбор урока в списке → переход на #lesson-N (hashchange откроет урок)
+document.querySelectorAll(".lesson-item").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const id = Number(btn.dataset.lesson);
+    toggleDrawer(false);
+    if (location.hash === "#lesson-" + id) route();
+    else location.hash = "#lesson-" + id;
+  });
+});
+
+// ── Обработчики урока ───────────────────────────────────
+// Только после загрузки JSON: они обращаются к words[current].
+let handlersReady = false;
+function initHandlers() {
+  if (handlersReady) return;
+  handlersReady = true;
+
+  $("prevWord").onclick = () => showWord(current - 1);
+  $("nextWord").onclick = () => showWord(current + 1);
+  $("randomWord").onclick = () => {
+    let n;
+    do n = Math.floor(Math.random() * words.length);
+    while (n === current && words.length > 1);
+    showWord(n);
+  };
+  $("pronounceWord").onclick = () =>
+    speakArabic(words[current].arabic, $("pronounceWord"));
+  $("wordsTab").onclick = () => setMode("words");
+  $("storyTab").onclick = () => setMode("story");
+  $("popupPronounce").onclick = () =>
+    speakArabic($("popupArabic").textContent, $("popupPronounce"));
+
+  $("storyText").addEventListener("click", (e) => {
+    const el = e.target.closest(".story-word");
+    if (!el) return;
+    document
+      .querySelectorAll(".story-word.selected")
+      .forEach((x) => x.classList.remove("selected"));
+    el.classList.add("selected");
+    $("popupArabic").textContent = el.dataset.arabic;
+    $("popupTranslation").textContent = el.dataset.translation;
+    $("popupType").textContent = el.dataset.type;
+    $("wordPopup").classList.add("show");
+    clearTimeout(window.popupTimer);
+    window.popupTimer = setTimeout(
+      () => $("wordPopup").classList.remove("show"),
+      2200,
+    );
+    speakArabic(el.dataset.arabic, el);
+  });
+
+  let startX = 0;
+  $("wordCard").addEventListener(
+    "touchstart",
+    (e) => {
+      startX = e.changedTouches[0].clientX;
+    },
+    { passive: true },
+  );
+  $("wordCard").addEventListener(
+    "touchend",
+    (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 45) showWord(current + (dx < 0 ? 1 : -1));
+    },
+    { passive: true },
+  );
+}
+
+// ── Инициализация ───────────────────────────────────────
+route();
