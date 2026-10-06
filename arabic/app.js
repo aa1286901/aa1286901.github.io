@@ -1,12 +1,12 @@
 // Данные урока (words, story) вынесены в lesson_<id>.json
 const LESSONS = [
-  { id: 1, title: "عِنْدَ الْمُعَلِّمِ الْمَرِيضِ" },
-  { id: 2, title: "عِنْدَ الْمُعَلِّمِ الْمَرِيضِ" },
-  { id: 3, title: "عَاقِبَة الْجَشَعِ" },
-  { id: 4, title: "الرَّجُلُ وَأَوْلَادُهُ" },
-  { id: 5, title: "المَطَرُ" },
-  { id: 6, title: "الْحَمَامَةُ وَالنَّمْلَةُ" },
-  { id: 7, title: "الْأَسَدُ" },
+  { id: 1, title: "عِنْدَ الْمُعَلِّمِ الْمَرِيضِ", ruTitle: "Возле больного учителя" },
+  { id: 2, title: "عِنْدَ الْمُعَلِّمِ الْمَرِيضِ", ruTitle: "Возле больного учителя" },
+  { id: 3, title: "عَاقِبَة الْجَشَعِ", ruTitle: "Последствие жадности" },
+  { id: 4, title: "الرَّجُلُ وَأَوْلَادُهُ", ruTitle: "Мужчина и его дети" },
+  { id: 5, title: "المَطَرُ", ruTitle: "Дождь" },
+  { id: 6, title: "الْحَمَامَةُ وَالنَّمْلَةُ", ruTitle: "Голубь и муравей" },
+  { id: 7, title: "الْأَسَدُ", ruTitle: "Лев" },
 ];
 
 let words = [];
@@ -31,6 +31,7 @@ function showLesson(id) {
   if (lesson) {
     $("lessonNumber").textContent = "УРОК " + arDigits(id);
     $("lessonTitle").textContent = lesson.title;
+    $("lessonTitleRu").textContent = lesson.ruTitle || "";
   }
   markActiveLesson(id);
 }
