@@ -438,1605 +438,1613 @@
       {
         "arabic": "إِنَّ",
         "translation": "действительно / поистине",
-        "type": "частица"
+        "type": "текст"
       },
       {
         "arabic": "وَالِدَتَنَا",
         "translation": "наша мать",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "كَانَتْ",
         "translation": "была",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "تُوصِينَا",
         "translation": "советовала нам / наставляла нас",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "دَائِمًا",
         "translation": "всегда",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "بِزِيَارَةِ",
         "translation": "посещением / навещанием",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "أَقَارِبِنَا",
         "translation": "наших родственников",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "وَأَصْدِقَائِنَا",
         "translation": "и наших друзей",
-        "type": "существительное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَعِيَادَتِهِمْ",
-        "translation": "и посещением их (больных)",
-        "type": "существительное"
+        "translation": "и навещанием их",
+        "type": "текст"
       },
       {
         "arabic": "إِذَا",
         "translation": "если / когда",
-        "type": "союз"
+        "type": "текст"
       },
       {
-        "arabic": "مَرِضُوا.",
+        "arabic": "مَرِضُوا",
         "translation": "заболели",
-        "type": "глагол"
-      },
+        "type": "текст"
+      }
+    ],
+    [
       {
         "arabic": "وَكُنَّا",
         "translation": "и мы были / бывало, мы",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "أَيْضًا",
-        "translation": "тоже",
-        "type": "наречие"
+        "translation": "также / тоже",
+        "type": "текст"
       },
       {
         "arabic": "نَسْمَعُ",
         "translation": "мы слышали",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "كَثِيرًا",
         "translation": "много",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "تِلْكَ",
-        "translation": "ту / ту самую",
-        "type": "местоимение"
+        "translation": "та / ту",
+        "type": "текст"
       },
       {
         "arabic": "الْوَصِيَّةَ",
         "translation": "совет / наставление",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "نَفْسَهَا",
-        "translation": "тот же самый / саму её",
-        "type": "местоимение"
+        "translation": "саму её / ту же самую",
+        "type": "текст"
       },
       {
         "arabic": "مِنْ",
-        "translation": "из / с",
-        "type": "предлог"
+        "translation": "от / из",
+        "type": "текст"
       },
       {
         "arabic": "مُعَلِّمِنَا",
         "translation": "нашего учителя",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "الْمَحْبُوبِ",
         "translation": "любимого",
-        "type": "прилагательное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "لِذَلِكَ",
-        "translation": "из-за этого / по поводу этого",
-        "type": "предлог+указательное"
+        "translation": "из-за этого",
+        "type": "текст"
       },
       {
         "arabic": "اعْتَدْتُ",
         "translation": "я привык",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "أَنَا",
         "translation": "я",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "وَأَخِي",
         "translation": "и мой брат",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "الصَّغِيرُ",
         "translation": "младший",
-        "type": "прилагательное"
+        "type": "текст"
       },
       {
         "arabic": "كَرِيمٌ",
         "translation": "Карим",
-        "type": "имя собственное"
+        "type": "текст"
       },
       {
         "arabic": "أَنْ",
         "translation": "чтобы",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "نَذْهَبَ",
         "translation": "идти / ходить",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "كُلَّ",
         "translation": "каждый",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "جُمُعَةٍ",
         "translation": "пятницу",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "إِلَى",
-        "translation": "в / к",
-        "type": "предлог"
+        "translation": "к / в",
+        "type": "текст"
       },
       {
         "arabic": "عَمَّتِنَا",
-        "translation": "нашей тёте по отцу",
-        "type": "существительное"
+        "translation": "нашей тёти по отцу",
+        "type": "текст"
       },
       {
         "arabic": "وَنَسْأَلَهَا",
         "translation": "и спрашивать её",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "عَنْ",
         "translation": "о / относительно",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "صِحَّتِهَا",
         "translation": "о её здоровье",
-        "type": "существительное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَهَكَذَا",
         "translation": "и таким образом",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "كُنَّا",
-        "translation": "мы были",
-        "type": "глагол"
+        "translation": "мы были / бывало, мы",
+        "type": "текст"
       },
       {
         "arabic": "نَزُورُ",
         "translation": "мы навещали",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "خَالَنَا",
         "translation": "нашего дядю по матери",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "إِبْرَاهِيمَ",
-        "translation": "Ибрахим",
-        "type": "имя собственное"
+        "translation": "Ибрахима",
+        "type": "текст"
       },
       {
         "arabic": "وَبِنْتَ",
         "translation": "и дочь",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "عَمَّتِنَا",
-        "translation": "нашей тёте по отцу",
-        "type": "существительное"
+        "translation": "нашей тёти по отцу",
+        "type": "текст"
       },
       {
         "arabic": "فَاطِمَةَ",
-        "translation": "Фатима",
-        "type": "имя собственное"
+        "translation": "Фатиму",
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَكَانَ",
         "translation": "и было",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "هَؤُلَاءِ",
         "translation": "эти",
-        "type": "указательное местоимение"
+        "type": "текст"
       },
       {
         "arabic": "كُلُّهُمْ",
         "translation": "все они",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "يَسُرُّونَ",
         "translation": "радовались",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "كَثِيرًا",
         "translation": "много",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "بِزِيَارَتِنَا",
         "translation": "нашему посещению",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "إِيَّاهُمْ",
         "translation": "их",
-        "type": "местоимение"
-      },
+        "type": "текст"
+      }
+    ],
+    [
       {
         "arabic": "وَيُتْحِفُونَنَا",
         "translation": "и угощали / одаривали нас",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "بِشَيْءٍ",
         "translation": "чем-нибудь / чем-то",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "مِنَ",
         "translation": "из / от",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "التُّفَّاحِ",
         "translation": "яблок",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "أَوِ",
         "translation": "или",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "الْبُرْتُقَالِ",
         "translation": "апельсинов",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "أَوْ",
         "translation": "или",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "غَيْرِهِمَا",
-        "translation": "другого / иных (из них)",
-        "type": "местоимение"
+        "translation": "другого / иных из них",
+        "type": "текст"
       },
       {
         "arabic": "مِنَ",
         "translation": "из / от",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "الْفَوَاكِهِ",
         "translation": "фруктов",
-        "type": "существительное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَكَثِيرًا",
         "translation": "и часто",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "مَا",
-        "translation": "не",
-        "type": "частица"
+        "translation": "не / что",
+        "type": "текст"
       },
       {
         "arabic": "كُنَّا",
-        "translation": "мы были",
-        "type": "глагол"
+        "translation": "мы были / бывало, мы",
+        "type": "текст"
       },
       {
         "arabic": "نَشْرَبُ",
-        "translation": "мы пьём / пили",
-        "type": "глагол"
+        "translation": "мы пили",
+        "type": "текст"
       },
       {
         "arabic": "مَعًا",
         "translation": "вместе",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "الشَّايَ",
         "translation": "чай",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "أَوْ",
         "translation": "или",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "نَتَغَدَّى",
-        "translation": "мы обедаем / обедали",
-        "type": "глагол"
+        "translation": "мы обедали",
+        "type": "текст"
       }
     ],
     [
       {
-        "arabic": "هَكَذَا",
-        "translation": "так / таким образом",
-        "type": "наречие"
-      },
-      {
         "arabic": "كَانَ",
         "translation": "был",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "حَالُنَا",
-        "translation": "наше состояние / положение",
-        "type": "существительное"
+        "translation": "наше положение",
+        "type": "текст"
       },
       {
         "arabic": "مَعَ",
-        "translation": "с",
-        "type": "предлог"
+        "translation": "—",
+        "type": "текст"
       },
       {
         "arabic": "هَؤُلَاءِ",
         "translation": "эти",
-        "type": "указательное местоимение"
+        "type": "текст"
       },
       {
         "arabic": "الْأَقَارِبِ",
-        "translation": "родственниками",
-        "type": "существительное"
+        "translation": "родственников",
+        "type": "текст"
+      },
+      {
+        "arabic": "هَكَذَا",
+        "translation": "так / таким образом",
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "مَرَّةً",
         "translation": "однажды",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "جَاءَ",
         "translation": "пришёл",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "إِلَيْنَا",
         "translation": "к нам",
-        "type": "местоимение+предлог"
+        "type": "текст"
       },
       {
         "arabic": "ابْنُ",
         "translation": "сын",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "عَمَّتِنَا",
-        "translation": "нашей тёте по отцу",
-        "type": "существительное"
+        "translation": "нашей тёти по отцу",
+        "type": "текст"
       },
       {
         "arabic": "سَعِيدٌ",
         "translation": "Саид",
-        "type": "имя собственное"
+        "type": "текст"
       },
       {
         "arabic": "فِي",
         "translation": "в",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "السَّاعَةِ",
-        "translation": "часу / времени",
-        "type": "существительное"
+        "translation": "часе / времени",
+        "type": "текст"
       },
       {
         "arabic": "السَّابِعَةِ",
         "translation": "седьмом",
-        "type": "числительное/прилагательное"
+        "type": "текст"
       },
       {
         "arabic": "وَالنِّصْفِ",
-        "translation": "и половине",
-        "type": "существительное"
+        "translation": "половине",
+        "type": "текст"
       },
       {
         "arabic": "صَبَاحًا",
         "translation": "утром",
-        "type": "наречие"
-      },
+        "type": "текст"
+      }
+    ],
+    [
       {
         "arabic": "عَلَى",
-        "translation": "с / после",
-        "type": "предлог"
+        "translation": "над / по сравнению с",
+        "type": "текст"
       },
       {
         "arabic": "خِلَافِ",
-        "translation": "отличие / خلاف с",
-        "type": "существительное"
+        "translation": "отличие / خلاف",
+        "type": "текст"
       },
       {
         "arabic": "عَادَتِهِ",
-        "translation": "его обычай / привычка",
-        "type": "существительное"
+        "translation": "его привычки",
+        "type": "текст"
       },
       {
         "arabic": "وَأَخْبَرَ",
         "translation": "и сообщил",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "أَنَّ",
         "translation": "что",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "وَالِدَتَهُ",
         "translation": "его мать",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "مَرِضَتْ",
         "translation": "заболела",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "مَرَضًا",
         "translation": "болезнью",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "شَدِيدًا",
-        "translation": "сильно",
-        "type": "наречие"
+        "translation": "очень / сильно",
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "فَقُمْنَا",
         "translation": "и мы встали",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "لِذَلِكَ",
-        "translation": "из-за этого / по поводу этого",
-        "type": "предлог+указательное"
+        "translation": "из-за этого",
+        "type": "текст"
       },
       {
         "arabic": "الْخَبَرِ",
         "translation": "новости",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "وَقَعَدْنَا",
         "translation": "и мы сели",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "وَاسْتَوْلَى",
         "translation": "и овладело",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "عَلَيْنَا",
         "translation": "над нами / на нас",
-        "type": "предлог+местоимение"
+        "type": "текст"
       },
       {
         "arabic": "حُزْنٌ",
         "translation": "печаль",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "شَدِيدٌ",
         "translation": "сильный / тяжёлый",
-        "type": "прилагательное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَقَدْ",
-        "translation": "и уже",
-        "type": "частица"
+        "translation": "и уже / уже",
+        "type": "текст"
       },
       {
         "arabic": "كُنْتُ",
         "translation": "я был",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "أَنَا",
         "translation": "я",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "وَأَخِي",
         "translation": "и мой брат",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "مُسْتَعِدَّيْنِ",
         "translation": "готовыми",
-        "type": "прилагательное"
+        "type": "текст"
       },
       {
         "arabic": "لِلذَّهَابِ",
-        "translation": "к походу / к отправлению",
-        "type": "существительное"
+        "translation": "для отправления / чтобы идти",
+        "type": "текст"
       },
       {
         "arabic": "إِلَى",
-        "translation": "в / к",
-        "type": "предлог"
+        "translation": "к / в",
+        "type": "текст"
       },
       {
         "arabic": "الْكِتَابِ",
-        "translation": "школе / книге",
-        "type": "существительное"
+        "translation": "школе",
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "فَتَقَدَّمْتُ",
         "translation": "и я подошёл",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "إِلَى",
-        "translation": "в / к",
-        "type": "предлог"
+        "translation": "к / в",
+        "type": "текст"
       },
       {
         "arabic": "وَالِدِي",
         "translation": "моему отцу",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "وَاسْتَأْذَنْتُهُ",
         "translation": "и попросил у него разрешения",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "أَنْ",
         "translation": "чтобы",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "أَذْهَبَ",
         "translation": "пойти",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "مَعَهَا",
         "translation": "с ней",
-        "type": "местоимение+предлог"
+        "type": "текст"
       },
       {
         "arabic": "إِلَى",
-        "translation": "в / к",
-        "type": "предлог"
+        "translation": "к / в",
+        "type": "текст"
       },
       {
         "arabic": "عَمَّتِنَا",
-        "translation": "нашей тёте по отцу",
-        "type": "существительное"
+        "translation": "нашей тёти по отцу",
+        "type": "текст"
       },
       {
         "arabic": "بَدَلَ",
         "translation": "вместо",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "الذَّهَابِ",
-        "translation": "похода / отправления",
-        "type": "существительное"
+        "translation": "отправления / похода",
+        "type": "текст"
       },
       {
         "arabic": "إِلَى",
-        "translation": "в / к",
-        "type": "предлог"
+        "translation": "к / в",
+        "type": "текст"
       },
       {
         "arabic": "الْكِتَابِ",
-        "translation": "школе / книге",
-        "type": "существительное"
+        "translation": "школе",
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "فَقَالَتْ:",
         "translation": "и она сказала",
-        "type": "глагол"
+        "type": "текст"
       },
       {
-        "arabic": "لَا",
-        "translation": "не",
-        "type": "частица"
+        "arabic": "لَا،",
+        "translation": "не / нет",
+        "type": "текст"
       },
       {
         "arabic": "يَا",
         "translation": "о / эй",
-        "type": "частица"
+        "type": "текст"
       },
       {
         "arabic": "بُنَيَّ،",
         "translation": "сынок / мой сын",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "لَا",
-        "translation": "не",
-        "type": "частица"
+        "translation": "не / нет",
+        "type": "текст"
       },
       {
         "arabic": "يَنْبَغِي",
         "translation": "следует / подобает",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "لِلتِّلْمِيذِ",
         "translation": "ученику",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "أَنْ",
         "translation": "чтобы",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "يَتَخَلَّفَ",
         "translation": "пропускать / отставать",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "عَنِ",
         "translation": "о",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "الدَّرْسِ",
         "translation": "урока",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "عَلَى",
-        "translation": "с / после",
-        "type": "предлог"
+        "translation": "над / по сравнению с",
+        "type": "текст"
       },
       {
         "arabic": "حَالٍ",
-        "translation": "случае / положении",
-        "type": "существительное"
+        "translation": "случая / положения",
+        "type": "текст"
       },
       {
         "arabic": "سِوَى",
         "translation": "кроме",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "الْمَرَضِ",
         "translation": "болезни",
-        "type": "существительное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "فَاذْهَبْ",
         "translation": "так что иди",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "حَالًا",
         "translation": "сейчас / немедленно",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "إِلَى",
-        "translation": "в / к",
-        "type": "предлог"
+        "translation": "к / в",
+        "type": "текст"
       },
       {
-        "arabic": "الْكِتَابِ",
-        "translation": "школе / книге",
-        "type": "существительное"
+        "arabic": "الْكِتَابِ،",
+        "translation": "школе",
+        "type": "текст"
       },
       {
         "arabic": "وَبَعْدَ",
         "translation": "и после",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "الدَّرْسِ",
         "translation": "урока",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "تَعُودَانِ",
         "translation": "вы оба вернётесь",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "مَعًا",
         "translation": "вместе",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "وَأَنَا",
-        "translation": "а я",
-        "type": "местоимение"
+        "translation": "—",
+        "type": "текст"
       },
       {
         "arabic": "أَكُونُ",
-        "translation": "буду / буду находиться",
-        "type": "глагол"
+        "translation": "я буду",
+        "type": "текст"
       },
       {
         "arabic": "أَيْضًا",
-        "translation": "тоже",
-        "type": "наречие"
+        "translation": "также / тоже",
+        "type": "текст"
       },
       {
         "arabic": "هُنَاكَ",
         "translation": "там",
-        "type": "наречие"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "مَا",
-        "translation": "не",
-        "type": "частица"
+        "translation": "не / что",
+        "type": "текст"
       },
       {
         "arabic": "رَأَيْتُ",
         "translation": "я видел",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "يَوْمًا",
         "translation": "день",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "قَطُّ",
         "translation": "никогда",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "أَطْوَلَ",
         "translation": "длиннее / более долгий",
-        "type": "прилагательное"
+        "type": "текст"
       },
       {
         "arabic": "مِنْ",
-        "translation": "из / с",
-        "type": "предлог"
+        "translation": "от / из",
+        "type": "текст"
       },
       {
         "arabic": "ذَلِكَ",
         "translation": "это / то",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "الْيَوْمِ",
         "translation": "дня",
-        "type": "существительное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "كَانَتِ",
         "translation": "была",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "الثَّانِيَةُ",
         "translation": "вторая",
-        "type": "числительное"
+        "type": "текст"
       },
       {
         "arabic": "دَقِيقَةً",
         "translation": "минутой",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "وَالدَّقِيقَةُ",
         "translation": "а минута",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "سَاعَةً",
         "translation": "часом",
-        "type": "существительное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "كَانَ",
         "translation": "был",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "أَوَّلًا",
         "translation": "сначала",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "دَرْسُ",
         "translation": "урок",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "الْحِسَابِ",
-        "translation": "арифметике",
-        "type": "существительное"
+        "translation": "арифметика / счёт",
+        "type": "текст"
       },
       {
         "arabic": "ثُمَّ",
         "translation": "затем",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "الْقِرَاءَةُ",
         "translation": "чтение",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "الْعَرَبِيَّةُ",
         "translation": "арабский",
-        "type": "прилагательное"
+        "type": "текст"
       },
       {
         "arabic": "ثُمَّ",
         "translation": "затем",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "دَرْسُ",
         "translation": "урок",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "الْإِنْشَاءِ",
         "translation": "сочинения",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "ثُمَّ",
         "translation": "затем",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "دُرُوسُ",
         "translation": "уроки",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "الْأَشْيَاءِ",
         "translation": "вещей / естествознания",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "ثُمَّ",
         "translation": "затем",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "الرَّسْمُ",
         "translation": "рисование",
-        "type": "существительное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَكُنْتُ",
         "translation": "и я был",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "فِي",
         "translation": "в",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "الْحِسَابِ",
-        "translation": "арифметике",
-        "type": "существительное"
+        "translation": "арифметика / счёт",
+        "type": "текст"
       },
       {
         "arabic": "مُقَدَّمًا",
         "translation": "впереди / первым",
-        "type": "прилагательное"
+        "type": "текст"
       },
       {
         "arabic": "عَلَى",
-        "translation": "с / после",
-        "type": "предлог"
+        "translation": "над / по сравнению с",
+        "type": "текст"
       },
       {
         "arabic": "جَمِيعِ",
         "translation": "всех",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "التَّلَامِيذِ",
         "translation": "учеников",
-        "type": "существительное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَلَكِنِ",
         "translation": "но",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "الْيَوْمَ",
         "translation": "сегодня / в тот день",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "مَا",
-        "translation": "не",
-        "type": "частица"
+        "translation": "не / что",
+        "type": "текст"
       },
       {
         "arabic": "تَيَسَّرَ",
         "translation": "удалось",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "لِي",
         "translation": "мне",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "أَنْ",
         "translation": "чтобы",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "أَحُلَّ",
         "translation": "решить",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "جَيِّدًا",
         "translation": "хорошо",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "وَلَا",
-        "translation": "и ни",
-        "type": "союз+частица"
+        "translation": "и не / ни",
+        "type": "текст"
       },
       {
         "arabic": "مَسْأَلَةً",
         "translation": "задачу",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "وَاحِدَةً",
         "translation": "одну",
-        "type": "числительное/прилагательное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَقَدْ",
-        "translation": "и уже",
-        "type": "частица"
+        "translation": "и уже / уже",
+        "type": "текст"
       },
       {
         "arabic": "تَفَرَّسَ",
-        "translation": "заметил / всмотрелся",
-        "type": "глагол"
+        "translation": "внимательно всмотрелся / заметил",
+        "type": "текст"
       },
       {
         "arabic": "الْمُعَلِّمُ",
         "translation": "учитель",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "لَمَّا",
-        "translation": "когда",
-        "type": "союз"
+        "translation": "когда / когда случилось",
+        "type": "текст"
       },
       {
         "arabic": "نَزَلَ",
         "translation": "охватило / снизошло",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "بِي",
         "translation": "меня / на меня",
-        "type": "предлог+местоимение"
+        "type": "текст"
       },
       {
         "arabic": "مِنَ",
         "translation": "из / от",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "الْكُآبَةِ",
-        "translation": "уныния / подавленности",
-        "type": "существительное"
+        "translation": "уныние / подавленность",
+        "type": "текст"
       },
       {
         "arabic": "وَكَانَ",
         "translation": "и было",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "فَطِنًا",
         "translation": "сообразительным / умным",
-        "type": "прилагательное"
+        "type": "текст"
       },
       {
         "arabic": "حَسَّاسًا",
         "translation": "чутким",
-        "type": "прилагательное"
+        "type": "текст"
       },
       {
         "arabic": "بَعِيدَ",
         "translation": "далёким",
-        "type": "прилагательное"
+        "type": "текст"
       },
       {
         "arabic": "النَّظَرِ",
         "translation": "взглядом / дальновидностью",
-        "type": "существительное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَلَكِنَّهُ",
         "translation": "но он",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "لَمْ",
         "translation": "не",
-        "type": "частица"
+        "type": "текст"
       },
       {
         "arabic": "يَقُلْ",
         "translation": "сказал",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "لِي",
         "translation": "мне",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "فِي",
         "translation": "в",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "ذَلِكَ",
         "translation": "это / то",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "شَيْئًا",
-        "translation": "ничего / кое-что",
-        "type": "существительное"
+        "translation": "что-либо / ничего",
+        "type": "текст"
       },
       {
         "arabic": "وَإِنَّمَا",
-        "translation": "а лишь / только",
-        "type": "частица"
+        "translation": "а только / лишь",
+        "type": "текст"
       },
       {
-        "arabic": "سَرَّى",
+        "arabic": "سَرَّ",
         "translation": "облегчил / утешил",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "لِي",
         "translation": "мне",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "بَعْضَ",
         "translation": "часть / немного",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "الْهَمِّ",
-        "translation": "тревоги / заботы",
-        "type": "существительное"
+        "translation": "тревогу / заботу",
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَكَانَتْ",
         "translation": "и была",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "هِيَ",
         "translation": "она",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "عَادَتَهُ",
         "translation": "его привычка / обычай",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "فِي",
         "translation": "в",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "مِثْلِ",
         "translation": "подобных / вроде",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "هَذِهِ",
         "translation": "этих",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "الْأَحْوَالِ",
         "translation": "обстоятельств / состояний",
-        "type": "существительное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَلِذَلِكَ",
         "translation": "поэтому",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "كُنَّا",
-        "translation": "мы были",
-        "type": "глагол"
+        "translation": "мы были / бывало, мы",
+        "type": "текст"
       },
       {
         "arabic": "نُحِبُّهُ",
         "translation": "мы любили его",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "شَدِيدًا",
-        "translation": "сильно",
-        "type": "наречие"
+        "translation": "очень / сильно",
+        "type": "текст"
       },
       {
         "arabic": "وَكَانَ",
         "translation": "и было",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "بِنَا",
         "translation": "к нам / с нами",
-        "type": "предлог+местоимение"
+        "type": "текст"
       },
       {
         "arabic": "رَحِيمًا",
         "translation": "милосердным",
-        "type": "прилагательное"
+        "type": "текст"
       },
       {
         "arabic": "وَعَلَيْنَا",
         "translation": "к нам / над нами",
-        "type": "предлог+местоимение"
+        "type": "текст"
       },
       {
         "arabic": "شَفِيقًا",
         "translation": "заботливым / сострадательным",
-        "type": "прилагательное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "قَلَّمَا",
         "translation": "редко / почти никогда",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "يُوجَدُ",
         "translation": "встречается / имеется",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "مِثْلُهُ",
         "translation": "такой, как он",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "فِي",
         "translation": "в",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "النَّاسِ",
         "translation": "людей",
-        "type": "существительное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَحِينَ",
         "translation": "и когда",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "تَمَّ",
         "translation": "закончился / завершился",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "الدَّرْسُ",
         "translation": "урок",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "وَأَذِنَ",
         "translation": "и разрешил",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "لَنَا",
         "translation": "нам",
-        "type": "предлог+местоимение"
+        "type": "текст"
       },
       {
         "arabic": "الْمُعَلِّمُ",
         "translation": "учитель",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "بِالِانْصِرَافِ",
         "translation": "уйти / удалиться",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "لَمْ",
         "translation": "не",
-        "type": "частица"
+        "type": "текст"
       },
       {
         "arabic": "نَرْجِعْ",
         "translation": "вернулись",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "إِلَى",
-        "translation": "в / к",
-        "type": "предлог"
+        "translation": "к / в",
+        "type": "текст"
       },
       {
         "arabic": "الْبَيْتِ",
-        "translation": "дому",
-        "type": "существительное"
-      },
+        "translation": "дом",
+        "type": "текст"
+      }
+    ],
+    [
       {
         "arabic": "بَلْ",
         "translation": "а / напротив",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "سِرْنَا",
-        "translation": "мы отправились / пошли",
-        "type": "глагол"
+        "translation": "мы пошли / отправились",
+        "type": "текст"
       },
       {
         "arabic": "تَوًّا",
         "translation": "тотчас / сразу",
-        "type": "наречие"
+        "type": "текст"
       },
       {
         "arabic": "إِلَى",
-        "translation": "в / к",
-        "type": "предлог"
+        "translation": "к / в",
+        "type": "текст"
       },
       {
         "arabic": "دَارِ",
-        "translation": "дому / жилищу",
-        "type": "существительное"
+        "translation": "дом / жилище",
+        "type": "текст"
       },
       {
         "arabic": "عَمَّتِنَا",
-        "translation": "нашей тёте по отцу",
-        "type": "существительное"
+        "translation": "нашей тёти по отцу",
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَكَانَتْ",
         "translation": "и была",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "وَالِدَتُنَا",
         "translation": "наша мать",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "أَيْضًا",
-        "translation": "тоже",
-        "type": "наречие"
+        "translation": "также / тоже",
+        "type": "текст"
       },
       {
         "arabic": "هُنَاكَ",
         "translation": "там",
-        "type": "наречие"
-      }
-    ],
-    [
+        "type": "текст"
+      },
       {
         "arabic": "فَسَأَلْنَاهَا",
         "translation": "и мы спросили её",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "عَنِ",
         "translation": "о",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "الْخَبَرِ",
         "translation": "новости",
-        "type": "существительное"
-      },
+        "type": "текст"
+      }
+    ],
+    [
       {
         "arabic": "فَقَالَتْ",
         "translation": "и она сказала",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "قَدْ",
         "translation": "уже / ведь",
-        "type": "частица"
+        "type": "текст"
       },
       {
         "arabic": "دَعَا",
         "translation": "вызвала",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "الطَّبِيبَ",
         "translation": "врача",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "وَعَايَنَهَا",
         "translation": "и осмотрел её",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "وَقَالَ",
         "translation": "и сказал",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "إِنَّهُ",
         "translation": "что он",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "لَيْسَ",
         "translation": "не является / нет",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "عَلَيْهَا",
         "translation": "у неё / на ней",
-        "type": "предлог+местоимение"
+        "type": "текст"
       },
       {
         "arabic": "مِنْ",
-        "translation": "из / с",
-        "type": "предлог"
+        "translation": "от / из",
+        "type": "текст"
       },
       {
         "arabic": "خَطَرٍ",
         "translation": "опасности",
-        "type": "существительное"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "فَفَرِحْنَا",
         "translation": "и мы обрадовались",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "شَدِيدًا",
-        "translation": "сильно",
-        "type": "наречие"
+        "translation": "очень / сильно",
+        "type": "текст"
       },
       {
         "arabic": "وَحَمِدْنَا",
         "translation": "и мы восхвалили / поблагодарили",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "اللَّهَ",
         "translation": "Аллаха / Бога",
-        "type": "имя собственное"
+        "type": "текст"
       },
       {
         "arabic": "كَثِيرًا",
         "translation": "много",
-        "type": "наречие"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَلَمْ",
         "translation": "и не",
-        "type": "частица"
+        "type": "текст"
       },
       {
         "arabic": "يَمْضِ",
-        "translation": "произошло / прошло",
-        "type": "глагол"
+        "translation": "прошло",
+        "type": "текст"
       },
       {
         "arabic": "عَلَى",
-        "translation": "с / после",
-        "type": "предлог"
+        "translation": "над / по сравнению с",
+        "type": "текст"
       },
       {
         "arabic": "الْوَاقِعَةِ",
-        "translation": "случая / происшествия",
-        "type": "существительное"
+        "translation": "случай / происшествие",
+        "type": "текст"
       },
       {
         "arabic": "عَشَرَةُ",
         "translation": "десять",
-        "type": "числительное"
+        "type": "текст"
       },
       {
         "arabic": "أَيَّامٍ",
         "translation": "дней",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "حَتَّى",
         "translation": "пока / до тех пор, пока",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "شُفِيَتْ",
         "translation": "выздоровела / была исцелена",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "شِفَاءً",
-        "translation": "выздоровлением / полностью",
-        "type": "существительное"
+        "translation": "выздоровлением / исцелением",
+        "type": "текст"
       },
       {
         "arabic": "تَامًّا",
-        "translation": "полным",
-        "type": "прилагательное"
+        "translation": "полностью / полным",
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَصَارَتْ",
         "translation": "и стала",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "تَسْتَقْبِلُنَا",
         "translation": "встречать нас / принимать нас",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "عِنْدَ",
         "translation": "при / во время",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "زِيَارَتِنَا",
         "translation": "нашего посещения",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "إِيَّاهَا",
         "translation": "её",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "بِالْفَوَاكِهِ",
         "translation": "фруктами",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "كَمَا",
         "translation": "как / так как",
-        "type": "союз"
+        "type": "текст"
       },
       {
         "arabic": "كَانَتْ",
         "translation": "была",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "تَفْعَلُ",
         "translation": "делала",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "مِنْ",
-        "translation": "из / с",
-        "type": "предлог"
+        "translation": "от / из",
+        "type": "текст"
       },
       {
         "arabic": "قَبْلُ",
         "translation": "прежде / ранее",
-        "type": "наречие"
+        "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَكَانَ",
         "translation": "и было",
-        "type": "глагол"
+        "type": "текст"
       },
       {
         "arabic": "ذَلِكَ",
         "translation": "это / то",
-        "type": "местоимение"
+        "type": "текст"
       },
       {
         "arabic": "فِي",
         "translation": "в",
-        "type": "предлог"
+        "type": "текст"
       },
       {
         "arabic": "أَوَاسِطِ",
         "translation": "середине",
-        "type": "существительное"
+        "type": "текст"
       },
       {
         "arabic": "يَنَايِرَ",
         "translation": "января",
-        "type": "имя собственное"
+        "type": "текст"
       }
     ]
   ]
