@@ -708,3 +708,28 @@ body:not(.view-welcome) .welcome {
         bottom: 14px
     }
 }
+
+
+.lesson-title-ru {
+    margin-top: 3px;
+    color: #8c929c;
+    font-size: 13px;
+    line-height: 1.2;
+    font-weight: 500;
+    text-align: center;
+}
+
+.lesson-item small {
+    display: block;
+    margin-top: 4px;
+    color: #8c929c;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.25;
+    font-weight: 500;
+    text-align: left;
+}
+
+.lesson-item.active small {
+    color: #5c82c9;
+}
