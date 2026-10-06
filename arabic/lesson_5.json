@@ -2,5 +2,540 @@
   "lesson": 5,
   "title": "المَطَرُ",
   "words": [],
-  "story": []
+  "story": [
+    [
+      {
+        "arabic": "المَطَرُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "هُوَ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "بُخَارُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْمَاءِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الَّذِي",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "يَصْعَدُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "إِلَى",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْجَوِّ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "فَيَصِيرُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "غُيُومًا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَسُحُبًا",
+        "translation": "",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "وَسُحُبًا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "تَسُوقُهَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الرِّيَاحُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "بَيْنَ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْقُبَّةِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الزَّرْقَاءِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَسَطْحِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْأَرْضِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَلَى",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَبْعَادٍ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مُخْتَلِفَةٍ",
+        "translation": "",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "وَعِنْدَمَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "تَبْلُغُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "هَذِهِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْغُيُومُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "بَعْدَ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مَيْلٍ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَوْ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مِيلَيْنِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "ارْتِفَاعًا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "تَبْرُدُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَتَنْخَفِضُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "دَرَجَةُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "حَرَارَةِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْهَوَاءِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "فَلَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "يَسْتَطِيعُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "حَمْلَهَا",
+        "translation": "",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "فَتَسْقُطُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "هَذِهِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْغُيُومُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مُنْضَمًّا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "بَعْضُهَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "إِلَى",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْبَعْضِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْآخَرِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "فَتَتَكَوَّنُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مِنْهَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "قَطَرَاتُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْمَطَرِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "لِكَوْنِهَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَثْقَلَ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مِنَ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْهَوَاءِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْكُرَوِيِّ",
+        "translation": "",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "وَالْغُيُومُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "فِي",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْجَوِّ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "عِنْدَ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "سَيْرِهَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "كَثِيرًا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "تُصَادِمُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "رُؤُوسَ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْجِبَالِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "فَتَصُبُّ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "فِيهَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مِنَ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْبُخَارِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مَطَرًا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَلَى",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "رُؤُوسِهَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَجَوَانِبِهَا",
+        "translation": "",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "وَقَدْ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "يَحْدُثُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْمَطَرُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَيْضًا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مِنْ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مُصَادَفَةِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "السُّحُبِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مُجَارِيَ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "رِيَاحٍ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "دَرَجَةُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "حَرَارَتِهَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "دُونَ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "دَرَجَةِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "حَرَارَةِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْغَيْمِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "السَّابِحِ",
+        "translation": "",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "وَكَثِيرًا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "مَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "تَتَجَمَّدُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْأَمْطَارُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "عِنْدَ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "انْحِدَارِهَا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "بِسَبَبِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "شِدَّةِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْبَرْدِ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "فَتَنْزِلُ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "بَرَدًا",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَوْ",
+        "translation": "",
+        "type": "текст"
+      },
+      {
+        "arabic": "ثَلْجًا",
+        "translation": "",
+        "type": "текст"
+      }
+    ]
+  ]
 }
