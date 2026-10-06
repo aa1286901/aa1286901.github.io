@@ -1,6 +1,1403 @@
 {
   "lesson": 4,
   "title": "الرَّجُلُ وَأَوْلَادُهُ",
-  "words": [],
-  "story": []
+  "words": [
+    {
+      "arabic": "وَلَد",
+      "translation": "сын / ребёнок",
+      "type": "существительное"
+    },
+    {
+      "arabic": "مَال",
+      "translation": "имущество / деньги",
+      "type": "существительное"
+    },
+    {
+      "arabic": "أَجَل",
+      "translation": "срок / смерть",
+      "type": "существительное"
+    },
+    {
+      "arabic": "أَمْوَال",
+      "translation": "имущество / деньги",
+      "type": "существительное"
+    },
+    {
+      "arabic": "جَوْهَرَة",
+      "translation": "драгоценный камень",
+      "type": "существительное"
+    },
+    {
+      "arabic": "مُكَافَأَة",
+      "translation": "награда",
+      "type": "существительное"
+    },
+    {
+      "arabic": "عَمَل",
+      "translation": "поступок / дело",
+      "type": "существительное"
+    },
+    {
+      "arabic": "شَهْر",
+      "translation": "месяц",
+      "type": "существительное"
+    },
+    {
+      "arabic": "وَالِد",
+      "translation": "отец",
+      "type": "существительное"
+    },
+    {
+      "arabic": "رَجُل",
+      "translation": "человек / мужчина",
+      "type": "существительное"
+    },
+    {
+      "arabic": "وَثِيقَة",
+      "translation": "документ / расписка",
+      "type": "существительное"
+    },
+    {
+      "arabic": "طَلَب",
+      "translation": "требование / просьба",
+      "type": "существительное"
+    },
+    {
+      "arabic": "الله",
+      "translation": "Аллах",
+      "type": "имя собственное"
+    },
+    {
+      "arabic": "شَاطِئ",
+      "translation": "берег",
+      "type": "существительное"
+    },
+    {
+      "arabic": "بُحَيْرَة",
+      "translation": "озеро",
+      "type": "существительное"
+    },
+    {
+      "arabic": "حَيَاة",
+      "translation": "жизнь",
+      "type": "существительное"
+    },
+    {
+      "arabic": "غَرَق",
+      "translation": "утопление",
+      "type": "существительное"
+    },
+    {
+      "arabic": "شَفَقَة",
+      "translation": "сострадание",
+      "type": "существительное"
+    },
+    {
+      "arabic": "إِنْسَان",
+      "translation": "человек",
+      "type": "существительное"
+    },
+    {
+      "arabic": "عَدُوّ",
+      "translation": "враг",
+      "type": "существительное"
+    },
+    {
+      "arabic": "حَافَّة",
+      "translation": "край",
+      "type": "существительное"
+    },
+    {
+      "arabic": "هُوَّة",
+      "translation": "пропасть",
+      "type": "существительное"
+    },
+    {
+      "arabic": "حَرَكَة",
+      "translation": "движение",
+      "type": "существительное"
+    },
+    {
+      "arabic": "وُقُوع",
+      "translation": "падение",
+      "type": "существительное"
+    },
+    {
+      "arabic": "صَدْر",
+      "translation": "грудь",
+      "type": "существительное"
+    },
+    {
+      "arabic": "هَلَاك",
+      "translation": "гибель",
+      "type": "существительное"
+    },
+    {
+      "arabic": "قُدْرَة",
+      "translation": "способность / возможность",
+      "type": "существительное"
+    },
+    {
+      "arabic": "شَكّ",
+      "translation": "сомнение",
+      "type": "существительное"
+    },
+    {
+      "arabic": "أَشْرَف",
+      "translation": "благороднейшие",
+      "type": "прилагательное"
+    },
+    {
+      "arabic": "كَانَ",
+      "translation": "быть",
+      "type": "глагол"
+    },
+    {
+      "arabic": "أَحَسَّ",
+      "translation": "чувствовать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "قَسَمَ",
+      "translation": "делить",
+      "type": "глагол"
+    },
+    {
+      "arabic": "اِخْتَارَ",
+      "translation": "выбирать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "قَالَ",
+      "translation": "сказать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "عَمِلَ",
+      "translation": "сделать / совершить",
+      "type": "глагол"
+    },
+    {
+      "arabic": "اسْتَحَقَّ",
+      "translation": "заслужить",
+      "type": "глагол"
+    },
+    {
+      "arabic": "أُكَافَأَ",
+      "translation": "быть награждённым",
+      "type": "глагол"
+    },
+    {
+      "arabic": "أَوْدَعَ",
+      "translation": "положить на хранение",
+      "type": "глагол"
+    },
+    {
+      "arabic": "عَرَفَ",
+      "translation": "знать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "أَخَذَ",
+      "translation": "брать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "سَلَّمَ",
+      "translation": "передавать / возвращать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "يُوجِبُ",
+      "translation": "обязывать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "مَشَى",
+      "translation": "идти",
+      "type": "глагол"
+    },
+    {
+      "arabic": "سَقَطَ",
+      "translation": "падать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "خَاطَرَ",
+      "translation": "рисковать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "أَنْقَذَ",
+      "translation": "спасать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "وَجَدَ",
+      "translation": "находить",
+      "type": "глагол"
+    },
+    {
+      "arabic": "تَحَرَّكَ",
+      "translation": "двигаться",
+      "type": "глагол"
+    },
+    {
+      "arabic": "وَقَعَ",
+      "translation": "падать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "هَلَكَ",
+      "translation": "погибать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "جَاءَ",
+      "translation": "приходить",
+      "type": "глагол"
+    },
+    {
+      "arabic": "أَيْقَظَ",
+      "translation": "будить",
+      "type": "глагол"
+    },
+    {
+      "arabic": "نَجَا",
+      "translation": "спастись / избежать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "ضَمَّ",
+      "translation": "прижимать / обнимать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "عَفَا",
+      "translation": "прощать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "أَشْرَفَ",
+      "translation": "быть более благородным",
+      "type": "глагол"
+    }
+  ],
+  "story": [
+    [
+      {
+        "arabic": "وَكَانَ",
+        "translation": "и было",
+        "type": "текст"
+      },
+      {
+        "arabic": "لَهُ",
+        "translation": "ему",
+        "type": "текст"
+      },
+      {
+        "arabic": "ثَلَاثَةُ",
+        "translation": "трое",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَوْلَادٍ",
+        "translation": "сыновья / дети",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَعِنْدَهُ",
+        "translation": "и у него есть / было",
+        "type": "текст"
+      },
+      {
+        "arabic": "مَالٌ",
+        "translation": "имущество / деньги",
+        "type": "текст"
+      },
+      {
+        "arabic": "كَثِيرٌ",
+        "translation": "много / большой",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "وَلَمَّا",
+        "translation": "и когда",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَحَسَّ",
+        "translation": "почувствовал",
+        "type": "текст"
+      },
+      {
+        "arabic": "بِدُنُوِّ",
+        "translation": "приближение",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَجَلِهِ",
+        "translation": "его срока / смерти",
+        "type": "текст"
+      },
+      {
+        "arabic": "قَسَمَ",
+        "translation": "разделил",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَمْوَالَهُ",
+        "translation": "его имущество",
+        "type": "текст"
+      },
+      {
+        "arabic": "بَيْنَ",
+        "translation": "между",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَوْلَادِهِ",
+        "translation": "его сыновьями",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَاخْتَارَ",
+        "translation": "и выбрал",
+        "type": "текст"
+      },
+      {
+        "arabic": "مِنْ",
+        "translation": "из",
+        "type": "текст"
+      },
+      {
+        "arabic": "هَذَا",
+        "translation": "этот",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْمَالِ",
+        "translation": "имущества",
+        "type": "текст"
+      },
+      {
+        "arabic": "جَوْهَرَةً",
+        "translation": "драгоценный камень",
+        "type": "текст"
+      },
+      {
+        "arabic": "ثَمِينَةً",
+        "translation": "драгоценный / ценный",
+        "type": "текст"
+      },
+      {
+        "arabic": "كَانَتْ",
+        "translation": "была",
+        "type": "текст"
+      },
+      {
+        "arabic": "عِنْدَهُ",
+        "translation": "у него",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "وَقَالَ",
+        "translation": "и сказал",
+        "type": "текст"
+      },
+      {
+        "arabic": "لَهُمْ",
+        "translation": "им",
+        "type": "текст"
+      },
+      {
+        "arabic": "هَذِهِ",
+        "translation": "этот",
+        "type": "текст"
+      },
+      {
+        "arabic": "تَكُونُ",
+        "translation": "будет",
+        "type": "текст"
+      },
+      {
+        "arabic": "مُكَافَأَةً",
+        "translation": "награду",
+        "type": "текст"
+      },
+      {
+        "arabic": "لِمَنْ",
+        "translation": "тому, кто",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَمِلَ",
+        "translation": "совершил / сделал",
+        "type": "текст"
+      },
+      {
+        "arabic": "مِنْكُمْ",
+        "translation": "из вас",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَمَلًا",
+        "translation": "поступок / дело",
+        "type": "текст"
+      },
+      {
+        "arabic": "جَلِيلًا",
+        "translation": "великий / благородный",
+        "type": "текст"
+      },
+      {
+        "arabic": "خِلَالَ",
+        "translation": "в течение",
+        "type": "текст"
+      },
+      {
+        "arabic": "الثَّلَاثَةِ",
+        "translation": "трёх",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَشْهُرٍ",
+        "translation": "месяцев",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "فَقَالَ",
+        "translation": "сказал",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَكْبَرُهُمْ",
+        "translation": "старший из них",
+        "type": "текст"
+      },
+      {
+        "arabic": "يَا",
+        "translation": "о",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَالِدِي",
+        "translation": "мой отец",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "أَنَا",
+        "translation": "я",
+        "type": "текст"
+      },
+      {
+        "arabic": "قَدْ",
+        "translation": "уже",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَمِلْتُ",
+        "translation": "я совершил",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَمَلًا",
+        "translation": "поступок / дело",
+        "type": "текст"
+      },
+      {
+        "arabic": "جَلِيلًا",
+        "translation": "великий / благородный",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَسْتَحِقُّ",
+        "translation": "я заслуживаю",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَنْ",
+        "translation": "что",
+        "type": "текст"
+      },
+      {
+        "arabic": "أُكَافَأَ",
+        "translation": "быть награждённым",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَلَيْهِ",
+        "translation": "над ним / ему",
+        "type": "текст"
+      },
+      {
+        "arabic": "بِهَذِهِ",
+        "translation": "этим / этой",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْجَوْهَرَةِ",
+        "translation": "драгоценным камнем",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "فَقَالَ",
+        "translation": "сказал",
+        "type": "текст"
+      },
+      {
+        "arabic": "لَهُ",
+        "translation": "ему",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَمَا",
+        "translation": "и не",
+        "type": "текст"
+      },
+      {
+        "arabic": "هُوَ",
+        "translation": "это / он",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "قَالَ",
+        "translation": "сказал",
+        "type": "текст"
+      },
+      {
+        "arabic": "قَدْ",
+        "translation": "уже",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَوْدَعَ",
+        "translation": "оставил на хранение",
+        "type": "текст"
+      },
+      {
+        "arabic": "عِنْدِي",
+        "translation": "у меня",
+        "type": "текст"
+      },
+      {
+        "arabic": "رَجُلٌ",
+        "translation": "мужчина / человек",
+        "type": "текст"
+      },
+      {
+        "arabic": "مَالًا",
+        "translation": "деньги / имущество",
+        "type": "текст"
+      },
+      {
+        "arabic": "كَثِيرًا",
+        "translation": "—",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَلَمْ",
+        "translation": "и не",
+        "type": "текст"
+      },
+      {
+        "arabic": "يَعْرِفْنِي",
+        "translation": "знал меня",
+        "type": "текст"
+      },
+      {
+        "arabic": "مِنْ",
+        "translation": "из",
+        "type": "текст"
+      },
+      {
+        "arabic": "قَبْلُ",
+        "translation": "—",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَلَمْ",
+        "translation": "и не",
+        "type": "текст"
+      },
+      {
+        "arabic": "يَأْخُذْ",
+        "translation": "взял",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَلَيَّ",
+        "translation": "с меня",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَثِيقَةً",
+        "translation": "расписку / документ",
+        "type": "текст"
+      },
+      {
+        "arabic": "بِهِ",
+        "translation": "на это / об этом",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "ثُمَّ",
+        "translation": "затем",
+        "type": "текст"
+      },
+      {
+        "arabic": "سَلَّمْتُهُ",
+        "translation": "передал его",
+        "type": "текст"
+      },
+      {
+        "arabic": "إِلَيْهِ",
+        "translation": "ему",
+        "type": "текст"
+      },
+      {
+        "arabic": "عِنْدَ",
+        "translation": "у / при",
+        "type": "текст"
+      },
+      {
+        "arabic": "طَلَبِهِ",
+        "translation": "его требования",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَمَا",
+        "translation": "и не",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَخَذْتُ",
+        "translation": "я взял",
+        "type": "текст"
+      },
+      {
+        "arabic": "مُكَافَأَةً",
+        "translation": "награду",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَلَى",
+        "translation": "по / на",
+        "type": "текст"
+      },
+      {
+        "arabic": "ذَلِكَ",
+        "translation": "это",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "فَقَالَ",
+        "translation": "сказал",
+        "type": "текст"
+      },
+      {
+        "arabic": "لَهُ",
+        "translation": "ему",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَالِدُهُ",
+        "translation": "его отец",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَمَلُكَ",
+        "translation": "твой поступок",
+        "type": "текст"
+      },
+      {
+        "arabic": "هَذَا",
+        "translation": "этот",
+        "type": "текст"
+      },
+      {
+        "arabic": "يُوجِبُهُ",
+        "translation": "обязывает к этому",
+        "type": "текст"
+      },
+      {
+        "arabic": "اللهُ",
+        "translation": "Аллах",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَلَيْكَ",
+        "translation": "тебя / на тебе",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "فَقَالَ",
+        "translation": "сказал",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْوَلَدُ",
+        "translation": "сын",
+        "type": "текст"
+      },
+      {
+        "arabic": "الثَّانِي",
+        "translation": "второй",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَنَا",
+        "translation": "я",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَمِلْتُ",
+        "translation": "я совершил",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَمَلًا",
+        "translation": "поступок / дело",
+        "type": "текст"
+      },
+      {
+        "arabic": "جَلِيلًا",
+        "translation": "великий / благородный",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَسْتَحِقُّ",
+        "translation": "я заслуживаю",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَلَيْهِ",
+        "translation": "над ним / ему",
+        "type": "текст"
+      },
+      {
+        "arabic": "هَذِهِ",
+        "translation": "этот",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْمُكَافَأَةَ",
+        "translation": "награды",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "فَقَالَ",
+        "translation": "сказал",
+        "type": "текст"
+      },
+      {
+        "arabic": "لَهُ",
+        "translation": "ему",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَمَا",
+        "translation": "и не",
+        "type": "текст"
+      },
+      {
+        "arabic": "هُوَ",
+        "translation": "это / он",
+        "type": "текст"
+      },
+      {
+        "arabic": "يَا",
+        "translation": "о",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَلَدِي",
+        "translation": "—",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "قَالَ",
+        "translation": "сказал",
+        "type": "текст"
+      },
+      {
+        "arabic": "كُنْتُ",
+        "translation": "я был",
+        "type": "текст"
+      },
+      {
+        "arabic": "مَاشِيًا",
+        "translation": "идущим / шедшим",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَلَى",
+        "translation": "по / на",
+        "type": "текст"
+      },
+      {
+        "arabic": "شَاطِئِ",
+        "translation": "берегу",
+        "type": "текст"
+      },
+      {
+        "arabic": "بُحَيْرَةٍ",
+        "translation": "озера",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَإِذَا",
+        "translation": "и вдруг",
+        "type": "текст"
+      },
+      {
+        "arabic": "بِوَلَدٍ",
+        "translation": "с мальчиком / мальчик",
+        "type": "текст"
+      },
+      {
+        "arabic": "سَقَطَ",
+        "translation": "упал",
+        "type": "текст"
+      },
+      {
+        "arabic": "فِيهَا",
+        "translation": "в него / в неё",
+        "type": "текст"
+      },
+      {
+        "arabic": "فَخَاطَرْتُ",
+        "translation": "и я рисковал",
+        "type": "текст"
+      },
+      {
+        "arabic": "بِحَيَاتِي",
+        "translation": "своей жизнью",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَأَنْقَذْتُهُ",
+        "translation": "и спас его",
+        "type": "текст"
+      },
+      {
+        "arabic": "مِنَ",
+        "translation": "от",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْغَرَقِ",
+        "translation": "утопления",
+        "type": "текст"
+      },
+      {
+        "arabic": "ثُمَّ",
+        "translation": "затем",
+        "type": "текст"
+      },
+      {
+        "arabic": "سَلَّمْتُهُ",
+        "translation": "передал его",
+        "type": "текст"
+      },
+      {
+        "arabic": "إِلَى",
+        "translation": "к",
+        "type": "текст"
+      },
+      {
+        "arabic": "أُمِّهِ",
+        "translation": "его матери",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "أَلَيْسَ",
+        "translation": "разве не",
+        "type": "текст"
+      },
+      {
+        "arabic": "هَذَا",
+        "translation": "этот",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْعَمَلُ",
+        "translation": "поступок / дело",
+        "type": "текст"
+      },
+      {
+        "arabic": "شَرِيفًا",
+        "translation": "благородным",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَسْتَحِقُّ",
+        "translation": "я заслуживаю",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَلَيْهِ",
+        "translation": "над ним / ему",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْمُكَافَأَةَ",
+        "translation": "награды",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "فَقَالَ",
+        "translation": "сказал",
+        "type": "текст"
+      },
+      {
+        "arabic": "لَهُ",
+        "translation": "ему",
+        "type": "текст"
+      },
+      {
+        "arabic": "يَا",
+        "translation": "о",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَلَدِي",
+        "translation": "—",
+        "type": "текст"
+      },
+      {
+        "arabic": "هَذِهِ",
+        "translation": "этот",
+        "type": "текст"
+      },
+      {
+        "arabic": "شَفَقَةٌ",
+        "translation": "сострадание",
+        "type": "текст"
+      },
+      {
+        "arabic": "غَرِيزِيَّةٌ",
+        "translation": "природное / естественное",
+        "type": "текст"
+      },
+      {
+        "arabic": "عِنْدَ",
+        "translation": "у / при",
+        "type": "текст"
+      },
+      {
+        "arabic": "كُلِّ",
+        "translation": "каждого",
+        "type": "текст"
+      },
+      {
+        "arabic": "إِنْسَانٍ",
+        "translation": "человека",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "ثُمَّ",
+        "translation": "затем",
+        "type": "текст"
+      },
+      {
+        "arabic": "قَالَ",
+        "translation": "сказал",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْوَلَدُ",
+        "translation": "сын",
+        "type": "текст"
+      },
+      {
+        "arabic": "الثَّالِثُ",
+        "translation": "третий",
+        "type": "текст"
+      },
+      {
+        "arabic": "يَا",
+        "translation": "о",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَالِدِي",
+        "translation": "мой отец",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَنَا",
+        "translation": "я",
+        "type": "текст"
+      },
+      {
+        "arabic": "الَّذِي",
+        "translation": "который",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَمِلْتُ",
+        "translation": "я совершил",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَمَلًا",
+        "translation": "поступок / дело",
+        "type": "текст"
+      },
+      {
+        "arabic": "جَلِيلًا",
+        "translation": "великий / благородный",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَسْتَحِقُّ",
+        "translation": "я заслуживаю",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَلَيْهِ",
+        "translation": "над ним / ему",
+        "type": "текст"
+      },
+      {
+        "arabic": "هَذِهِ",
+        "translation": "этот",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْمُكَافَأَةَ",
+        "translation": "награды",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "فَقَالَ",
+        "translation": "сказал",
+        "type": "текст"
+      },
+      {
+        "arabic": "لَهُ",
+        "translation": "ему",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَمَا",
+        "translation": "и не",
+        "type": "текст"
+      },
+      {
+        "arabic": "هُوَ",
+        "translation": "это / он",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "قَالَ",
+        "translation": "сказал",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَجَدْتُ",
+        "translation": "я нашёл",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَحَدَ",
+        "translation": "одного из",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَعْدَائِي",
+        "translation": "моих врагов",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْأَلِدَّاءِ",
+        "translation": "злейших / непримиримых",
+        "type": "текст"
+      },
+      {
+        "arabic": "نَائِمًا",
+        "translation": "спящим",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَلَى",
+        "translation": "по / на",
+        "type": "текст"
+      },
+      {
+        "arabic": "حَافَّةِ",
+        "translation": "краю",
+        "type": "текст"
+      },
+      {
+        "arabic": "هُوَّةٍ",
+        "translation": "пропасти",
+        "type": "текст"
+      },
+      {
+        "arabic": "بِحَيْثُ",
+        "translation": "так что",
+        "type": "текст"
+      },
+      {
+        "arabic": "لَوْ",
+        "translation": "если бы",
+        "type": "текст"
+      },
+      {
+        "arabic": "تَحَرَّكَ",
+        "translation": "двинулся",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَدْنَى",
+        "translation": "малейшее",
+        "type": "текст"
+      },
+      {
+        "arabic": "حَرَكَةٍ",
+        "translation": "движение",
+        "type": "текст"
+      },
+      {
+        "arabic": "لَوَقَعَ",
+        "translation": "упал бы",
+        "type": "текст"
+      },
+      {
+        "arabic": "فِيهَا",
+        "translation": "в него / в неё",
+        "type": "текст"
+      },
+      {
+        "arabic": "فَيَهْلِكَ",
+        "translation": "и погиб бы",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "فَجِئْتُ",
+        "translation": "и я подошёл",
+        "type": "текст"
+      },
+      {
+        "arabic": "بِجَانِبِهِ",
+        "translation": "к нему / рядом с ним",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَأَيْقَظْتُهُ",
+        "translation": "—",
+        "type": "текст"
+      },
+      {
+        "arabic": "بِكَيْفِيَّةٍ",
+        "translation": "таким образом",
+        "type": "текст"
+      },
+      {
+        "arabic": "نَجَا",
+        "translation": "спасся / избежал",
+        "type": "текст"
+      },
+      {
+        "arabic": "مِنَ",
+        "translation": "от",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْوُقُوعِ",
+        "translation": "падения",
+        "type": "текст"
+      },
+      {
+        "arabic": "فِيهَا",
+        "translation": "в него / в неё",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "فَضَمَّهُ",
+        "translation": "и прижал его",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَالِدُهُ",
+        "translation": "его отец",
+        "type": "текст"
+      },
+      {
+        "arabic": "إِلَى",
+        "translation": "к",
+        "type": "текст"
+      },
+      {
+        "arabic": "صَدْرِهِ",
+        "translation": "своей груди",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَقَالَ",
+        "translation": "и сказал",
+        "type": "текст"
+      },
+      {
+        "arabic": "لَهُ",
+        "translation": "ему",
+        "type": "текст"
+      },
+      {
+        "arabic": "يَا",
+        "translation": "о",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَلَدِي",
+        "translation": "—",
+        "type": "текст"
+      },
+      {
+        "arabic": "هَذِهِ",
+        "translation": "этот",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْجَوْهَرَةُ",
+        "translation": "—",
+        "type": "текст"
+      },
+      {
+        "arabic": "الثَّمِينَةُ",
+        "translation": "ценный / драгоценный",
+        "type": "текст"
+      },
+      {
+        "arabic": "لَكَ",
+        "translation": "твой / тебе",
+        "type": "текст"
+      },
+      {
+        "arabic": "حَيْثُ",
+        "translation": "поскольку / так как",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَفَوْتَ",
+        "translation": "ты простил",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَنْ",
+        "translation": "о / от",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَدُوِّكَ",
+        "translation": "твоего врага",
+        "type": "текст"
+      },
+      {
+        "arabic": "وَأَنْقَذْتَهُ",
+        "translation": "и спас его",
+        "type": "текст"
+      },
+      {
+        "arabic": "مِنَ",
+        "translation": "от",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْهَلَاكِ",
+        "translation": "гибели",
+        "type": "текст"
+      },
+      {
+        "arabic": "مَعَ",
+        "translation": "при / с",
+        "type": "текст"
+      },
+      {
+        "arabic": "قُدْرَتِكَ",
+        "translation": "твоей способностью / возможностью",
+        "type": "текст"
+      },
+      {
+        "arabic": "عَلَيْهِ",
+        "translation": "над ним / ему",
+        "type": "текст"
+      }
+    ],
+    [
+      {
+        "arabic": "فَلَا",
+        "translation": "так что нет",
+        "type": "текст"
+      },
+      {
+        "arabic": "شَكَّ",
+        "translation": "сомнения",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَنَّ",
+        "translation": "—",
+        "type": "текст"
+      },
+      {
+        "arabic": "هَذَا",
+        "translation": "этот",
+        "type": "текст"
+      },
+      {
+        "arabic": "مِنْ",
+        "translation": "из",
+        "type": "текст"
+      },
+      {
+        "arabic": "أَشْرَفِ",
+        "translation": "самых благородных",
+        "type": "текст"
+      },
+      {
+        "arabic": "الْأَعْمَالِ",
+        "translation": "поступков",
+        "type": "текст"
+      }
+    ]
+  ]
 }
