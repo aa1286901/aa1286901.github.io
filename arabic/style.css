@@ -448,7 +448,7 @@ button {
 
 .lesson-item {
     width: 100%;
-    min-height: 82px;
+    min-height: 72px;
     border: 0;
     border-radius: 16px;
     padding: 12px 16px;
@@ -478,9 +478,9 @@ button {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    text-align: center;
+    text-align: right;
     direction: rtl
 }
 
@@ -488,8 +488,9 @@ button {
     display: block;
     font-family: Georgia, "Times New Roman", serif;
     font-size: 19px;
-    line-height: 1.25;
-    white-space: nowrap
+    line-height: 1.2;
+    white-space: nowrap;
+    text-align: right
 }
 
 .lesson-info small {
@@ -498,9 +499,9 @@ button {
     color: #8c929c;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Arial, sans-serif;
     font-size: 13px;
-    line-height: 1.25;
+    line-height: 1.2;
     font-weight: 500;
-    text-align: center;
+    text-align: right;
     direction: rtl
 }
 
@@ -744,10 +745,10 @@ body:not(.view-welcome) .welcome {
 
 
 .lesson-title-ru {
-    margin-top: 3px;
+    margin-top: 5px;
     color: #8c929c;
-    font-size: 13px;
-    line-height: 1.2;
+    font-size: 15px;
+    line-height: 1.15;
     font-weight: 500;
     text-align: center;
 }
