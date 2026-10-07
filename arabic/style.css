@@ -211,7 +211,31 @@ button {
     line-height: 1.2;
     font-weight: 750;
     max-width: 92%;
-    margin-top: 18px
+    margin-top: 18px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer
+}
+
+.translation.hidden-translation {
+    min-width: 0
+}
+
+.translation-text {
+    display: inline-block;
+    max-width: 100%;
+    filter: blur(8px);
+    opacity: .35;
+    user-select: none;
+    transition: filter .18s ease, opacity .18s ease
+}
+
+.translation.hidden-translation.revealed .translation-text {
+    filter: none;
+    opacity: 1;
+    user-select: text
 }
 
 .part-of-speech {
