@@ -1,539 +1,710 @@
 {
   "lesson": 5,
   "title": "المَطَرُ",
-  "words": [],
+  "words": [
+    {
+      "arabic": "مَطَر",
+      "translation": "дождь",
+      "type": "существительное"
+    },
+    {
+      "arabic": "بُخَار",
+      "translation": "пар",
+      "type": "существительное"
+    },
+    {
+      "arabic": "مَاء",
+      "translation": "вода",
+      "type": "существительное"
+    },
+    {
+      "arabic": "جَوّ",
+      "translation": "воздух / атмосфера",
+      "type": "существительное"
+    },
+    {
+      "arabic": "غَيْم",
+      "translation": "облако",
+      "type": "существительное"
+    },
+    {
+      "arabic": "سُحُب",
+      "translation": "облака",
+      "type": "существительное"
+    },
+    {
+      "arabic": "رِيح",
+      "translation": "ветер",
+      "type": "существительное"
+    },
+    {
+      "arabic": "قُبَّة",
+      "translation": "свод / купол",
+      "type": "существительное"
+    },
+    {
+      "arabic": "سَطْح",
+      "translation": "поверхность",
+      "type": "существительное"
+    },
+    {
+      "arabic": "أَرْض",
+      "translation": "земля",
+      "type": "существительное"
+    },
+    {
+      "arabic": "أَبْعَاد",
+      "translation": "расстояния",
+      "type": "существительное"
+    },
+    {
+      "arabic": "مَيْل",
+      "translation": "миля",
+      "type": "существительное"
+    },
+    {
+      "arabic": "دَرَجَة",
+      "translation": "степень",
+      "type": "существительное"
+    },
+    {
+      "arabic": "حَرَارَة",
+      "translation": "температура",
+      "type": "существительное"
+    },
+    {
+      "arabic": "هَوَاء",
+      "translation": "воздух",
+      "type": "существительное"
+    },
+    {
+      "arabic": "قَطَرَة",
+      "translation": "капля",
+      "type": "существительное"
+    },
+    {
+      "arabic": "جَبَل",
+      "translation": "гора",
+      "type": "существительное"
+    },
+    {
+      "arabic": "بَرَد",
+      "translation": "град",
+      "type": "существительное"
+    },
+    {
+      "arabic": "ثَلْج",
+      "translation": "снег",
+      "type": "существительное"
+    },
+    {
+      "arabic": "صَعَدَ",
+      "translation": "подниматься",
+      "type": "глагол"
+    },
+    {
+      "arabic": "صَارَ",
+      "translation": "становиться / превращаться",
+      "type": "глагол"
+    },
+    {
+      "arabic": "سَاقَ",
+      "translation": "гнать / вести",
+      "type": "глагол"
+    },
+    {
+      "arabic": "بَلَغَ",
+      "translation": "достигать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "بَرَدَ",
+      "translation": "охлаждаться",
+      "type": "глагол"
+    },
+    {
+      "arabic": "انْخَفَضَ",
+      "translation": "понижаться",
+      "type": "глагол"
+    },
+    {
+      "arabic": "اسْتَطَاعَ",
+      "translation": "мочь",
+      "type": "глагол"
+    },
+    {
+      "arabic": "حَمَلَ",
+      "translation": "нести / удерживать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "سَقَطَ",
+      "translation": "падать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "تَكَوَّنَ",
+      "translation": "образовываться",
+      "type": "глагол"
+    },
+    {
+      "arabic": "صَادَمَ",
+      "translation": "сталкиваться",
+      "type": "глагол"
+    },
+    {
+      "arabic": "صَبَّ",
+      "translation": "проливать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "حَدَثَ",
+      "translation": "происходить",
+      "type": "глагол"
+    },
+    {
+      "arabic": "تَجَمَّدَ",
+      "translation": "замерзать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "نَزَلَ",
+      "translation": "спускаться / выпадать",
+      "type": "глагол"
+    }
+  ],
   "story": [
     [
       {
         "arabic": "المَطَرُ",
-        "translation": "",
+        "translation": "дождь",
         "type": "текст"
       },
       {
         "arabic": "هُوَ",
-        "translation": "",
+        "translation": "он / это",
         "type": "текст"
       },
       {
         "arabic": "بُخَارُ",
-        "translation": "",
+        "translation": "пар",
         "type": "текст"
       },
       {
         "arabic": "الْمَاءِ",
-        "translation": "",
+        "translation": "воды",
         "type": "текст"
       },
       {
         "arabic": "الَّذِي",
-        "translation": "",
+        "translation": "который",
         "type": "текст"
       },
       {
         "arabic": "يَصْعَدُ",
-        "translation": "",
+        "translation": "поднимается",
         "type": "текст"
       },
       {
         "arabic": "إِلَى",
-        "translation": "",
+        "translation": "к",
         "type": "текст"
       },
       {
         "arabic": "الْجَوِّ",
-        "translation": "",
+        "translation": "воздух / атмосфера",
         "type": "текст"
       },
       {
         "arabic": "فَيَصِيرُ",
-        "translation": "",
+        "translation": "превращается",
         "type": "текст"
       },
       {
         "arabic": "غُيُومًا",
-        "translation": "",
+        "translation": "облака",
         "type": "текст"
       },
       {
         "arabic": "وَسُحُبًا",
-        "translation": "",
+        "translation": "и облака",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَسُحُبًا",
-        "translation": "",
+        "translation": "и облака",
         "type": "текст"
       },
       {
         "arabic": "تَسُوقُهَا",
-        "translation": "",
+        "translation": "гонит их",
         "type": "текст"
       },
       {
         "arabic": "الرِّيَاحُ",
-        "translation": "",
+        "translation": "ветер / ветры",
         "type": "текст"
       },
       {
         "arabic": "بَيْنَ",
-        "translation": "",
+        "translation": "между",
         "type": "текст"
       },
       {
         "arabic": "الْقُبَّةِ",
-        "translation": "",
+        "translation": "свод / купол",
         "type": "текст"
       },
       {
         "arabic": "الزَّرْقَاءِ",
-        "translation": "",
+        "translation": "голубой",
         "type": "текст"
       },
       {
         "arabic": "وَسَطْحِ",
-        "translation": "",
+        "translation": "и поверхность",
         "type": "текст"
       },
       {
         "arabic": "الْأَرْضِ",
-        "translation": "",
+        "translation": "земли",
         "type": "текст"
       },
       {
         "arabic": "عَلَى",
-        "translation": "",
+        "translation": "на",
         "type": "текст"
       },
       {
         "arabic": "أَبْعَادٍ",
-        "translation": "",
+        "translation": "расстояниях",
         "type": "текст"
       },
       {
         "arabic": "مُخْتَلِفَةٍ",
-        "translation": "",
+        "translation": "различных",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَعِنْدَمَا",
-        "translation": "",
+        "translation": "и когда",
         "type": "текст"
       },
       {
         "arabic": "تَبْلُغُ",
-        "translation": "",
+        "translation": "достигают / поднимаются",
         "type": "текст"
       },
       {
         "arabic": "هَذِهِ",
-        "translation": "",
+        "translation": "эти",
         "type": "текст"
       },
       {
         "arabic": "الْغُيُومُ",
-        "translation": "",
+        "translation": "облака",
         "type": "текст"
       },
       {
         "arabic": "بَعْدَ",
-        "translation": "",
+        "translation": "после",
         "type": "текст"
       },
       {
         "arabic": "مَيْلٍ",
-        "translation": "",
+        "translation": "мили",
         "type": "текст"
       },
       {
         "arabic": "أَوْ",
-        "translation": "",
+        "translation": "или",
         "type": "текст"
       },
       {
         "arabic": "مِيلَيْنِ",
-        "translation": "",
+        "translation": "двух миль",
         "type": "текст"
       },
       {
         "arabic": "ارْتِفَاعًا",
-        "translation": "",
+        "translation": "высоту",
         "type": "текст"
       },
       {
         "arabic": "تَبْرُدُ",
-        "translation": "",
+        "translation": "охлаждаются",
         "type": "текст"
       },
       {
         "arabic": "وَتَنْخَفِضُ",
-        "translation": "",
+        "translation": "и понижается",
         "type": "текст"
       },
       {
         "arabic": "دَرَجَةُ",
-        "translation": "",
+        "translation": "степень",
         "type": "текст"
       },
       {
         "arabic": "حَرَارَةِ",
-        "translation": "",
+        "translation": "температуры",
         "type": "текст"
       },
       {
         "arabic": "الْهَوَاءِ",
-        "translation": "",
+        "translation": "воздуха",
         "type": "текст"
       },
       {
         "arabic": "فَلَا",
-        "translation": "",
+        "translation": "поэтому не",
         "type": "текст"
       },
       {
         "arabic": "يَسْتَطِيعُ",
-        "translation": "",
+        "translation": "может",
         "type": "текст"
       },
       {
         "arabic": "حَمْلَهَا",
-        "translation": "",
+        "translation": "удерживать их",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "فَتَسْقُطُ",
-        "translation": "",
+        "translation": "и падают",
         "type": "текст"
       },
       {
         "arabic": "هَذِهِ",
-        "translation": "",
+        "translation": "эти",
         "type": "текст"
       },
       {
         "arabic": "الْغُيُومُ",
-        "translation": "",
+        "translation": "облака",
         "type": "текст"
       },
       {
         "arabic": "مُنْضَمًّا",
-        "translation": "",
+        "translation": "соединяясь",
         "type": "текст"
       },
       {
         "arabic": "بَعْضُهَا",
-        "translation": "",
+        "translation": "часть их",
         "type": "текст"
       },
       {
         "arabic": "إِلَى",
-        "translation": "",
+        "translation": "к",
         "type": "текст"
       },
       {
         "arabic": "الْبَعْضِ",
-        "translation": "",
+        "translation": "друг другу",
         "type": "текст"
       },
       {
         "arabic": "الْآخَرِ",
-        "translation": "",
+        "translation": "другому",
         "type": "текст"
       },
       {
         "arabic": "فَتَتَكَوَّنُ",
-        "translation": "",
+        "translation": "и образуются",
         "type": "текст"
       },
       {
         "arabic": "مِنْهَا",
-        "translation": "",
+        "translation": "из них",
         "type": "текст"
       },
       {
         "arabic": "قَطَرَاتُ",
-        "translation": "",
+        "translation": "капли",
         "type": "текст"
       },
       {
         "arabic": "الْمَطَرِ",
-        "translation": "",
+        "translation": "дождя",
         "type": "текст"
       },
       {
         "arabic": "لِكَوْنِهَا",
-        "translation": "",
+        "translation": "поскольку они",
         "type": "текст"
       },
       {
         "arabic": "أَثْقَلَ",
-        "translation": "",
+        "translation": "тяжелее",
         "type": "текст"
       },
       {
         "arabic": "مِنَ",
-        "translation": "",
+        "translation": "чем / от",
         "type": "текст"
       },
       {
         "arabic": "الْهَوَاءِ",
-        "translation": "",
+        "translation": "воздуха",
         "type": "текст"
       },
       {
         "arabic": "الْكُرَوِيِّ",
-        "translation": "",
+        "translation": "окружающего / сферического",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَالْغُيُومُ",
-        "translation": "",
+        "translation": "а облака",
         "type": "текст"
       },
       {
         "arabic": "فِي",
-        "translation": "",
+        "translation": "в",
         "type": "текст"
       },
       {
         "arabic": "الْجَوِّ",
-        "translation": "",
+        "translation": "воздух / атмосфера",
         "type": "текст"
       },
       {
         "arabic": "عِنْدَ",
-        "translation": "",
+        "translation": "при",
         "type": "текст"
       },
       {
         "arabic": "سَيْرِهَا",
-        "translation": "",
+        "translation": "их движении",
         "type": "текст"
       },
       {
         "arabic": "كَثِيرًا",
-        "translation": "",
+        "translation": "часто",
         "type": "текст"
       },
       {
         "arabic": "مَا",
-        "translation": "",
+        "translation": "частица",
         "type": "текст"
       },
       {
         "arabic": "تُصَادِمُ",
-        "translation": "",
+        "translation": "сталкиваются",
         "type": "текст"
       },
       {
         "arabic": "رُؤُوسَ",
-        "translation": "",
+        "translation": "вершины",
         "type": "текст"
       },
       {
         "arabic": "الْجِبَالِ",
-        "translation": "",
+        "translation": "гор",
         "type": "текст"
       },
       {
         "arabic": "فَتَصُبُّ",
-        "translation": "",
+        "translation": "и проливают",
         "type": "текст"
       },
       {
         "arabic": "مَا",
-        "translation": "",
+        "translation": "частица",
         "type": "текст"
       },
       {
         "arabic": "فِيهَا",
-        "translation": "",
+        "translation": "в них",
         "type": "текст"
       },
       {
         "arabic": "مِنَ",
-        "translation": "",
+        "translation": "чем / от",
         "type": "текст"
       },
       {
         "arabic": "الْبُخَارِ",
-        "translation": "",
+        "translation": "пар",
         "type": "текст"
       },
       {
         "arabic": "مَطَرًا",
-        "translation": "",
+        "translation": "дождём",
         "type": "текст"
       },
       {
         "arabic": "عَلَى",
-        "translation": "",
+        "translation": "на",
         "type": "текст"
       },
       {
         "arabic": "رُؤُوسِهَا",
-        "translation": "",
+        "translation": "их вершины",
         "type": "текст"
       },
       {
         "arabic": "وَجَوَانِبِهَا",
-        "translation": "",
+        "translation": "и их склоны",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَقَدْ",
-        "translation": "",
+        "translation": "может / уже",
         "type": "текст"
       },
       {
         "arabic": "يَحْدُثُ",
-        "translation": "",
+        "translation": "происходит / возникает",
         "type": "текст"
       },
       {
         "arabic": "الْمَطَرُ",
-        "translation": "",
+        "translation": "—",
         "type": "текст"
       },
       {
         "arabic": "أَيْضًا",
-        "translation": "",
+        "translation": "также",
         "type": "текст"
       },
       {
         "arabic": "مِنْ",
-        "translation": "",
+        "translation": "—",
         "type": "текст"
       },
       {
         "arabic": "مُصَادَفَةِ",
-        "translation": "",
+        "translation": "встречи",
         "type": "текст"
       },
       {
         "arabic": "السُّحُبِ",
-        "translation": "",
+        "translation": "облаков",
         "type": "текст"
       },
       {
         "arabic": "مُجَارِيَ",
-        "translation": "",
+        "translation": "сопутствующих / текущих вместе с",
         "type": "текст"
       },
       {
         "arabic": "رِيَاحٍ",
-        "translation": "",
+        "translation": "ветров",
         "type": "текст"
       },
       {
         "arabic": "دَرَجَةُ",
-        "translation": "",
+        "translation": "степень",
         "type": "текст"
       },
       {
         "arabic": "حَرَارَتِهَا",
-        "translation": "",
+        "translation": "их температура",
         "type": "текст"
       },
       {
         "arabic": "دُونَ",
-        "translation": "",
+        "translation": "ниже",
         "type": "текст"
       },
       {
         "arabic": "دَرَجَةِ",
-        "translation": "",
+        "translation": "степень",
         "type": "текст"
       },
       {
         "arabic": "حَرَارَةِ",
-        "translation": "",
+        "translation": "температуры",
         "type": "текст"
       },
       {
         "arabic": "الْغَيْمِ",
-        "translation": "",
+        "translation": "облака",
         "type": "текст"
       },
       {
         "arabic": "السَّابِحِ",
-        "translation": "",
+        "translation": "движущегося",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَكَثِيرًا",
-        "translation": "",
+        "translation": "и очень часто",
         "type": "текст"
       },
       {
         "arabic": "مَا",
-        "translation": "",
+        "translation": "частица",
         "type": "текст"
       },
       {
         "arabic": "تَتَجَمَّدُ",
-        "translation": "",
+        "translation": "замерзают",
         "type": "текст"
       },
       {
         "arabic": "الْأَمْطَارُ",
-        "translation": "",
+        "translation": "дождевые осадки / капли",
         "type": "текст"
       },
       {
         "arabic": "عِنْدَ",
-        "translation": "",
+        "translation": "при",
         "type": "текст"
       },
       {
         "arabic": "انْحِدَارِهَا",
-        "translation": "",
+        "translation": "их падении",
         "type": "текст"
       },
       {
         "arabic": "بِسَبَبِ",
-        "translation": "",
+        "translation": "из-за",
         "type": "текст"
       },
       {
         "arabic": "شِدَّةِ",
-        "translation": "",
+        "translation": "силы",
         "type": "текст"
       },
       {
         "arabic": "الْبَرْدِ",
-        "translation": "",
+        "translation": "холода",
         "type": "текст"
       },
       {
         "arabic": "فَتَنْزِلُ",
-        "translation": "",
+        "translation": "и выпадают",
         "type": "текст"
       },
       {
         "arabic": "بَرَدًا",
-        "translation": "",
+        "translation": "градом",
         "type": "текст"
       },
       {
         "arabic": "أَوْ",
-        "translation": "",
+        "translation": "или",
         "type": "текст"
       },
       {
         "arabic": "ثَلْجًا",
-        "translation": "",
+        "translation": "снегом",
         "type": "текст"
       }
     ]
