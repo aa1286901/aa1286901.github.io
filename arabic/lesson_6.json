@@ -1,438 +1,639 @@
 {
   "lesson": 6,
   "title": "الْحَمَامَةُ وَالنَّمْلَةُ",
-  "words": [],
+  "words": [
+    {
+      "arabic": "حَمَامَة",
+      "translation": "голубка",
+      "type": "существительное"
+    },
+    {
+      "arabic": "غَدِير",
+      "translation": "ручей",
+      "type": "существительное"
+    },
+    {
+      "arabic": "مَاء",
+      "translation": "вода",
+      "type": "существительное"
+    },
+    {
+      "arabic": "مُقْلَة",
+      "translation": "глаз",
+      "type": "существительное"
+    },
+    {
+      "arabic": "نَمْلَة",
+      "translation": "муравей",
+      "type": "существительное"
+    },
+    {
+      "arabic": "عَطْف",
+      "translation": "сострадание",
+      "type": "существительное"
+    },
+    {
+      "arabic": "أَذًى",
+      "translation": "вред / беда",
+      "type": "существительное"
+    },
+    {
+      "arabic": "عُود",
+      "translation": "палочка / кусочек дерева",
+      "type": "существительное"
+    },
+    {
+      "arabic": "حَطَب",
+      "translation": "дрова",
+      "type": "существительное"
+    },
+    {
+      "arabic": "عَطَب",
+      "translation": "гибель",
+      "type": "существительное"
+    },
+    {
+      "arabic": "صَيَّاد",
+      "translation": "охотник",
+      "type": "существительное"
+    },
+    {
+      "arabic": "بِيد",
+      "translation": "пустыня",
+      "type": "существительное"
+    },
+    {
+      "arabic": "وِهَاد",
+      "translation": "овраги / низины",
+      "type": "существительное"
+    },
+    {
+      "arabic": "سَهْم",
+      "translation": "стрела",
+      "type": "существительное"
+    },
+    {
+      "arabic": "وَرْقَاء",
+      "translation": "голубка",
+      "type": "существительное"
+    },
+    {
+      "arabic": "قَرْص",
+      "translation": "укус / щипок",
+      "type": "существительное"
+    },
+    {
+      "arabic": "قَنَص",
+      "translation": "добыча",
+      "type": "существительное"
+    },
+    {
+      "arabic": "فَنَاء",
+      "translation": "гибель",
+      "type": "существительное"
+    },
+    {
+      "arabic": "مَرَّ",
+      "translation": "проходить / пролетать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "ارْتَوَى",
+      "translation": "напиться",
+      "type": "глагол"
+    },
+    {
+      "arabic": "حَدَّقَ",
+      "translation": "внимательно смотреть",
+      "type": "глагол"
+    },
+    {
+      "arabic": "خَبَطَ",
+      "translation": "барахтаться / биться",
+      "type": "глагол"
+    },
+    {
+      "arabic": "أَخَذَ",
+      "translation": "охватывать / брать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "ابْتَدَرَ",
+      "translation": "поспешить",
+      "type": "глагол"
+    },
+    {
+      "arabic": "أَنْقَذَ",
+      "translation": "спасать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "طَرَحَ",
+      "translation": "бросать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "نَجَا",
+      "translation": "спастись",
+      "type": "глагол"
+    },
+    {
+      "arabic": "دَنَا",
+      "translation": "приблизиться",
+      "type": "глагол"
+    },
+    {
+      "arabic": "صَوَّبَ",
+      "translation": "направить",
+      "type": "глагол"
+    },
+    {
+      "arabic": "نَوَى",
+      "translation": "намереваться",
+      "type": "глагол"
+    },
+    {
+      "arabic": "أَرَادَ",
+      "translation": "хотеть / собираться",
+      "type": "глагол"
+    },
+    {
+      "arabic": "أَرْسَلَ",
+      "translation": "выпускать / посылать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "أَعْجَلَ",
+      "translation": "заставлять поспешить / отвлекать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "بَحَثَ",
+      "translation": "искать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "قَرَصَ",
+      "translation": "кусать / щипать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "أَفْلَتَ",
+      "translation": "ускользнуть",
+      "type": "глагол"
+    },
+    {
+      "arabic": "سَلِمَ",
+      "translation": "спастись / уцелеть",
+      "type": "глагол"
+    },
+    {
+      "arabic": "قَالَ",
+      "translation": "сказать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "جَازَى",
+      "translation": "воздавать / поступать",
+      "type": "глагол"
+    },
+    {
+      "arabic": "تَجَازَى",
+      "translation": "получать воздаяние",
+      "type": "глагол"
+    }
+  ],
   "story": [
     [
       {
         "arabic": "حَمَامَةٌ",
-        "translation": "",
+        "translation": "голубка",
         "type": "текст"
       },
       {
         "arabic": "مَرَّتْ",
-        "translation": "",
+        "translation": "пролетела / прошла",
         "type": "текст"
       },
       {
         "arabic": "عَلَى",
-        "translation": "",
+        "translation": "над / на",
         "type": "текст"
       },
       {
         "arabic": "غَدِيرِ",
-        "translation": "",
+        "translation": "ручей",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "لِتَرْتَوِيَ",
-        "translation": "",
+        "translation": "чтобы напиться",
         "type": "текст"
       },
       {
         "arabic": "مِنْ",
-        "translation": "",
+        "translation": "из / от",
         "type": "текст"
       },
       {
         "arabic": "مَائِهِ",
-        "translation": "",
+        "translation": "его воды",
         "type": "текст"
       },
       {
         "arabic": "النَّمِيرِ",
-        "translation": "",
+        "translation": "чистой, приятной",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَحَدَّقَتْ",
-        "translation": "",
+        "translation": "и внимательно посмотрела",
         "type": "текст"
       },
       {
         "arabic": "بِمُقْلَةٍ",
-        "translation": "",
+        "translation": "глазом",
         "type": "текст"
       },
       {
         "arabic": "نَجْلَاءَ",
-        "translation": "",
+        "translation": "большим, красивым",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "لِنَمْلَةٍ",
-        "translation": "",
+        "translation": "на муравья",
         "type": "текст"
       },
       {
         "arabic": "تَخْبِطُ",
-        "translation": "",
+        "translation": "барахтается / бьётся",
         "type": "текст"
       },
       {
         "arabic": "فِيهِ",
-        "translation": "",
+        "translation": "в ней / в нём",
         "type": "текст"
       },
       {
         "arabic": "الْمَاءَ",
-        "translation": "",
+        "translation": "воде",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "فَأَخَذَ",
-        "translation": "",
+        "translation": "и охватило",
         "type": "текст"
       },
       {
         "arabic": "الْعَطْفُ",
-        "translation": "",
+        "translation": "сострадание",
         "type": "текст"
       },
       {
         "arabic": "عَلَيْهَا",
-        "translation": "",
+        "translation": "к ней / к нему",
         "type": "текст"
       },
       {
         "arabic": "مَأْخَذًا",
-        "translation": "",
+        "translation": "действие / влияние",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "فَابْتَدَرَتْ",
-        "translation": "",
+        "translation": "и поспешила",
         "type": "текст"
       },
       {
         "arabic": "إِنْقَاذَهَا",
-        "translation": "",
+        "translation": "спасти её / его",
         "type": "текст"
       },
       {
         "arabic": "مِنَ",
-        "translation": "",
+        "translation": "—",
         "type": "текст"
       },
       {
         "arabic": "الْأَذَى",
-        "translation": "",
+        "translation": "вред / беда",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "فَطَرَحَتْ",
-        "translation": "",
+        "translation": "и бросила",
         "type": "текст"
       },
       {
         "arabic": "عُودًا",
-        "translation": "",
+        "translation": "палочку / кусочек дерева",
         "type": "текст"
       },
       {
         "arabic": "لَهَا",
-        "translation": "",
+        "translation": "для неё / ему",
         "type": "текст"
       },
       {
         "arabic": "مِنْ",
-        "translation": "",
+        "translation": "из / от",
         "type": "текст"
       },
       {
         "arabic": "حَطَبٍ",
-        "translation": "",
+        "translation": "дров",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "نَجَتْ",
-        "translation": "",
+        "translation": "спаслась",
         "type": "текст"
       },
       {
         "arabic": "عَلَيْهِ",
-        "translation": "",
+        "translation": "на нём",
         "type": "текст"
       },
       {
         "arabic": "مِنْ",
-        "translation": "",
+        "translation": "из / от",
         "type": "текст"
       },
       {
         "arabic": "مُتَسَاوِي",
-        "translation": "",
+        "translation": "равного / неминуемого",
         "type": "текст"
       },
       {
         "arabic": "الْعَطَبِ",
-        "translation": "",
+        "translation": "погибели",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَبَعْدَ",
-        "translation": "",
+        "translation": "и после",
         "type": "текст"
       },
       {
         "arabic": "مِنْهُمَا",
-        "translation": "",
+        "translation": "их двоих",
         "type": "текст"
       },
       {
         "arabic": "دَنَا",
-        "translation": "",
+        "translation": "приблизился",
         "type": "текст"
       },
       {
         "arabic": "صَيَّادٌ",
-        "translation": "",
+        "translation": "охотник",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "تَقَاذَفَتْهُ",
-        "translation": "",
+        "translation": "его пронесли / он прошёл через",
         "type": "текст"
       },
       {
         "arabic": "الْبِيدُ",
-        "translation": "",
+        "translation": "пустыни",
         "type": "текст"
       },
       {
         "arabic": "وَالْوِهَادُ",
-        "translation": "",
+        "translation": "и овраги",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "فَصَوَّبَ",
-        "translation": "",
+        "translation": "и направил",
         "type": "текст"
       },
       {
         "arabic": "السَّهْمَ",
-        "translation": "",
+        "translation": "стрелу",
         "type": "текст"
       },
       {
         "arabic": "إِلَى",
-        "translation": "",
+        "translation": "на / к",
         "type": "текст"
       },
       {
         "arabic": "الْوَرْقَاءِ",
-        "translation": "",
+        "translation": "голубку",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "يَنْوِي",
-        "translation": "",
+        "translation": "намеревается",
         "type": "текст"
       },
       {
         "arabic": "بِهَا",
-        "translation": "",
+        "translation": "ею / с её помощью",
         "type": "текст"
       },
       {
         "arabic": "مَوَارِدَ",
-        "translation": "",
+        "translation": "пути к / причины",
         "type": "текст"
       },
       {
         "arabic": "الْفَنَاءِ",
-        "translation": "",
+        "translation": "гибели",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَحِينَ",
-        "translation": "",
+        "translation": "и когда",
         "type": "текст"
       },
       {
         "arabic": "إِذْ",
-        "translation": "",
+        "translation": "как вдруг / когда",
         "type": "текст"
       },
       {
         "arabic": "أَرَادَ",
-        "translation": "",
+        "translation": "хотел / собирался",
         "type": "текст"
       },
       {
         "arabic": "أَنْ",
-        "translation": "",
+        "translation": "чтобы",
         "type": "текст"
       },
       {
         "arabic": "يُرْسِلَهُ",
-        "translation": "",
+        "translation": "выпустить её",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "إِذَا",
-        "translation": "",
+        "translation": "вдруг",
         "type": "текст"
       },
       {
         "arabic": "بِقَرْصٍ",
-        "translation": "",
+        "translation": "укусом / щипком",
         "type": "текст"
       },
       {
         "arabic": "مُؤْلِمٍ",
-        "translation": "",
+        "translation": "болезненным",
         "type": "текст"
       },
       {
         "arabic": "أَعْجَلَهُ",
-        "translation": "",
+        "translation": "заставил его поспешить / отвлёк его",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَبَيْنَمَا",
-        "translation": "",
+        "translation": "в то время как",
         "type": "текст"
       },
       {
         "arabic": "يَبْحَثُ",
-        "translation": "",
+        "translation": "ищет",
         "type": "текст"
       },
       {
         "arabic": "عَمَّا",
-        "translation": "",
+        "translation": "то, что",
         "type": "текст"
       },
       {
         "arabic": "يَقْرِصُهُ",
-        "translation": "",
+        "translation": "кусает / щиплет его",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "أَفْلَتَ",
-        "translation": "",
+        "translation": "ускользнула",
         "type": "текст"
       },
       {
         "arabic": "مِنْهُ",
-        "translation": "",
+        "translation": "от него",
         "type": "текст"
       },
       {
         "arabic": "عِنْدَ",
-        "translation": "",
+        "translation": "в тот момент / при",
         "type": "текст"
       },
       {
         "arabic": "ذَاكَ",
-        "translation": "",
+        "translation": "том / тогда",
         "type": "текст"
       },
       {
         "arabic": "قَنَصُهُ",
-        "translation": "",
+        "translation": "его добыча",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَسَلِمَتْ",
-        "translation": "",
+        "translation": "и спаслась",
         "type": "текст"
       },
       {
         "arabic": "مِنْ",
-        "translation": "",
+        "translation": "из / от",
         "type": "текст"
       },
       {
         "arabic": "سَهْمِهِ",
-        "translation": "",
+        "translation": "его стрелы",
         "type": "текст"
       },
       {
         "arabic": "الْحَمَامَةُ",
-        "translation": "",
+        "translation": "голубка",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "وَهِيَ",
-        "translation": "",
+        "translation": "и она",
         "type": "текст"
       },
       {
         "arabic": "تَقُولُ",
-        "translation": "",
+        "translation": "говорит",
         "type": "текст"
       },
       {
         "arabic": "قَوْلَهَا",
-        "translation": "",
+        "translation": "свои слова",
         "type": "текст"
       },
       {
         "arabic": "إِيجَازًا",
-        "translation": "",
+        "translation": "кратко",
         "type": "текст"
       }
     ],
     [
       {
         "arabic": "كَمَا",
-        "translation": "",
+        "translation": "как",
         "type": "текст"
       },
       {
         "arabic": "تُجَازِي",
-        "translation": "",
+        "translation": "ты воздаёшь / поступаешь с",
         "type": "текст"
       },
       {
         "arabic": "تُجَازَى",
-        "translation": "",
+        "translation": "тебе воздаётся",
         "type": "текст"
       },
       {
         "arabic": "هَكَذَا",
-        "translation": "",
+        "translation": "так",
         "type": "текст"
       },
       {
         "arabic": "تُجَازَى",
-        "translation": "",
+        "translation": "тебе воздаётся",
         "type": "текст"
       }
     ]
