@@ -77,7 +77,8 @@ function renderWord() {
   if (!words.length) return;
   const w = words[current];
   $("arabicWord").textContent = w.arabic;
-  $("translation").textContent = w.translation;
+  $("translation").querySelector(".translation-text").textContent = w.translation;
+  $("translation").classList.remove("revealed");
   $("partOfSpeech").textContent = w.type;
   $("topCounter").textContent = `${arDigits(current + 1)} / ${arDigits(words.length)}`;
 }
@@ -181,6 +182,7 @@ function initHandlers() {
   };
   $("pronounceWord").onclick = () =>
     speakArabic(words[current].arabic, $("pronounceWord"));
+  $("translation").onclick = () => $("translation").classList.toggle("revealed");
   $("wordsTab").onclick = () => setMode("words");
   $("storyTab").onclick = () => setMode("story");
   $("popupPronounce").onclick = () =>
