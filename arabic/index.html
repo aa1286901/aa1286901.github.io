@@ -5,77 +5,139 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+    <meta name="theme-color" content="#F2F2F7">
     <title>Арабский — Уроки</title>
-    <link rel="stylesheet" href="style.css?v=0020">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="style.css?v=0021">
 </head>
 
 <body class="view-welcome">
     <!-- Экран выбора урока: адрес / -->
     <section class="welcome" id="welcomeScreen">
         <header class="welcome-head">
-            <div class="welcome-mark" aria-hidden="true">ع</div>
-            <h1 class="welcome-title">Уроки</h1>
-            <p class="welcome-subtitle">الدُّرُوسُ</p>
-        </header>
-        <nav class="welcome-list lesson-list" aria-label="Список уроков"></nav>
-    </section>
-    <div class="app" id="mainContent">
-        <header class="header">
-            <div class="header-side-spacer" aria-hidden="true"></div>
-            <div class="header-center">
-                <div class="lesson-number" id="lessonNumber"></div>
-                <div class="lesson-title" id="lessonTitle"></div>
-                <div class="lesson-title-ru" id="lessonTitleRu"></div>
+            <div>
+                <div class="eyebrow">Арабский язык</div>
+                <h1 class="welcome-title">Уроки</h1>
             </div>
-            <button class="header-menu" id="menuBtn" aria-label="Выбрать урок">
-                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" />
-                </svg>
-            </button>
+            <div class="welcome-ar" lang="ar" dir="rtl">الدُّرُوسُ</div>
         </header>
-        <main class="content">
-            <div class="mode-switch" role="tablist" aria-label="Режим урока"><button class="mode-btn active"
-                    id="wordsTab" role="tab" aria-selected="true">Слова</button><button class="mode-btn" id="storyTab"
-                    role="tab" aria-selected="false">Текст</button></div>
-            <section class="screen word-screen active" id="wordsScreen">
-                <div class="word-card" id="wordCard">
-                    <div class="card-count" id="topCounter">١ / ٣٣</div>
-                    <div class="arabic-word" id="arabicWord"></div>
-                    <button class="translation hidden-translation" id="translation" type="button" aria-label="Показать перевод"><span class="translation-text"></span></button>
-                    <div class="part-of-speech" id="partOfSpeech"></div>
-                    <button class="reveal-hint" id="revealHint" type="button">Нажмите, чтобы показать перевод</button>
-                    <div class="card-nav"><button class="arrow" id="prevWord"
-                            aria-label="Предыдущее слово">‹</button><button class="random"
-                            id="randomWord"><span>⤨</span> Случайное</button><button class="arrow next"
-                            id="nextWord" aria-label="Следующее слово">›</button>
-                    </div>
-                </div>
-            </section>
-            <section class="screen story-screen" id="storyScreen">
-                <div class="story-card">
-                    <div class="story-scroll">
-                        <div class="story-text" id="storyText"></div>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-    <div class="drawer-overlay" id="drawerOverlay"></div>
-    <aside class="lesson-drawer" id="lessonDrawer" aria-hidden="true">
-        <div class="drawer-head">
-            <div class="drawer-title">Уроки</div><button class="drawer-close" id="drawerClose"
-                aria-label="Закрыть">×</button>
+        <nav class="lesson-list" id="lessonList" aria-label="Список уроков"></nav>
+        <p class="welcome-note">Нажмите на урок, чтобы открыть карточки и текст рассказа.</p>
+    </section>
+
+    <!-- Экран урока: адрес #lesson-N -->
+    <div class="app" id="mainContent">
+        <div class="navbar">
+            <a class="back" id="backBtn" href="#">
+                <svg width="11" height="18" viewBox="0 0 11 18" aria-hidden="true">
+                    <path d="M9 2L2 9l7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Уроки
+            </a>
+            <span class="eyebrow" id="lessonNumber"></span>
+            <div class="navbar-side">
+                <button class="aa-btn" id="sizeBtn" type="button" aria-label="Размер текста" aria-expanded="false">
+                    <span class="aa-small">A</span><span class="aa-big">a</span>
+                </button>
+            </div>
         </div>
-        <nav class="lesson-list" id="drawerList" aria-label="Список уроков"></nav>
-    </aside>
-    <div class="word-popup" id="wordPopup">
-        <div class="popup-arabic" id="popupArabic"></div>
-        <div class="popup-translation" id="popupTranslation"></div>
-        <div class="popup-type" id="popupType"></div>
-        <div class="popup-dict" id="popupDict"></div>
+
+        <div class="lesson-head">
+            <div class="lesson-title" id="lessonTitle" lang="ar" dir="rtl"></div>
+            <div class="lesson-title-ru" id="lessonTitleRu"></div>
+        </div>
+
+        <div class="segmented" role="tablist" aria-label="Режим урока">
+            <button class="segment active" id="wordsTab" role="tab" aria-selected="true">Слова</button>
+            <button class="segment" id="storyTab" role="tab" aria-selected="false">Текст</button>
+        </div>
+
+        <section class="screen word-screen active" id="wordsScreen">
+            <div class="word-card" id="wordCard">
+                <div class="card-top">
+                    <div class="card-meta">
+                        <span id="topCounter"></span>
+                        <span id="partOfSpeech"></span>
+                    </div>
+                    <div class="progress" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+                </div>
+
+                <button class="card-face" id="cardFace" type="button" aria-label="Показать перевод">
+                    <span class="arabic-word" id="arabicWord" lang="ar" dir="rtl"></span>
+                    <span class="translation" id="translation">
+                        <span class="translation-main" id="translationMain"></span>
+                        <span class="translation-rest" id="translationRest"></span>
+                    </span>
+                    <span class="reveal-hint">Нажмите, чтобы показать перевод</span>
+                </button>
+
+                <div class="card-nav">
+                    <button class="round-btn" id="prevWord" type="button" aria-label="Предыдущее слово">
+                        <svg width="11" height="18" viewBox="0 0 11 18" aria-hidden="true">
+                            <path d="M9 2L2 9l7 7" fill="none" stroke="currentColor" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <button class="round-btn random" id="randomWord" type="button">
+                        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                        Случайное
+                    </button>
+                    <button class="round-btn next" id="nextWord" type="button" aria-label="Следующее слово">
+                        <svg width="11" height="18" viewBox="0 0 11 18" aria-hidden="true">
+                            <path d="M2 2l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="screen story-screen" id="storyScreen">
+            <div class="story-card">
+                <div class="story-text" id="storyText" lang="ar" dir="rtl"></div>
+            </div>
+        </section>
+
+        <!-- Размер текста рассказа -->
+        <div class="size-popover" id="sizePopover" role="dialog" aria-label="Размер текста" hidden>
+            <div class="eyebrow">Размер текста</div>
+            <div class="size-stepper">
+                <button class="size-btn" id="sizeDown" type="button" aria-label="Уменьшить текст">A</button>
+                <div class="size-dots" id="sizeDots" aria-hidden="true"></div>
+                <button class="size-btn big" id="sizeUp" type="button" aria-label="Увеличить текст">A</button>
+            </div>
+            <div class="size-label" id="sizeLabel"></div>
+        </div>
     </div>
-    <script src="app.js?v=0020"></script>
+
+    <!-- Перевод слова из рассказа -->
+    <button class="sheet-overlay" id="sheetOverlay" type="button" aria-label="Закрыть перевод" hidden></button>
+    <div class="word-sheet" id="wordSheet" role="dialog" aria-label="Перевод слова" aria-hidden="true">
+        <div class="sheet-grabber" aria-hidden="true"></div>
+        <div class="sheet-head">
+            <div class="sheet-info">
+                <div class="sheet-translation" id="popupTranslation"></div>
+                <div class="pill" id="popupType"></div>
+            </div>
+            <div class="sheet-arabic" id="popupArabic" lang="ar" dir="rtl"></div>
+        </div>
+        <div class="sheet-dict" id="popupDictBlock">
+            <div class="eyebrow">Словарная форма</div>
+            <div class="sheet-dict-row">
+                <span class="sheet-dict-word" id="popupDictWord" lang="ar" dir="rtl"></span>
+                <span class="sheet-dict-text" id="popupDictText"></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=0021"></script>
 </body>
 
 </html>
