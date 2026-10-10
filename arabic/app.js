@@ -98,34 +98,6 @@ function renderWord() {
   $("partOfSpeech").textContent = w.type;
   $("topCounter").textContent = `${arDigits(current + 1)} / ${arDigits(words.length)}`;
 }
-function speakArabic(text, button) {
-  if (!("speechSynthesis" in window)) {
-    if (button) button.textContent = "Недоступно";
-    return;
-  }
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = "ar-SA";
-  u.rate = 0.78;
-  u.pitch = 1;
-  const voices = speechSynthesis.getVoices();
-  const v = voices.find((x) => /^ar(-|_)/i.test(x.lang));
-  if (v) u.voice = v;
-  if (button) {
-    button.classList.add("speaking");
-    const label = button.querySelector("span:last-child");
-    if (label) label.textContent = "Воспроизведение";
-    u.onend = () => {
-      button.classList.remove("speaking");
-      if (label) label.textContent = "Прослушать";
-    };
-    u.onerror = () => {
-      button.classList.remove("speaking");
-      if (label) label.textContent = "Прослушать";
-    };
-  }
-  speechSynthesis.speak(u);
-}
 function renderStory() {
   $("storyText").innerHTML = story
     .map(
@@ -199,13 +171,11 @@ function initHandlers() {
     while (n === current && words.length > 1);
     showWord(n);
   };
-  $("pronounceWord").onclick = () =>
-    speakArabic(words[current].arabic, $("pronounceWord"));
-  $("translation").onclick = () => $("translation").classList.toggle("revealed");
+  const toggleTranslation = () => $("translation").classList.toggle("revealed");
+  $("translation").onclick = toggleTranslation;
+  $("revealHint").onclick = toggleTranslation;
   $("wordsTab").onclick = () => setMode("words");
   $("storyTab").onclick = () => setMode("story");
-  $("popupPronounce").onclick = () =>
-    speakArabic($("popupArabic").textContent, $("popupPronounce"));
 
   $("storyText").addEventListener("click", (e) => {
     const el = e.target.closest(".story-word");
@@ -228,7 +198,6 @@ function initHandlers() {
       () => $("wordPopup").classList.remove("show"),
       3500,
     );
-    speakArabic(el.dataset.arabic, el);
   });
 
   let startX = 0;

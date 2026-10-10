@@ -6,7 +6,7 @@
     <meta name="viewport"
         content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
     <title>Арабский — Уроки</title>
-    <link rel="stylesheet" href="style.css?v=0019">
+    <link rel="stylesheet" href="style.css?v=0020">
 </head>
 
 <body class="view-welcome">
@@ -44,7 +44,7 @@
                     <div class="arabic-word" id="arabicWord"></div>
                     <button class="translation hidden-translation" id="translation" type="button" aria-label="Показать перевод"><span class="translation-text"></span></button>
                     <div class="part-of-speech" id="partOfSpeech"></div>
-                    <button class="pronounce-btn" id="pronounceWord" type="button"><span class="pronounce-icon">◖</span><span>Прослушать</span></button>
+                    <button class="reveal-hint" id="revealHint" type="button">Нажмите, чтобы показать перевод</button>
                     <div class="card-nav"><button class="arrow" id="prevWord"
                             aria-label="Предыдущее слово">‹</button><button class="random"
                             id="randomWord"><span>⤨</span> Случайное</button><button class="arrow next"
@@ -73,10 +73,9 @@
         <div class="popup-arabic" id="popupArabic"></div>
         <div class="popup-translation" id="popupTranslation"></div>
         <div class="popup-type" id="popupType"></div>
-        <div class="popup-dict" id="popupDict"></div><button class="popup-pronounce" id="popupPronounce" type="button">◖
-            Прослушать</button>
+        <div class="popup-dict" id="popupDict"></div>
     </div>
-    <script src="app.js?v=0019"></script>
+    <script src="app.js?v=0020"></script>
 </body>
 
 </html>
