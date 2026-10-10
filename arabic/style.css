@@ -9,8 +9,47 @@
     --separator: #e5e5ea;
     --accent: #0a66d1;
     --accent-soft: #e6effb;
+    --on-accent: #fff;
+    --segment-on: #fff;
+    --pressed: #e9e9ee;
+    --hover: #f7f7fa;
+    --track: #efeff4;
+    --dot: #c7c7cc;
+    --grabber: #d1d1d6;
+    --chevron: #c4c4c7;
+    --overlay: rgba(0, 0, 0, .18);
+    --sentence: #f1f6fd;
+    --shadow: rgba(0, 0, 0, .12);
     --ar: "Noto Naskh Arabic", Georgia, "Times New Roman", serif;
-    --story-size: 23px
+    --story-size: 23px;
+    color-scheme: light
+}
+
+/* Тёмная тема: включается вместе с тёмной темой системы */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #000;
+        --card: #1c1c1e;
+        --text: #f2f2f7;
+        --text-2: #d1d1d6;
+        --muted: #98989f;
+        --faint: #8e8e93;
+        --fill: #2c2c2e;
+        --separator: #38383a;
+        --accent: #0a84ff;
+        --accent-soft: #15304f;
+        --segment-on: #636366;
+        --pressed: #2c2c2e;
+        --hover: #242426;
+        --track: #2c2c2e;
+        --dot: #48484a;
+        --grabber: #48484a;
+        --chevron: #5a5a5e;
+        --overlay: rgba(0, 0, 0, .55);
+        --sentence: #142236;
+        --shadow: rgba(0, 0, 0, .5);
+        color-scheme: dark
+    }
 }
 
 * {
@@ -127,7 +166,7 @@ button {
 }
 
 .lesson-item:active {
-    background: #e9e9ee
+    background: var(--pressed)
 }
 
 .lesson-num {
@@ -180,12 +219,13 @@ button {
 }
 
 .chevron {
-    flex: none
+    flex: none;
+    color: var(--chevron)
 }
 
 @media(hover:hover) and (pointer:fine) {
     .lesson-item:hover {
-        background: #f7f7fa
+        background: var(--hover)
     }
 }
 
@@ -314,8 +354,8 @@ body:not(.view-welcome) .welcome {
 }
 
 .segment.active {
-    background: var(--card);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+    background: var(--segment-on);
+    box-shadow: 0 1px 3px var(--shadow);
     font-weight: 600
 }
 
@@ -327,6 +367,57 @@ body:not(.view-welcome) .welcome {
 
 .screen.active {
     display: flex
+}
+
+.word-screen {
+    flex-direction: column;
+    gap: 12px
+}
+
+/* ── Фильтр карточек ── */
+.chips {
+    flex: none;
+    display: flex;
+    gap: 8px;
+    margin: 0 -16px;
+    padding: 0 16px;
+    overflow-x: auto;
+    scrollbar-width: none
+}
+
+.chips::-webkit-scrollbar {
+    display: none
+}
+
+.chip {
+    flex: none;
+    height: 32px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 16px;
+    background: var(--fill);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px
+}
+
+.chip-count {
+    color: var(--muted);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums
+}
+
+.chip.active {
+    background: var(--text);
+    color: var(--bg)
+}
+
+.chip.active .chip-count {
+    color: inherit;
+    opacity: .7
 }
 
 /* ── Карточка ── */
@@ -357,7 +448,7 @@ body:not(.view-welcome) .welcome {
 .progress {
     height: 3px;
     border-radius: 2px;
-    background: #efeff4;
+    background: var(--track);
     overflow: hidden
 }
 
@@ -432,6 +523,97 @@ body:not(.view-welcome) .welcome {
     opacity: 0
 }
 
+.learned-mark {
+    color: var(--accent);
+    font-weight: 600
+}
+
+/* До открытия перевода — навигация, после — «Не знаю / Знаю» */
+.grade-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px
+}
+
+.word-card:not(.revealed) .grade-nav,
+.word-card.revealed .card-nav {
+    display: none
+}
+
+.grade-btn {
+    height: 52px;
+    border: 0;
+    border-radius: 26px;
+    background: var(--fill);
+    font-size: 16px;
+    font-weight: 600;
+    transition: transform .12s
+}
+
+.grade-btn:active {
+    transform: scale(.97)
+}
+
+.grade-btn.yes {
+    background: var(--accent);
+    color: var(--on-accent)
+}
+
+/* Пустой набор карточек */
+.empty-state {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-align: center
+}
+
+.word-card.empty .empty-state {
+    display: flex
+}
+
+.word-card.empty .card-top,
+.word-card.empty .card-face,
+.word-card.empty .card-nav,
+.word-card.empty .grade-nav {
+    display: none
+}
+
+.empty-title {
+    font-size: 20px;
+    font-weight: 600
+}
+
+.empty-text {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 260px;
+    line-height: 1.4
+}
+
+.empty-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px
+}
+
+.pill-btn {
+    height: 44px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 22px;
+    background: var(--fill);
+    font-size: 15px;
+    font-weight: 600
+}
+
+.pill-btn.primary {
+    background: var(--accent);
+    color: var(--on-accent)
+}
+
 .card-nav {
     display: grid;
     grid-template-columns: 52px minmax(0, 1fr) 52px;
@@ -443,7 +625,7 @@ body:not(.view-welcome) .welcome {
     height: 52px;
     border: 0;
     border-radius: 26px;
-    background: var(--bg);
+    background: var(--fill);
     display: grid;
     place-items: center;
     transition: transform .12s
@@ -464,7 +646,7 @@ body:not(.view-welcome) .welcome {
 
 .round-btn.next {
     background: var(--accent);
-    color: #fff
+    color: var(--on-accent)
 }
 
 /* ── Рассказ ── */
@@ -496,6 +678,11 @@ body:not(.view-welcome) .welcome {
     transition: background .15s, color .15s
 }
 
+.story-line.current {
+    background: var(--sentence);
+    border-radius: 6px
+}
+
 .story-word.selected {
     background: var(--accent-soft);
     color: var(--accent)
@@ -511,7 +698,7 @@ body:not(.view-welcome) .welcome {
     padding: 14px;
     background: var(--card);
     border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, .16), 0 0 0 .5px rgba(0, 0, 0, .06);
+    box-shadow: 0 10px 40px var(--shadow), 0 0 0 .5px var(--separator);
     display: flex;
     flex-direction: column;
     gap: 12px
@@ -555,11 +742,64 @@ body:not(.view-welcome) .welcome {
     width: 6px;
     height: 6px;
     border-radius: 3px;
-    background: #c7c7cc
+    background: var(--dot)
 }
 
 .size-dots span.on {
     background: var(--accent)
+}
+
+/* Переключатель огласовок */
+.switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: .5px solid var(--separator)
+}
+
+.switch-label {
+    font-size: 15px
+}
+
+.switch-label small {
+    display: block;
+    font-size: 12px;
+    color: var(--muted)
+}
+
+.switch {
+    position: relative;
+    flex: none;
+    width: 51px;
+    height: 31px;
+    border: 0;
+    border-radius: 16px;
+    padding: 0;
+    background: var(--dot);
+    transition: background .2s
+}
+
+.switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .25);
+    transition: transform .2s
+}
+
+.switch[aria-checked="true"] {
+    background: #34c759
+}
+
+.switch[aria-checked="true"]::after {
+    transform: translateX(20px)
 }
 
 .size-label {
@@ -575,7 +815,7 @@ body:not(.view-welcome) .welcome {
     inset: 0;
     border: 0;
     padding: 0;
-    background: rgba(0, 0, 0, .18)
+    background: var(--overlay)
 }
 
 .word-sheet {
@@ -587,10 +827,12 @@ body:not(.view-welcome) .welcome {
     padding: 10px 24px 28px;
     background: var(--card);
     border-radius: 30px;
-    box-shadow: 0 -4px 30px rgba(0, 0, 0, .12);
+    box-shadow: 0 -4px 30px var(--shadow);
     display: flex;
     flex-direction: column;
     gap: 16px;
+    max-height: calc(100dvh - env(safe-area-inset-top) - 40px);
+    overflow-y: auto;
     visibility: hidden;
     transform: translate(-50%, calc(100% + 40px));
     transition: transform .28s cubic-bezier(.2, .8, .2, 1), visibility 0s .28s
@@ -607,7 +849,7 @@ body:not(.view-welcome) .welcome {
     width: 36px;
     height: 5px;
     border-radius: 3px;
-    background: #d1d1d6
+    background: var(--grabber)
 }
 
 .sheet-head {
@@ -671,6 +913,31 @@ body:not(.view-welcome) .welcome {
     flex: none;
     font-family: var(--ar);
     font-size: 22px
+}
+
+.sheet-sentence {
+    padding-top: 14px;
+    border-top: .5px solid var(--separator);
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+}
+
+.sentence-toggle {
+    align-self: flex-start;
+    min-height: 32px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: var(--accent);
+    font-size: 15px;
+    font-weight: 600
+}
+
+.sentence-text {
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--text-2)
 }
 
 .sheet-dict-text {
