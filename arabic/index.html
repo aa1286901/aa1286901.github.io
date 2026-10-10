@@ -6,8 +6,9 @@
     <meta name="viewport"
         content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
     <meta name="description" content="Уроки арабского языка: карточки слов с переводом и тексты рассказов.">
-    <meta name="theme-color" content="#F2F2F7">
-    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    <meta name="color-scheme" content="light dark">
     <meta name="application-name" content="Arabic">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -26,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
-    <link rel="stylesheet" href="style.css?v=0025">
+    <link rel="stylesheet" href="style.css?v=0026">
 </head>
 
 <body class="view-welcome">
@@ -91,11 +92,12 @@
         </div>
 
         <section class="screen word-screen active" id="wordsScreen">
+            <div class="chips" id="filterChips" role="tablist" aria-label="Какие карточки показывать"></div>
             <div class="word-card" id="wordCard">
                 <div class="card-top">
                     <div class="card-meta">
                         <span id="topCounter"></span>
-                        <span id="partOfSpeech"></span>
+                        <span><span id="partOfSpeech"></span><span class="learned-mark" id="learnedMark" hidden> · выучено</span></span>
                     </div>
                     <div class="progress" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
                 </div>
@@ -108,6 +110,20 @@
                     </span>
                     <span class="reveal-hint">Нажмите, чтобы показать перевод</span>
                 </button>
+
+                <div class="grade-nav">
+                    <button class="grade-btn no" id="gradeNo" type="button">Не знаю</button>
+                    <button class="grade-btn yes" id="gradeYes" type="button">Знаю</button>
+                </div>
+
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-title" id="emptyTitle">Все слова выучены</div>
+                    <div class="empty-text" id="emptyText"></div>
+                    <div class="empty-actions">
+                        <button class="pill-btn" id="emptyAll" type="button">Показать все</button>
+                        <button class="pill-btn primary" id="emptyReset" type="button">Учить заново</button>
+                    </div>
+                </div>
 
                 <div class="card-nav">
                     <button class="round-btn" id="prevWord" type="button" aria-label="Предыдущее слово">
@@ -149,6 +165,11 @@
                 <button class="size-btn big" id="sizeUp" type="button" aria-label="Увеличить текст">A</button>
             </div>
             <div class="size-label" id="sizeLabel"></div>
+            <div class="switch-row">
+                <span class="switch-label" id="harakatLabel">Огласовки<small>Знаки над и под буквами</small></span>
+                <button class="switch" id="harakatSwitch" type="button" role="switch" aria-checked="true"
+                    aria-labelledby="harakatLabel"></button>
+            </div>
         </div>
     </div>
 
@@ -170,9 +191,13 @@
                 <span class="sheet-dict-text" id="popupDictText"></span>
             </div>
         </div>
+        <div class="sheet-sentence" id="sentenceBlock">
+            <button class="sentence-toggle" id="sentenceToggle" type="button" aria-expanded="false">Перевод предложения</button>
+            <div class="sentence-text" id="sentenceText" hidden></div>
+        </div>
     </div>
 
-    <script src="app.js?v=0025"></script>
+    <script src="app.js?v=0026"></script>
 </body>
 
 </html>
