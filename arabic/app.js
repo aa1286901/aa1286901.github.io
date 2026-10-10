@@ -1,32 +1,68 @@
 // Данные урока (words, story) вынесены в lesson_<id>.json
 const LESSONS = [
-  { id: 1, title: "عِنْدَ الْمُعَلِّمِ الْمَرِيضِ", ruTitle: "Возле больного учителя" },
-  { id: 2, title: "عِنْدَ الْمُعَلِّمِ الْمَرِيضِ", ruTitle: "Возле больного учителя" },
-  { id: 3, title: "عَاقِبَة الْجَشَعِ", ruTitle: "Последствие жадности" },
-  { id: 4, title: "الرَّجُلُ وَأَوْلَادُهُ", ruTitle: "Мужчина и его дети" },
-  { id: 5, title: "المَطَرُ", ruTitle: "Дождь" },
-  { id: 6, title: "الْحَمَامَةُ وَالنَّمْلَةُ", ruTitle: "Голубь и муравей" },
+  { id: 1, title: "عِنْدَ الْمُعَلِّمِ الْمَرِيضِ", ruTitle: "Возле больного учителя" },
+  { id: 2, title: "عِنْدَ الْمُعَلِّمِ الْمَرِيضِ", ruTitle: "Возле больного учителя" },
+  { id: 3, title: "عَاقِبَةُ الْجَشَعِ", ruTitle: "Последствие жадности" },
+  { id: 4, title: "الرَّجُلُ وَأَوْلَادُهُ", ruTitle: "Мужчина и его дети" },
+  { id: 5, title: "الْمَطَرُ", ruTitle: "Дождь" },
+  { id: 6, title: "الْحَمَامَةُ وَالنَّمْلَةُ", ruTitle: "Голубь и муравей" },
   { id: 7, title: "الْأَسَدُ", ruTitle: "Лев" },
 ];
+
+// Шаги размера текста рассказа
+const STORY_SIZES = [19, 21, 23, 26, 29, 32];
+const SIZE_LABELS = ["Очень мелкий", "Мелкий", "Обычный", "Крупный", "Очень крупный", "Максимальный"];
+const SIZE_KEY = "arabic.storySize";
 
 let words = [];
 let dict = new Map();
 let story = [];
 let current = 0;
+const lessonData = new Map(); // id → Promise с JSON урока
 const $ = (id) => document.getElementById(id);
-const arDigits = (n) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const plural = (n, one, few, many) => {
+  const m10 = n % 10, m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return one;
+  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
+  return many;
+};
 
-// ── Список уроков: строится из LESSONS для главного экрана и меню ──
-function renderLessonLists() {
-  const html = LESSONS.map(
-    (l) =>
-      `<button class="lesson-item" data-lesson="${l.id}"><strong>${arDigits(l.id)}</strong><span class="lesson-info"><span>${esc(l.title)}</span><small>${esc(l.ruTitle)}</small></span></button>`,
-  ).join("");
-  document.querySelectorAll(".lesson-list").forEach((list) => (list.innerHTML = html));
+function loadLesson(id) {
+  if (!lessonData.has(id)) {
+    const p = fetch(`lesson_${id}.json`).then((res) => {
+      if (!res.ok) throw new Error(`Файл lesson_${id}.json не найден`);
+      return res.json();
+    });
+    p.catch(() => lessonData.delete(id));
+    lessonData.set(id, p);
+  }
+  return lessonData.get(id);
 }
-renderLessonLists();
+
+// ── Список уроков на главном экране ─────────────────────
+function renderLessonList() {
+  $("lessonList").innerHTML = LESSONS.map(
+    (l) =>
+      `<button class="lesson-item" type="button" data-lesson="${l.id}"><span class="lesson-num">${l.id}</span><span class="lesson-info"><span class="lesson-ru">${esc(l.ruTitle)}</span><span class="lesson-sub"><span class="lesson-count" id="count-${l.id}"></span><span class="lesson-ar" lang="ar" dir="rtl">${esc(l.title)}</span></span></span><svg class="chevron" width="8" height="14" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6" fill="none" stroke="#c4c4c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`,
+  ).join("");
+  document.querySelectorAll(".lesson-item").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      location.hash = "#lesson-" + btn.dataset.lesson;
+    });
+  });
+  // Число слов подгружается в фоне; ошибка просто оставляет строку пустой
+  LESSONS.forEach((l) =>
+    loadLesson(l.id)
+      .then((data) => {
+        const n = data.words.length;
+        $("count-" + l.id).textContent = `${n} ${plural(n, "слово", "слова", "слов")}`;
+      })
+      .catch(() => {}),
+  );
+}
+renderLessonList();
 
 // ── Hash-роутер: #lesson-N ──────────────────────────────
 function parseHash() {
@@ -35,6 +71,8 @@ function parseHash() {
 }
 
 function showWelcome() {
+  closeSheet();
+  toggleSizer(false);
   document.body.classList.add("view-welcome");
   document.title = "Арабский — Уроки";
 }
@@ -43,19 +81,16 @@ function showLesson(id) {
   document.body.classList.remove("view-welcome");
   const lesson = LESSONS.find((l) => l.id === id);
   if (lesson) {
-    $("lessonNumber").textContent = "УРОК " + arDigits(id);
+    $("lessonNumber").textContent = "Урок " + id;
     $("lessonTitle").textContent = lesson.title;
     $("lessonTitleRu").textContent = lesson.ruTitle || "";
     document.title = `${lesson.ruTitle} — Урок ${id}`;
   }
-  markActiveLesson(id);
 }
 
 async function openLesson(id) {
   try {
-    const res = await fetch(`lesson_${id}.json`);
-    if (!res.ok) throw new Error(`Файл lesson_${id}.json не найден`);
-    const data = await res.json();
+    const data = await loadLesson(id);
     if (!Array.isArray(data.words) || !Array.isArray(data.story))
       throw new Error("Неверная структура JSON");
     words = data.words;
@@ -64,7 +99,7 @@ async function openLesson(id) {
     current = 0;
     renderWord();
     renderStory();
-    initHandlers();
+    $("storyScreen").querySelector(".story-card").scrollTop = 0;
     showLesson(id);
   } catch (err) {
     alert(err.message);
@@ -88,16 +123,71 @@ async function route() {
 
 window.addEventListener("hashchange", route);
 
-// ── Рендер ──────────────────────────────────────────────
+// ── Карточки ────────────────────────────────────────────
 function renderWord() {
   if (!words.length) return;
   const w = words[current];
+  // Первое значение крупно, остальные (после «;») — мельче
+  const [main, ...rest] = w.translation.split(";");
   $("arabicWord").textContent = w.arabic;
-  $("translation").querySelector(".translation-text").textContent = w.translation;
-  $("translation").classList.remove("revealed");
+  $("translationMain").textContent = main.trim();
+  $("translationRest").textContent = rest.join(";").trim();
+  $("wordCard").classList.remove("revealed");
+  $("cardFace").setAttribute("aria-label", "Показать перевод");
   $("partOfSpeech").textContent = w.type;
-  $("topCounter").textContent = `${arDigits(current + 1)} / ${arDigits(words.length)}`;
+  $("topCounter").textContent = `${current + 1} из ${words.length}`;
+  $("progressBar").style.width = `${((current + 1) / words.length) * 100}%`;
 }
+
+function showWord(i) {
+  if (!words.length) return;
+  current = (i + words.length) % words.length;
+  renderWord();
+}
+
+$("cardFace").onclick = () => {
+  const open = $("wordCard").classList.toggle("revealed");
+  $("cardFace").setAttribute("aria-label", open ? "Скрыть перевод" : "Показать перевод");
+};
+$("prevWord").onclick = () => showWord(current - 1);
+$("nextWord").onclick = () => showWord(current + 1);
+$("randomWord").onclick = () => {
+  let n;
+  do n = Math.floor(Math.random() * words.length);
+  while (n === current && words.length > 1);
+  showWord(n);
+};
+
+let startX = 0;
+$("wordCard").addEventListener("touchstart", (e) => (startX = e.changedTouches[0].clientX), { passive: true });
+$("wordCard").addEventListener(
+  "touchend",
+  (e) => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 45) showWord(current + (dx < 0 ? 1 : -1));
+  },
+  { passive: true },
+);
+
+// ── Режим: Слова / Текст ────────────────────────────────
+function setMode(mode) {
+  const wordsMode = mode === "words";
+  $("wordsScreen").classList.toggle("active", wordsMode);
+  $("storyScreen").classList.toggle("active", !wordsMode);
+  $("wordsTab").classList.toggle("active", wordsMode);
+  $("storyTab").classList.toggle("active", !wordsMode);
+  $("wordsTab").setAttribute("aria-selected", wordsMode);
+  $("storyTab").setAttribute("aria-selected", !wordsMode);
+  $("mainContent").classList.toggle("story-mode", !wordsMode);
+  if (wordsMode) {
+    toggleSizer(false);
+    closeSheet();
+  }
+}
+$("wordsTab").onclick = () => setMode("words");
+$("storyTab").onclick = () => setMode("story");
+
+// ── Рассказ ─────────────────────────────────────────────
 function renderStory() {
   $("storyText").innerHTML = story
     .map(
@@ -111,112 +201,79 @@ function renderStory() {
     )
     .join(" ");
 }
-function showWord(i) {
-  if (!words.length) return;
-  current = (i + words.length) % words.length;
-  renderWord();
-}
-function setMode(mode) {
-  const wordsMode = mode === "words";
-  $("wordsScreen").classList.toggle("active", wordsMode);
-  $("storyScreen").classList.toggle("active", !wordsMode);
-  $("wordsTab").classList.toggle("active", wordsMode);
-  $("storyTab").classList.toggle("active", !wordsMode);
-  $("wordsTab").setAttribute("aria-selected", wordsMode);
-  $("storyTab").setAttribute("aria-selected", !wordsMode);
+
+function closeSheet() {
+  $("wordSheet").classList.remove("show");
+  $("wordSheet").setAttribute("aria-hidden", "true");
+  $("sheetOverlay").hidden = true;
+  document.querySelectorAll(".story-word.selected").forEach((x) => x.classList.remove("selected"));
 }
 
-// ── Боковое меню уроков ─────────────────────────────────
-// Навешивается сразу: drawer должен открываться и с экрана
-// «Выберите урок», и из урока.
-function toggleDrawer(open) {
-  $("lessonDrawer").classList.toggle("open", open);
-  $("drawerOverlay").classList.toggle("show", open);
-  $("lessonDrawer").setAttribute("aria-hidden", String(!open));
-  $("menuBtn").setAttribute("aria-expanded", String(open));
-}
-
-function markActiveLesson(id) {
-  document.querySelectorAll(".lesson-item").forEach((btn) => {
-    btn.classList.toggle("active", Number(btn.dataset.lesson) === id);
-  });
-}
-
-$("menuBtn").onclick = () => toggleDrawer(true);
-$("drawerClose").onclick = () => toggleDrawer(false);
-$("drawerOverlay").onclick = () => toggleDrawer(false);
-
-// Выбор урока в списке → переход на #lesson-N (hashchange откроет урок)
-document.querySelectorAll(".lesson-item").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const id = Number(btn.dataset.lesson);
-    toggleDrawer(false);
-    if (location.hash === "#lesson-" + id) route();
-    else location.hash = "#lesson-" + id;
-  });
+$("storyText").addEventListener("click", (e) => {
+  const el = e.target.closest(".story-word");
+  if (!el) return;
+  toggleSizer(false);
+  document.querySelectorAll(".story-word.selected").forEach((x) => x.classList.remove("selected"));
+  el.classList.add("selected");
+  $("popupArabic").textContent = el.dataset.arabic;
+  $("popupTranslation").textContent = el.dataset.translation;
+  $("popupType").textContent = el.dataset.type;
+  // Словарная форма и значения из карточек урока
+  const entry = dict.get(el.dataset.lemma);
+  $("popupDictBlock").hidden = !entry;
+  if (entry) {
+    $("popupDictWord").textContent = entry.arabic;
+    $("popupDictText").textContent = entry.translation;
+  }
+  $("sheetOverlay").hidden = false;
+  $("wordSheet").setAttribute("aria-hidden", "false");
+  $("wordSheet").classList.add("show");
 });
+$("sheetOverlay").onclick = closeSheet;
+$("wordSheet").onclick = closeSheet;
 
-// ── Обработчики урока ───────────────────────────────────
-// Только после загрузки JSON: они обращаются к words[current].
-let handlersReady = false;
-function initHandlers() {
-  if (handlersReady) return;
-  handlersReady = true;
+// ── Размер текста рассказа ──────────────────────────────
+let sizeIndex = 2;
+try {
+  const raw = localStorage.getItem(SIZE_KEY);
+  const saved = Number(raw);
+  if (raw !== null && Number.isInteger(saved) && saved >= 0 && saved < STORY_SIZES.length) sizeIndex = saved;
+} catch {}
 
-  $("prevWord").onclick = () => showWord(current - 1);
-  $("nextWord").onclick = () => showWord(current + 1);
-  $("randomWord").onclick = () => {
-    let n;
-    do n = Math.floor(Math.random() * words.length);
-    while (n === current && words.length > 1);
-    showWord(n);
-  };
-  const toggleTranslation = () => $("translation").classList.toggle("revealed");
-  $("translation").onclick = toggleTranslation;
-  $("revealHint").onclick = toggleTranslation;
-  $("wordsTab").onclick = () => setMode("words");
-  $("storyTab").onclick = () => setMode("story");
-
-  $("storyText").addEventListener("click", (e) => {
-    const el = e.target.closest(".story-word");
-    if (!el) return;
-    document
-      .querySelectorAll(".story-word.selected")
-      .forEach((x) => x.classList.remove("selected"));
-    el.classList.add("selected");
-    $("popupArabic").textContent = el.dataset.arabic;
-    $("popupTranslation").textContent = el.dataset.translation;
-    $("popupType").textContent = el.dataset.type;
-    // Словарная форма и значения из карточек урока
-    const entry = dict.get(el.dataset.lemma);
-    $("popupDict").innerHTML = entry
-      ? `<span class="popup-dict-word">${esc(entry.arabic)}</span> ${esc(entry.translation)}`
-      : "";
-    $("wordPopup").classList.add("show");
-    clearTimeout(window.popupTimer);
-    window.popupTimer = setTimeout(
-      () => $("wordPopup").classList.remove("show"),
-      3500,
-    );
-  });
-
-  let startX = 0;
-  $("wordCard").addEventListener(
-    "touchstart",
-    (e) => {
-      startX = e.changedTouches[0].clientX;
-    },
-    { passive: true },
-  );
-  $("wordCard").addEventListener(
-    "touchend",
-    (e) => {
-      const dx = e.changedTouches[0].clientX - startX;
-      if (Math.abs(dx) > 45) showWord(current + (dx < 0 ? 1 : -1));
-    },
-    { passive: true },
-  );
+function applySize() {
+  document.documentElement.style.setProperty("--story-size", STORY_SIZES[sizeIndex] + "px");
+  $("sizeDots").innerHTML = STORY_SIZES.map((_, i) => `<span class="${i <= sizeIndex ? "on" : ""}"></span>`).join("");
+  $("sizeLabel").textContent = SIZE_LABELS[sizeIndex];
+  $("sizeDown").disabled = sizeIndex === 0;
+  $("sizeUp").disabled = sizeIndex === STORY_SIZES.length - 1;
+  try {
+    localStorage.setItem(SIZE_KEY, String(sizeIndex));
+  } catch {}
 }
+
+function toggleSizer(open) {
+  $("sizePopover").hidden = !open;
+  $("sizeBtn").setAttribute("aria-expanded", String(open));
+}
+
+$("sizeBtn").onclick = (e) => {
+  e.stopPropagation();
+  closeSheet();
+  toggleSizer($("sizePopover").hidden);
+};
+$("sizeDown").onclick = () => {
+  sizeIndex = Math.max(0, sizeIndex - 1);
+  applySize();
+};
+$("sizeUp").onclick = () => {
+  sizeIndex = Math.min(STORY_SIZES.length - 1, sizeIndex + 1);
+  applySize();
+};
+// Нажатие вне меню размера закрывает его
+document.addEventListener("click", (e) => {
+  if (!$("sizePopover").hidden && !e.target.closest("#sizePopover, #sizeBtn")) toggleSizer(false);
+});
+applySize();
 
 // ── Инициализация ───────────────────────────────────────
 route();
