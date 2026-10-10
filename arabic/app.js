@@ -74,7 +74,7 @@ function showWelcome() {
   closeSheet();
   toggleSizer(false);
   document.body.classList.add("view-welcome");
-  document.title = "Арабский — Уроки";
+  document.title = "Arabic";
 }
 
 function showLesson(id) {
@@ -277,3 +277,8 @@ applySize();
 
 // ── Инициализация ───────────────────────────────────────
 route();
+
+// PWA: офлайн-кэш и установка на экран «Домой»
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
