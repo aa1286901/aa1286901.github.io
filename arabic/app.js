@@ -10,10 +10,23 @@ const LESSONS = [
 ];
 
 let words = [];
+let dict = new Map();
 let story = [];
 let current = 0;
 const $ = (id) => document.getElementById(id);
 const arDigits = (n) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);
+const esc = (s) =>
+  String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+// ── Список уроков: строится из LESSONS для главного экрана и меню ──
+function renderLessonLists() {
+  const html = LESSONS.map(
+    (l) =>
+      `<button class="lesson-item" data-lesson="${l.id}"><strong>${arDigits(l.id)}</strong><span class="lesson-info"><span>${esc(l.title)}</span><small>${esc(l.ruTitle)}</small></span></button>`,
+  ).join("");
+  document.querySelectorAll(".lesson-list").forEach((list) => (list.innerHTML = html));
+}
+renderLessonLists();
 
 // ── Hash-роутер: #lesson-N ──────────────────────────────
 function parseHash() {
@@ -23,6 +36,7 @@ function parseHash() {
 
 function showWelcome() {
   document.body.classList.add("view-welcome");
+  document.title = "Арабский — Уроки";
 }
 
 function showLesson(id) {
@@ -32,6 +46,7 @@ function showLesson(id) {
     $("lessonNumber").textContent = "УРОК " + arDigits(id);
     $("lessonTitle").textContent = lesson.title;
     $("lessonTitleRu").textContent = lesson.ruTitle || "";
+    document.title = `${lesson.ruTitle} — Урок ${id}`;
   }
   markActiveLesson(id);
 }
@@ -45,6 +60,7 @@ async function openLesson(id) {
       throw new Error("Неверная структура JSON");
     words = data.words;
     story = data.story;
+    dict = new Map(words.map((w) => [w.arabic, w]));
     current = 0;
     renderWord();
     renderStory();
@@ -114,7 +130,12 @@ function renderStory() {
   $("storyText").innerHTML = story
     .map(
       (line) =>
-        `<span class="story-line">${line.map(({ arabic, translation, type }) => `<span class="story-word" data-arabic="${arabic.replace(/"/g, "&quot;")}" data-translation="${translation.replace(/"/g, "&quot;")}" data-type="${type.replace(/"/g, "&quot;")}">${arabic}</span>`).join(" ")}.</span>`,
+        `<span class="story-line">${line
+          .map(
+            ({ arabic, translation, type, lemma }) =>
+              `<span class="story-word" data-arabic="${esc(arabic)}" data-translation="${esc(translation)}" data-type="${esc(type)}" data-lemma="${esc(lemma)}">${esc(arabic)}</span>`,
+          )
+          .join(" ")}.</span>`,
     )
     .join(" ");
 }
@@ -141,7 +162,6 @@ function toggleDrawer(open) {
   $("drawerOverlay").classList.toggle("show", open);
   $("lessonDrawer").setAttribute("aria-hidden", String(!open));
   $("menuBtn").setAttribute("aria-expanded", String(open));
-  $("welcomeMenuBtn").setAttribute("aria-expanded", String(open));
 }
 
 function markActiveLesson(id) {
@@ -151,7 +171,6 @@ function markActiveLesson(id) {
 }
 
 $("menuBtn").onclick = () => toggleDrawer(true);
-$("welcomeMenuBtn").onclick = () => toggleDrawer(true);
 $("drawerClose").onclick = () => toggleDrawer(false);
 $("drawerOverlay").onclick = () => toggleDrawer(false);
 
@@ -198,11 +217,16 @@ function initHandlers() {
     $("popupArabic").textContent = el.dataset.arabic;
     $("popupTranslation").textContent = el.dataset.translation;
     $("popupType").textContent = el.dataset.type;
+    // Словарная форма и значения из карточек урока
+    const entry = dict.get(el.dataset.lemma);
+    $("popupDict").innerHTML = entry
+      ? `<span class="popup-dict-word">${esc(entry.arabic)}</span> ${esc(entry.translation)}`
+      : "";
     $("wordPopup").classList.add("show");
     clearTimeout(window.popupTimer);
     window.popupTimer = setTimeout(
       () => $("wordPopup").classList.remove("show"),
-      2200,
+      3500,
     );
     speakArabic(el.dataset.arabic, el);
   });
