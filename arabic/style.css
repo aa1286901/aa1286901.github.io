@@ -244,29 +244,22 @@ button {
     font-size: 15px
 }
 
-.pronounce-btn {
-    margin-top: 12px;
-    height: 34px;
-    padding: 0 13px;
+.reveal-hint {
+    margin-top: 14px;
+    padding: 4px 8px;
     border: 0;
-    border-radius: 17px;
-    background: #eef3f9;
-    color: #3478e5;
+    background: transparent;
+    color: #b0b5bd;
     font-size: 13px;
-    font-weight: 650;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px
+    font-weight: 500;
+    letter-spacing: .01em;
+    cursor: pointer;
+    transition: opacity .18s ease
 }
 
-.pronounce-btn.speaking {
-    background: #eaf2ff
-}
-
-.pronounce-icon {
-    font-size: 15px;
-    line-height: 1
+.translation.revealed ~ .reveal-hint {
+    opacity: 0;
+    pointer-events: none
 }
 
 .card-nav {
@@ -592,24 +585,6 @@ button {
     font-size: 18px;
     color: #fff;
     margin-left: 4px
-}
-
-.popup-pronounce {
-    margin-top: 12px;
-    height: 32px;
-    padding: 0 12px;
-    border: 0;
-    border-radius: 16px;
-    background: #2b2f36;
-    color: #fff;
-    font-size: 13px;
-    font-weight: 650
-}
-
-.story-word.playing,
-.story-word.speaking {
-    background: #eaf2ff;
-    color: #1e5fb9
 }
 
 /* ── Экран выбора урока (/) ─────────────────────────────── */
