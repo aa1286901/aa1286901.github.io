@@ -275,6 +275,20 @@ document.addEventListener("click", (e) => {
 });
 applySize();
 
+// ── Заставка: убираем после анимации или по нажатию ─────
+const splash = $("splash");
+if (splash) {
+  const hideSplash = () => {
+    splash.remove();
+    document.documentElement.classList.remove("splash-on");
+  };
+  splash.addEventListener("animationend", (e) => {
+    if (e.target === splash) hideSplash();
+  });
+  splash.addEventListener("click", hideSplash);
+  setTimeout(hideSplash, 3000); // на случай, если анимация не сработала
+}
+
 // ── Инициализация ───────────────────────────────────────
 route();
 

@@ -679,6 +679,77 @@ body:not(.view-welcome) .welcome {
     color: var(--text-2)
 }
 
+/* ── Заставка при запуске ── */
+.splash {
+    position: fixed;
+    z-index: 100;
+    inset: 0;
+    background: var(--bg);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding-bottom: 6vh;
+    cursor: pointer
+}
+
+html.splash-on .splash {
+    display: flex;
+    animation: splash-out 2s ease forwards
+}
+
+.splash-tile {
+    width: 108px;
+    height: 108px;
+    border-radius: 25px;
+    background: linear-gradient(160deg, #1a78e6 0%, #0a66d1 55%, #0757b4 100%);
+    box-shadow: 0 14px 36px rgba(10, 102, 209, .25);
+    animation: splash-tile .55s cubic-bezier(.2, .9, .3, 1.25) both
+}
+
+.splash-glyph {
+    display: block;
+    width: 100%;
+    height: 100%;
+    animation: splash-write .7s .25s cubic-bezier(.5, 0, .2, 1) both
+}
+
+.splash-name {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    animation: splash-rise .45s .75s ease-out both
+}
+
+.splash-sub {
+    margin-top: -12px;
+    font-size: 15px;
+    color: var(--muted);
+    animation: splash-rise .45s .9s ease-out both
+}
+
+@keyframes splash-out {
+    0%, 80% { opacity: 1 }
+    100% { opacity: 0; visibility: hidden }
+}
+
+@keyframes splash-tile {
+    from { transform: scale(.6); opacity: 0 }
+    to { transform: scale(1); opacity: 1 }
+}
+
+/* Буква «пишется» справа налево */
+@keyframes splash-write {
+    from { clip-path: inset(0 0 0 100%) }
+    to { clip-path: inset(0 0 0 0) }
+}
+
+@keyframes splash-rise {
+    from { transform: translateY(8px); opacity: 0 }
+    to { transform: none; opacity: 1 }
+}
+
 @media(max-height:700px) {
     .app {
         gap: 10px
@@ -696,5 +767,11 @@ body:not(.view-welcome) .welcome {
 @media(prefers-reduced-motion:reduce) {
     * {
         transition: none !important
+    }
+
+    .splash *,
+    html.splash-on .splash {
+        animation-duration: .01s !important;
+        animation-delay: 0s !important
     }
 }

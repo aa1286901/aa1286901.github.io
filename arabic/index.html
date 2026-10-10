@@ -26,10 +26,30 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
-    <link rel="stylesheet" href="style.css?v=0022">
+    <link rel="stylesheet" href="style.css?v=0023">
 </head>
 
 <body class="view-welcome">
+    <!-- Заставка: только при запуске с экрана «Домой» (или с ?splash для проверки) -->
+    <div class="splash" id="splash" aria-hidden="true">
+        <div class="splash-tile"><img class="splash-glyph" src="icons/glyph.png" alt=""></div>
+        <div class="splash-name">Arabic</div>
+        <div class="splash-sub">Уроки арабского языка</div>
+    </div>
+    <script>
+        (function () {
+            var s = document.getElementById("splash");
+            var standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+            var forced = /[?&]splash\b/.test(location.search);
+            var seen = false;
+            try {
+                seen = sessionStorage.getItem("arabic.splash") === "1";
+                sessionStorage.setItem("arabic.splash", "1");
+            } catch (e) {}
+            if (forced || (standalone && !seen)) document.documentElement.classList.add("splash-on");
+            else s.remove();
+        })();
+    </script>
     <!-- Экран выбора урока: адрес / -->
     <section class="welcome" id="welcomeScreen">
         <header class="welcome-head">
@@ -152,7 +172,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0022"></script>
+    <script src="app.js?v=0023"></script>
 </body>
 
 </html>
