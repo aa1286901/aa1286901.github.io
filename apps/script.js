@@ -8,7 +8,7 @@ fetch('apps.json?'+ Math.random())
       const item = document.createElement('div');
       item.className = 'menu-item';
 
-      const encodedPlistUrl = encodeURIComponent(`https://raw.githubusercontent.com/aa1286901/aa1286901.github.io/refs/heads/master/apps1/plist/${app.bundleId}.plist`);
+      const encodedPlistUrl = encodeURIComponent(`https://raw.githubusercontent.com/aa1286901/aa1286901.github.io/refs/heads/master/apps/plist/${app.bundleId}.plist`);
       item.setAttribute('onclick', `window.location.href='itms-services://?action=download-manifest&url=${encodedPlistUrl}'`);
 
       item.innerHTML = `
