@@ -97,6 +97,12 @@
       "skillPath": "skills/copywriting/SKILL.md",
       "computedHash": "34095dc1ba236967c7515c62568591008f8ec795e1a5fd4b018f2b127a36b32c"
     },
+    "create-video": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/create-video/SKILL.md",
+      "computedHash": "cc85de7d334304112e35863409f0ea0c0bb66b80223f21583fd3c5158930db8d"
+    },
     "cro": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
@@ -133,6 +139,12 @@
       "skillPath": "skills/faceless-explainer/SKILL.md",
       "computedHash": "abf2f40c87529a809ce8cf2c24e6736cc6851e818a7816f48b0fb86ffd3dc05e"
     },
+    "ffmpeg": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/ffmpeg/SKILL.md",
+      "computedHash": "51fa05bc18bb2691e622aefd1d8ec6d4d96a9e9c44cdf599003c9d6003d11a07"
+    },
     "find-skills": {
       "source": "vercel-labs/skills",
       "sourceType": "github",
@@ -150,6 +162,18 @@
       "sourceType": "github",
       "skillPath": "skills/general-video/SKILL.md",
       "computedHash": "d6d522af41350855c64fe266f32b7af238ae1c8d44ca20e39e0b92e848eef0f1"
+    },
+    "gsap-core": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/gsap-core/SKILL.md",
+      "computedHash": "c4a01101d9e1aafbf4b49f75d74f9349790d8741981ba0237c990093863035a6"
+    },
+    "gsap-timeline": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/gsap-timeline/SKILL.md",
+      "computedHash": "54981c2feec5a9c0d57988aeb32315af32bdeadd261550d5e9db7a7b1f08b487"
     },
     "hyperframes": {
       "source": "heygen-com/hyperframes",
@@ -217,6 +241,12 @@
       "skillPath": "skills/lead-magnets/SKILL.md",
       "computedHash": "1956a2253be6ce5f59361d4af7757eb230d92835bff1dd4f7b19af2a1dac89bd"
     },
+    "lottie-bodymovin": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/lottie-bodymovin/SKILL.md",
+      "computedHash": "0eece518ff73d47a172e8fed4c5e3b5e0113afd573124659021b3209f17289c9"
+    },
     "marketing-council": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
@@ -253,6 +283,12 @@
       "skillPath": "skills/motion-graphics/SKILL.md",
       "computedHash": "73420963bea97e1008257c32f89b172486e87b87132ee4ebc83d21e1805ffd25"
     },
+    "music": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/music/SKILL.md",
+      "computedHash": "8de187c5fe68aba221193d827406c832fa5ed0cc1d7a82fc3b91d8a5fafeaefc"
+    },
     "music-to-video": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
@@ -276,6 +312,12 @@
       "sourceType": "github",
       "skillPath": "skills/paywalls/SKILL.md",
       "computedHash": "1f0b8d15770d2e7737b818408dc5877b2eadc4cab072cdfb3529349ab059815f"
+    },
+    "playwright-recording": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/playwright-recording/SKILL.md",
+      "computedHash": "65dd7d4d2097a5ee137ee9a9ab9ced260d98d8728611fa70c6d8ba7d3c21f1e1"
     },
     "popups": {
       "source": "coreyhaines31/marketingskills",
@@ -379,11 +421,77 @@
       "skillPath": "skills/social/SKILL.md",
       "computedHash": "fba7865d9f3b69c23bb43457857ad2423c4c122aad8c16b5ac2cba5e7a7e2986"
     },
+    "sound-effects": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/sound-effects/SKILL.md",
+      "computedHash": "54ec05122413cbc956b28fbd81c676e44eb0fdbbf6459ee3b367b2c7a1350b02"
+    },
+    "svg-character-animation": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/svg-character-animation/SKILL.md",
+      "computedHash": "65a17b9ab121f1fb11af63ff1cc8ab36accf96a36ce8decb82660fe26df6fbf0"
+    },
+    "synthetic-screen-recording": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/synthetic-screen-recording/SKILL.md",
+      "computedHash": "e344a8555be7eb30839645a2af0d7bda71bbd61c2aff6e7be0dcf2f8a16ea7f8"
+    },
+    "threejs-animation": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/threejs-animation/SKILL.md",
+      "computedHash": "8c50b1493812bd88f3ed0637c0c3c5d846afdb322157b67b2ffba4ce8e552835"
+    },
+    "threejs-fundamentals": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/threejs-fundamentals/SKILL.md",
+      "computedHash": "e08d49571071f0f54ef2a76fdfcb96c16673e4fda478067727def4659feb80ca"
+    },
+    "threejs-postprocessing": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/threejs-postprocessing/SKILL.md",
+      "computedHash": "48e04ff507582a18e0d509c2738b9d9466881b00e8ca2600727910a0d52abf75"
+    },
     "video": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/video/SKILL.md",
       "computedHash": "9755cc816fc5c05e382fb551d76158060fd89ee2b3105a73d2c8165e3e6bd9e1"
+    },
+    "video-edit": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/video-edit/SKILL.md",
+      "computedHash": "c392bc176158a9d0deed541752fc0fe5bcccd910aa3568beca5741ec2b2827e0"
+    },
+    "video-toolkit": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/video-toolkit/SKILL.md",
+      "computedHash": "72aa61abd26a02e952f58162c6c20cc43f11aaa4640363dc049cb83529771195"
+    },
+    "video-understand": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/video-understand/SKILL.md",
+      "computedHash": "098f2e869473b0e03c75fbf85009b0f46e75a2870ab52885faaae16578a211b8"
+    },
+    "visual-style": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/visual-style/SKILL.md",
+      "computedHash": "9b6545b4467ad420a311582abb4070850e24643b15e5856d907190ff5247ae7e"
+    },
+    "website-to-video": {
+      "source": "calesthio/openmontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/website-to-video/SKILL.md",
+      "computedHash": "5d9906ccfbb7bc7a38689aa4eb1f251321adba5d41f29fb73ad56e4781c55c95"
     }
   }
 }
