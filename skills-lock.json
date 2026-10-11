@@ -49,6 +49,12 @@
       "skillPath": "skills/churn-prevention/SKILL.md",
       "computedHash": "4ffd6cb137a92a8e9d7a5982200e95915a4dd8eae683bbc8be1750b7b5b259b3"
     },
+    "cli-setup": {
+      "source": "diegosouzapw/omniroute",
+      "sourceType": "github",
+      "skillPath": "skills/cli-setup/SKILL.md",
+      "computedHash": "155cb3ffe415952124dd2a58770b383c9fd8947e872c120a2199f4d98c38adcd"
+    },
     "co-marketing": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
@@ -301,6 +307,18 @@
       "skillPath": "skills/offers/SKILL.md",
       "computedHash": "9f8781bc04889a6f2f23a7167384976bfaf2709da31a2b92d17cc3cbfca84cd4"
     },
+    "omni-combos-routing": {
+      "source": "diegosouzapw/omniroute",
+      "sourceType": "github",
+      "skillPath": "skills/omni-combos-routing/SKILL.md",
+      "computedHash": "7c225b6f899e7eef1001ce3aaa6026ca8c597d7d2733b310e573f9854fad4081"
+    },
+    "omni-mcp": {
+      "source": "diegosouzapw/omniroute",
+      "sourceType": "github",
+      "skillPath": "skills/omni-mcp/SKILL.md",
+      "computedHash": "016c006b5f98ee30b52437d69ad2f8bf41cad1403d60f7fe39455ae588ef4765"
+    },
     "onboarding": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
@@ -318,6 +336,12 @@
       "sourceType": "github",
       "skillPath": ".agents/skills/playwright-recording/SKILL.md",
       "computedHash": "65dd7d4d2097a5ee137ee9a9ab9ced260d98d8728611fa70c6d8ba7d3c21f1e1"
+    },
+    "ponytail": {
+      "source": "dietrichgebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail/SKILL.md",
+      "computedHash": "99f0589e5646b46da07b9419a5daa178004b3dd8930fec528918a51ab07f5efc"
     },
     "popups": {
       "source": "coreyhaines31/marketingskills",
