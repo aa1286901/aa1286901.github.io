@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><title>IT Ahmedov — ChatGPT vs Claude</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#05060A;font-family:'Inter Display','Inter',sans-serif;color:#F4F7FF;-webkit-font-smoothing:antialiased}
+#bg{position:absolute;inset:0}
+#stage{position:absolute;inset:0}
+.scene{position:absolute;inset:0;perspective:1800px;display:none;transform-origin:50% 45%}
+.abs{position:absolute}
+.p3{transform-style:preserve-3d}
+.h{font-weight:800;letter-spacing:-0.035em;line-height:1}
+.ch{display:inline-block;white-space:pre}
+.cx{left:0;right:0;text-align:center}
+.glass{background:linear-gradient(160deg,rgba(255,255,255,.11),rgba(255,255,255,.03));border:2px solid rgba(255,255,255,.14);box-shadow:0 30px 90px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.18)}
+.chip{display:inline-flex;align-items:center;gap:14px;padding:0 30px;height:76px;border-radius:40px;font-size:36px;font-weight:700}
+.mono{font-family:'DejaVu Sans Mono',monospace}
+.img{background-size:cover;background-position:center}
+.tag{position:absolute;padding:8px 22px;border-radius:24px;font-size:34px;font-weight:800;color:#05060A}
+#cap{position:absolute;left:60px;right:60px;top:1590px;text-align:center;font-size:50px;font-weight:800;letter-spacing:-.01em;line-height:1.15;text-shadow:0 4px 24px rgba(0,0,0,.9)}
+#cap .w{display:inline-block;margin:0 .14em;transition:none}
+#flash{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 45%,rgba(255,255,255,.95),rgba(255,220,200,.35) 45%,transparent 75%);opacity:0}
+#wipe{position:absolute;left:-660px;top:-540px;width:2400px;height:3000px;display:none;align-items:center;justify-content:center;background:linear-gradient(90deg,#10A37F,#4DA8FF 45%,#D97757)}
+#wipe span{font-size:110px;font-weight:900;letter-spacing:-.04em;color:#05060A;transform:rotate(-20deg)}
+</style></head>
+<body>
+<canvas id="bg" width="1080" height="1920"></canvas>
+<div id="stage">
+
+<!-- S1 HOOK -->
+<div class="scene" id="s1">
+  <div id="typed" class="abs cx mono" style="top:700px;font-size:60px;color:#C9D3E8"></div>
+  <div id="notH" class="abs cx h" style="top:830px;font-size:158px;font-weight:900;white-space:nowrap">НЕ ЧЕЛОВЕК</div>
+</div>
+
+<!-- S2 ME -->
+<div class="scene" id="s2">
+  <div id="card" class="abs p3 glass" style="left:110px;top:430px;width:860px;height:1060px;border-radius:64px"></div>
+  <div id="avWrap" class="abs" style="left:330px;top:500px;width:420px;height:420px">
+    <div id="ring" class="abs" style="inset:-14px;border-radius:50%;background:conic-gradient(#4DA8FF,#10A37F,#D97757,#8B5CF6,#4DA8FF)"></div>
+    <div class="abs" style="inset:-4px;border-radius:50%;background:#05060A"></div>
+    <div class="abs img" style="inset:6px;border-radius:50%;background-image:url(a/avatar.png);background-size:118%;background-position:50% 70%"></div>
+  </div>
+  <div id="nm" class="abs cx h" style="top:990px;font-size:130px">IT Ahmedov</div>
+  <div id="nick" class="abs cx" style="top:1140px;font-size:52px;font-weight:600;color:#9AA6C1">@ahmedov.ml</div>
+  <div id="tagl" class="abs cx" style="top:1240px"><div class="chip glass" style="font-size:38px">Технологии делают жизнь проще</div></div>
+  <div id="orb1" class="abs chip" style="background:#10A37F;color:#fff;font-size:34px"></div>
+  <div id="orb2" class="abs chip" style="background:#D97757;color:#fff;font-size:34px"></div>
+  <div id="rubs"></div>
+</div>
+
+<!-- S3 VS -->
+<div class="scene" id="s3">
+  <div id="oG" class="abs" style="left:-190px;top:-190px;width:380px;height:380px"></div>
+  <div id="oC" class="abs" style="left:-190px;top:-190px;width:380px;height:380px"></div>
+  <div id="vs" class="abs cx h" style="top:760px;font-size:300px;font-weight:900;font-style:italic">VS</div>
+  <svg id="bolt" class="abs" style="left:0;top:0" width="1080" height="1920"></svg>
+  <div id="both" class="abs cx h" style="top:1330px;font-size:110px">Нужны <span style="color:#F0A27A">оба</span></div>
+  <div id="lG" class="abs h" style="font-size:64px;color:#19C37D">ChatGPT</div>
+  <div id="lC" class="abs h" style="font-size:64px;color:#F0A27A">Claude</div>
+</div>
+
+<!-- S4 GPT -->
+<div class="scene" id="s4">
+  <div id="g_head" class="abs cx" style="top:170px">
+    <div class="chip" style="background:#10A37F;color:#fff"><span id="gIc1"></span>ChatGPT</div>
+    <div id="g_title" class="h" style="font-size:150px;margin-top:22px">Художник</div>
+    <div id="g_model" style="margin-top:22px"><div class="chip glass" style="font-size:34px;height:66px"><span style="color:#19C37D">●</span> GPT-6 Astra</div></div>
+  </div>
+  <!-- A chat -->
+  <div id="g_chat" class="abs glass p3" style="left:90px;top:640px;width:900px;height:880px;border-radius:52px;overflow:hidden">
+    <div class="abs" style="left:0;right:0;top:0;height:96px;display:flex;align-items:center;gap:18px;padding:0 34px;border-bottom:1px solid rgba(255,255,255,.1)"><span id="gIc2"></span><span style="font-size:36px;font-weight:700">ChatGPT</span><span style="margin-left:auto;font-size:28px;color:#9AA6C1">GPT-6 Astra</span></div>
+    <div id="g_ub" class="abs" style="right:30px;top:120px;width:620px;padding:18px;border-radius:30px;background:#2B2F3A">
+      <div class="img" style="height:200px;border-radius:18px;background-image:url(a/before.jpg)"></div>
+      <div id="g_prompt" style="font-size:28px;line-height:1.3;margin-top:14px;min-height:110px"></div>
+    </div>
+    <div id="g_ab" class="abs" style="left:30px;top:520px;width:560px;height:340px;border-radius:26px;overflow:hidden;background:#111">
+      <canvas id="gen" width="560" height="340" style="width:560px;height:340px;display:block"></canvas>
+    </div>
+  </div>
+  <!-- B fan -->
+  <div id="g_fan" class="abs p3" style="left:0;top:640px;width:1080px;height:900px"></div>
+  <div id="g_chips" class="abs cx" style="top:1450px;display:flex;justify-content:center;gap:16px"></div>
+  <!-- C before/after -->
+  <div id="g_ba" class="abs" style="left:110px;top:600px;width:860px;height:950px;border-radius:48px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.6)">
+    <div class="abs img" style="inset:0;background-image:url(a/before.jpg)"></div>
+    <div id="g_after" class="abs img" style="inset:0;background-image:url(a/after.jpg)"></div>
+    <div id="g_line" class="abs" style="top:0;bottom:0;width:6px;margin-left:-3px;background:#fff;box-shadow:0 0 30px #fff"><div class="abs" style="left:-37px;top:440px;width:80px;height:80px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;color:#05060A;font-size:40px;font-weight:900">⇆</div></div>
+    <div class="tag" style="left:30px;top:30px;background:#fff">ДО</div>
+    <div id="g_aftTag" class="tag" style="right:30px;top:30px;background:#19C37D">ПОСЛЕ</div>
+  </div>
+  <div id="g_min" class="abs cx" style="top:1450px"><div class="chip" style="background:#19C37D;color:#05060A;font-size:40px">⚡ за 1 минуту</div></div>
+  <!-- D price -->
+  <div id="g_price" class="abs p3" style="left:140px;top:600px;width:800px;height:900px"></div>
+</div>
+
+<!-- S5 CLAUDE -->
+<div class="scene" id="s5">
+  <div id="c_head" class="abs cx" style="top:170px">
+    <div class="chip" style="background:#D97757;color:#fff"><span id="cIc1"></span>Claude</div>
+    <div id="c_title" class="h" style="font-size:94px;margin-top:22px;white-space:nowrap">Режиссёр и инженер</div>
+    <div id="c_model" style="margin-top:22px"><div class="chip glass" style="font-size:34px;height:66px"><span style="color:#F0A27A">●</span> Claude Opus 5.5</div></div>
+  </div>
+  <div id="c_ed" class="abs p3" style="left:90px;top:640px;width:900px;height:720px">
+    <div id="c_code" class="abs glass" style="inset:0;border-radius:40px;overflow:hidden;background:rgba(14,16,24,.92);backface-visibility:hidden">
+      <div style="height:70px;display:flex;align-items:center;gap:12px;padding:0 28px;border-bottom:1px solid rgba(255,255,255,.08)"><i style="width:18px;height:18px;border-radius:50%;background:#FF5F57;display:block"></i><i style="width:18px;height:18px;border-radius:50%;background:#FEBC2E;display:block"></i><i style="width:18px;height:18px;border-radius:50%;background:#28C840;display:block"></i><span class="mono" style="margin-left:18px;font-size:24px;color:#9AA6C1">promo.html — Claude</span></div>
+      <pre id="code" class="mono" style="padding:26px 34px;font-size:27px;line-height:1.5;white-space:pre-wrap"></pre>
+    </div>
+    <div id="c_render" class="abs" style="inset:0;border-radius:40px;overflow:hidden;background:radial-gradient(circle at 50% 40%,#3a1f17,#0b0a10);transform:rotateY(180deg);backface-visibility:hidden;border:2px solid rgba(240,162,122,.5)">
+      <div class="abs cx mono" style="top:24px;font-size:24px;color:#F0A27A">▶ render 1080×1920 · 30fps</div>
+      <div id="r_logo" class="abs cx h" style="top:270px;font-size:120px;font-weight:900">IT AHMEDOV</div>
+      <div id="r_bar" class="abs" style="left:150px;top:440px;height:10px;border-radius:5px;background:linear-gradient(90deg,#D97757,#4DA8FF)"></div>
+      <div id="r_dots"></div>
+    </div>
+  </div>
+  <div id="c_tl" class="abs glass" style="left:60px;top:640px;width:960px;height:720px;border-radius:40px;overflow:hidden;background:rgba(14,16,24,.92)"></div>
+  <div id="c_ph" class="abs p3" style="left:0;top:600px;width:1080px;height:820px"></div>
+  <div id="c_chips" class="abs cx" style="top:1420px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap;padding:0 40px"></div>
+  <div id="c_web" class="abs" style="left:110px;top:600px;width:860px;height:960px;border-radius:36px;overflow:hidden;background:#0b0d16;box-shadow:0 40px 100px rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.14)">
+    <div style="height:74px;background:#1a1d29;display:flex;align-items:center;gap:12px;padding:0 24px"><i style="width:16px;height:16px;border-radius:50%;background:#FF5F57;display:block"></i><i style="width:16px;height:16px;border-radius:50%;background:#FEBC2E;display:block"></i><i style="width:16px;height:16px;border-radius:50%;background:#28C840;display:block"></i><div style="margin-left:16px;flex:1;height:46px;border-radius:23px;background:#0b0d16;display:flex;align-items:center;padding:0 22px;font-size:26px;color:#C9D3E8">🔒 ahmedov.online/proxy</div></div>
+    <div class="abs" style="left:0;right:0;top:74px;bottom:0;overflow:hidden">
+      <div id="w_skel" class="abs" style="inset:0;padding:30px"></div>
+      <img id="w_img" src="a/landing.png" style="position:absolute;left:0;top:0;width:860px">
+    </div>
+  </div>
+  <div id="c_price" class="abs p3" style="left:140px;top:600px;width:800px;height:900px"></div>
+</div>
+
+<!-- S6 REVEAL -->
+<div class="scene" id="s6">
+  <div id="r_k" class="abs cx h" style="top:260px;font-size:110px;color:#C9D3E8">И кстати…</div>
+  <div id="r_t1" class="abs cx" style="top:250px;font-size:62px;font-weight:700;color:#C9D3E8">Весь этот ролик сделал</div>
+  <div id="r_t2" class="abs cx h" style="top:330px;font-size:230px;font-weight:900"><span id="r_ic"></span>Claude</div>
+  <div id="stack" class="abs p3" style="left:500px;top:1000px;width:0;height:0"></div>
+  <div id="wave" class="abs" style="left:90px;top:860px;width:900px;height:420px;display:flex;align-items:center;justify-content:center;gap:8px"></div>
+  <div id="r_voice" class="abs cx" style="top:1330px"><div class="chip glass" style="font-size:40px">🎙 Голос сгенерирован нейросетью</div></div>
+</div>
+
+<!-- S7 CTA -->
+<div class="scene" id="s7">
+  <div id="k_av" class="abs" style="left:440px;top:170px;width:200px;height:200px">
+    <div class="abs" style="inset:-8px;border-radius:50%;background:conic-gradient(#4DA8FF,#10A37F,#D97757,#4DA8FF)"></div>
+    <div class="abs img" style="inset:4px;border-radius:50%;background-image:url(a/avatar.png);background-size:118%;background-position:50% 70%"></div>
+  </div>
+  <div id="k_nm" class="abs cx h" style="top:395px;font-size:64px">IT Ahmedov</div>
+  <div id="k_t" class="abs cx h" style="top:500px;font-size:96px;line-height:1.05">Оформлю подписку<br><span style="background:linear-gradient(90deg,#19C37D,#4DA8FF,#F0A27A);-webkit-background-clip:text;color:transparent">за тебя</span></div>
+  <div id="k_cards" class="abs p3" style="left:0;top:760px;width:1080px;height:420px"></div>
+  <div id="k_btn" class="abs" style="left:110px;top:1210px;width:860px;height:150px;border-radius:75px;background:linear-gradient(90deg,#25D366,#128C7E);display:flex;align-items:center;justify-content:center;gap:24px;font-size:56px;font-weight:800;overflow:hidden;box-shadow:0 20px 80px rgba(37,211,102,.45)">
+    <div id="k_shine" class="abs" style="top:-40px;bottom:-40px;width:140px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-20deg)"></div>
+    <span id="k_wa" style="position:relative;display:flex"></span><span style="position:relative">Пиши в WhatsApp</span></div>
+  <div id="k_num" class="abs cx h" style="top:1390px;font-size:76px">+7 963 415-04-24</div>
+  <div id="k_nick" class="abs cx" style="top:1490px;font-size:46px;font-weight:600;color:#9AA6C1">или @ahmedov.ml</div>
+</div>
+
+<div id="wipe"><span>IT Ahmedov</span></div>
+<div id="flash"></div>
+</div>
+<div id="cap"></div>
+<div class="abs" style="inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.55) 100%)"></div>
+
+<script>
+const P=window.PLAN; // {vo:{k:[t,dur]}, env:[...], caps:[...]}
+const $=id=>document.getElementById(id);
+document.querySelectorAll('.scene').forEach(s=>s.style.display='block');
+const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const pr=(t,a,b)=>cl((t-a)/(b-a));
+const lerp=(a,b,x)=>a+(b-a)*x;
+const eo=x=>1-Math.pow(1-x,3), eo5=x=>1-Math.pow(1-x,5), ei=x=>x*x*x;
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eb=(x,s=1.70158)=>{const c3=s+1;return 1+c3*Math.pow(x-1,3)+s*Math.pow(x-1,2)};
+const el=x=>x<=0?0:x>=1?1:Math.pow(2,-10*x)*Math.sin((x*10-.75)*2*Math.PI/3)+1;
+const rnd=i=>{const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+const V=k=>P.vo[k][0], VD=k=>P.vo[k][1];
+const env=t=>{const i=Math.floor(t*30);return P.env[Math.max(0,Math.min(P.env.length-1,i))]||0};
+
+/* glyphs (stylized, not official logos) */
+const GG=(s=40,c='#fff')=>{let r='';for(let i=0;i<6;i++)r+=`<rect x="-5.5" y="-17" width="11" height="22" rx="5.5" transform="rotate(${i*60}) translate(0,-3)" fill="none" stroke="${c}" stroke-width="2.6"/>`;return `<svg width="${s}" height="${s}" viewBox="-24 -24 48 48">${r}</svg>`};
+const CG=(s=40,c='#fff')=>{let r='';for(let i=0;i<12;i++){const L=i%2?13:19;r+=`<path d="M0 -3 L-2.2 -${L*0.45} L0 -${L} L2.2 -${L*0.45} Z" fill="${c}" transform="rotate(${i*30})"/>`}return `<svg width="${s}" height="${s}" viewBox="-21 -21 42 42">${r}<circle r="3.5" fill="${c}"/></svg>`};
+const WAP='<svg width="64" height="64" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.9 7.6c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .6.4l.8 1.9c.1.2 0 .4-.1.6l-.5.6c-.1.2-.2.3 0 .6.6 1 1.5 1.9 2.6 2.5.3.1.4.1.6-.1l.6-.7c.2-.2.3-.2.6-.1l1.8.9c.3.1.4.2.4.4 0 .4-.1 1.2-.7 1.7-.6.5-1.6.8-2.6.4-1.5-.5-2.8-1.4-3.9-2.6-1-1.1-1.9-2.4-2.2-3.7-.2-1 .1-1.8.6-2.4z" fill="#fff"/></svg>';
+['gIc1','gIc2'].forEach(id=>$(id).innerHTML=GG(44));$('cIc1').innerHTML=CG(44);$('k_wa').innerHTML=WAP;
+$('r_ic').innerHTML=CG(170,'#D97757');$('r_ic').style.cssText='display:inline-block;vertical-align:-18px;margin-right:24px';
+$('orb1').innerHTML=GG(40)+'ChatGPT';$('orb2').innerHTML=CG(40)+'Claude';
+
+function orbHTML(c1,c2,glyph){return `<div class="abs" style="inset:-60px;border-radius:50%;background:radial-gradient(circle,${c1}88,transparent 65%)"></div><div class="abs" style="inset:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,${c2},${c1} 55%,#05060A 120%);box-shadow:inset -20px -30px 60px rgba(0,0,0,.45),inset 10px 14px 40px rgba(255,255,255,.35),0 0 120px ${c1}">`+`<div class="abs" style="inset:0;display:flex;align-items:center;justify-content:center">${glyph}</div></div>`}
+$('oG').innerHTML=orbHTML('#10A37F','#7CF2C8',GG(190));$('oC').innerHTML=orbHTML('#D97757','#FFD0B5',CG(200));
+$('rubs').innerHTML=Array.from({length:14},(_,i)=>`<div class="abs h rub" style="font-size:${60+rnd(i)*50}px;color:${i%2?'#19C37D':'#F0A27A'}">₽</div>`).join('');
+
+/* GPT fan */
+const FAN=['a/after.jpg','a/poster1.png','a/poster2.png'];
+$('g_fan').innerHTML=FAN.map((s,k)=>`<div class="abs img fanc" style="left:${540-230}px;top:40px;width:460px;height:680px;border-radius:30px;background-image:url(${s});box-shadow:0 30px 80px rgba(0,0,0,.6);border:3px solid rgba(255,255,255,.2)"></div>`).join('');
+$('g_chips').innerHTML=['Генерация','Редактирование','Постеры и дизайн'].map((s,k)=>`<div class="chip glass gch" style="font-size:32px;height:66px"><span style="color:#19C37D">✓</span>${s}</div>`).join('');
+function priceHTML(name,price,feat,c,c2,glyph){return `<div class="abs glass" style="inset:0;border-radius:60px;background:linear-gradient(160deg,${c}33,rgba(255,255,255,.03));border-color:${c}99;box-shadow:0 0 120px ${c}55,0 40px 100px rgba(0,0,0,.5)">
+ <div style="display:flex;justify-content:center;margin-top:60px"><div style="width:130px;height:130px;border-radius:36px;background:${c};display:flex;align-items:center;justify-content:center">${glyph}</div></div>
+ <div class="h" style="text-align:center;font-size:76px;margin-top:40px">${name}</div>
+ <div class="h pnum" style="text-align:center;font-size:190px;margin-top:40px;color:${c2}">0 ₽</div>
+ <div style="text-align:center;font-size:44px;color:#C9D3E8;margin-top:6px">в месяц</div>
+ <div style="margin:46px 90px 0;display:flex;flex-direction:column;gap:18px">${feat.map(f=>`<div class="pf" style="font-size:38px;font-weight:600"><span style="color:${c2}">✓</span> ${f}</div>`).join('')}</div></div>`}
+$('g_price').innerHTML=priceHTML('ChatGPT Plus',2490,['Генерация изображений','Редактирование фото','GPT-6 Astra'],'#10A37F','#19C37D',GG(84));
+$('c_price').innerHTML=priceHTML('Claude Pro',3490,['Монтаж и motion-видео','Сайты под ключ','Claude Opus 5.5'],'#D97757','#F0A27A',CG(84));
+
+/* code */
+const CODE=[['<span style="color:#F0A27A">const</span> scene = <span style="color:#7CC4FF">timeline</span>({ fps: <span style="color:#B5E48C">30</span> });'],
+['scene.<span style="color:#7CC4FF">add</span>(<span style="color:#FFD580">"IT AHMEDOV"</span>, { <span style="color:#C3A6FF">3d</span>: true });'],
+['scene.<span style="color:#7CC4FF">camera</span>.zoom(<span style="color:#B5E48C">1.4</span>, <span style="color:#FFD580">"easeOut"</span>);'],
+['scene.<span style="color:#7CC4FF">sfx</span>(<span style="color:#FFD580">"whoosh"</span>).<span style="color:#7CC4FF">voice</span>(<span style="color:#FFD580">"ru"</span>);'],
+['<span style="color:#F0A27A">await</span> scene.<span style="color:#7CC4FF">render</span>(<span style="color:#FFD580">"promo.mp4"</span>);']];
+const CODE_TXT=CODE.map(l=>l[0]);
+/* timeline editor */
+(function(){const tr=[['Видео','#4DA8FF'],['Motion','#D97757'],['3D','#8B5CF6'],['Текст','#19C37D'],['Звук','#F5C451']];let h=`<div class="mono" style="height:70px;display:flex;align-items:center;padding:0 28px;font-size:24px;color:#9AA6C1;border-bottom:1px solid rgba(255,255,255,.08)">Timeline · 00:58 · Claude</div>`;
+tr.forEach(([n,c],k)=>{h+=`<div class="abs" style="left:0;right:0;top:${100+k*118}px;height:100px"><div style="position:absolute;left:24px;top:30px;font-size:28px;font-weight:700;color:#C9D3E8;width:120px">${n}</div>`;
+ for(let j=0;j<3;j++){const L=170+j*270+rnd(k*7+j)*40,W=170+rnd(k*3+j)*90;h+=`<div class="abs clip" data-k="${k*3+j}" style="left:${L}px;top:14px;width:${W}px;height:72px;border-radius:14px;background:linear-gradient(180deg,${c},${c}AA);box-shadow:0 6px 18px ${c}55">${n==='Звук'?'<svg width="100%" height="72" preserveAspectRatio="none" viewBox="0 0 100 20">'+Array.from({length:40},(_,i)=>`<rect x="${i*2.5}" y="${10-3-rnd(i+j*9)*7}" width="1.4" height="${6+rnd(i+j*9)*14}" fill="#05060A" opacity=".55"/>`).join('')+'</svg>':''}</div>`}h+='</div>'});
+h+=`<div id="playh" class="abs" style="top:70px;bottom:0;width:4px;background:#fff;box-shadow:0 0 20px #fff"></div>`;$('c_tl').innerHTML=h})();
+$('c_ph').innerHTML=[1,2,3].map(i=>`<div class="abs phn" style="left:${540-150}px;top:40px;width:300px;height:620px;border-radius:44px;background:#111;padding:10px;box-shadow:0 30px 80px rgba(0,0,0,.6),inset 0 0 0 3px rgba(255,255,255,.15)"><img id="pv${i}" style="width:280px;height:600px;border-radius:36px;object-fit:cover;display:block"></div>`).join('');
+const CCH=[['Монтаж видео','montage'],['Motion-графика','motion'],['3D','d3'],['Звук','snd'],['Сайты под ключ','web']];
+$('c_chips').innerHTML=CCH.map(([n,k])=>`<div class="chip cch" id="cc_${k}" style="background:#D97757;color:#fff;font-size:32px;height:64px">${n}</div>`).join('');
+$('w_skel').innerHTML=[[0,0,800,60],[0,90,520,120],[0,240,800,320],[0,600,380,180],[420,600,380,180],[0,820,800,90]].map(([x,y,w,h])=>`<div class="abs sk" style="left:${30+x}px;top:${30+y}px;width:${w}px;height:${h}px;border-radius:22px;background:rgba(255,255,255,.08)"></div>`).join('');
+$('r_dots').innerHTML=Array.from({length:18},(_,i)=>`<i class="abs rd" style="width:16px;height:16px;border-radius:50%;background:${['#D97757','#4DA8FF','#19C37D'][i%3]};display:block"></i>`).join('');
+/* reveal stack */
+const LAY=[['Голос','#F5C451'],['Звук','#19C37D'],['Монтаж','#4DA8FF'],['3D-графика','#8B5CF6'],['Анимация','#D97757']];
+$('stack').innerHTML=LAY.map(([n,c],k)=>`<div class="abs lay p3" style="left:-300px;top:-190px;width:600px;height:380px;border-radius:36px;background:linear-gradient(135deg,${c}55,${c}18);border:3px solid ${c};box-shadow:0 0 60px ${c}55"><div class="abs h" style="left:34px;top:26px;font-size:64px;color:#fff;text-shadow:0 2px 12px #000">${n}</div></div>`).join('');
+$('wave').innerHTML=Array.from({length:44},()=>`<i class="wb" style="display:block;width:12px;border-radius:6px;background:linear-gradient(180deg,#F0A27A,#D97757)"></i>`).join('');
+/* CTA cards */
+$('k_cards').innerHTML=[['ChatGPT Plus','2 490 ₽','#10A37F',GG(60)],['Claude Pro','3 490 ₽','#D97757',CG(60)]].map(([n,p,c,g],k)=>`<div class="abs glass kc" style="left:${k?560:80}px;top:20px;width:440px;height:380px;border-radius:44px;background:linear-gradient(160deg,${c}40,rgba(255,255,255,.03));border-color:${c}AA;box-shadow:0 0 80px ${c}44;text-align:center"><div style="display:flex;justify-content:center;margin-top:36px"><div style="width:100px;height:100px;border-radius:28px;background:${c};display:flex;align-items:center;justify-content:center">${g}</div></div><div class="h" style="font-size:50px;margin-top:26px">${n}</div><div class="h" style="font-size:88px;margin-top:20px">${p}</div><div style="font-size:32px;color:#C9D3E8;margin-top:6px">в месяц</div></div>`).join('');
+
+function split(el){const walk=n=>{[...n.childNodes].forEach(c=>{if(c.nodeType===3){const f=document.createDocumentFragment();[...c.textContent].forEach(ch=>{const s=document.createElement('span');s.className='ch';s.textContent=ch;f.appendChild(s)});c.replaceWith(f)}else if(c.nodeType===1&&c.tagName!=='BR'&&c.tagName!=='svg'&&c.id!=='r_ic')walk(c)})};walk(el);return [...el.querySelectorAll('.ch')]}
+const L_not=split($('notH')),L_nm=split($('nm')),L_g=split($('g_title')),L_c=split($('c_title')),L_r2=split($('r_t2')),L_kt=split($('k_t'));
+L_g.forEach((s,i,a)=>{const k=i/(a.length-1);s.style.color=`rgb(${Math.round(lerp(25,124,k))},${Math.round(lerp(195,242,k))},${Math.round(lerp(125,200,k))})`});
+L_c.forEach((s,i,a)=>{const k=i/(a.length-1);s.style.color=`rgb(${Math.round(lerp(240,255,k))},${Math.round(lerp(162,208,k))},${Math.round(lerp(122,181,k))})`});
+L_not.forEach((s,i,a)=>{const k=i/(a.length-1);s.style.color=`rgb(255,${Math.round(lerp(84,150,k))},${Math.round(lerp(112,90,k))})`});
+
+/* generation canvas */
+const gi=new Image();gi.src='a/after.jpg';const gc=$('gen').getContext('2d');
+function drawGen(p){const W=560,H=340;gc.fillStyle='#0d0f14';gc.fillRect(0,0,W,H);if(!gi.complete||p<=0){return}
+  const iw=gi.width,ih=gi.height;const s=Math.max(W/iw,H/ih);const dw=iw*s,dh=ih*s;
+  const blocks=Math.max(1,Math.round(lerp(64,1,eo(p))));
+  if(blocks>1){const tw=Math.ceil(W/blocks),th=Math.ceil(H/blocks);const oc=drawGen.oc||(drawGen.oc=document.createElement('canvas'));oc.width=tw;oc.height=th;const o=oc.getContext('2d');o.drawImage(gi,(W-dw)/2/blocks,(H-dh)/2/blocks,dw/blocks,dh/blocks);gc.imageSmoothingEnabled=false;gc.drawImage(oc,0,0,tw,th,0,0,tw*blocks,th*blocks);gc.imageSmoothingEnabled=true}
+  else gc.drawImage(gi,(W-dw)/2,(H-dh)/2,dw,dh);
+  const n=1-p;if(n>0.02){for(let i=0;i<900*n;i++){gc.fillStyle=`rgba(${rnd(i*3+Math.floor(p*50))*255|0},${rnd(i*5+7)*255|0},${rnd(i*11+3)*255|0},${.5*n})`;gc.fillRect(rnd(i+Math.floor(p*90))*W,rnd(i*7+Math.floor(p*90))*H,4,4)}}
+  // scan line
+  if(p<1){const y=H*eo(p);gc.fillStyle='rgba(124,242,200,.8)';gc.fillRect(0,y-2,W,4)}
+}
+
+/* background */
+const cv=$('bg'),g=cv.getContext('2d');
+const STARS=Array.from({length:140},(_,i)=>({x:rnd(i)*1080,y:rnd(i+500)*1920,z:.3+rnd(i+900)*1.2,s:rnd(i+77)}));
+const mix=(a,b,k)=>a.map((v,i)=>Math.round(lerp(v,b[i],k)));
+const TH={brand:[[77,168,255],[139,92,246],[236,72,153]],gpt:[[16,163,127],[25,195,125],[77,168,255]],cla:[[217,119,87],[240,162,122],[139,92,246]],dark:[[60,40,40],[40,30,60],[30,30,40]],hook:[[255,60,90],[120,40,60],[40,20,40]]};
+function theme(t){const S=P.sc;if(t<S.s2)return ['hook','brand',pr(t,S.s2-.4,S.s2)];if(t<S.s4)return ['brand','gpt',pr(t,S.s4-.4,S.s4)];if(t<S.s5)return ['gpt','cla',pr(t,S.s5-.3,S.s5+.3)];if(t<S.s6)return ['cla','dark',pr(t,S.s6-.3,S.s6+.4)];return ['dark','brand',pr(t,S.s7-.3,S.s7+.3)]}
+function drawBg(t){
+  const [a,b,k]=theme(t);const A=TH[a],B=TH[b];
+  g.fillStyle='#05060A';g.fillRect(0,0,1080,1920);
+  const dim=t<P.sc.s1h?0.35:1;
+  [[0,200+Math.sin(t*.6)*180,450+Math.cos(t*.5)*150,950,.32],[1,880+Math.cos(t*.7)*150,1450+Math.sin(t*.6)*180,900,.24],[2,540+Math.sin(t*.4)*300,1000,700,.16]].forEach(([i,x,y,r,al])=>{const c=mix(A[i],B[i],k);const gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,`rgba(${c},${al*dim})`);gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(0,0,1080,1920)});
+  const hz=1300,gcx=mix(A[0],B[0],k);g.save();g.beginPath();g.rect(0,hz,1080,620);g.clip();const gg=g.createLinearGradient(0,hz,0,1920);gg.addColorStop(0,`rgba(${gcx},0)`);gg.addColorStop(1,`rgba(${gcx},${.28*dim})`);g.strokeStyle=gg;g.lineWidth=2;
+  for(let i=-14;i<=14;i++){g.beginPath();g.moveTo(540+i*14,hz);g.lineTo(540+i*260,2120);g.stroke()}
+  for(let j=0;j<26;j++){const z=((j-(t*2.2)%1)+26)%26+.4;const y=hz+640/z;if(y>1920)continue;g.beginPath();g.moveTo(0,y);g.lineTo(1080,y);g.stroke()}g.restore();
+  for(const s of STARS){const y=((s.y-t*45*s.z)%1920+1920)%1920;g.fillStyle=`rgba(230,235,255,${(.25+.55*Math.abs(Math.sin(t*2+s.s*10)))*s.z*.6*dim})`;g.beginPath();g.arc(s.x,y,1+s.z*1.5,0,7);g.fill()}
+}
+
+function show(id,t,a,b,first,last){const e=$(id);if(t<a-.001||t>=b){e.style.display='none';return false}e.style.display='block';
+  const i=first?1:eo(pr(t,a,a+.38)),o=last?1:1-ei(pr(t,b-.28,b));const s=lerp(1.3,1,i)*lerp(1,.8,1-o),bl=(1-i)*24+(1-o)*18;
+  e.style.opacity=Math.min(i*1.2,o*1.1,1);e.style.transform=`scale(${s})`;e.style.filter=bl>.3?`blur(${bl.toFixed(1)}px)`:'none';return true}
+const pop=(e,t,a,d=.4,from=.6)=>{const p=pr(t,a,a+d);e.style.opacity=p>0?Math.min(1,p*2.5):0;e.style.transform=`scale(${lerp(from,1,eb(p))})`;return p};
+const rise=(e,t,a,d=.4,dy=60)=>{const p=pr(t,a,a+d);e.style.opacity=p;e.style.transform=`translateY(${(1-eo(p))*dy}px)`;return p};
+const letters=(L,t,a,st=.03,d=.35,mode=0)=>L.forEach((s,i)=>{const q=pr(t,a+i*st,a+d+i*st);s.style.opacity=q>0?1:0;s.style.transform=mode?`translateY(${(1-eb(q,2))*140}px) rotateX(${(1-eo(q))*-90}deg) scale(${lerp(1.5,1,eo(q))})`:`translateY(${(1-eb(q))*90}px)`});
+
+/* captions */
+const CAPS=P.caps; // [{t0,t1,words:[{w,t}]}]
+function drawCap(t){const c=CAPS.find(c=>t>=c.t0&&t<c.t1);const E=$('cap');if(!c){E.innerHTML='';return}
+  const p=pr(t,c.t0,c.t0+.15);E.style.opacity=p;E.style.transform=`translateY(${(1-eo(p))*20}px)`;
+  E.innerHTML=c.words.map(w=>{const on=t>=w.t;const cur=on&&(!w.n||t<w.n);return `<span class="w" style="color:${cur?c.col:on?'#fff':'rgba(255,255,255,.45)'};transform:scale(${cur?1.08:1})">${w.w}</span>`}).join(' ')}
+
+function shakeAt(t,list){let sx=0,sy=0;for(const c of list){if(t>=c&&t<c+.35){const k=Math.exp(-(t-c)*12)*18;sx+=(rnd(Math.floor(t*60))-.5)*k;sy+=(rnd(Math.floor(t*60)+9)-.5)*k}}return [sx,sy]}
+
+async function render(t){
+  const S=P.sc;
+  drawBg(t);
+  const [sx,sy]=shakeAt(t,P.hits);$('stage').style.transform=`translate(${sx}px,${sy}px)`;
+  let f=0;for(const c of P.flashes)f=Math.max(f,t>=c?Math.exp(-(t-c)*10)*.5:Math.exp(-(c-t)*30)*.2);$('flash').style.opacity=f;
+  /* wipe GPT->Claude */
+  const W=$('wipe');if(Math.abs(t-S.s5)<.32){const p=eio(pr(t,S.s5-.32,S.s5+.32));W.style.display='flex';W.style.transform=`translateX(${lerp(2700,-2700,p)}px) rotate(20deg)`}else W.style.display='none';
+
+  /* S1 hook */
+  if(show('s1',t,0,S.s2,true)){
+    const full='> Этот ролик смонтировал';const n=Math.floor(pr(t,.3,1.75)*full.length);const cur=(Math.floor(t*3)%2||t<1.8)?'▍':' ';
+    $('typed').textContent=full.slice(0,n)+(t<S.hookNot+.2?cur:'');
+    const T=S.hookNot;L_not.forEach((s,i)=>{const q=pr(t,T+i*.02,T+.3+i*.02);s.style.opacity=q>0?1:0;s.style.transform=`scale(${lerp(2.6,1,eo5(q))})`});
+    const fr=Math.floor(t*30);const gl=t>T&&(rnd(fr*1.7)>.6||t<T+.25);const gx=gl?(rnd(fr)-.5)*40:0;
+    $('notH').style.textShadow=gl?`${-gx}px 0 #22D3EE, ${gx}px 0 #FF3B5C`:'0 0 80px rgba(255,84,112,.5)';$('notH').style.transform=`translateX(${gx*.4}px)`;
+    $('typed').style.transform=`translateY(${-eo(pr(t,T,T+.3))*40}px)`;
+  }
+  /* S2 me */
+  if(show('s2',t,S.s2,S.s3)){
+    const a=S.s2;const cp=pr(t,a+.05,a+.6);$('card').style.opacity=cp;$('card').style.transform=`rotateX(${lerp(40,8,eo(cp))+Math.sin(t*1.3)*3}deg) rotateY(${Math.sin(t*.9)*6}deg) translateY(${(1-eo(cp))*300}px)`;
+    const ap=pr(t,a+.2,a+.75);$('avWrap').style.opacity=ap>0?1:0;$('avWrap').style.transform=`scale(${eb(ap,1.4)}) rotateY(${(1-eo(ap))*180}deg)`;$('ring').style.transform=`rotate(${t*90}deg)`;
+    letters(L_nm,t,a+.45,.03,.35);rise($('nick'),t,a+.9);pop($('tagl'),t,a+1.2);
+    const op=pr(t,a+1.9,a+2.4);[['orb1',0],['orb2',Math.PI]].forEach(([id,ph])=>{const e=$(id);const ang=t*1.6+ph;e.style.left=540+Math.cos(ang)*330-130+'px';e.style.top=710+Math.sin(ang)*110-38+'px';e.style.opacity=op;e.style.zIndex=Math.sin(ang)>0?5:0;e.style.transform=`scale(${lerp(.4,1,eb(op))*(0.85+0.15*Math.sin(ang))})`});
+    document.querySelectorAll('.rub').forEach((d,i)=>{const q=pr(t,a+4.2+rnd(i)*.4,a+5.5+rnd(i)*.4);d.style.left=100+rnd(i+1)*880+'px';d.style.top=1500-q*900+'px';d.style.opacity=q>0&&q<1?Math.sin(q*Math.PI):0;d.style.transform=`rotate(${(rnd(i+5)-.5)*60}deg)`});
+  }
+  /* S3 VS */
+  if(show('s3',t,S.s3,S.s4)){
+    const a=S.s3,C=S.vsHit;const inp=eo(pr(t,a+.05,C-a>0?C:a+1.4));
+    const sep=eo(pr(t,C+.55,C+1.1));
+    const gx=t<C?lerp(-300,350,eo(pr(t,a+.05,C))):lerp(500,300,sep), cxv=t<C?lerp(1380,730,eo(pr(t,a+.05,C))):lerp(580,780,sep);
+    const yy=820+Math.sin(t*2)*12;
+    const kick=t>=C&&t<C+.25?Math.sin(pr(t,C,C+.25)*Math.PI)*1:0;
+    $('oG').style.transform=`translate(${gx-kick*60}px,${yy}px) scale(${1+kick*.15})`;$('oC').style.transform=`translate(${cxv+kick*60}px,${yy}px) scale(${1+kick*.15})`;
+    const vp=pr(t,a+.6,a+.95);$('vs').style.opacity=vp>0?(t<C?1:1-pr(t,C+.3,C+.6)):0;$('vs').style.transform=`scale(${lerp(3,1,eo5(vp))}) skewX(-8deg)`;$('vs').style.textShadow='0 0 60px rgba(255,255,255,.6)';
+    $('vs').style.background='linear-gradient(90deg,#19C37D,#fff,#F0A27A)';$('vs').style.webkitBackgroundClip='text';$('vs').style.color='transparent';
+    // lightning
+    if(t>=C&&t<C+.45){let s='';for(let b=0;b<5;b++){let x=540,y=1010;let d=`M${x} ${y}`;const ang=rnd(b+Math.floor(t*20))*Math.PI*2;for(let j=0;j<7;j++){x+=Math.cos(ang)*60+(rnd(b*9+j+Math.floor(t*30))-.5)*80;y+=Math.sin(ang)*60+(rnd(b*7+j+Math.floor(t*30))-.5)*80;d+=` L${x} ${y}`}s+=`<path d="${d}" stroke="#fff" stroke-width="5" fill="none" style="filter:drop-shadow(0 0 12px #9cf)"/>`}$('bolt').innerHTML=s;$('bolt').style.opacity=1-pr(t,C,C+.45)}else $('bolt').innerHTML='';
+    const bp=pop($('both'),t,S.vsBoth,.45,.5);
+    const lp=pr(t,C+.7,C+1.1);$('lG').style.left=gx-140+'px';$('lG').style.top=yy+215+'px';$('lC').style.left=cxv-105+'px';$('lC').style.top=yy+215+'px';$('lG').style.opacity=lp;$('lC').style.opacity=lp;
+  }
+  /* S4 GPT */
+  if(show('s4',t,S.s4,S.s5)){
+    const a=S.s4;
+    const hp=pr(t,a+.05,a+.4);$('g_head').style.opacity=hp;$('g_head').style.transform=`translateY(${(1-eo(hp))*-40}px)`;letters(L_g,t,a+.15,.04,.4,1);pop($('g_model'),t,a+.7);
+    const A1=S.gA,B1=S.gB,C1=S.gC,D1=S.gD;
+    // A chat
+    const ca=t>=a&&t<B1+.3;$('g_chat').style.display=ca?'block':'none';
+    if(ca){const p=pr(t,a+.2,a+.65),o=pr(t,B1-.1,B1+.3);$('g_chat').style.opacity=Math.min(p,1-o);$('g_chat').style.transform=`rotateX(${(1-eo(p))*30+Math.sin(t)*2}deg) translateY(${(1-eo(p))*200}px) scale(${1-o*.2})`;
+      const pt='Сделай облицовку фасада дагестанским камнем. Ничего не менять в архитектуре.';$('g_prompt').textContent=pt.slice(0,Math.floor(pr(t,a+.6,a+1.9)*pt.length));
+      pop($('g_ub'),t,a+.45,.35,.8);const gp=pr(t,a+2.1,B1-.3);$('g_ab').style.opacity=t>a+2.0?1:0;drawGen(gp)}
+    // B fan
+    const fb=t>=B1-.1&&t<C1;$('g_fan').style.display=fb?'block':'none';$('g_chips').style.display=fb?'flex':'none';
+    if(fb){const o=pr(t,C1-.3,C1);document.querySelectorAll('.fanc').forEach((d,k)=>{const p=pr(t,B1+k*.15,B1+.5+k*.15);const ang=(k-1)*28+Math.sin(t*1.2)*4;
+      d.style.opacity=p*(1-o);d.style.transform=`translateX(${(k-1)*250*eo(p)}px) translateZ(${k===1?120:0}px) rotateY(${-ang*eo(p)}deg) rotateZ(${(k-1)*6*eo(p)}deg) translateY(${(1-eb(p))*400}px)`});
+      document.querySelectorAll('.gch').forEach((d,k)=>{const p=pop(d,t,B1+.4+k*.25,.35);d.style.opacity=Math.min(+d.style.opacity,1-o)})}
+    // C before/after
+    const bc=t>=C1-.05&&t<D1;$('g_ba').style.display=bc?'block':'none';$('g_min').style.display=bc?'block':'none';
+    if(bc){const p=pr(t,C1,C1+.4),o=pr(t,D1-.3,D1);$('g_ba').style.opacity=Math.min(p,1-o);$('g_ba').style.transform=`scale(${lerp(.85,1,eo(p))*(1-o*.15)}) rotateY(${(1-eo(p))*-25}deg)`;
+      const sl=eio(pr(t,C1+.6,C1+2.4));const x=860*(1-sl);$('g_after').style.clipPath=`inset(0 0 0 ${x}px)`;$('g_line').style.left=x+'px';$('g_line').style.opacity=sl>0&&sl<1?1:0;
+      $('g_aftTag').style.opacity=sl>.5?1:0;const mp=pop($('g_min'),t,C1+2.2,.4);$('g_min').style.opacity=Math.min(mp,1-o)}
+    // D price
+    const pd=t>=D1-.05;$('g_price').style.display=pd?'block':'none';
+    if(pd){const p=pr(t,D1,D1+.6);$('g_price').style.opacity=Math.min(1,p*2);$('g_price').style.transform=`rotateY(${lerp(-90,0,eb(p,1.2))+Math.sin(t*1.4)*5}deg) rotateX(${Math.cos(t*1.1)*4}deg)`;
+      const n=Math.round(eo(pr(t,S.gPrice,S.gPrice+.9))*2490);$('g_price').querySelector('.pnum').textContent=n.toLocaleString('ru-RU').replace(/ /g,' ')+' ₽';
+      $('g_price').querySelectorAll('.pf').forEach((d,k)=>rise(d,t,D1+1.4+k*.2,.35,30))}
+  }
+  /* S5 Claude */
+  if(show('s5',t,S.s5,S.s6)){
+    const a=S.s5;const hp=pr(t,a+.05,a+.4);$('c_head').style.opacity=hp;$('c_head').style.transform=`translateY(${(1-eo(hp))*-40}px)`;letters(L_c,t,a+.15,.025,.4,1);pop($('c_model'),t,S.cModel);
+    const EA=S.cA,EB=S.cB,EC=S.cC,ED=S.cD,EE=S.cE;
+    // editor
+    const ea=t>=a&&t<EB+.2;$('c_ed').style.display=ea?'block':'none';
+    if(ea){const p=pr(t,a+.2,a+.6),o=pr(t,EB-.1,EB+.2);$('c_ed').style.opacity=Math.min(p,1-o);
+      const flip=eio(pr(t,EB-1.0,EB-.6));$('c_ed').style.transform=`translateY(${(1-eo(p))*200}px) rotateY(${flip*180+Math.sin(t)*3}deg) scale(${1-o*.2})`;
+      const tot=CODE_TXT.length;const k=pr(t,a+.5,EB-1.1)*tot;let h='';for(let i=0;i<tot;i++){if(i<Math.floor(k))h+=CODE_TXT[i]+'\n';else if(i===Math.floor(k)){const tmp=document.createElement('div');tmp.innerHTML=CODE_TXT[i];const txt=tmp.textContent;h+=txt.slice(0,Math.floor((k%1)*txt.length))+'▍\n'}}$('code').innerHTML=h;
+      const rp=pr(t,EB-.6,EB);$('r_logo').style.transform=`scale(${lerp(.3,1,eb(rp,1.6))})`;$('r_logo').style.opacity=rp;$('r_bar').style.width=700*eo(rp)+'px';
+      document.querySelectorAll('.rd').forEach((d,i)=>{const ang=i/18*Math.PI*2+t*2;d.style.left=450+Math.cos(ang)*(200+60*Math.sin(t*3+i))-8+'px';d.style.top=330+Math.sin(ang)*180-8+'px';d.style.opacity=rp})}
+    // timeline
+    const tb=t>=EB-.05&&t<EC+.1;$('c_tl').style.display=tb?'block':'none';
+    if(tb){const p=pr(t,EB,EB+.35),o=pr(t,EC-.2,EC+.1);$('c_tl').style.opacity=Math.min(p,1-o);$('c_tl').style.transform=`rotateX(${(1-eo(p))*40}deg) scale(${1-o*.15})`;
+      document.querySelectorAll('.clip').forEach(d=>{const k=+d.dataset.k;const q=pr(t,EB+.1+k*.05,EB+.4+k*.05);d.style.transform=`translateX(${(1-eo(q))*900}px)`;d.style.opacity=q});
+      $('playh').style.left=170+pr(t,EB+.5,EC)*760+'px'}
+    // phones with previous videos
+    const pc=t>=EC-.1&&t<ED;$('c_ph').style.display=pc?'block':'none';
+    if(pc){const o=pr(t,ED-.25,ED);document.querySelectorAll('.phn').forEach((d,k)=>{const p=pr(t,EC+k*.12,EC+.45+k*.12);const ang=(k-1)*22;d.style.opacity=p*(1-o);d.style.transform=`translateX(${(k-1)*300*eo(p)}px) translateZ(${k===1?100:-40}px) rotateY(${-ang*eo(p)+Math.sin(t*1.5)*4}deg) translateY(${(1-eb(p))*500+(k===1?-20:30)}px)`});
+      for(let i=1;i<=3;i++){const fi=Math.min(72,Math.max(1,Math.floor((t-EC)*30)+1));const src=`a/pv${i}/${String(fi).padStart(3,'0')}.jpg`;const im=$('pv'+i);if(im.getAttribute('src')!==src){im.src=src;await im.decode().catch(()=>{})}}}
+    // chips
+    document.querySelectorAll('.cch').forEach((d,k)=>{const T=S.cChips[k];const p=pop(d,t,T,.35,.4);const hide=k<4?pr(t,ED-.2,ED):pr(t,EE-.2,EE);d.style.opacity=Math.min(+d.style.opacity,1-hide);d.style.display=t>=T?'inline-flex':'none'});
+    // web
+    const wd=t>=ED-.05&&t<EE;$('c_web').style.display=wd?'block':'none';
+    if(wd){const p=pr(t,ED,ED+.35),o=pr(t,EE-.25,EE);$('c_web').style.opacity=Math.min(p,1-o);$('c_web').style.transform=`scale(${lerp(.85,1,eo(p))}) rotateX(${(1-eo(p))*25}deg)`;
+      document.querySelectorAll('.sk').forEach((d,k)=>{d.style.opacity=pr(t,ED+.05+k*.05,ED+.2+k*.05)*(1-pr(t,ED+.6,ED+.85))});
+      const ip=pr(t,ED+.55,ED+.85);$('w_img').style.opacity=ip;$('w_img').style.transform=`translateY(${-eio(pr(t,ED+.9,EE-.2))*2100}px)`}
+    // price
+    const pd=t>=EE-.05;$('c_price').style.display=pd?'block':'none';
+    if(pd){const p=pr(t,EE,EE+.6);$('c_price').style.opacity=Math.min(1,p*2);$('c_price').style.transform=`rotateY(${lerp(90,0,eb(p,1.2))+Math.sin(t*1.4)*5}deg) rotateX(${Math.cos(t*1.1)*4}deg)`;
+      const n=Math.round(eo(pr(t,S.cPrice,S.cPrice+.9))*3490);$('c_price').querySelector('.pnum').textContent=n.toLocaleString('ru-RU').replace(/ /g,' ')+' ₽';
+      $('c_price').querySelectorAll('.pf').forEach((d,k)=>rise(d,t,EE+1.3+k*.2,.35,30))}
+  }
+  /* S6 reveal */
+  if(show('s6',t,S.s6,S.s7)){
+    const a=S.s6;const kp=pop($('r_k'),t,a+.35,.45,.7);$('r_k').style.opacity=Math.min(kp,1-pr(t,S.rT1-.2,S.rT1));
+    rise($('r_t1'),t,S.rT1,.4,40);
+    L_r2.forEach((s,i)=>{const q=pr(t,S.rClaude+i*.05,S.rClaude+.45+i*.05);s.style.opacity=q>0?1:0;s.style.transform=`translateY(${(1-eb(q,2))*160}px) scale(${lerp(2,1,eo5(q))})`;s.style.textShadow='0 0 80px rgba(217,119,87,.8)'});
+    const ip=pr(t,S.rClaude-.1,S.rClaude+.4);$('r_ic').style.opacity=ip;$('r_ic').style.transform=`rotate(${t*60}deg) scale(${eb(ip)})`;
+    // stack
+    const sp=pr(t,S.rT1,S.rT1+.6),ex=eio(pr(t,S.rT1+.5,S.rClaude+.6)),so=pr(t,S.rVoice-.3,S.rVoice);
+    $('stack').style.transform=`rotateX(58deg) rotateZ(${-35+Math.sin(t*.8)*8}deg) scale(${lerp(.6,1.35,eo(sp))*(1-so*.5)})`;$('stack').style.opacity=sp*(1-so);$('stack').style.display=so<1?'block':'none';
+    document.querySelectorAll('.lay').forEach((d,k)=>{d.style.transform=`translateZ(${(k-2)*lerp(6,210,ex)}px)`});
+    // voice wave
+    const wv=pr(t,S.rVoice-.1,S.rVoice+.3);$('wave').style.opacity=wv;
+    document.querySelectorAll('.wb').forEach((d,i)=>{const e=env(t-Math.abs(i-22)*0.012);const h=20+e*360*(0.6+0.4*Math.sin(i*1.7+t*9))*(1-Math.abs(i-22)/30);d.style.height=Math.max(14,h)+'px'});
+    pop($('r_voice'),t,S.rVoice+.3,.4);
+  }
+  /* S7 CTA */
+  if(show('s7',t,S.s7,99,false,true)){
+    const a=S.s7;pop($('k_av'),t,a+.1,.45,.3);rise($('k_nm'),t,a+.3);
+    L_kt.forEach((s,i)=>{const q=pr(t,a+.35+i*.025,a+.7+i*.025);s.style.opacity=q>0?1:0;s.style.transform=`translateY(${(1-eb(q))*80}px)`});
+    document.querySelectorAll('.kc').forEach((d,k)=>{const p=pr(t,a+.9+k*.15,a+1.35+k*.15);d.style.opacity=p;d.style.transform=`rotateY(${(k?-1:1)*lerp(70,10,eb(p))+Math.sin(t*1.3+k)*4}deg) translateY(${(1-eo(p))*200}px)`});
+    const bp=pr(t,a+1.4,a+1.8);$('k_btn').style.opacity=bp;$('k_btn').style.transform=`translateY(${(1-eb(bp))*140}px) scale(${1+Math.sin(Math.max(0,t-a-1.8)*5)*.025})`;
+    $('k_shine').style.left=lerp(-200,1000,eio(pr(t,a+2.2,a+2.9)%1))+'px';
+    pop($('k_num'),t,a+1.8,.4,.6);rise($('k_nick'),t,a+2.1);
+  }
+  drawCap(t);
+}
+window.render=render;
+</script>
+</body></html>
