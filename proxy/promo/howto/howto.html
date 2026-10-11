@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><title>ahmedov.proxy how-to</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#06080F;font-family:'Inter Display','Inter',sans-serif;color:#F4F7FF;-webkit-font-smoothing:antialiased}
+#bg{position:absolute;inset:0}
+#stage{position:absolute;inset:0;perspective:2000px}
+.abs{position:absolute}
+.p3{transform-style:preserve-3d}
+.h{font-weight:800;letter-spacing:-0.035em;line-height:1}
+.ch{display:inline-block;white-space:pre}
+.cx{left:0;right:0;text-align:center}
+.glass{background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border:2px solid rgba(255,255,255,.15);box-shadow:0 30px 80px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.2)}
+.pill{border-radius:60px;padding:0 36px;height:92px;display:inline-flex;align-items:center;gap:16px;font-size:40px;font-weight:700}
+.btn{border-radius:70px;display:flex;align-items:center;justify-content:center;gap:22px;font-weight:800;letter-spacing:-.02em;overflow:hidden;position:relative}
+/* phone */
+#phone{left:222px;top:440px;width:636px;height:1333px}
+.shell{position:absolute;inset:0;border-radius:86px;background:linear-gradient(145deg,#2c3548,#0b0f18);box-shadow:0 60px 140px rgba(0,0,0,.7),inset 0 0 0 3px rgba(255,255,255,.14)}
+#screen{position:absolute;left:18px;top:18px;width:600px;height:1297px;border-radius:70px;overflow:hidden;background:#000}
+#cam{position:absolute;left:0;top:0;width:600px;height:1297px;transform-origin:0 0}
+#fimg{width:600px;height:1297px;display:block}
+#glow{position:absolute;inset:0;border-radius:86px;pointer-events:none}
+.tap{position:absolute;width:96px;height:96px;margin:-48px 0 0 -48px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.95) 0,rgba(255,255,255,.75) 45%,rgba(255,255,255,.25) 70%);box-shadow:0 0 30px rgba(255,255,255,.8),0 0 0 4px rgba(77,168,255,.6)}
+.rip{position:absolute;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;border:6px solid #fff}
+/* caption */
+#cap{top:150px}
+#badge{display:inline-flex;align-items:center;gap:12px;padding:12px 28px;border-radius:40px;font-size:32px;font-weight:800;letter-spacing:.06em}
+#ctitle{font-size:92px;margin-top:22px}
+#csub{font-size:44px;font-weight:600;color:#C9D3E8;margin-top:14px}
+</style></head>
+<body>
+<canvas id="bg" width="1080" height="1920"></canvas>
+<div id="stage">
+
+  <!-- intro -->
+  <div id="intro" class="abs" style="inset:0">
+    <div id="i1" class="abs cx" style="top:300px;font-size:64px;font-weight:600;color:#C9D3E8">Как подключить</div>
+    <div id="i2" class="abs cx h" style="top:395px;font-size:104px">Telegram и WhatsApp</div>
+    <div id="i3" class="abs cx h" style="top:520px;font-size:230px">без VPN</div>
+    <div id="i4" class="abs cx" style="top:800px"><div class="pill glass" style="font-size:46px;height:104px"><svg width="44" height="44" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="#64DE79"/></svg>за 30 секунд</div></div>
+    <div id="iTg" class="abs p3" style="left:120px;top:1060px;width:280px;height:280px"></div>
+    <div id="iWa" class="abs p3" style="left:680px;top:1180px;width:280px;height:280px"></div>
+  </div>
+
+  <!-- chapter -->
+  <div id="chap" class="abs" style="inset:0;display:none">
+    <div id="cWa" class="abs p3" style="left:350px;top:560px;width:380px;height:380px"></div>
+    <div id="c1" class="abs cx" style="top:1040px;font-size:72px;font-weight:700;color:#C9D3E8">Теперь</div>
+    <div id="c2" class="abs cx h" style="top:1130px;font-size:180px;color:#64DE79">WhatsApp</div>
+  </div>
+
+  <!-- caption -->
+  <div id="cap" class="abs cx" style="z-index:5">
+    <div id="badge"></div>
+    <div id="ctitle" class="h"></div>
+    <div id="csub"></div>
+  </div>
+
+  <!-- phone -->
+  <div id="phone" class="abs p3">
+    <div class="shell" style="transform:translateZ(-30px);filter:brightness(.45)"></div>
+    <div class="shell" style="transform:translateZ(-15px);filter:brightness(.7)"></div>
+    <div class="shell"></div>
+    <div id="screen"><div id="cam"><img id="fimg"></div><div id="taps"></div></div>
+    <div id="glow"></div>
+  </div>
+  <div id="confetti" class="abs" style="left:540px;top:700px"></div>
+
+  <!-- outro -->
+  <div id="outro" class="abs" style="inset:0;display:none">
+    <div id="o1" class="abs cx h" style="top:230px;font-size:190px">Готово!</div>
+    <div id="o2" class="abs cx" style="top:470px;display:flex;justify-content:center;gap:22px"></div>
+    <div id="ologo" class="abs p3" style="left:390px;top:640px;width:300px;height:300px"></div>
+    <div id="o3" class="abs cx h" style="top:990px;font-size:120px">ahmedov.proxy</div>
+    <div id="o4" class="abs cx" style="top:1135px;font-size:52px;font-weight:700">без VPN · от <span style="color:#64DE79">2,7 ₽</span> в день</div>
+    <div id="cta" class="abs btn" style="left:160px;top:1260px;width:760px;height:144px;font-size:56px;color:#06080F;background:linear-gradient(90deg,#64DE79,#4DA8FF);box-shadow:0 20px 80px rgba(100,222,121,.45)">
+      <div id="shine" class="abs" style="top:-40px;bottom:-40px;width:140px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);transform:skewX(-20deg)"></div>
+      <svg width="48" height="48" viewBox="0 0 24 24" style="position:relative"><path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="#06080F"/></svg><span style="position:relative">Подключить сейчас</span></div>
+    <div id="o5" class="abs cx h" style="top:1450px;font-size:60px;color:#C9D3E8">ahmedov.online<span style="color:#64DE79">/proxy</span></div>
+  </div>
+
+  <div id="flash" class="abs" style="inset:0;pointer-events:none;background:radial-gradient(circle at 50% 45%,rgba(255,255,255,.9),rgba(160,200,255,.35) 45%,transparent 75%);opacity:0"></div>
+</div>
+<div class="abs" style="inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.5) 100%)"></div>
+
+<script>
+const TL=window.TL;
+const $=id=>document.getElementById(id);
+const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const pr=(t,a,b)=>cl((t-a)/(b-a));
+const lerp=(a,b,x)=>a+(b-a)*x;
+const eo=x=>1-Math.pow(1-x,3), eo5=x=>1-Math.pow(1-x,5), ei=x=>x*x*x;
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eb=(x,s=1.70158)=>{const c3=s+1;return 1+c3*Math.pow(x-1,3)+s*Math.pow(x-1,2)};
+const el=x=>x<=0?0:x>=1?1:Math.pow(2,-10*x)*Math.sin((x*10-.75)*2*Math.PI/3)+1;
+const rnd=i=>{const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+
+const PLANE='<path d="M21.6 4.2 2.6 11.6c-.9.4-.9 1 0 1.3l4.8 1.5 1.8 5.7c.2.6.4.7.9.3l2.6-2.4 5 3.7c.9.5 1.5.2 1.7-.8l3.1-14.8c.3-1.2-.5-1.8-1.3-1.4zM9 14l8.4-5.3c.4-.2.7-.1.4.2l-6.8 6.2-.3 3.3z" fill="#fff"/>';
+const WAP='<path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.9 7.6c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .6.4l.8 1.9c.1.2 0 .4-.1.6l-.5.6c-.1.2-.2.3 0 .6.6 1 1.5 1.9 2.6 2.5.3.1.4.1.6-.1l.6-.7c.2-.2.3-.2.6-.1l1.8.9c.3.1.4.2.4.4 0 .4-.1 1.2-.7 1.7-.6.5-1.6.8-2.6.4-1.5-.5-2.8-1.4-3.9-2.6-1-1.1-1.9-2.4-2.2-3.7-.2-1 .1-1.8.6-2.4z" fill="#fff"/>';
+const CHECK='<path d="m5 12.5 4.5 4.5L19 7.5"/>';
+const tgFace=`<div style="width:100%;height:100%;border-radius:50%;background:linear-gradient(160deg,#6CC0FF,#2A8EEA);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 4px 0 rgba(255,255,255,.35)"><svg viewBox="0 0 24 24" width="58%" height="58%" style="margin-left:-6%">${PLANE}</svg></div>`;
+const waFace=`<div style="width:100%;height:100%;border-radius:28%;background:linear-gradient(160deg,#8BEA9B,#2FBF5A);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 4px 0 rgba(255,255,255,.35)"><svg viewBox="0 0 24 24" width="60%" height="60%">${WAP}</svg></div>`;
+const LOGO=`<svg viewBox="0 0 512 512" width="100%" height="100%"><rect width="512" height="512" rx="128" fill="#06080F"/><rect x="44" y="44" width="424" height="424" rx="104" fill="url(#g1)" fill-opacity=".16" stroke="rgba(255,255,255,.12)" stroke-width="2"/><circle cx="176" cy="176" r="72" fill="url(#g2)"/><circle cx="344" cy="344" r="64" fill="url(#g3)"/><path d="M148 268h214" stroke="#F4F7FF" stroke-width="30" stroke-linecap="round"/><path d="M148 334h146" stroke="#F4F7FF" stroke-width="30" stroke-linecap="round" opacity=".82"/><defs><linearGradient id="g1" x1="44" y1="44" x2="468" y2="468" gradientUnits="userSpaceOnUse"><stop stop-color="#4DA8FF"/><stop offset="1" stop-color="#64DE79"/></linearGradient><linearGradient id="g2" x1="104" y1="104" x2="248" y2="248" gradientUnits="userSpaceOnUse"><stop stop-color="#4DA8FF"/><stop offset="1" stop-color="#6CC0FF"/></linearGradient><linearGradient id="g3" x1="280" y1="280" x2="408" y2="408" gradientUnits="userSpaceOnUse"><stop stop-color="#64DE79"/><stop offset="1" stop-color="#A6F3B5"/></linearGradient></defs></svg>`;
+function extrude(host,face,n=14,step=3){let h='';for(let i=n;i>=1;i--)h+=`<div class="abs" style="inset:0;transform:translateZ(${-i*step}px);filter:brightness(${(.35+.35*(1-i/n)).toFixed(2)})">${face}</div>`;h+=`<div class="abs" style="inset:0">${face}</div>`;host.innerHTML=h}
+extrude($('iTg'),tgFace);extrude($('iWa'),waFace);extrude($('cWa'),waFace,18,3);
+(function(){let h='';for(let i=14;i>=1;i--)h+=`<div class="abs" style="inset:0;border-radius:25%;background:linear-gradient(135deg,#1b2a44,#0d2a1a);transform:translateZ(${-i*3}px);filter:brightness(${(.4+.5*(1-i/14)).toFixed(2)})"></div>`;h+=`<div class="abs" style="inset:0;border-radius:25%;overflow:hidden;box-shadow:0 0 100px rgba(77,168,255,.45)">${LOGO}</div>`;$('ologo').innerHTML=h})();
+$('o2').innerHTML=[['Telegram',tgFace],['WhatsApp',waFace]].map(([n,f],k)=>`<div class="pill glass" id="och${k}" style="height:116px;font-size:50px;padding:0 36px 0 18px"><div style="width:80px;height:80px">${f}</div>${n}<svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#64DE79" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${CHECK}</svg></div>`).join('');
+$('confetti').innerHTML=Array.from({length:40},(_,i)=>`<i class="abs cf" style="width:${12+rnd(i)*14}px;height:${18+rnd(i+1)*16}px;border-radius:4px;background:${['#64DE79','#4DA8FF','#A6F3B5','#fff','#8B5CF6'][i%5]};display:block"></i>`).join('');
+
+function split(el){const walk=n=>{[...n.childNodes].forEach(c=>{if(c.nodeType===3){const f=document.createDocumentFragment();[...c.textContent].forEach(ch=>{const s=document.createElement('span');s.className='ch';s.textContent=ch;f.appendChild(s)});c.replaceWith(f)}else if(c.nodeType===1&&c.tagName!=='BR')walk(c)})};walk(el);return [...el.querySelectorAll('.ch')]}
+const LI2=split($('i2')),LI3=split($('i3')),LO1=split($('o1')),LO3=split($('o3')),LC2=split($('c2'));
+LI3.forEach((s,i,a)=>{const k=i/(a.length-1);s.style.color=`rgb(${Math.round(lerp(77,100,k))},${Math.round(lerp(168,222,k))},${Math.round(lerp(255,121,k))})`;s.style.textShadow='0 0 60px rgba(77,168,255,.35)'});
+
+/* captions */
+const BLUE='#4DA8FF',GREEN='#64DE79';
+const CAP={
+ c1:{b:'ШАГ 1',t:'Открой ahmedov.proxy',s:'и войди по номеру',c:BLUE},
+ c2:{b:'ШАГ 2',t:'Выбери сервер',s:'вкладка Telegram',c:BLUE},
+ c3:{b:'ШАГ 3',t:'Подключить прокси',s:'одно касание — и всё',c:BLUE},
+ c4:{b:'ГОТОВО',t:'Telegram подключён',s:'работает без VPN',c:GREEN,ok:1},
+ c5:{b:'ШАГ 1',t:'Выбери сервер',s:'вкладка WhatsApp',c:GREEN},
+ c6:{b:'ШАГ 2',t:'Сохранить и включить',s:'прокси прямо в WhatsApp',c:GREEN},
+ c7:{b:'ГОТОВО',t:'WhatsApp подключён',s:'работает без VPN',c:GREEN,ok:1}
+};
+const SH=TL.shots;
+SH.forEach((s,k)=>{if(s.cap==='c6b')s.cap='c6'});
+// caption start times & contiguity
+SH.forEach((s,k)=>{const p=SH[k-1];s.contig=p&&!p.g&&!s.g&&Math.abs(p.e-s.s)<.01;s.capStart=(p&&p.cap===s.cap)?p.capStart:s.t0});
+// make camera continuous on contiguous shots
+SH.forEach((s,k)=>{if(s.contig){const p=SH[k-1];s.cam=[p.cam[1],s.cam[1],p.cam[3],s.cam[3]]}});
+let curCap=null,LCT=[];
+function setCap(id){if(curCap===id)return;curCap=id;const C=CAP[id];
+  $('badge').innerHTML=(C.ok?`<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#06080F" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">${CHECK}</svg>`:'')+C.b;
+  $('badge').style.background=C.c;$('badge').style.color='#06080F';$('badge').style.boxShadow=`0 0 40px ${C.c}88`;
+  $('ctitle').textContent=C.t;$('csub').textContent=C.s;LCT=split($('ctitle'));}
+
+/* background */
+const cv=$('bg'),g=cv.getContext('2d');
+const STARS=Array.from({length:130},(_,i)=>({x:rnd(i)*1080,y:rnd(i+500)*1920,z:.3+rnd(i+900)*1.2,s:rnd(i+77)}));
+const mix=(a,b,k)=>a.map((v,i)=>Math.round(lerp(v,b[i],k)));
+function drawBg(t,wa){
+  g.fillStyle='#06080F';g.fillRect(0,0,1080,1920);
+  const A=mix([77,168,255],[100,222,121],wa),B=mix([139,92,246],[77,168,255],wa),C=mix([236,72,153],[139,92,246],wa);
+  [[A,200+Math.sin(t*.6)*180,480+Math.cos(t*.5)*150,950,.30],[B,880+Math.cos(t*.7)*150,1450+Math.sin(t*.6)*180,900,.24],[C,540+Math.sin(t*.4)*300,1000,700,.14]].forEach(([c,x,y,r,a])=>{const gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,`rgba(${c},${a})`);gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(0,0,1080,1920)});
+  const hz=1250,gc=mix([110,190,255],[120,230,150],wa);
+  g.save();g.beginPath();g.rect(0,hz,1080,670);g.clip();const gg=g.createLinearGradient(0,hz,0,1920);gg.addColorStop(0,`rgba(${gc},0)`);gg.addColorStop(1,`rgba(${gc},.28)`);g.strokeStyle=gg;g.lineWidth=2;
+  for(let i=-14;i<=14;i++){g.beginPath();g.moveTo(540+i*14,hz);g.lineTo(540+i*260,2120);g.stroke()}
+  for(let k=0;k<26;k++){const z=((k-(t*2)%1)+26)%26+.4;const y=hz+700/z;if(y>1920)continue;g.beginPath();g.moveTo(0,y);g.lineTo(1080,y);g.stroke()}g.restore();
+  for(const s of STARS){const y=((s.y-t*50*s.z)%1920+1920)%1920;g.fillStyle=`rgba(220,235,255,${(.25+.55*Math.abs(Math.sin(t*2+s.s*10)))*s.z*.6})`;g.beginPath();g.arc(s.x,y,1+s.z*1.5,0,7);g.fill()}
+}
+
+const K=600/444;
+const INTRO_END=SH[1].t0, CH=SH.find(s=>s.g==='chapter'), OUT=SH.find(s=>s.g==='outro');
+function shotAt(t){let r=SH[0];for(const s of SH)if(t>=s.t0)r=s;return r}
+let lastSrc='';
+async function render(t){
+  const sh=shotAt(t);
+  const wa=eio(pr(t,CH.t0,CH.t0+1.0));
+  drawBg(t,wa);
+  /* ---- footage frame ---- */
+  let fs=sh.g?null:sh;
+  if(!fs){ if(sh.g==='intro')fs=SH[1]; else if(sh.g==='chapter')fs=t<CH.t0+.7?SH[SH.indexOf(CH)-1]:SH[SH.indexOf(CH)+1]; else fs=SH[SH.indexOf(OUT)-1]; }
+  let idx=fs===sh?Math.floor((t-sh.t0)*30)+1:(sh.g==='intro'||(sh.g==='chapter'&&t>=CH.t0+.7)?1:fs.n);
+  idx=Math.max(1,Math.min(fs.n,idx));
+  const src=`${fs.dir}/${String(idx).padStart(4,'0')}.jpg`;
+  if(src!==lastSrc){const im=$('fimg');im.src=src;await im.decode().catch(()=>{});lastSrc=src}
+  /* ---- camera ---- */
+  const cp=fs===sh?eio(pr(t,sh.t0,sh.t0+sh.dur)):(sh.g==='intro'||(sh.g==='chapter'&&t>=CH.t0+.7)?0:1);
+  const [z0,z1,f0,f1]=fs.cam;const z=lerp(z0,z1,cp),fx=lerp(f0[0],f1[0],cp),fy=lerp(f0[1],f1[1],cp);
+  const W=444*K*z,H=960*K*z;
+  const ox=cl(300-fx*K*z,600-W,0),oy=cl(648-fy*K*z,1297-H,0);
+  const whip=(fs===sh&&!sh.contig)?1-eo(pr(t,sh.t0,sh.t0+.18)):0;
+  $('cam').style.transform=`translate(${ox}px,${oy}px) scale(${K*z/K})`;
+  $('fimg').style.filter=whip>.02?`blur(${whip*8}px)`:'none';
+  /* ---- taps ---- */
+  let th='';
+  if(fs===sh)for(const [T,x,y] of sh.taps){
+    if(t<T-.35||t>T+.55)continue;
+    const px=ox+x*K*z,py=oy+y*K*z;
+    const a=pr(t,T-.35,T-.1),press=t>=T-.05&&t<T+.12;
+    const op=t<T+.15?eo(a):1-pr(t,T+.15,T+.3);
+    th+=`<div class="tap" style="left:${px}px;top:${py}px;opacity:${op};transform:scale(${press?.78:lerp(1.4,1,eo(a))})"></div>`;
+    const rp=pr(t,T,T+.5);if(rp>0)th+=`<div class="rip" style="left:${px}px;top:${py}px;opacity:${1-rp};transform:scale(${lerp(.4,2.6,eo(rp))})"></div>`;
+  }
+  $('taps').innerHTML=th;
+  /* ---- phone transform ---- */
+  const ph=$('phone');
+  let pv=1,tx=0,ty=0,rz=0,ry=Math.sin(t*.8)*3,sc=1;
+  const pin=eo(pr(t,INTRO_END-.45,INTRO_END+.25));
+  if(t<INTRO_END+.25){ty=(1-pin)*1500;ry+=(1-pin)*-30;rz=(1-pin)*8;pv=t>=INTRO_END-.45?1:0}
+  if(sh.g==='chapter'){const o=eio(pr(t,CH.t0,CH.t0+.35)),i=eo(pr(t,CH.t0+CH.dur-.4,CH.t0+CH.dur));
+    tx=t<CH.t0+.7?-1300*o:1300*(1-i);ry+=t<CH.t0+.7?40*o:-40*(1-i);pv=(t<CH.t0+.7?o<1:i>0)?1:0}
+  if(t>=OUT.t0){const o=eio(pr(t,OUT.t0,OUT.t0+.4));ty=o*900;sc=1-o*.4;pv=o<1?1:0;ph.style.opacity=1-o}else ph.style.opacity=1;
+  const sk=shake(t);
+  ph.style.display=pv?'block':'none';
+  ph.style.transform=`translate(${tx+sk[0]}px,${ty+sk[1]}px) rotateX(3deg) rotateY(${ry}deg) rotateZ(${rz}deg) scale(${sc})`;
+  /* success glow + confetti */
+  let sg=0,sT=null;for(const s of SH)if(s.success&&t>=s.success&&t<s.success+1.4){sg=1-pr(t,s.success+.3,s.success+1.4);sT=s.success}
+  $('glow').style.boxShadow=sg>0?`0 0 0 ${6*sg}px #64DE79, 0 0 ${140*sg}px rgba(100,222,121,${.8*sg})`:'none';
+  const cfs=[...document.querySelectorAll('.cf')];
+  cfs.forEach((d,i)=>{if(sT===null){d.style.opacity=0;return}const q=pr(t,sT,sT+1.3);const a=-Math.PI/2+(rnd(i+3)-.5)*2.6;const v=700+rnd(i+8)*700;
+    d.style.left=Math.cos(a)*v*q+'px';d.style.top=(Math.sin(a)*v*q+q*q*900)+'px';d.style.opacity=q>0?1-pr(t,sT+.8,sT+1.3):0;d.style.transform=`rotate(${q*720*(rnd(i)-.5)}deg)`});
+  /* ---- caption ---- */
+  const capEl=$('cap');
+  if(!sh.g){setCap(sh.cap);capEl.style.display='block';const p=pr(t,sh.capStart,sh.capStart+.4);
+    const b=$('badge');b.style.transform=`scale(${CAP[sh.cap].ok?el(pr(t,sh.capStart,sh.capStart+.6)):eb(p)})`;b.style.opacity=p>0?1:0;
+    LCT.forEach((s,i)=>{const q=pr(t,sh.capStart+.05+i*.018,sh.capStart+.35+i*.018);s.style.opacity=q>0?Math.min(1,q*2.5):0;s.style.transform=`translateY(${(1-eo(q))*60}px)`});
+    const sp=pr(t,sh.capStart+.25,sh.capStart+.5);$('csub').style.opacity=sp;$('csub').style.transform=`translateY(${(1-eo(sp))*20}px)`;
+    // exit before graphic shots
+    const nx=SH[SH.indexOf(sh)+1];if(nx&&nx.g){const xo=pr(t,nx.t0-.2,nx.t0);capEl.style.opacity=1-xo;capEl.style.transform=`translateY(${-xo*60}px)`}else{capEl.style.opacity=1;capEl.style.transform='none'}
+  } else capEl.style.display='none';
+  /* ---- intro ---- */
+  const I=$('intro');I.style.display=t<INTRO_END+.1?'block':'none';
+  if(t<INTRO_END+.1){const out=eio(pr(t,INTRO_END-.5,INTRO_END));
+    const p1=pr(t,.05,.4);$('i1').style.opacity=p1*(1-out);$('i1').style.transform=`translateY(${(1-eo(p1))*40-out*200}px)`;
+    LI2.forEach((s,i)=>{const q=pr(t,.25+i*.02,.6+i*.02);s.style.opacity=q>0?1:0;s.style.transform=`translateY(${(1-eo(q))*80}px)`});$('i2').style.opacity=1-out;$('i2').style.transform=`translateY(${-out*220}px)`;
+    LI3.forEach((s,i)=>{const q=pr(t,.7+i*.05,1.15+i*.05);s.style.opacity=q>0?1:0;s.style.transform=`translateY(${(1-eb(q,2))*180}px) rotateX(${(1-eo(q))*-90}deg) scale(${lerp(1.6,1,eo(q))})`});$('i3').style.opacity=1-out;$('i3').style.transform=`translateY(${-out*260}px)`;
+    const p4=pr(t,1.4,1.75);$('i4').style.opacity=p4*(1-out);$('i4').style.transform=`scale(${lerp(.6,1,eb(p4))}) translateY(${-out*200}px)`;
+    const p5=eo(pr(t,.4,1.2));
+    $('iTg').style.transform=`translate(${(1-p5)*-500-out*600}px,${Math.sin(t*2)*16}px) translateZ(${60}px) rotateY(${Math.sin(t*1.5)*25+(1-p5)*180}deg)`;
+    $('iWa').style.transform=`translate(${(1-p5)*500+out*600}px,${Math.cos(t*2)*16}px) translateZ(${60}px) rotateY(${Math.cos(t*1.5)*25-(1-p5)*180}deg)`;}
+  /* ---- chapter ---- */
+  const Cc=$('chap');const inC=t>=CH.t0&&t<CH.t0+CH.dur;Cc.style.display=inC?'block':'none';
+  if(inC){const out=eio(pr(t,CH.t0+CH.dur-.4,CH.t0+CH.dur));const a=pr(t,CH.t0+.1,CH.t0+.6);
+    $('cWa').style.transform=`translateX(${-out*1200}px) rotateY(${lerp(-270,0,eo(a))+Math.sin(t*2)*12}deg) scale(${lerp(.2,1,eb(a))})`;$('cWa').style.opacity=a>0?1:0;
+    const b1=pr(t,CH.t0+.25,CH.t0+.5);$('c1').style.opacity=b1*(1-out);$('c1').style.transform=`translate(${-out*1200}px,${(1-eo(b1))*40}px)`;
+    LC2.forEach((s,i)=>{const q=pr(t,CH.t0+.35+i*.03,CH.t0+.7+i*.03);s.style.opacity=q>0?1:0;s.style.transform=`translateY(${(1-eb(q,2))*140}px) scale(${lerp(1.5,1,eo(q))})`});$('c2').style.transform=`translateX(${-out*1200}px)`;}
+  /* ---- outro ---- */
+  const O=$('outro');O.style.display=t>=OUT.t0?'block':'none';
+  if(t>=OUT.t0){const T=OUT.t0;
+    LO1.forEach((s,i)=>{const q=pr(t,T+.2+i*.04,T+.55+i*.04);s.style.opacity=q>0?1:0;s.style.transform=`translateY(${(1-eb(q,2))*160}px) scale(${lerp(2,1,eo5(q))})`});
+    [0,1].forEach(k=>{const q=pr(t,T+.55+k*.15,T+.9+k*.15);const e=$('och'+k);e.style.opacity=q>0?Math.min(1,q*2):0;e.style.transform=`translateY(${(1-eb(q))*80}px) scale(${lerp(.7,1,eo(q))})`});
+    const lp=pr(t,T+.95,T+1.6);$('ologo').style.opacity=lp>0?1:0;$('ologo').style.transform=`rotateY(${lerp(200,0,eb(lp,1.3))+Math.sin(t*1.4)*12*lp}deg) rotateX(${Math.cos(t*1.2)*8}deg) scale(${lerp(.2,1,eo(lp))})`;
+    LO3.forEach((s,i)=>{const q=pr(t,T+1.3+i*.025,T+1.65+i*.025);s.style.opacity=q>0?1:0;s.style.transform=`translateY(${(1-eb(q))*70}px)`});
+    const p4=pr(t,T+1.65,T+1.95);$('o4').style.opacity=p4;$('o4').style.transform=`translateY(${(1-eo(p4))*40}px)`;
+    const cp2=pr(t,T+1.9,T+2.3);$('cta').style.opacity=Math.min(1,cp2*2);$('cta').style.transform=`translateY(${(1-eb(cp2))*140}px) scale(${1+Math.sin(Math.max(0,t-T-2.3)*5)*.02})`;
+    $('shine').style.left=lerp(-200,900,eio(pr(t,T+2.6,T+3.2)))+'px';
+    const up=pr(t,T+2.15,T+2.5);$('o5').style.opacity=up;$('o5').style.transform=`translateY(${(1-eo(up))*40}px)`;}
+  /* flash at section changes */
+  let f=0;for(const c of [INTRO_END,CH.t0,CH.t0+CH.dur,OUT.t0])f=Math.max(f,t>=c?Math.exp(-(t-c)*10)*.4:Math.exp(-(c-t)*30)*.2);
+  for(const s of SH)if(s.success&&t>=s.success)f=Math.max(f,Math.exp(-(t-s.success)*8)*.35);
+  $('flash').style.opacity=f;
+}
+function shake(t){let sx=0,sy=0;for(const s of SH)if(s.success&&t>=s.success&&t<s.success+.3){const k=Math.exp(-(t-s.success)*12)*14;sx+=(rnd(Math.floor(t*60))-.5)*k;sy+=(rnd(Math.floor(t*60)+9)-.5)*k}return [sx,sy]}
+window.render=render;
+</script>
+</body></html>
