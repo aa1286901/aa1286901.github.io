@@ -61,7 +61,7 @@ add(whoosh(.4,True),S['s2']+1.9,.35,pan=-.4); add(whoosh(.4,True),S['s2']+2.0,.3
 for k in range(8): add(tone(1800+k*90,.08,40)*.4,S['s2']+4.3+k*.12,.35,pan=rng.uniform(-.5,.5))
 add(whoosh(.7,True),S['s3']+.05,.6,pan=-.5); add(whoosh(.7,True),S['s3']+.05,.6,pan=.5)
 add(impact(.8),S['s3']+.65,.6)
-add(impact(2.0),S['vsHit'],1.2); add(glass(1.2)*.6,S['vsHit'],.6); add(kick(True),S['vsHit'],.7)
+add(impact(2.0),S['vsHit'],.75); add(glass(1.2)*.6,S['vsHit'],.35); add(kick(True),S['vsHit'],.7)
 add(pop(600),S['vsBoth'],.6)
 add(pop(900),S['s4']+.5,.4)
 for i in range(30): add(click()*.35,S['s4']+.6+i*.043,.25)
@@ -92,8 +92,8 @@ add(pop(700),a+1.45,.6); add(chime([note(m) for m in (76,81,84,88)],1.2,.05),a+1
 # --- voice + ducking
 vo=np.load(os.path.join(D,'vo.npy'))[:N]
 env=np.abs(vo); k=int(SR*.15); envs=np.convolve(env,np.ones(k)/k,mode='same')
-duck=1-0.55*np.clip(envs/ (np.max(envs)*.35),0,1)
-mixL=L+ML*duck*0.85+vo*1.35; mixR=R+MR*duck*0.85+vo*1.35
+duck=1-0.72*np.clip(envs/ (np.max(envs)*.35),0,1)
+mixL=L*0.8+ML*duck*0.75+vo*1.7; mixR=R*0.8+MR*duck*0.75+vo*1.7
 mix=np.stack([mixL,mixR],1); t=np.arange(N)/SR
 mix*=np.clip((T-t)/1.2,0,1)[:,None]; mix=np.tanh(mix*1.05); mix/=np.max(np.abs(mix))/0.93
 pcm=(mix*32767).astype(np.int16)
