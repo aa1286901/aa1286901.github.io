@@ -4,85 +4,99 @@
       "title": "Авито",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/f3/ac/14/f3ac141b-fb83-54d1-36c4-4db235025cc8/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/114x114bb.jpg",
       "bundleId": "ru.avito.app",
-      "category": "v. 200.5"
+      "category": "v. 200.5",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/qkobwg4i9s8cbkjt6tlzt/200.5-aa...-mail.ru.ipa?rlkey=b69hgymyzyxef9rtp3y5l6nj1"
     },
     {
       "title": "Мах",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3c/78/4c/3c784c95-2fc7-270b-2d64-f224e96decb4/AppIcon-0-0-1x_U007ephone-0-1-sRGB-85-220.png/114x114bb.jpg",
       "bundleId": "ru.oneme.app",
-      "category": "v. 26.17.3"
+      "category": "v. 26.17.3",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/dmrwfh6phjy57y5rv66on/MAX-mail.ru.ipa?rlkey=p5j2lj1ef5vzlqdtgrfgwbm04"
     },
     {
       "title": "Вконтакте",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/d7/b7/8f/d7b78f62-cb03-c29e-fce3-a5504be4b43c/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/114x114bb.jpg",
       "bundleId": "com.vk.vkclient",
-      "category": "v. 8.183.1"
+      "category": "v. 8.183.1",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/cohlob610ghkbtni8f2bu/VK-mail.ipa?rlkey=xy0wlglnu6m94jhp6k4ct8nmn"
     },
     {
       "title": "Сириус (ВТБ)",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/7a/4a/e1/7a4ae123-f112-8c8b-aab7-0be6399aa982/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/114x114bb.jpg",
       "bundleId": "com.sm.FlowTime",
-      "category": "v. 2.0.1"
+      "category": "v. 2.0.1",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/zinvbjtyzft5732ib9iur/mail.ru.ipa?rlkey=pkpcv85p3vrfabexpz3dbumom"
     },
     {
       "title": "Финансы Онлайн (Сбер)",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/33/bd/c4/33bdc466-70f0-0b85-db0c-982201dbf5e7/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/114x114bb.jpg",
       "bundleId": "com.digit.budg",
-      "category": "v. 17.0.0"
+      "category": "v. 17.0.0",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/zv58n7k0zpx90iqvnu3x5/17.0.0-aa...-mail.ru.ipa?rlkey=ukrt13j83n8lkzflvon1bw9cf"
     },
     {
       "title": "Активы Онлайн (Сбер)",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/2d/e0/fd/2de0fd84-a982-766b-95f4-d78ef24cf557/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/114x114bb.jpg",
       "bundleId": "com.assetsonline.ios",
-      "category": "v. 16.13.0"
+      "category": "v. 16.13.0",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/03welofj9s0f9iwsed1wx/16.13.0-aa...-mail.ru.ipa?rlkey=tc5ehvzai0c1p6xl19sbm90d9"
     },
     {
       "title": "Поровну (Альфа)",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/67/a4/7e/67a47e74-9e24-4cf5-b7e5-fa357143397b/AppIcon-0-0-1x_U007epad-0-1-85-220.png/114x114bb.jpg",
       "bundleId": "com.splitactivities.app",
-      "category": "v. 28052025.3"
+      "category": "v. 28052025.3",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/z0nc4y6ukvqi14zljuw4s/mail.ru.ipa?rlkey=p8twseune5wqba23wmx03pheo"
     },
     {
       "title": "T-Помощь (Т-Банк)",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/20/5c/97/205c9700-def2-7b1a-88c7-2c614dd991cf/THelpAppIcon-1x_U007emarketing-0-7-0-0-85-220.png/114x114bb.jpg",
       "bundleId": "com.capyjune.client",
-      "category": "v. 6.33"
+      "category": "v. 6.33",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/8gilca5xg2tfbwfx2p2ru/T-Help-6.33-aa...-mail.ru.ipa?rlkey=zjgauz8g0ntznwpc1rrpnwezw"
     },
     {
       "title": "Tинькофф (Т-Банк)",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/ef/63/5b/ef635b1d-82c1-d770-a5a4-cfc7fd650d81/AppIcon-0-1x_U007emarketing-0-7-0-85-220.png/114x114bb.jpg",
       "bundleId": "ru.tcsbank.mobileclient",
-      "category": "v. 6.13.5"
+      "category": "v. 6.13.5",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/z8gdh21vcwz5b1c4klglf/T-Bank-aa...-mail.ru.ipa?rlkey=rwtmd5nsw1na0m3f6p3jtvj3y"
     },
     {
       "title": "Тинькофф Инвестиции",
       "img": "https://is2-ssl.mzstatic.com/image/thumb/Purple116/v4/ca/2e/a4/ca2ea432-66c9-fd52-9514-4468ec233278/AppIcon-0-1x_U007emarketing-0-7-0-0-85-220.png/114x114bb.jpg",
       "bundleId": "ru.tcsbank.Investing",
-      "category": "v. 6.3.2"
+      "category": "v. 6.3.2",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/68u53hkuo8dqzex2inknt/Investing-aa...-mail.ru.ipa?rlkey=0o0vca2fq8mbf2r3mnabb084w"
     },
     {
       "title": "Дед VPN",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9a/cb/c5/9acbc549-38c7-c154-c71a-26cce2837b6e/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/114x114bb.jpg",
       "bundleId": "com.limy.Turbo-NOVA",
-      "category": "v. 1.4"
+      "category": "v. 1.4",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/9lb9w0xcun96646u9gc28/VPN-1.4-aa...-mail.ru.ipa?rlkey=my3wn50j111o5ekv98ca87hy6"
     },
     {
       "title": "VPN MIR",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/be/96/4f/be964f51-1ce5-1618-2824-e17e50189f52/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/114x114bb.jpg",
       "bundleId": "com.vpnmir.app",
-      "category": "v. 2.4.1"
+      "category": "v. 2.4.1",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/tmafgqx2awkxblcvrnjt9/com.vpnmir.app_v2.4.1.ipa?rlkey=x8a2hmnclaccv6eznvqyqx20s"
     },
     {
       "title": "ChatGPT",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b3/fd/3d/b3fd3d71-5cc3-6663-1654-63934e3bc692/AppIcon-0-0-1x_U007epad-0-0-0-1-0-85-220.png/114x114bb.jpg",
       "bundleId": "com.openai.chat",
-      "category": "v. 1.2025.168"
+      "category": "v. 1.2025.168",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/613hg5ascairkar4fpri9/ChatGPT-1.2025.168-aa...-mail.ru.ipa?rlkey=ojqg2f6iki1ldt0g3dpc234o2"
     },
     {
       "title": "Keenetic",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9c/cf/64/9ccf6401-dee5-b2dc-3d6a-cd67c9ca9b77/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/114x114bb.jpg",
       "bundleId": "com.keenetic.app",
-      "category": "v. 62"
+      "category": "v. 62",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/euhz19osspnfgvyds1bkj/Keenetic-62-aa...-mail.ru.ipa?rlkey=6p1viizf35yyp3im1n3a9uqvv"
     }
   ]
 }

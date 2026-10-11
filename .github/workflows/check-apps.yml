@@ -1,0 +1,20 @@
+name: Check apps
+
+on:
+  push:
+    paths: ["apps/**", "scripts/**", ".github/workflows/check-apps.yml"]
+  pull_request:
+    paths: ["apps/**", "scripts/**", ".github/workflows/check-apps.yml"]
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Plists match apps.json
+        run: python3 scripts/generate_plists.py --check
+      - name: IPA links are reachable
+        run: python3 scripts/check_links.py
