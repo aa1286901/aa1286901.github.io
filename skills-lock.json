@@ -157,6 +157,12 @@
       "skillPath": "skills/find-skills/SKILL.md",
       "computedHash": "913b9d37d0d54047dd65222bb8c67b2bf04e3cb87dcad1729068d7a8b2c8c396"
     },
+    "free-llm-apis": {
+      "source": "mnfst/awesome-free-llm-apis",
+      "sourceType": "github",
+      "skillPath": "free-llm-apis/SKILL.md",
+      "computedHash": "6e30f7243e74a05fd846f562507fd1f820b732fc42f1a430e7be05f81334aa2d"
+    },
     "free-tools": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
