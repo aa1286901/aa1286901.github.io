@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><title>Билайн 0 ₽ — IT Ahmedov</title>
+<style>
+@font-face{font-family:Rub;font-weight:900;src:url(fonts/rubik900.woff2),url(fonts/rubik900l.woff2)}
+@font-face{font-family:Rub;font-weight:700;src:url(fonts/rubik700.woff2),url(fonts/rubik700l.woff2)}
+@font-face{font-family:Hand;font-weight:700;src:url(fonts/caveat700.woff2),url(fonts/caveat700l.woff2)}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#1b1714}
+#paper{position:absolute;left:30px;top:40px;width:1020px;height:1840px;border-radius:18px;background:#F3EEE3;box-shadow:0 30px 80px rgba(0,0,0,.6);overflow:hidden}
+#grid{position:absolute;inset:0;background-image:linear-gradient(rgba(70,90,120,.13) 2px,transparent 2px),linear-gradient(90deg,rgba(70,90,120,.13) 2px,transparent 2px);background-size:48px 48px;background-position:0 20px}
+#noise{position:absolute;inset:0;opacity:.35;mix-blend-mode:multiply}
+#spiral{position:absolute;left:0;top:40px;width:120px;height:1760px}
+.abs{position:absolute}
+.R{white-space:nowrap;font-family:Rub,sans-serif;font-weight:900;color:#141210;letter-spacing:-.01em;line-height:1.05}
+.H{white-space:nowrap;font-family:Hand,cursive;font-weight:700;color:#1d1b18;line-height:1}
+.mk{position:relative;display:inline;background-repeat:no-repeat;background-position:0 70%}
+.cur{display:inline-block;width:6px;height:.9em;background:#141210;vertical-align:-.08em;margin-left:4px}
+#stage{position:absolute;inset:0}
+.scene{position:absolute;inset:0}
+.ball{position:absolute;border-radius:50%;overflow:hidden}
+.ball .st{position:absolute;inset:-40%;background:repeating-linear-gradient(160deg,#FFC800 0 46px,#121212 46px 84px)}
+.ball .sh{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.75),rgba(255,255,255,0) 32%),radial-gradient(circle at 60% 65%,rgba(0,0,0,0) 45%,rgba(0,0,0,.55) 100%)}
+.icon{width:150px;height:150px;border-radius:40px;background:#FFC800;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 0 #c99a00,0 24px 30px rgba(0,0,0,.25)}
+</style></head>
+<body>
+<div id="paper">
+  <div id="grid"></div>
+  <canvas id="noise" width="510" height="920" style="width:1020px;height:1840px"></canvas>
+  <svg id="spiral" viewBox="0 0 120 1760"></svg>
+  <div id="stage">
+    <!-- brand top-left -->
+    <div id="brand" class="abs" style="left:150px;top:90px">
+      <div class="R" style="font-size:40px">IT AHMEDOV</div>
+      <div class="R" style="font-size:24px;font-weight:700;margin-top:8px;color:#3a3530">ТЕХНОЛОГИИ ДЕЛАЮТ ЖИЗНЬ ПРОЩЕ</div>
+      <div id="brandU" class="abs" style="left:0;top:86px;height:10px;border-radius:5px;background:#FFC800"></div>
+    </div>
+    <div id="ballShadow" class="abs" style="width:220px;height:40px;border-radius:50%;background:radial-gradient(rgba(0,0,0,.35),transparent 70%)"></div>
+    <div id="ball" class="ball" style="width:240px;height:240px"><div class="st"></div><div class="sh"></div></div>
+    <div id="ballTxt" class="abs R" style="font-size:44px">билайн</div>
+
+    <!-- S1 -->
+    <div id="s1" class="scene">
+      <div id="l1" class="abs R" style="left:150px;top:760px;font-size:80px"></div>
+      <div id="l2" class="abs R" style="left:150px;top:870px;font-size:80px"></div>
+      <svg id="strike" class="abs" style="left:140px;top:860px" width="820" height="120"><path d="M10 70 C 200 40, 500 95, 800 50" stroke="#141210" stroke-width="14" fill="none" stroke-linecap="round"/></svg>
+    </div>
+    <!-- S2 -->
+    <div id="s2" class="scene">
+      <svg id="brush" class="abs" style="left:120px;top:1000px" width="820" height="360" viewBox="0 0 820 360"><path d="M30 60 Q 60 20 160 30 L 700 18 Q 800 30 790 120 L 800 260 Q 780 340 650 330 L 120 342 Q 20 330 26 240 Z" fill="#FFC800"/></svg>
+      <div id="zero" class="abs R" style="left:190px;top:1010px;font-size:330px;letter-spacing:-.04em">0₽</div>
+      <div id="month" class="abs H" style="left:640px;top:1180px;font-size:120px"></div>
+      <svg id="u2" class="abs" style="left:620px;top:1300px" width="320" height="40"><path d="M5 25 Q 150 5 310 22" stroke="#141210" stroke-width="9" fill="none" stroke-linecap="round"/></svg>
+    </div>
+    <!-- S3 -->
+    <div id="s3" class="scene"></div>
+    <!-- S4 -->
+    <div id="s4" class="scene">
+      <div id="p1" class="abs R" style="left:150px;top:700px;font-size:84px"></div>
+      <div id="p2" class="abs R" style="left:150px;top:810px;font-size:210px;letter-spacing:-.03em"></div>
+      <div id="p3" class="abs H" style="left:160px;top:1040px;font-size:120px"></div>
+      <div id="stamp" class="abs" style="left:110px;top:1260px;width:860px;padding:34px 20px;border:12px solid #141210;border-radius:26px;text-align:center;background:rgba(255,200,0,.92)">
+        <div class="R" style="font-size:64px">И ЗАБЫЛ ПРО ОПЛАТУ</div></div>
+    </div>
+    <!-- S5 -->
+    <div id="s5" class="scene">
+      <div id="q1" class="abs R" style="left:150px;top:680px;font-size:56px"></div>
+      <div id="q2" class="abs R" style="left:150px;top:760px;font-size:118px"></div>
+      <div id="wa" class="abs" style="left:150px;top:1030px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7CF09A,#1FAF4B 60%,#127a33);box-shadow:0 16px 0 #0d5f27,0 30px 40px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center"></div>
+      <div id="q3" class="abs H" style="left:370px;top:1075px;font-size:88px"></div>
+      <div id="q4" class="abs R" style="left:150px;top:1290px;font-size:84px;letter-spacing:-.01em"></div>
+      <svg id="arr" class="abs" style="left:760px;top:1150px" width="240" height="150"><path d="M10 20 C 80 10, 170 40, 200 120 M200 120 L 170 92 M200 120 L 222 86" stroke="#141210" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <!-- doodles -->
+    <div id="note1" class="abs H" style="left:400px;top:1560px;font-size:64px;transform:rotate(-5deg);color:#2a2622"></div>
+    <svg id="heart" class="abs" style="left:870px;top:1560px" width="120" height="110"><path d="M60 96 C 10 60, 5 25, 30 15 C 48 8, 58 25, 60 34 C 62 25, 72 8, 90 15 C 115 25, 110 60, 60 96 Z" stroke="#141210" stroke-width="6" fill="none" stroke-linejoin="round"/></svg>
+  </div>
+</div>
+<div id="flash" class="abs" style="inset:0;background:#fff;opacity:0;pointer-events:none"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),pr=(t,a,b)=>cl((t-a)/(b-a)),lerp=(a,b,x)=>a+(b-a)*x;
+const eo=x=>1-Math.pow(1-x,3),eo5=x=>1-Math.pow(1-x,5),eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eb=(x,s=1.70158)=>{const c3=s+1;return 1+c3*Math.pow(x-1,3)+s*Math.pow(x-1,2)};
+const rnd=i=>{const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+const CPS=17; // typing speed, chars per second
+const KEYS=[], SFX=[];
+/* typed block: segments [{t:'text', mk:'#color'}], start time */
+function T(el,segs,t0,cps=CPS){const total=segs.reduce((a,s)=>a+s.t.length,0);const end=t0+total/cps;
+  let c=0;for(const s of segs)for(const ch of s.t){if(ch!==' ')KEYS.push(+(t0+c/cps).toFixed(3));c++}
+  segs.forEach(s=>{if(s.mk)SFX.push(['marker',+(end+.08).toFixed(3)])});
+  return {el,segs,t0,end,cps}}
+function drawT(b,t,cursor=true){const n=Math.floor((t-b.t0)*b.cps);let left=n,h='';
+  for(const s of b.segs){const k=Math.max(0,Math.min(s.t.length,left));left-=s.t.length;const txt=s.t.slice(0,k).replace(/ /g,'&nbsp;').replace(/&nbsp;(?=\S)/g,' ');
+    if(s.mk){const p=eo(pr(t,b.end+.08,b.end+.38));h+=`<span class="mk" style="background-image:linear-gradient(${s.mk},${s.mk});background-size:${p*100}% 46%;padding:0 4px">${txt}</span>`}else h+=txt}
+  const showCur=cursor&&t>=b.t0&&t<b.end+.6&&(t<b.end||Math.floor(t*3)%2===0);
+  b.el.innerHTML=(t<b.t0?'':h)+(showCur?'<span class="cur"></span>':'')}
+const Y='rgba(255,200,0,.9)',RED='rgba(255,70,60,.55)';
+/* timeline */
+const S={s2:2.7,s3:5.2,s4:9.5,s5:12.4,END:16.0};
+const B={
+ l1:T($('l1'),[{t:'Платишь за связь'}],.45),
+ l2:T($('l2'),[{t:'каждый месяц',mk:Y},{t:'?'}],1.45),
+ month:T($('month'),[{t:'/ месяц'}],3.35,14),
+ p1:T($('p1'),[{t:'Подключение'}],9.65),
+ p2:T($('p2'),[{t:'2 500 ₽',mk:Y}],10.35,12),
+ p3:T($('p3'),[{t:'— один раз'}],10.95,16),
+ q1:T($('q1'),[{t:'Количество подключений'}],12.5,20),
+ q2:T($('q2'),[{t:'ограничено!',mk:RED}],13.65,14),
+ q3:T($('q3'),[{t:'Пиши в WhatsApp'}],14.55,20),
+ q4:T($('q4'),[{t:'+7 963 415-04-24'}],15.2,22),
+ n1:T($('note1'),[{t:'Связь без ограничений!'}],5.3,22)
+};
+/* S3 rows */
+const ROWS=[{t:'Безлимитный интернет',s:'+ раздача Wi-Fi',ic:'inf'},{t:'Звонки на Билайн',s:'безлимит',ic:'call'},{t:'Другие операторы',s:'≈ 3,5 ₽ / минута',ic:'rub'}];
+const INF='<svg width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="#141210" stroke-width="2.6" stroke-linecap="round"><path d="M12 12c-2-2.7-3.6-4-5.5-4a4 4 0 0 0 0 8c1.9 0 3.5-1.3 5.5-4zm0 0c2 2.7 3.6 4 5.5 4a4 4 0 0 0 0-8c-1.9 0-3.5 1.3-5.5 4z"/></svg>';
+const CALL='<svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="#141210" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>';
+const RUB='<div class="R" style="font-size:96px">₽</div>';
+$('s3').innerHTML=ROWS.map((r,k)=>`<div class="abs" id="row${k}" style="left:150px;top:${680+k*280}px;display:flex;align-items:center;gap:40px">
+ <div class="icon" id="ic${k}">${r.ic==='inf'?INF:r.ic==='call'?CALL:RUB}</div>
+ <div><div class="R" id="rt${k}" style="font-size:52px;min-height:60px"></div><div class="H" id="rs${k}" style="font-size:60px;margin-top:8px;color:#3a3530;min-height:60px"></div></div></div>`).join('');
+const RT=[5.35,6.75,8.05];
+const RB=ROWS.map((r,k)=>[T($('rt'+k),[{t:r.t}],RT[k]+.25,22),T($('rs'+k),[{t:r.s,mk:k===2?Y:null}],RT[k]+.25+r.t.length/22+.05,22)]);
+RT.forEach(x=>SFX.push(['pop',x]));
+$('wa').innerHTML='<svg width="120" height="120" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.9 7.6c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .6.4l.8 1.9c.1.2 0 .4-.1.6l-.5.6c-.1.2-.2.3 0 .6.6 1 1.5 1.9 2.6 2.5.3.1.4.1.6-.1l.6-.7c.2-.2.3-.2.6-.1l1.8.9c.3.1.4.2.4.4 0 .4-.1 1.2-.7 1.7-.6.5-1.6.8-2.6.4-1.5-.5-2.8-1.4-3.9-2.6-1-1.1-1.9-2.4-2.2-3.7-.2-1 .1-1.8.6-2.4z" fill="#fff"/></svg>';
+SFX.push(['bounce',.62],['bounce',.95],['strike',2.75],['slam',3.0],['whoosh',S.s3-.15],['whoosh',S.s4-.15],['stamp',11.85],['whoosh',S.s5-.15],['pop',14.4],['draw',14.6],['ding',15.9]);
+window.TIMING={keys:KEYS,sfx:SFX,end:S.END};
+
+/* paper noise + spiral (static) */
+(function(){const c=$('noise').getContext('2d');const im=c.createImageData(510,920);for(let i=0;i<im.data.length;i+=4){const v=200+rnd(i)*55;im.data[i]=v;im.data[i+1]=v-6;im.data[i+2]=v-16;im.data[i+3]=60}c.putImageData(im,0,0);
+ let h='';for(let i=0;i<29;i++){const y=30+i*60;h+=`<circle cx="62" cy="${y}" r="13" fill="#2a2622"/><path d="M-20 ${y-14} C 40 ${y-30}, 80 ${y-8}, 66 ${y}" stroke="#555" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M-20 ${y-14} C 40 ${y-30}, 80 ${y-8}, 66 ${y}" stroke="#bbb" stroke-width="3" fill="none" stroke-linecap="round"/>`}$('spiral').innerHTML=h})();
+const pathLen=svg=>{const p=svg.querySelector('path');return p.getTotalLength()};
+['strike','u2','arr','heart'].forEach(id=>{$(id).querySelectorAll('path').forEach(p=>{const L=p.getTotalLength();p.style.strokeDasharray=L;p.dataset.l=L})});
+const drawPath=(id,t,a,b)=>$(id).querySelectorAll('path').forEach(p=>{p.style.strokeDashoffset=p.dataset.l*(1-eio(pr(t,a,b)))});
+function vis(id,t,a,b){const e=$(id);const on=t>=a-.3&&t<b+.35;e.style.display=on?'block':'none';if(!on)return false;
+  const i=pr(t,a-.3,a),o=pr(t,b,b+.35);e.style.opacity=Math.min(i>0||a<=0?1:0,1-o);e.style.transform=`translateY(${130-eio(o)*160}px)`;return true}
+
+function render(t){
+  // ball: drops, bounces, then rests top-right and spins
+  const d=pr(t,0,.62);let by;
+  if(t<.62)by=lerp(-300,300,d*d);else if(t<.95){const q=pr(t,.62,.95);by=300-Math.sin(q*Math.PI)*90}else if(t<1.15){const q=pr(t,.95,1.15);by=300-Math.sin(q*Math.PI)*25}else by=300+Math.sin((t-1.15)*2)*8;
+  const bx=760, sq=(t>.6&&t<.68)||(t>.93&&t<.99)?.88:1;
+  const ball=$('ball');ball.style.left=bx+'px';ball.style.top=by+'px';ball.style.transform=`scale(${1/sq*.98+.02},${sq})`;
+  ball.querySelector('.st').style.backgroundPosition=`${t*90}px ${t*40}px`;
+  $('ballShadow').style.left=bx+10+'px';$('ballShadow').style.top=540+'px';$('ballShadow').style.opacity=cl(.25+by/400);
+  $('ballTxt').style.left=bx+10+'px';$('ballTxt').style.top=560+'px';$('ballTxt').style.opacity=pr(t,1.0,1.3);
+  // brand
+  $('brand').style.opacity=pr(t,.1,.4);$('brandU').style.width=eo(pr(t,.3,.8))*480+'px';
+  // S1
+  if(vis('s1',t,0,S.s2+.15)){drawT(B.l1,t,t<B.l2.t0);drawT(B.l2,t);drawPath('strike',t,2.72,2.95);}
+  // S2
+  if(vis('s2',t,S.s2,S.s3)){const z=pr(t,2.95,3.25);$('zero').style.opacity=z>0?1:0;$('zero').style.transform=`scale(${lerp(2.6,1,eo5(z))}) rotate(${lerp(-10,-3,eo(z))}deg)`;
+    const br=pr(t,2.85,3.15);$('brush').style.clipPath=`inset(0 ${100-eo(br)*100}% 0 0)`;$('brush').style.transform='rotate(-2deg)';
+    drawT(B.month,t);drawPath('u2',t,B.month.end+.05,B.month.end+.35);}
+  // S3
+  if(vis('s3',t,S.s3,S.s4)){ROWS.forEach((r,k)=>{const p=pr(t,RT[k],RT[k]+.35);const ic=$('ic'+k);ic.style.opacity=p>0?1:0;ic.style.transform=`perspective(600px) rotateY(${(1-eo(p))*-90+Math.sin(t*2+k)*8}deg) scale(${eb(p)})`;drawT(RB[k][0],t,false);drawT(RB[k][1],t,k===2)});drawT(B.n1,t,false);}
+  else $('note1').innerHTML='';
+  $('note1').style.display=t>=S.s3&&t<S.s4+.3?'block':'none';
+  // S4
+  if(vis('s4',t,S.s4,S.s5)){drawT(B.p1,t,false);drawT(B.p2,t,false);drawT(B.p3,t);const s=pr(t,11.65,11.85);const st=$('stamp');st.style.opacity=s>0?1:0;st.style.transform=`rotate(${lerp(-14,-5,eo(s))}deg) scale(${lerp(2.4,1,eo5(s))})`;}
+  // S5
+  if(vis('s5',t,S.s5,99)){drawT(B.q1,t,false);drawT(B.q2,t,false);const w=pr(t,14.3,14.65);$('wa').style.opacity=w>0?1:0;$('wa').style.transform=`perspective(600px) rotateY(${(1-eo(w))*180+Math.sin(t*3)*10}deg) scale(${eb(w)})`;
+    drawT(B.q3,t,false);drawT(B.q4,t);drawPath('arr',t,14.55,14.95);}
+  drawPath('heart',t,S.s5+.4,S.s5+1.1);$('heart').style.display=t>=S.s5?'block':'none';
+  // shake on slam/stamp
+  let sx=0,sy=0;for(const c of [3.0,11.85]){if(t>=c&&t<c+.3){const k=Math.exp(-(t-c)*14)*16;sx+=(rnd(Math.floor(t*60))-.5)*k;sy+=(rnd(Math.floor(t*60)+7)-.5)*k}}
+  $('paper').style.transform=`translate(${sx}px,${sy}px)`;
+  let f=0;for(const c of [3.0,11.85])f=Math.max(f,t>=c?Math.exp(-(t-c)*12)*.25:0);$('flash').style.opacity=f;
+}
+window.render=render;
+</script>
+</body></html>
