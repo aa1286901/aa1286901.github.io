@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
-    <link rel="stylesheet" href="style.css?v=0028">
+    <link rel="stylesheet" href="style.css?v=0029">
 </head>
 
 <body class="view-home">
@@ -139,16 +139,17 @@
             <span class="eyebrow">Грамматика</span>
             <span class="navbar-side" aria-hidden="true"></span>
         </div>
-        <header class="nahw-head">
-            <div class="lesson-title" id="nahwTitle" lang="ar" dir="rtl"></div>
-            <div class="lesson-title-ru" id="nahwSub"></div>
-            <p class="nahw-intro" id="nahwIntro"></p>
+        <header class="nahw-banner">
+            <div class="nahw-book" lang="ar" dir="rtl">شَرْحُ الْأُنْمُوذَجِ</div>
+            <div class="nahw-title" id="nahwTitle" lang="ar" dir="rtl"></div>
+            <div class="nahw-sub" id="nahwSub"></div>
         </header>
         <div class="nahw-actions">
             <button class="pill-btn" id="nahwExpand" type="button">Раскрыть всё</button>
             <button class="pill-btn" id="nahwCollapse" type="button">Свернуть</button>
         </div>
-        <div class="tree" id="nahwTree"></div>
+        <p class="nahw-hint">Нажмите на термин — откроется определение из книги</p>
+        <div class="tree" id="nahwTree" lang="ar" dir="rtl"></div>
     </section>
 
     <!-- Экран урока: адрес #lesson-N -->
@@ -285,7 +286,38 @@
         </div>
     </div>
 
-    <script src="app.js?v=0028"></script>
+    <!-- Определение термина из книги -->
+    <div class="qawl-layer" id="qawlLayer" hidden>
+        <button class="qawl-overlay" id="qawlOverlay" type="button" aria-label="Закрыть"></button>
+        <div class="qawl-modal" id="qawlModal" role="dialog" aria-modal="true" aria-labelledby="qawlTerm">
+            <button class="qawl-close" id="qawlClose" type="button" aria-label="Закрыть">
+                <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="qawl-ru" id="qawlRu"></div>
+            <div class="qawl-term" id="qawlTerm" lang="ar" dir="rtl"></div>
+            <div class="qawl-quote" id="qawlQuoteBlock" lang="ar" dir="rtl">
+                <span class="qawl-said">قَالَ:</span> <span id="qawlQuote"></span>
+            </div>
+            <div class="qawl-section" id="qawlTrBlock">
+                <div class="eyebrow">Перевод</div>
+                <p class="qawl-text" id="qawlTr"></p>
+            </div>
+            <div class="qawl-section" id="qawlDefBlock">
+                <div class="eyebrow">Пояснение</div>
+                <p class="qawl-text" id="qawlDef"></p>
+            </div>
+            <div class="qawl-section" id="qawlExBlock">
+                <div class="eyebrow">Пример</div>
+                <p class="qawl-ex" id="qawlEx" lang="ar" dir="rtl"></p>
+            </div>
+            <div class="qawl-foot">
+                <span class="qawl-page" id="qawlPage"></span>
+                <button class="pill-btn primary" id="qawlBranch" type="button"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=0029"></script>
 </body>
 
 </html>

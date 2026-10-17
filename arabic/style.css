@@ -573,20 +573,52 @@ body.view-nahw .nahw {
     display: flex
 }
 
-.nahw-head {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    text-align: center
+.nahw > * {
+    flex: none
 }
 
-.nahw-intro {
-    margin: 10px 0 0;
+/* Шапка в цветах обложки книги */
+.nahw-banner {
+    position: relative;
+    overflow: hidden;
+    padding: 18px 16px 16px;
+    border-radius: 20px;
+    text-align: center;
+    color: #f6f0d8;
+    background:
+        radial-gradient(ellipse 70% 90% at 50% 120%, rgba(214, 160, 70, .55), transparent 70%),
+        linear-gradient(160deg, #0f6a3c, #0a4d2b 60%, #073822)
+}
+
+.nahw-banner::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(232, 196, 120, .4);
+    border-radius: 15px;
+    pointer-events: none
+}
+
+.nahw-book {
+    font-family: var(--ar);
     font-size: 15px;
-    line-height: 1.45;
-    color: var(--text-2);
-    max-width: 440px
+    color: #e8c478
+}
+
+.nahw-title {
+    font-family: var(--ar);
+    font-size: 34px;
+    line-height: 1.5;
+    font-weight: 700;
+    background: linear-gradient(180deg, #fff3cf, #e0b25a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent
+}
+
+.nahw-sub {
+    font-size: 14px;
+    opacity: .85
 }
 
 .nahw-actions {
@@ -600,138 +632,336 @@ body.view-nahw .nahw {
     font-size: 14px
 }
 
-.tree {
-    display: flex;
-    flex-direction: column;
-    gap: 12px
+.nahw-hint {
+    margin: -4px 0 0;
+    font-size: 13px;
+    text-align: center;
+    color: var(--muted)
 }
 
-.node > summary {
+/* ── Дерево: плашки и ветви (справа налево) ── */
+.tree {
+    --line: #b9cfc0;
+    --box-border: #cfe0d4;
+    --gold: #b8862b;
+    --green: #0f6a3c;
+    padding-bottom: 12px
+}
+
+.tree ul {
     list-style: none;
+    margin: 0;
+    padding: 0
+}
+
+.tr-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    min-height: 52px;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 12px
+    gap: 8px;
+    min-height: 48px
 }
 
-.node > summary::-webkit-details-marker {
-    display: none
+.tr-box {
+    min-width: 0;
+    max-width: 100%;
+    padding: 7px 16px;
+    border: 1.5px solid var(--box-border);
+    border-radius: 12px;
+    background: var(--card);
+    color: var(--text);
+    font-family: var(--ar);
+    font-size: 19px;
+    line-height: 1.55;
+    text-align: right;
+    box-shadow: 0 1px 2px var(--shadow);
+    transition: transform .12s ease, background .15s
 }
 
-.node > summary:active {
+.tr-box:active {
+    transform: scale(.97);
     background: var(--pressed)
 }
 
-.tree > .node {
-    background: var(--card);
+.root > .tr-row .tr-box {
+    padding: 10px 22px;
+    border: 0;
     border-radius: 16px;
-    overflow: hidden
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff3cf;
+    background: linear-gradient(160deg, #13804a, #0a4d2b);
+    box-shadow: 0 4px 14px rgba(10, 77, 43, .35), inset 0 0 0 1.5px rgba(232, 196, 120, .55)
 }
 
-.tree > .node > summary {
-    min-height: 60px;
-    padding: 10px 16px
-}
-
-.node-names {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px
-}
-
-.node-ru {
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 1.3
-}
-
-.tree > .node > summary .node-ru {
-    font-size: 17px;
-    font-weight: 600
-}
-
-.node-ar {
-    flex: none;
-    max-width: 55%;
-    font-family: var(--ar);
-    font-size: 19px;
-    line-height: 1.5;
-    text-align: right
-}
-
-.tree > .node > summary .node-ar {
+.d0 > .tr-row .tr-box {
     font-size: 22px;
-    font-weight: 700
+    font-weight: 700;
+    color: var(--green);
+    border: 2px solid var(--green)
 }
 
-.node-count {
+.d1 > .tr-row .tr-box {
+    font-weight: 600;
+    border-color: var(--gold)
+}
+
+.d3 > .tr-row .tr-box {
+    font-size: 17px;
+    padding: 5px 13px;
+    box-shadow: none
+}
+
+/* Кнопка ветвей: число дочерних и стрелка */
+.tr-toggle {
     flex: none;
-    min-width: 22px;
-    height: 22px;
-    padding: 0 6px;
-    border-radius: 11px;
+    height: 28px;
+    padding: 0 9px;
+    border: 0;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     background: var(--fill);
     color: var(--muted);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
-    display: grid;
-    place-items: center;
     font-variant-numeric: tabular-nums
 }
 
-.node-chevron {
-    flex: none;
-    color: var(--chevron);
+.tr-toggle svg {
     transition: transform .2s
 }
 
-.node[open] > summary .node-chevron {
+.tr-item.open > .tr-row .tr-toggle {
+    background: #e2efe6;
+    color: var(--green)
+}
+
+.tr-item.open > .tr-row .tr-toggle svg {
     transform: rotate(180deg)
 }
 
-.node-body {
-    padding: 0 12px 10px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px
+.tr-kids {
+    display: none;
+    margin-right: 18px
 }
 
-.node-def {
+.tr-item.open > .tr-kids {
+    display: block;
+    animation: branch-in .22s ease
+}
+
+@keyframes branch-in {
+    from {
+        opacity: 0;
+        transform: translateY(-6px)
+    }
+}
+
+/* Линии: вертикальный ствол справа и колено к каждой плашке */
+.tr-kids > .tr-item {
+    position: relative;
+    padding: 5px 20px 5px 0
+}
+
+.tr-kids > .tr-item::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border-right: 2px solid var(--line)
+}
+
+.tr-kids > .tr-item::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 29px;
+    width: 16px;
+    border-top: 2px solid var(--line)
+}
+
+.tr-kids > .tr-item:last-child::before {
+    bottom: auto;
+    height: 29px;
+    width: 16px;
+    border-bottom: 2px solid var(--line);
+    border-bottom-right-radius: 10px
+}
+
+.tr-kids > .tr-item:last-child::after {
+    display: none
+}
+
+.root > .tr-kids {
+    margin-right: 26px
+}
+
+/* ── Окно определения ── */
+.qawl-layer {
+    position: fixed;
+    z-index: 60;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px)
+}
+
+.qawl-overlay {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, .4);
+    opacity: 0;
+    transition: opacity .2s
+}
+
+.qawl-modal {
+    position: relative;
+    width: min(480px, 100%);
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 22px 20px 18px;
+    border-radius: 22px;
+    background: var(--card);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .3);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    opacity: 0;
+    transform: scale(.94) translateY(10px);
+    transition: opacity .2s, transform .22s cubic-bezier(.2, .8, .2, 1)
+}
+
+.qawl-layer.show .qawl-overlay {
+    opacity: 1
+}
+
+.qawl-layer.show .qawl-modal {
+    opacity: 1;
+    transform: none
+}
+
+.qawl-close {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--fill);
+    color: var(--muted)
+}
+
+.qawl-ru {
+    padding-left: 40px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: right
+}
+
+.qawl-term {
+    margin-top: -8px;
+    font-family: var(--ar);
+    font-size: 30px;
+    line-height: 1.5;
+    font-weight: 700;
+    color: var(--green, #0f6a3c);
+    text-align: center
+}
+
+.qawl-quote {
+    padding: 14px 16px;
+    border-radius: 14px;
+    border-right: 4px solid #b3261e;
+    background: #fbf6ea;
+    font-family: var(--ar);
+    font-size: 21px;
+    line-height: 1.85;
+    color: #1c1c1e;
+    text-align: right
+}
+
+.qawl-said {
+    font-weight: 700;
+    color: #b3261e
+}
+
+.qawl-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px
+}
+
+.qawl-text {
     margin: 0;
-    font-size: 14.5px;
-    line-height: 1.45;
+    font-size: 16px;
+    line-height: 1.5;
     color: var(--text-2)
 }
 
-.node-ex {
+.qawl-ex {
     margin: 0;
     padding: 6px 12px;
     border-radius: 10px;
     background: var(--fill);
     font-family: var(--ar);
-    font-size: 19px;
+    font-size: 20px;
     line-height: 1.7;
     text-align: right
 }
 
-.node-page {
-    align-self: flex-start;
+.qawl-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap
+}
+
+.qawl-page {
     font-size: 12px;
     color: var(--muted)
 }
 
-.node-children {
-    margin-left: 4px;
-    padding-left: 10px;
-    border-left: 2px solid var(--separator);
-    display: flex;
-    flex-direction: column
+.qawl-foot .pill-btn {
+    height: 36px;
+    font-size: 14px
+}
+
+@media (prefers-color-scheme: dark) {
+    .tree {
+        --line: #2f4a3a;
+        --box-border: #34483b;
+        --gold: #a07a35;
+        --green: #5cd08a
+    }
+
+    .tr-item.open > .tr-row .tr-toggle {
+        background: #183a24
+    }
+
+    .qawl-term {
+        color: #5cd08a
+    }
+
+    .qawl-quote {
+        background: #2a2418;
+        color: #f2ead6;
+        border-right-color: #ff6b5e
+    }
+
+    .qawl-said {
+        color: #ff6b5e
+    }
 }
 
 .navbar {
