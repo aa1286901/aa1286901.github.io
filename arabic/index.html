@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
-    <link rel="stylesheet" href="style.css?v=0030">
+    <link rel="stylesheet" href="style.css?v=0031">
 </head>
 
 <body class="view-home">
@@ -141,17 +141,20 @@
             <span class="eyebrow eyebrow-ar" lang="ar" dir="rtl">النَّحْوُ</span>
             <span class="navbar-side" aria-hidden="true"></span>
         </div>
-        <header class="nahw-banner">
-            <div class="nahw-book" lang="ar" dir="rtl">شَرْحُ الْأُنْمُوذَجِ</div>
-            <div class="nahw-title" id="nahwTitle" lang="ar" dir="rtl"></div>
-            <div class="nahw-sub" id="nahwSub"></div>
+        <header class="lesson-head">
+            <button class="lesson-title nahw-title" id="nahwTitle" type="button" lang="ar" dir="rtl"></button>
+            <div class="lesson-title-ru" id="nahwSub"></div>
         </header>
-        <div class="nahw-actions">
-            <button class="pill-btn" id="nahwExpand" type="button">Раскрыть всё</button>
-            <button class="pill-btn" id="nahwCollapse" type="button">Свернуть</button>
+        <div class="tree-card">
+            <div class="tree-top">
+                <span class="tree-hint">Нажмите на термин — откроется определение</span>
+                <div class="nahw-actions">
+                    <button class="chip" id="nahwExpand" type="button">Раскрыть всё</button>
+                    <button class="chip" id="nahwCollapse" type="button">Свернуть</button>
+                </div>
+            </div>
+            <div class="tree" id="nahwTree" lang="ar" dir="rtl"></div>
         </div>
-        <p class="nahw-hint">Нажмите на термин — откроется определение из книги</p>
-        <div class="tree" id="nahwTree" lang="ar" dir="rtl"></div>
     </section>
 
     <!-- Экран урока: адрес #lesson-N -->
@@ -319,7 +322,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0030"></script>
+    <script src="app.js?v=0031"></script>
 </body>
 
 </html>
