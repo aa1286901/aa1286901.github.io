@@ -137,6 +137,7 @@ function parseHash() {
 // view: home | welcome | nahw | lesson (у урока своего класса нет)
 function setView(view) {
   closeSheet();
+  closeQawl();
   toggleSizer(false);
   document.body.classList.remove("view-home", "view-welcome", "view-nahw");
   if (view !== "lesson") document.body.classList.add("view-" + view);
@@ -476,16 +477,23 @@ applySize();
 
 // ── Грамматика: дерево главы об имени ───────────────────
 let nahwData = null;
+let nahwNodes = []; // все узлы по порядку обхода; индекс — data-i у плашки
 
+// Плашка с арабским термином; ветви ниже соединены линиями
 function renderNode(n, depth) {
+  const i = nahwNodes.push(n) - 1;
   const kids = n.children || [];
-  const meta = [
-    n.def ? `<p class="node-def">${esc(n.def)}</p>` : "",
-    n.ex ? `<p class="node-ex" lang="ar" dir="rtl">${esc(n.ex)}</p>` : "",
-    n.p ? `<span class="node-page">стр. ${n.p}</span>` : "",
-  ].join("");
-  const count = kids.length ? `<span class="node-count">${kids.length}</span>` : "";
-  return `<details class="node depth-${Math.min(depth, 3)}"${depth === 0 ? " open" : ""}><summary><span class="node-names"><span class="node-ru">${esc(n.ru)}</span><span class="node-ar" lang="ar" dir="rtl">${esc(n.ar)}</span></span>${count}<svg class="node-chevron" width="12" height="8" viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="node-body">${meta}${kids.length ? `<div class="node-children">${kids.map((c) => renderNode(c, depth + 1)).join("")}</div>` : ""}</div></details>`;
+  const open = depth < 1;
+  const toggle = kids.length
+    ? `<button class="tr-toggle" type="button" data-i="${i}" aria-expanded="${open}" aria-label="Ветви: ${kids.length}"><span>${kids.length}</span><svg width="10" height="7" viewBox="0 0 10 7" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`
+    : "";
+  const sub = kids.length ? `<ul class="tr-kids">${kids.map((c) => renderNode(c, depth + 1)).join("")}</ul>` : "";
+  return `<li class="tr-item ${depth < 0 ? "root" : "d" + Math.min(depth, 3)}${open ? " open" : ""}" id="tr-${i}"><div class="tr-row"><button class="tr-box" type="button" data-i="${i}">${esc(n.ar)}</button>${toggle}</div>${sub}</li>`;
+}
+
+function setBranch(li, open) {
+  li.classList.toggle("open", open);
+  li.querySelector(":scope > .tr-row > .tr-toggle")?.setAttribute("aria-expanded", open);
 }
 
 async function showNahw() {
@@ -499,17 +507,78 @@ async function showNahw() {
     const root = nahwData.tree;
     $("nahwTitle").textContent = root.ar;
     $("nahwSub").textContent = `${root.ru} · ${nahwData.bookRu}`;
-    $("nahwIntro").textContent = root.def;
-    $("nahwTree").innerHTML = root.children.map((c) => renderNode(c, 0)).join("");
+    nahwNodes = [];
+    $("nahwTree").innerHTML = `<ul class="tr-root">${renderNode(root, -1)}</ul>`;
   } catch (err) {
     alert(err.message);
     location.hash = "";
   }
 }
 
-const setAllNodes = (open) => document.querySelectorAll("#nahwTree details").forEach((d) => (d.open = open));
+$("nahwTree").addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-i]");
+  if (!btn) return;
+  if (btn.classList.contains("tr-toggle")) {
+    const li = btn.closest(".tr-item");
+    setBranch(li, !li.classList.contains("open"));
+  } else openQawl(Number(btn.dataset.i));
+});
+
+const setAllNodes = (open) =>
+  document.querySelectorAll("#nahwTree .tr-item").forEach((li, k) => {
+    if (li.querySelector(".tr-kids")) setBranch(li, open || k === 0);
+  });
 $("nahwExpand").onclick = () => setAllNodes(true);
 $("nahwCollapse").onclick = () => setAllNodes(false);
+
+// ── Окно с определением из книги ────────────────────────
+let qawlIndex = null;
+
+function openQawl(i) {
+  const n = nahwNodes[i];
+  if (!n) return;
+  qawlIndex = i;
+  const fill = (block, el, text) => {
+    $(block).hidden = !text;
+    $(el).textContent = text || "";
+  };
+  $("qawlRu").textContent = n.ru;
+  $("qawlTerm").textContent = n.ar;
+  fill("qawlQuoteBlock", "qawlQuote", n.qawl);
+  fill("qawlTrBlock", "qawlTr", n.qawlRu);
+  fill("qawlDefBlock", "qawlDef", n.qawl ? "" : n.def);
+  fill("qawlExBlock", "qawlEx", n.ex);
+  $("qawlPage").textContent = n.p ? `Шарх аль-Унмузадж, стр. ${n.p}` : "";
+  const kids = (n.children || []).length;
+  const li = $("tr-" + i);
+  $("qawlBranch").hidden = !kids || li.classList.contains("open");
+  $("qawlBranch").textContent = `Показать ветви · ${kids}`;
+  $("qawlLayer").hidden = false;
+  requestAnimationFrame(() => $("qawlLayer").classList.add("show"));
+  $("qawlModal").scrollTop = 0;
+  $("qawlClose").focus({ preventScroll: true });
+}
+
+function closeQawl() {
+  const layer = $("qawlLayer");
+  if (layer.hidden) return;
+  layer.classList.remove("show");
+  setTimeout(() => {
+    if (!layer.classList.contains("show")) layer.hidden = true;
+  }, 220);
+}
+
+$("qawlClose").onclick = closeQawl;
+$("qawlOverlay").onclick = closeQawl;
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeQawl();
+});
+$("qawlBranch").onclick = () => {
+  const li = $("tr-" + qawlIndex);
+  closeQawl();
+  setBranch(li, true);
+  li.querySelector(".tr-kids")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+};
 
 // ── Заставка: убираем после анимации или по нажатию ─────
 const splash = $("splash");
