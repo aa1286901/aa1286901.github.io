@@ -479,21 +479,37 @@ applySize();
 let nahwData = null;
 let nahwNodes = []; // все узлы по порядку обхода; индекс — data-i у плашки
 
-// Плашка с арабским термином; ветви ниже соединены линиями
+// Схема сверху вниз: плашка термина, под ней ветви в ряд (справа налево)
+const CHEVRON = `<svg width="12" height="8" viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
 function renderNode(n, depth) {
   const i = nahwNodes.push(n) - 1;
   const kids = n.children || [];
-  const open = depth < 1;
+  const open = depth < 0;
+  const count = kids.length ? `<span class="tr-count">${kids.length} ${plural(kids.length, "тема", "темы", "тем")}</span>` : "";
   const toggle = kids.length
-    ? `<button class="tr-toggle" type="button" data-i="${i}" aria-expanded="${open}" aria-label="Ветви: ${kids.length}"><span>${kids.length}</span><svg width="10" height="7" viewBox="0 0 10 7" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`
+    ? `<button class="tr-toggle" type="button" data-i="${i}" aria-expanded="${open}" aria-label="Ветви: ${kids.length}">${CHEVRON}</button>`
     : "";
   const sub = kids.length ? `<ul class="tr-kids">${kids.map((c) => renderNode(c, depth + 1)).join("")}</ul>` : "";
-  return `<li class="tr-item ${depth < 0 ? "root" : "d" + Math.min(depth, 3)}${open ? " open" : ""}" id="tr-${i}"><div class="tr-row"><button class="tr-box" type="button" data-i="${i}">${esc(n.ar)}</button>${toggle}</div>${sub}</li>`;
+  const cls = depth < 0 ? "root" : "d" + Math.min(depth, 2);
+  return `<li class="tr-item ${cls}${open ? " open" : ""}" id="tr-${i}"><div class="tr-node"><button class="tr-box" type="button" data-i="${i}"><span class="tr-ar" lang="ar" dir="rtl">${esc(n.ar)}</span><span class="tr-ru">${esc(n.ru)}</span>${count}</button>${toggle}</div>${sub}</li>`;
 }
 
 function setBranch(li, open) {
   li.classList.toggle("open", open);
-  li.querySelector(":scope > .tr-row > .tr-toggle")?.setAttribute("aria-expanded", open);
+  li.querySelector(":scope > .tr-node > .tr-toggle")?.setAttribute("aria-expanded", open);
+}
+
+// Раскрытую ветвь подвинуть в центр экрана
+function revealBranch(li) {
+  const kids = li.querySelector(":scope > .tr-kids");
+  if (kids) requestAnimationFrame(() => kids.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" }));
+}
+
+function centerTree() {
+  const t = $("nahwTree");
+  t.scrollLeft = (t.scrollWidth - t.clientWidth) / 2;
+  t.scrollTop = 0;
 }
 
 async function showNahw() {
@@ -509,6 +525,7 @@ async function showNahw() {
     $("nahwSub").textContent = `${root.ru} · Шарх аль-Унмузадж`;
     nahwNodes = [];
     $("nahwTree").innerHTML = `<ul class="tr-root">${renderNode(root, -1)}</ul>`;
+    requestAnimationFrame(centerTree);
   } catch (err) {
     alert(err.message);
     location.hash = "";
@@ -520,7 +537,9 @@ $("nahwTree").addEventListener("click", (e) => {
   if (!btn) return;
   if (btn.classList.contains("tr-toggle")) {
     const li = btn.closest(".tr-item");
-    setBranch(li, !li.classList.contains("open"));
+    const open = !li.classList.contains("open");
+    setBranch(li, open);
+    if (open) revealBranch(li);
   } else openQawl(Number(btn.dataset.i));
 });
 
@@ -530,7 +549,31 @@ const setAllNodes = (open) =>
   });
 $("nahwTitle").onclick = () => openQawl(0);
 $("nahwExpand").onclick = () => setAllNodes(true);
-$("nahwCollapse").onclick = () => setAllNodes(false);
+$("nahwCollapse").onclick = () => {
+  setAllNodes(false);
+  centerTree();
+};
+
+// Мышью схему можно двигать перетаскиванием (на телефоне — обычная прокрутка)
+{
+  const t = $("nahwTree");
+  let drag = null;
+  t.addEventListener("pointerdown", (e) => {
+    if (e.pointerType !== "mouse" || e.button !== 0) return;
+    drag = { x: e.clientX, y: e.clientY, left: t.scrollLeft, top: t.scrollTop, moved: false };
+  });
+  window.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
+    t.scrollLeft = drag.left - dx;
+    t.scrollTop = drag.top - dy;
+  });
+  window.addEventListener("pointerup", () => {
+    if (drag?.moved) t.addEventListener("click", (e) => e.stopPropagation(), { capture: true, once: true });
+    drag = null;
+  });
+}
 
 // ── Окно с определением из книги ────────────────────────
 let qawlIndex = null;
@@ -578,7 +621,7 @@ $("qawlBranch").onclick = () => {
   const li = $("tr-" + qawlIndex);
   closeQawl();
   setBranch(li, true);
-  li.querySelector(".tr-kids")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  revealBranch(li);
 };
 
 // ── Заставка: убираем после анимации или по нажатию ─────

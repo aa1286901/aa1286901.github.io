@@ -642,25 +642,37 @@ body.view-nahw .nahw {
     opacity: .6
 }
 
-/* Дерево — в карточке, как слова урока */
+/* Схема — в карточке, как слова урока; занимает остаток экрана */
+.nahw > .tree-card {
+    flex: 1 1 0;
+    min-height: 300px
+}
+
+body.view-nahw .nahw {
+    overflow: hidden
+}
+
 .tree-card {
+    flex: 1;
+    min-height: 0;
     background: var(--card);
     border-radius: 24px;
-    padding: 16px 14px 18px;
+    padding: 14px 0 0;
     display: flex;
     flex-direction: column;
-    gap: 12px
+    gap: 6px;
+    overflow: hidden
 }
 
 .tree-top {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 0 4px
+    padding: 0 18px
 }
 
 .tree-hint {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--muted)
 }
 
@@ -683,13 +695,21 @@ body.view-nahw .nahw {
     background: var(--pressed)
 }
 
-.nahw-hint {
-    display: none
+/* ── Схема: сверху вниз, ветви в ряд, прокрутка по X и Y ── */
+.tree {
+    --line: var(--dot);
+    --gap: 22px;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 14px 0 40px;
+    direction: ltr;
+    scrollbar-width: none
 }
 
-/* ── Дерево: плашки и ветви (справа налево) ── */
-.tree {
-    --line: var(--dot)
+.tree::-webkit-scrollbar {
+    display: none
 }
 
 .tree ul {
@@ -698,25 +718,40 @@ body.view-nahw .nahw {
     padding: 0
 }
 
-.tr-row {
+.tr-root {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 48px
+    justify-content: center;
+    width: max-content;
+    min-width: 100%;
+    padding: 0 16px !important
+}
+
+.tr-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.tr-node {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center
 }
 
 .tr-box {
-    min-width: 0;
-    max-width: 100%;
-    padding: 6px 16px;
-    border: 0;
-    border-radius: 14px;
+    min-width: 104px;
+    max-width: 180px;
+    padding: 9px 14px 10px;
+    border: 1.5px solid transparent;
+    border-radius: 18px;
     background: var(--fill);
     color: var(--text);
-    font-family: var(--ar);
-    font-size: 20px;
-    line-height: 1.55;
-    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-align: center;
     transition: transform .12s ease, background .15s
 }
 
@@ -725,58 +760,99 @@ body.view-nahw .nahw {
     background: var(--pressed)
 }
 
-/* Верхний уровень — крупнее, как заголовки разделов */
-.root > .tr-kids > .tr-item > .tr-row .tr-box {
-    padding: 8px 18px;
-    font-size: 24px;
+.tr-node:has(.tr-toggle) > .tr-box {
+    padding-bottom: 19px
+}
+
+.tr-ar {
+    font-family: var(--ar);
+    font-size: 20px;
+    line-height: 1.5
+}
+
+.tr-ru {
+    font-size: 12.5px;
+    line-height: 1.3;
+    color: var(--muted)
+}
+
+.tr-count {
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--faint)
+}
+
+.root > .tr-node .tr-box {
+    min-width: 200px;
+    padding: 14px 24px;
+    border-color: var(--accent);
+    background: var(--accent-soft)
+}
+
+.root > .tr-node .tr-ar {
+    font-size: 27px;
     font-weight: 700
 }
 
-.d1 > .tr-row .tr-box {
+.d0 > .tr-node .tr-box {
+    min-width: 160px;
+    border-color: var(--dot)
+}
+
+.d0 > .tr-node .tr-ar {
+    font-size: 23px;
+    font-weight: 700
+}
+
+.d1 > .tr-node .tr-ar {
     font-weight: 600
 }
 
-.d3 > .tr-row .tr-box {
-    font-size: 18px;
-    padding: 4px 13px
-}
-
-/* Кнопка ветвей: число дочерних и стрелка */
+/* Круглая кнопка ветвей под плашкой */
 .tr-toggle {
-    flex: none;
-    height: 28px;
-    padding: 0 10px;
+    position: absolute;
+    left: 50%;
+    bottom: -15px;
+    z-index: 1;
+    width: 30px;
+    height: 30px;
     border: 0;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: transparent;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    transform: translateX(-50%);
+    background: var(--card);
     color: var(--muted);
-    font-size: 14px;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums
+    box-shadow: 0 0 0 1.5px var(--dot)
 }
 
 .tr-toggle svg {
     transition: transform .2s
 }
 
-.tr-item.open > .tr-row .tr-toggle {
-    color: var(--accent)
+.tr-item.open > .tr-node .tr-toggle {
+    color: var(--on-accent);
+    background: var(--accent);
+    box-shadow: none
 }
 
-.tr-item.open > .tr-row .tr-toggle svg {
+.tr-item.open > .tr-node .tr-toggle svg {
     transform: rotate(180deg)
 }
 
+/* Ветви: ряд справа налево, линии соединяют центры */
 .tr-kids {
+    position: relative;
     display: none;
-    margin-right: 18px
+    flex-direction: row-reverse;
+    justify-content: center;
+    margin-top: 15px;
+    padding-top: var(--gap) !important
 }
 
 .tr-item.open > .tr-kids {
-    display: block;
+    display: flex;
     animation: branch-in .22s ease
 }
 
@@ -787,63 +863,57 @@ body.view-nahw .nahw {
     }
 }
 
-/* Линии: вертикальный ствол справа и колено к каждой плашке */
-.tr-kids > .tr-item {
-    position: relative;
-    padding: 4px 18px 4px 0
-}
-
-.tr-kids > .tr-item::before {
+.tr-kids::before {
     content: "";
     position: absolute;
-    right: 0;
     top: 0;
-    bottom: 0;
-    border-right: 1.5px solid var(--line)
+    left: 50%;
+    height: var(--gap);
+    border-left: 1.5px solid var(--line)
 }
 
+.tr-kids > .tr-item {
+    position: relative;
+    padding: var(--gap) 6px 0
+}
+
+.tr-kids > .tr-item::before,
 .tr-kids > .tr-item::after {
     content: "";
     position: absolute;
-    right: 0;
-    top: 28px;
-    width: 14px;
+    top: 0;
+    width: 50%;
     border-top: 1.5px solid var(--line)
 }
 
+.tr-kids > .tr-item::before {
+    left: 0
+}
+
+.tr-kids > .tr-item::after {
+    right: 0
+}
+
+/* первый по порядку стоит справа, последний — слева */
+.tr-kids > .tr-item:first-child::after,
 .tr-kids > .tr-item:last-child::before {
-    bottom: auto;
-    height: 28px;
-    width: 14px;
-    border-bottom: 1.5px solid var(--line);
-    border-bottom-right-radius: 10px
-}
-
-.tr-kids > .tr-item:last-child::after {
     display: none
 }
 
-/* Корень показан в заголовке; его ветви — верхний уровень без линий */
-.root > .tr-row {
-    display: none
+.tr-kids > .tr-item > .tr-node::before {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--gap));
+    left: 50%;
+    height: var(--gap);
+    border-left: 1.5px solid var(--line)
 }
 
-.root > .tr-kids {
-    margin: 0
+.tr-kids > .tr-item:only-child {
+    padding-top: 0
 }
 
-.root > .tr-kids > .tr-item {
-    padding: 6px 0
-}
-
-.root > .tr-kids > .tr-item + .tr-item {
-    margin-top: 6px;
-    border-top: 1px solid var(--separator);
-    padding-top: 12px
-}
-
-.root > .tr-kids > .tr-item::before,
-.root > .tr-kids > .tr-item::after {
+.tr-kids > .tr-item:only-child > .tr-node::before {
     display: none
 }
 
