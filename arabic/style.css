@@ -54,6 +54,7 @@
         --shadow: rgba(0, 0, 0, .5);
         color-scheme: dark
     }
+
 }
 
 :root[data-theme="dark"] {
@@ -79,7 +80,6 @@
         --shadow: rgba(0, 0, 0, .5);
         color-scheme: dark
     }
-
 
 * {
     box-sizing: border-box;
@@ -148,13 +148,6 @@ button {
     line-height: 41px;
     font-weight: 700;
     letter-spacing: -.02em
-}
-
-.welcome-ar {
-    font-family: var(--ar);
-    font-size: 24px;
-    color: var(--muted);
-    padding-bottom: 4px
 }
 
 .welcome-note {
@@ -258,6 +251,7 @@ button {
     .lesson-item:hover {
         background: var(--hover)
     }
+
 }
 
 /* ── Экран урока ────────────────────────────────────────── */
@@ -293,47 +287,7 @@ body:not(.view-welcome) .welcome {
     margin-bottom: 4px
 }
 
-/* ── Шапка главного экрана в стиле iOS ── */
-.home {
-    padding-top: 0
-}
-
-.home-nav {
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    flex: none;
-    margin: 0 -16px;
-    padding: calc(env(safe-area-inset-top) + 6px) 16px 6px;
-    min-height: calc(env(safe-area-inset-top) + 56px);
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    transition: background .2s, box-shadow .2s
-}
-
-.home-nav-title {
-    position: absolute;
-    left: 50%;
-    bottom: 16px;
-    transform: translateX(-50%);
-    font-size: 17px;
-    font-weight: 600;
-    opacity: 0;
-    transition: opacity .2s
-}
-
-.home-nav.scrolled {
-    background: color-mix(in srgb, var(--bg) 78%, transparent);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    backdrop-filter: saturate(180%) blur(20px);
-    box-shadow: 0 .5px 0 var(--separator)
-}
-
-.home-nav.scrolled .home-nav-title {
-    opacity: 1
-}
-
+/* Круглая кнопка в шапке */
 .icon-btn {
     width: 40px;
     height: 40px;
@@ -350,40 +304,6 @@ body:not(.view-welcome) .welcome {
 .icon-btn:active {
     transform: scale(.94);
     background: var(--pressed)
-}
-
-.home-hero {
-    flex: none;
-    margin-top: -6px;
-    padding: 0 4px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px
-}
-
-.home-hero .eyebrow {
-    font-size: 13px;
-    letter-spacing: .02em
-}
-
-.home-title-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px
-}
-
-.home-title-row .welcome-title {
-    margin: 0;
-    font-size: 34px;
-    line-height: 41px;
-    letter-spacing: .01em
-}
-
-.home-title-ar {
-    font-family: var(--ar);
-    font-size: 22px;
-    color: var(--faint)
 }
 
 /* ── Настройки: лист снизу, сгруппированные пункты ── */
@@ -598,205 +518,12 @@ body:not(.view-welcome) .welcome {
     text-align: center
 }
 
-/* ── Главный экран: книжная полка ───────────────────────── */
-.resume {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    background: var(--card);
-    border-radius: 14px;
-    color: inherit;
-    text-decoration: none
-}
-
-.resume:active {
-    background: var(--pressed)
-}
-
-.resume-icon {
-    flex: none;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    padding-left: 3px;
-    background: var(--accent);
-    color: var(--on-accent)
-}
-
-.resume-info {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column
-}
-
-.resume-label {
-    font-size: 13px;
-    color: var(--muted)
-}
-
-.resume-title {
-    font-size: 17px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis
-}
-
-.shelf {
-    display: flex;
-    flex-direction: column;
-    gap: 14px
-}
-
-.book {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 14px;
-    background: var(--card);
-    border-radius: 18px;
-    color: inherit;
-    text-decoration: none;
-    transition: transform .15s ease
-}
-
-.book:active {
-    transform: scale(.98);
-    background: var(--pressed)
-}
-
-.book-info {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 3px
-}
-
-.book-kind {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: var(--muted)
-}
-
-.book-title {
-    font-size: 20px;
-    line-height: 25px;
-    font-weight: 700;
-    letter-spacing: -.01em
-}
-
-/* Арабские подписи книг */
-.book-info [lang="ar"] {
-    font-family: var(--ar);
-    letter-spacing: 0;
-    text-transform: none
-}
-
-.book-kind[lang="ar"] {
-    font-size: 14px;
-    font-weight: 600;
-    color: #1d6b3a
-}
-
-.book-title[lang="ar"] {
-    font-size: 25px;
-    line-height: 1.5
-}
-
-.book-author {
-    font-family: var(--ar);
-    font-size: 16px;
-    line-height: 1.5;
-    color: var(--text-2)
-}
-
-.book-author.small {
-    margin-top: -4px;
-    font-size: 14px;
-    color: var(--muted)
-}
-
-.book-meta[dir="ltr"] {
-    text-align: right
-}
-
-.chapter {
-    font-size: 15px !important;
-    padding: 2px 12px
-}
-
 .eyebrow-ar {
     font-family: var(--ar);
     font-size: 17px;
     letter-spacing: 0;
     text-transform: none;
     color: var(--text-2)
-}
-
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .book-kind[lang="ar"] {
-        color: #6ee08f
-    }
-}
-
-:root[data-theme="dark"] .book-kind[lang="ar"] {
-        color: #6ee08f
-    }
-
-
-.book-meta,
-.book-note {
-    font-size: 14px;
-    color: var(--muted)
-}
-
-.book-note {
-    font-size: 13px
-}
-
-.book-progress {
-    height: 5px;
-    margin: 8px 0 3px;
-    border-radius: 3px;
-    background: var(--track);
-    overflow: hidden
-}
-
-.book-progress-bar {
-    display: block;
-    width: 0;
-    height: 100%;
-    border-radius: 3px;
-    background: #1f9d55;
-    transition: width .5s ease
-}
-
-.book-chapters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 8px
-}
-
-.chapter {
-    padding: 3px 10px;
-    border-radius: 99px;
-    font-size: 13px;
-    background: var(--track);
-    color: var(--faint)
-}
-
-.chapter.on {
-    background: #e7f1e8;
-    color: #1d6b3a;
-    font-weight: 600
 }
 
 /* Обложки — по мотивам настоящих книг */
@@ -941,27 +668,6 @@ body:not(.view-welcome) .welcome {
     font-size: 9px;
     color: #f6f0d8
 }
-
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .book-progress-bar {
-        background: #30d158
-    }
-
-    :root:not([data-theme="light"]) .chapter.on {
-        background: #183a24;
-        color: #6ee08f
-    }
-}
-
-:root[data-theme="dark"] .book-progress-bar {
-        background: #30d158
-    }
-
-:root[data-theme="dark"] .chapter.on {
-        background: #183a24;
-        color: #6ee08f
-    }
-
 
 /* ── Грамматика: дерево ─────────────────────────────────── */
 .section-label {
@@ -1464,6 +1170,7 @@ body.view-quiz .quiz {
     :root:not([data-theme="light"]) .quiz-opt.right {
         border-color: #30d158
     }
+
 }
 
 :root[data-theme="dark"] .quiz-verdict.ok {
@@ -1473,7 +1180,6 @@ body.view-quiz .quiz {
 :root[data-theme="dark"] .quiz-opt.right {
         border-color: #30d158
     }
-
 
 /* ── Окно определения ── */
 .qawl-layer {
@@ -2436,6 +2142,7 @@ html.splash-on .splash {
     .card-face {
         gap: 14px
     }
+
 }
 
 @media(prefers-reduced-motion:reduce) {
@@ -2448,239 +2155,245 @@ html.splash-on .splash {
         animation-duration: .01s !important;
         animation-delay: 0s !important
     }
+
 }
 
-
-/* ── Главная библиотека: единый тёмный стиль ─────────────── */
-body.view-home {
-    --bg: #050706;
-    --card: #1b1d1c;
-    --text: #f4f3f0;
-    --text-2: #d0d0ca;
-    --muted: #969995;
-    --faint: #777c77;
-    --fill: #292d2a;
-    --separator: #303430;
-    --accent: #39895a;
-    --accent-soft: #193b28;
-    --on-accent: #f7fff8;
-    --pressed: #252a26;
-    --hover: #202521;
-    --track: #303330;
-    --shadow: rgba(0, 0, 0, .32);
-    background:
-        radial-gradient(ellipse 110% 42% at 50% -12%, rgba(29, 93, 53, .18), transparent 72%),
-        #050706;
-    color-scheme: dark;
-    color: var(--text);
+/* ── Главный экран: библиотека с листающимися обложками ── */
+.home {
+    --k: 2.35;          /* масштаб обложки относительно базовых 96×136 */
+    --cw: calc(96px * var(--k));
+    --ch: calc(136px * var(--k));
+    max-width: 560px;
+    padding: calc(env(safe-area-inset-top) + 8px) 16px calc(env(safe-area-inset-bottom) + 20px);
+    gap: 0;
+    overflow: hidden
 }
 
-body.view-home .home {
-    gap: 22px;
-    padding-top: calc(env(safe-area-inset-top) + 32px);
-    padding-bottom: calc(env(safe-area-inset-bottom) + 28px);
-}
-
-body.view-home .welcome-head {
+.lib-top {
+    flex: none;
+    display: flex;
     align-items: center;
-    padding: 0 5px 2px;
+    justify-content: space-between;
+    min-height: 56px
 }
 
-body.view-home .eyebrow {
-    color: #929891;
-    letter-spacing: .12em;
-    font-size: 12px;
+.lib-brand {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15
 }
 
-body.view-home .welcome-title {
-    margin-top: 3px;
-    font-size: 38px;
-    line-height: 1.08;
-    letter-spacing: -.04em;
+.lib-brand-ar {
+    font-family: var(--ar);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.4
 }
 
-body.view-home .welcome-ar {
-    color: #a8ada7;
-    font-size: 25px;
-    padding-bottom: 0;
-}
-
-body.view-home .resume {
-    border: 1px solid rgba(255,255,255,.035);
-    border-radius: 22px;
-    padding: 15px 17px;
-    background: linear-gradient(115deg, #202321, #171a18);
-    box-shadow: 0 10px 28px rgba(0,0,0,.12);
-}
-
-body.view-home .resume-icon {
-    width: 42px;
-    height: 42px;
-    background: #3987f6;
-    box-shadow: 0 4px 14px rgba(57,135,246,.22);
-}
-
-body.view-home .resume-label {
+.lib-brand-ru {
     font-size: 13px;
-    margin-bottom: 2px;
-    color: #999e99;
+    color: var(--muted)
 }
 
-body.view-home .resume-title {
-    font-size: 18px;
-    line-height: 1.3;
+.lib-stage {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px
 }
 
-body.view-home .shelf {
-    gap: 15px;
+.carousel {
+    flex: none;
+    margin: 0 -16px;
+    padding: 18px calc(50% + 16px - var(--cw) / 2) 48px;
+    display: flex;
+    gap: 22px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch
 }
 
-body.view-home .book {
+.carousel::-webkit-scrollbar {
+    display: none
+}
+
+.slide {
+    flex: none;
+    width: var(--cw);
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    transform: scale(.84);
+    opacity: .5;
+    transition: transform .35s cubic-bezier(.2, .8, .2, 1), opacity .35s
+}
+
+.slide.active {
+    transform: none;
+    opacity: 1
+}
+
+.slide:active {
+    transform: scale(.97)
+}
+
+.slide:not(.active):active {
+    transform: scale(.82)
+}
+
+.cover-frame {
     position: relative;
-    gap: 17px;
-    padding: 17px 16px;
-    min-height: 190px;
-    border: 1px solid rgba(255,255,255,.035);
-    border-radius: 25px;
-    background: linear-gradient(135deg, #1c1e1d 0%, #191b1a 72%, #171a18 100%);
-    box-shadow: 0 12px 28px rgba(0,0,0,.12);
-    transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    display: block;
+    width: var(--cw);
+    height: var(--ch);
+    border-radius: 10px 16px 16px 10px;
+    box-shadow: 0 22px 40px -12px rgba(0, 0, 0, .45), 0 4px 10px rgba(0, 0, 0, .12)
 }
 
-body.view-home .book::before {
+/* Обложка рисуется в базовом размере и увеличивается целиком — текст остаётся чётким */
+.cover-frame .cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(var(--k));
+    transform-origin: top left;
+    box-shadow: inset 3px 0 0 rgba(0, 0, 0, .22), inset 5px 0 0 rgba(255, 255, 255, .1)
+}
+
+/* Блик на обложке, как у книг в Apple Books */
+.cover-frame::after {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    background: radial-gradient(ellipse 75% 90% at 100% 0%, rgba(66,145,86,.055), transparent 68%);
+    background: linear-gradient(105deg, rgba(255, 255, 255, .18), transparent 28%, transparent 70%, rgba(0, 0, 0, .08))
 }
 
-body.view-home .book:active {
-    transform: scale(.985);
-    border-color: rgba(105, 206, 135, .25);
-    background: #202521;
+.dots {
+    flex: none;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: -30px
 }
 
-body.view-home .book-info {
-    position: relative;
-    z-index: 1;
-    gap: 4px;
+.dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--dot);
+    transition: background .25s, width .25s
 }
 
-body.view-home .book-kind[lang="ar"] {
-    color: #76d996;
-    font-size: 13px;
-    letter-spacing: .02em;
+.dots span.on {
+    width: 20px;
+    border-radius: 4px;
+    background: var(--text)
 }
 
-body.view-home .book-title[lang="ar"] {
-    font-size: 27px;
-    line-height: 1.4;
-    color: #f4f3f0;
+.book-panel {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2px;
+    padding: 0 8px
 }
 
-body.view-home .book-author {
-    color: #b7bbb5;
+.book-panel.swap > * {
+    animation: panel-in .35s ease both
+}
+
+.book-panel.swap > :nth-child(2) {
+    animation-delay: .03s
+}
+
+.book-panel.swap > :nth-child(3) {
+    animation-delay: .06s
+}
+
+.book-panel.swap > :nth-child(n + 4) {
+    animation-delay: .09s
+}
+
+@keyframes panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px)
+    }
+}
+
+.bp-kind {
+    font-family: var(--ar);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent)
+}
+
+.bp-title {
+    font-family: var(--ar);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.45
+}
+
+.bp-author {
+    font-family: var(--ar);
+    font-size: 17px;
+    color: var(--text-2)
+}
+
+.bp-desc {
+    max-width: 340px;
+    margin: 8px 0 16px;
     font-size: 15px;
     line-height: 1.45;
+    color: var(--muted)
 }
 
-body.view-home .book-author.small {
-    color: #8f958f;
+.bp-open {
+    min-width: 200px;
+    height: 50px;
+    padding: 0 28px;
+    border-radius: 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: 17px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform .12s
 }
 
-body.view-home .book-title-ru {
-    color: #e2e3df;
-    font-size: 14px;
-    line-height: 1.3;
-    font-weight: 500;
-    margin-top: 1px;
+.bp-open:active {
+    transform: scale(.97);
+    opacity: .9
 }
 
-body.view-home .book-meta,
-body.view-home .book-note {
-    color: #989d98;
-    font-size: 13px;
-    line-height: 1.35;
-}
-
-body.view-home .book-meta[dir="ltr"] {
-    text-align: right;
-}
-
-body.view-home .book-progress {
-    height: 5px;
-    margin: 7px 0 2px;
-    background: #303330;
-}
-
-body.view-home .book-progress-bar {
-    background: #65d681;
-}
-
-body.view-home .book-chapters {
-    gap: 6px;
-    margin-top: 8px;
-}
-
-body.view-home .chapter,
-body.view-home .chapter.on {
-    padding: 5px 10px;
-    border-radius: 999px;
-    font-family: var(--ar);
-    font-size: 14px !important;
-    background: #292d2a;
-    color: #8c928c;
-}
-
-body.view-home .chapter.on {
-    background: #183a25;
-    color: #7cdb98;
-}
-
-body.view-home .cover {
-    width: 92px;
-    height: 132px;
-    border-radius: 7px 10px 10px 7px;
-    box-shadow: 0 9px 20px rgba(0,0,0,.28), inset 3px 0 0 rgba(0,0,0,.24), inset 5px 0 0 rgba(255,255,255,.09);
-}
-
-body.view-home .cover-mabda {
-    padding-top: 14px;
-}
-
-body.view-home .cover-mia {
-    border: 1px solid rgba(255,255,255,.22);
-}
-
-body.view-home .cover-unm {
-    border: 1px solid rgba(111, 176, 122, .22);
-}
-
-@media (max-width: 380px) {
-    body.view-home .book {
-        gap: 12px;
-        padding: 14px 12px;
-        min-height: 170px;
+/* Невысокие экраны: обложка поменьше */
+@media (max-height: 760px) {
+    .home {
+        --k: 2
     }
-    body.view-home .cover {
-        width: 80px;
-        height: 116px;
+
+    .bp-title {
+        font-size: 26px
     }
-    body.view-home .book-title[lang="ar"] {
-        font-size: 23px;
-    }
-    body.view-home .book-author {
-        font-size: 13px;
+
+    .bp-desc {
+        margin: 4px 0 12px
     }
 }
 
-/* Шапка в стиле iOS поверх тёмной библиотеки: отступ сверху задаёт сама панель */
-body.view-home .home {
-    padding-top: 0
-}
-
-body.view-home .home-hero .eyebrow {
-    letter-spacing: .06em
+@media (max-height: 640px) {
+    .home {
+        --k: 1.65
+    }
 }

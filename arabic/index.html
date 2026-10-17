@@ -33,7 +33,7 @@
             if (t === '"light"' || t === '"dark"') document.documentElement.dataset.theme = JSON.parse(t);
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="style.css?v=0038">
+    <link rel="stylesheet" href="style.css?v=0039">
 </head>
 
 <body class="view-home">
@@ -57,86 +57,56 @@
             else s.remove();
         })();
     </script>
-    <!-- Главный экран — книжная полка: адрес / -->
+    <!-- Главный экран — библиотека: обложки листаются вбок, под ними описание книги -->
     <section class="home" id="homeScreen">
-        <!-- Панель как в iOS: при прокрутке появляется размытый фон и малый заголовок -->
-        <div class="home-nav" id="homeNav">
-            <span class="home-nav-title" aria-hidden="true">Книги</span>
+        <header class="lib-top">
+            <div class="lib-brand">
+                <span class="lib-brand-ar" lang="ar" dir="rtl">الْمَكْتَبَةُ</span>
+                <span class="lib-brand-ru">Библиотека</span>
+            </div>
             <button class="icon-btn" id="settingsBtn" type="button" aria-label="Настройки" aria-haspopup="dialog">
                 <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></svg>
             </button>
-        </div>
-        <header class="home-hero">
-            <div class="eyebrow" id="homeDate"></div>
-            <div class="home-title-row">
-                <h1 class="welcome-title">Книги</h1>
-                <span class="home-title-ar" lang="ar" dir="rtl">الْمَكْتَبَةُ</span>
-            </div>
         </header>
 
-        <a class="resume" id="resume" href="#" hidden>
-            <span class="resume-icon" aria-hidden="true">
-                <svg width="14" height="16" viewBox="0 0 14 16"><path d="M2 1.5v13L13 8z" fill="currentColor"/></svg>
-            </span>
-            <span class="resume-info">
-                <span class="resume-label">Продолжить</span>
-                <span class="resume-title" id="resumeTitle"></span>
-            </span>
-            <svg class="chevron" width="8" height="14" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
+        <div class="lib-stage">
+            <nav class="carousel" id="carousel" aria-label="Книги">
+            <a class="slide" href="#mabda" data-i="0">
+                <span class="cover-frame">
+                    <span class="cover cover-mabda" aria-hidden="true">
+                        <span class="cover-ar">مَبْدَأُ<br>الْقِرَاءَةِ</span>
+                        <span class="cover-ru">Мабдауль<br>Къираат</span>
+                    </span>
+                </span>
+            </a>
+            <a class="slide" href="#amil" data-i="1">
+                <span class="cover-frame">
+                    <span class="cover cover-mia" aria-hidden="true">
+                        <span class="cover-ar">مِئَةُ عَامِلٍ<br>فِي النَّحْوِ</span>
+                        <span class="cover-ru">Сто управляющих<br>слов в синтаксисе</span>
+                    </span>
+                </span>
+            </a>
+            <a class="slide" href="#nahw" data-i="2">
+                <span class="cover-frame">
+                    <span class="cover cover-unm" aria-hidden="true">
+                        <span class="cover-ar">شَرْحُ<br>الْأُنْمُوذَجِ</span>
+                        <span class="cover-glyph">ح</span>
+                        <span class="cover-author">الأردبيلي</span>
+                    </span>
+                </span>
+            </a>
+            </nav>
+            <div class="dots" id="dots" aria-hidden="true"><span></span><span></span><span></span></div>
 
-        <nav class="shelf" aria-label="Книги">
-            <a class="book" href="#mabda" dir="rtl">
-                <span class="cover cover-mabda" aria-hidden="true">
-                    <span class="cover-ar">مَبْدَأُ<br>الْقِرَاءَةِ</span>
-                    <span class="cover-ru">Мабдауль<br>Къираат</span>
-                </span>
-                <span class="book-info">
-                    <span class="book-kind" lang="ar">الْجُزْءُ الثَّالِثُ</span>
-                    <span class="book-title" lang="ar">مَبْدَأُ الْقِرَاءَةِ</span>
-                    <span class="book-author" lang="ar">صِبْغَةُ اللهِ بِيكْبُولَاط</span>
-                    <span class="book-meta" id="mabdaMeta" dir="ltr">Рассказы с переводом</span>
-                    <span class="book-progress" aria-hidden="true"><span class="book-progress-bar" id="mabdaBar"></span></span>
-                    <span class="book-note" id="mabdaNote"></span>
-                </span>
-            </a>
-            <a class="book" href="#amil" dir="rtl">
-                <span class="cover cover-mia" aria-hidden="true">
-                    <span class="cover-ar">مِئَةُ عَامِلٍ<br>فِي النَّحْوِ</span>
-                    <span class="cover-ru">Сто управляющих<br>слов в синтаксисе</span>
-                </span>
-                <span class="book-info">
-                    <span class="book-kind" lang="ar">النَّحْوُ</span>
-                    <span class="book-title" lang="ar">مِئَةُ عَامِلٍ</span>
-                    <span class="book-title-ru">Сто управляющих слов в синтаксисе</span>
-                    <span class="book-author" lang="ar">عَبْدُ الْقَاهِرِ الْجُرْجَانِيُّ</span>
-                    <span class="book-meta" dir="ltr">Перевод А. А. Гойбасханова</span>
-                    <span class="book-chapters" lang="ar">
-                        <span class="chapter on">لَفْظِيَّةٌ ٩٨</span>
-                        <span class="chapter on">مَعْنَوِيَّةٌ ٢</span>
-                    </span>
-                </span>
-            </a>
-            <a class="book" href="#nahw" dir="rtl">
-                <span class="cover cover-unm" aria-hidden="true">
-                    <span class="cover-ar">شَرْحُ<br>الْأُنْمُوذَجِ</span>
-                    <span class="cover-glyph">ح</span>
-                    <span class="cover-author">الأردبيلي</span>
-                </span>
-                <span class="book-info">
-                    <span class="book-kind" lang="ar">النَّحْوُ</span>
-                    <span class="book-title" lang="ar">شَرْحُ الْأُنْمُوذَجِ</span>
-                    <span class="book-title-ru">Грамматика · شرح الأنموذج</span>
-                    <span class="book-author" lang="ar">جَمَالُ الدِّينِ الْأَرْدَبِيلِيُّ</span>
-                    <span class="book-author small" lang="ar">عَلَى مَتْنِ الزَّمَخْشَرِيِّ</span>
-                    <span class="book-chapters" lang="ar">
-                        <span class="chapter on">الِاسْمُ</span>
-                        <span class="chapter">الْفِعْلُ</span>
-                        <span class="chapter">الْحَرْفُ</span>
-                    </span>
-                </span>
-            </a>
-        </nav>
+            <div class="book-panel" id="bookPanel" aria-live="polite">
+                <div class="bp-kind" id="bpKind" lang="ar" dir="rtl"></div>
+                <div class="bp-title" id="bpTitle" lang="ar" dir="rtl"></div>
+                <div class="bp-author" id="bpAuthor" lang="ar" dir="rtl"></div>
+                <p class="bp-desc" id="bpDesc"></p>
+                <a class="bp-open" id="bpOpen" href="#mabda">Открыть</a>
+            </div>
+        </div>
     </section>
 
     <!-- Мабдау-ль-Кыраа: список уроков, адрес #mabda -->
@@ -388,14 +358,6 @@
 
                 <div class="set-group-label">Прогресс</div>
                 <div class="set-group">
-                    <div class="set-row">
-                        <span class="set-row-label">Слова уроков</span>
-                        <span class="set-value" id="setWords"></span>
-                    </div>
-                    <div class="set-row">
-                        <span class="set-row-label">Тренажёр «Миату Амиль»</span>
-                        <span class="set-value" id="setQuiz"></span>
-                    </div>
                     <button class="set-row set-action danger" id="setResetWords" type="button">Сбросить прогресс слов</button>
                     <button class="set-row set-action danger" id="setResetQuiz" type="button">Сбросить тренажёр</button>
                 </div>
@@ -407,11 +369,6 @@
                         <span class="set-row-label">Версия</span>
                         <span class="set-value" id="setVersion"></span>
                     </div>
-                    <div class="set-row">
-                        <span class="set-row-label">Книги</span>
-                        <span class="set-value">Мабдаъ аль-Кыраа, Миату Амиль, Шарх аль-Унмузадж</span>
-                    </div>
-                    <button class="set-row set-action" id="setReload" type="button">Обновить приложение</button>
                 </div>
             </div>
         </div>
@@ -473,7 +430,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0038"></script>
+    <script src="app.js?v=0039"></script>
 </body>
 
 </html>
