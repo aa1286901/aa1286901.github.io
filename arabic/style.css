@@ -2091,3 +2091,229 @@ html.splash-on .splash {
         animation-delay: 0s !important
     }
 }
+
+
+/* ── Главная библиотека: единый тёмный стиль ─────────────── */
+body.view-home {
+    --bg: #050706;
+    --card: #1b1d1c;
+    --text: #f4f3f0;
+    --text-2: #d0d0ca;
+    --muted: #969995;
+    --faint: #777c77;
+    --fill: #292d2a;
+    --separator: #303430;
+    --accent: #39895a;
+    --accent-soft: #193b28;
+    --on-accent: #f7fff8;
+    --pressed: #252a26;
+    --hover: #202521;
+    --track: #303330;
+    --shadow: rgba(0, 0, 0, .32);
+    background:
+        radial-gradient(ellipse 110% 42% at 50% -12%, rgba(29, 93, 53, .18), transparent 72%),
+        #050706;
+    color-scheme: dark;
+    color: var(--text);
+}
+
+body.view-home .home {
+    gap: 22px;
+    padding-top: calc(env(safe-area-inset-top) + 32px);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 28px);
+}
+
+body.view-home .welcome-head {
+    align-items: center;
+    padding: 0 5px 2px;
+}
+
+body.view-home .eyebrow {
+    color: #929891;
+    letter-spacing: .12em;
+    font-size: 12px;
+}
+
+body.view-home .welcome-title {
+    margin-top: 3px;
+    font-size: 38px;
+    line-height: 1.08;
+    letter-spacing: -.04em;
+}
+
+body.view-home .welcome-ar {
+    color: #a8ada7;
+    font-size: 25px;
+    padding-bottom: 0;
+}
+
+body.view-home .resume {
+    border: 1px solid rgba(255,255,255,.035);
+    border-radius: 22px;
+    padding: 15px 17px;
+    background: linear-gradient(115deg, #202321, #171a18);
+    box-shadow: 0 10px 28px rgba(0,0,0,.12);
+}
+
+body.view-home .resume-icon {
+    width: 42px;
+    height: 42px;
+    background: #3987f6;
+    box-shadow: 0 4px 14px rgba(57,135,246,.22);
+}
+
+body.view-home .resume-label {
+    font-size: 13px;
+    margin-bottom: 2px;
+    color: #999e99;
+}
+
+body.view-home .resume-title {
+    font-size: 18px;
+    line-height: 1.3;
+}
+
+body.view-home .shelf {
+    gap: 15px;
+}
+
+body.view-home .book {
+    position: relative;
+    gap: 17px;
+    padding: 17px 16px;
+    min-height: 190px;
+    border: 1px solid rgba(255,255,255,.035);
+    border-radius: 25px;
+    background: linear-gradient(135deg, #1c1e1d 0%, #191b1a 72%, #171a18 100%);
+    box-shadow: 0 12px 28px rgba(0,0,0,.12);
+    transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+
+body.view-home .book::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(ellipse 75% 90% at 100% 0%, rgba(66,145,86,.055), transparent 68%);
+}
+
+body.view-home .book:active {
+    transform: scale(.985);
+    border-color: rgba(105, 206, 135, .25);
+    background: #202521;
+}
+
+body.view-home .book-info {
+    position: relative;
+    z-index: 1;
+    gap: 4px;
+}
+
+body.view-home .book-kind[lang="ar"] {
+    color: #76d996;
+    font-size: 13px;
+    letter-spacing: .02em;
+}
+
+body.view-home .book-title[lang="ar"] {
+    font-size: 27px;
+    line-height: 1.4;
+    color: #f4f3f0;
+}
+
+body.view-home .book-author {
+    color: #b7bbb5;
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+body.view-home .book-author.small {
+    color: #8f958f;
+}
+
+body.view-home .book-title-ru {
+    color: #e2e3df;
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 500;
+    margin-top: 1px;
+}
+
+body.view-home .book-meta,
+body.view-home .book-note {
+    color: #989d98;
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+body.view-home .book-meta[dir="ltr"] {
+    text-align: right;
+}
+
+body.view-home .book-progress {
+    height: 5px;
+    margin: 7px 0 2px;
+    background: #303330;
+}
+
+body.view-home .book-progress-bar {
+    background: #65d681;
+}
+
+body.view-home .book-chapters {
+    gap: 6px;
+    margin-top: 8px;
+}
+
+body.view-home .chapter,
+body.view-home .chapter.on {
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-family: var(--ar);
+    font-size: 14px !important;
+    background: #292d2a;
+    color: #8c928c;
+}
+
+body.view-home .chapter.on {
+    background: #183a25;
+    color: #7cdb98;
+}
+
+body.view-home .cover {
+    width: 92px;
+    height: 132px;
+    border-radius: 7px 10px 10px 7px;
+    box-shadow: 0 9px 20px rgba(0,0,0,.28), inset 3px 0 0 rgba(0,0,0,.24), inset 5px 0 0 rgba(255,255,255,.09);
+}
+
+body.view-home .cover-mabda {
+    padding-top: 14px;
+}
+
+body.view-home .cover-mia {
+    border: 1px solid rgba(255,255,255,.22);
+}
+
+body.view-home .cover-unm {
+    border: 1px solid rgba(111, 176, 122, .22);
+}
+
+@media (max-width: 380px) {
+    body.view-home .book {
+        gap: 12px;
+        padding: 14px 12px;
+        min-height: 170px;
+    }
+    body.view-home .cover {
+        width: 80px;
+        height: 116px;
+    }
+    body.view-home .book-title[lang="ar"] {
+        font-size: 23px;
+    }
+    body.view-home .book-author {
+        font-size: 13px;
+    }
+}
