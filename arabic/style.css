@@ -806,7 +806,11 @@ body.view-nahw .nahw {
     font-size: 12.5px;
     line-height: 1.3;
     color: var(--muted);
-    direction: ltr
+    direction: ltr;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden
 }
 
 .nb-count {
@@ -951,6 +955,10 @@ body.view-nahw .nahw {
     text-align: center
 }
 
+#qawlQuote {
+    white-space: pre-line
+}
+
 .qawl-quote {
     padding: 14px 16px;
     border-radius: 14px;
@@ -976,6 +984,7 @@ body.view-nahw .nahw {
 
 .qawl-text {
     margin: 0;
+    white-space: pre-line;
     font-size: 16px;
     line-height: 1.5;
     color: var(--text-2)
