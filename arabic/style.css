@@ -532,6 +532,29 @@ body:not(.view-welcome) .welcome {
     text-shadow: 0 0 2px #fff, 0 0 2px #fff
 }
 
+/* Белая страница с крупной чёрной надписью, как титул книги */
+.cover-mia {
+    padding: 16px 6px 0;
+    justify-content: flex-start;
+    background: linear-gradient(180deg, #fbfaf6, #efede6);
+    box-shadow: 0 6px 16px var(--shadow), inset 3px 0 0 rgba(0, 0, 0, .08), inset 0 0 0 1px rgba(0, 0, 0, .06)
+}
+
+.cover-mia .cover-ar {
+    font-size: 18px;
+    line-height: 1.45;
+    color: #1c1c1e
+}
+
+.cover-mia .cover-ru {
+    margin-top: 10px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 7.5px;
+    font-weight: 700;
+    color: #1c1c1e;
+    text-shadow: none
+}
+
 .cover-unm {
     padding: 10px 6px 0;
     background:
@@ -783,7 +806,11 @@ body.view-nahw .nahw {
     font-size: 12.5px;
     line-height: 1.3;
     color: var(--muted);
-    direction: ltr
+    direction: ltr;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden
 }
 
 .nb-count {
@@ -928,6 +955,10 @@ body.view-nahw .nahw {
     text-align: center
 }
 
+#qawlQuote {
+    white-space: pre-line
+}
+
 .qawl-quote {
     padding: 14px 16px;
     border-radius: 14px;
@@ -953,6 +984,7 @@ body.view-nahw .nahw {
 
 .qawl-text {
     margin: 0;
+    white-space: pre-line;
     font-size: 16px;
     line-height: 1.5;
     color: var(--text-2)
@@ -967,6 +999,42 @@ body.view-nahw .nahw {
     font-size: 20px;
     line-height: 1.7;
     text-align: right
+}
+
+.qawl-exs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+}
+
+.qawl-exs:empty {
+    display: none
+}
+
+.qawl-exs li {
+    padding: 8px 12px 10px;
+    border-radius: 12px;
+    background: var(--fill);
+    display: flex;
+    flex-direction: column;
+    gap: 2px
+}
+
+.qawl-ex-ar {
+    font-family: var(--ar);
+    font-size: 20px;
+    line-height: 1.7;
+    text-align: right
+}
+
+.qawl-ex-ru {
+    font-size: 15px;
+    line-height: 1.4;
+    font-style: italic;
+    color: var(--text-2)
 }
 
 .qawl-foot {

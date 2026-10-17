@@ -202,7 +202,7 @@ async function openLesson(id) {
 }
 
 async function route() {
-  if (location.hash === "#nahw") return showNahw();
+  if (TREE_BOOKS[location.hash]) return showNahw(location.hash);
   if (location.hash === "#mabda") return showWelcome();
   const id = parseHash();
   if (id === null) {
@@ -477,6 +477,13 @@ applySize();
 
 // ── Грамматика: дерево главы об имени ───────────────────
 // Уровни идут сверху вниз: корень, под ним сетка его тем, под выбранной темой — сетка её тем…
+// Книги-деревья: адрес → файл и подписи
+const TREE_BOOKS = {
+  "#nahw": { file: "nahw_ism.json", book: "Шарх аль-Унмузадж", eyebrow: "النَّحْوُ", said: "قَالَ:" },
+  "#amil": { file: "mia_amil.json", book: "Сто управляющих слов", eyebrow: "مِئَةُ عَامِلٍ", sub: "аль-Джурджани · перевод Гойбасханова" },
+};
+const treeCache = new Map(); // адрес → JSON книги
+let nahwBook = null; // текущая книга из TREE_BOOKS
 let nahwData = null;
 let nahwNodes = []; // все узлы по порядку обхода; индекс — data-i у плашки
 let nahwParent = []; // индекс родителя для каждого узла
@@ -484,7 +491,8 @@ let nahwPath = [0]; // раскрытые узлы от корня вниз
 
 const CHEVRON = `<svg width="12" height="8" viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const kidsOf = (i) => nahwNodes[i].children || [];
-const topicCount = (n) => `${n} ${plural(n, "тема", "темы", "тем")}`;
+// Подпись числа ветвей: у узла может быть своё слово (cw), иначе «темы»
+const topicCount = (n, cw = ["тема", "темы", "тем"]) => `${n} ${plural(n, ...cw)}`;
 
 function indexNodes(n, parent) {
   const i = nahwNodes.push(n) - 1;
@@ -503,7 +511,7 @@ function nodeCard(i, level, cls = "") {
   const toggle = k
     ? `<button class="nb-open" type="button" data-open="${i}" data-level="${level}" aria-expanded="${open}" aria-label="Темы: ${k}">${CHEVRON}</button>`
     : "";
-  return `<div class="nb${open ? " open" : ""}${k ? " has-kids" : ""} ${cls}"><button class="nb-box" type="button" data-i="${i}"><span class="nb-ar" lang="ar" dir="rtl">${esc(n.ar)}</span><span class="nb-ru">${esc(n.ru)}</span>${k ? `<span class="nb-count">${topicCount(k)}</span>` : ""}</button>${toggle}</div>`;
+  return `<div class="nb${open ? " open" : ""}${k ? " has-kids" : ""} ${cls}"><button class="nb-box" type="button" data-i="${i}"><span class="nb-ar" lang="ar" dir="rtl">${esc(n.ar)}</span><span class="nb-ru">${esc(n.ru)}</span>${k ? `<span class="nb-count">${topicCount(n.total ?? k, n.cw)}</span>` : ""}</button>${toggle}</div>`;
 }
 
 function renderNahw(scrollTo) {
@@ -512,7 +520,7 @@ function renderNahw(scrollTo) {
     const kids = kidsOf(p).map((c) => c._i);
     if (!kids.length) return;
     const head = level
-      ? `<div class="nb-head"><span class="nb-head-ar" lang="ar" dir="rtl">${esc(nahwNodes[p].ar)}</span><span class="nb-head-ru">${esc(nahwNodes[p].ru)} · ${topicCount(kids.length)}</span></div>`
+      ? `<div class="nb-head"><span class="nb-head-ar" lang="ar" dir="rtl">${esc(nahwNodes[p].ar)}</span><span class="nb-head-ru">${esc(nahwNodes[p].ru)} · ${topicCount(nahwNodes[p].total ?? kids.length, nahwNodes[p].cw)}</span></div>`
       : "";
     html += `<div class="nb-link" id="nb-link-${level}" aria-hidden="true"></div>${head}<div class="nb-level" style="--cols:${colsFor(kids.length)}">${kids.map((c) => nodeCard(c, level)).join("")}</div>`;
   });
@@ -531,22 +539,29 @@ function openNode(i) {
   renderNahw(nahwPath.length - 1);
 }
 
-async function showNahw() {
+async function showNahw(hash) {
   setView("nahw");
-  document.title = "Глава об имени — Arabic";
-  if (nahwData) return;
+  const book = TREE_BOOKS[hash];
+  $("nahwEyebrow").textContent = book.eyebrow;
+  if (nahwBook === book) return;
   try {
-    const res = await fetch("nahw_ism.json");
-    if (!res.ok) throw new Error("Файл nahw_ism.json не найден");
-    nahwData = await res.json();
+    if (!treeCache.has(hash)) {
+      const res = await fetch(book.file);
+      if (!res.ok) throw new Error(`Файл ${book.file} не найден`);
+      treeCache.set(hash, await res.json());
+    }
+    nahwBook = book;
+    nahwData = treeCache.get(hash);
     const root = nahwData.tree;
+    document.title = `${root.ru} — Arabic`;
     $("nahwTitle").textContent = root.ar;
-    $("nahwSub").textContent = `${root.ru} · Шарх аль-Унмузадж`;
+    $("nahwSub").textContent = book.sub || `${root.ru} · ${book.book}`;
     nahwNodes = [];
     nahwParent = [];
     indexNodes(root, null);
     nahwPath = [0];
     renderNahw();
+    $("nahwScroll").scrollTop = 0;
   } catch (err) {
     alert(err.message);
     location.hash = "";
@@ -586,11 +601,21 @@ function openQawl(i) {
   fill("qawlQuoteBlock", "qawlQuote", n.qawl);
   fill("qawlTrBlock", "qawlTr", n.qawlRu);
   fill("qawlDefBlock", "qawlDef", n.qawl ? "" : n.def);
+  // Примеры: одной строкой (ex) или списком с переводом из книги (exs)
+  const exs = n.exs || [];
   fill("qawlExBlock", "qawlEx", n.ex);
-  $("qawlPage").textContent = n.p ? `Шарх аль-Унмузадж, стр. ${n.p}` : "";
+  $("qawlEx").hidden = !n.ex;
+  if (exs.length) $("qawlExBlock").hidden = false;
+  $("qawlExs").innerHTML = exs
+    .map((x) => `<li><span class="qawl-ex-ar" lang="ar" dir="rtl">${esc(x.ar)}</span>${x.ru ? `<span class="qawl-ex-ru">${esc(x.ru)}</span>` : ""}</li>`)
+    .join("");
+  $("qawlSaid").hidden = !nahwBook.said;
+  $("qawlSaid").textContent = nahwBook.said || "";
+  $("qawlPage").textContent = n.p ? `${nahwBook.book}, стр. ${n.p}` : "";
   const kids = kidsOf(i).length;
   $("qawlBranch").hidden = !kids || nahwPath.includes(i);
-  $("qawlBranch").textContent = `Показать темы · ${kids}`;
+  $("qawlBranch").textContent = `Показать: ${topicCount(kids, n.cw)}`;
+  $("qawlExTitle").textContent = exs.length > 1 ? "Примеры" : "Пример";
   $("qawlLayer").hidden = false;
   requestAnimationFrame(() => $("qawlLayer").classList.add("show"));
   $("qawlModal").scrollTop = 0;

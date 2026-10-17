@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим приложения Arabic.
 // Свои файлы — «сначала сеть»: обновления видны сразу, без интернета берётся кэш.
 // Шрифты Google — «сначала кэш»: они не меняются.
-const VERSION = "0033";
+const VERSION = "0034";
 const CACHE = "arabic-" + VERSION;
 const FONT_CACHE = "arabic-fonts";
 
@@ -17,6 +17,7 @@ const PRECACHE = [
   "icons/favicon-32.png",
   "icons/glyph.png",
   "nahw_ism.json",
+  "mia_amil.json",
   ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => `lesson_${n}.json`),
 ];
 
