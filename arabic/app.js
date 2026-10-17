@@ -145,25 +145,88 @@ function setView(view) {
   if (view !== "lesson") document.body.classList.add("view-" + view);
 }
 
-// Главный экран: обложки книг, общий прогресс и «Продолжить»
+// Главный экран: обложки листаются вбок, под активной — описание книги
+const BOOKS = [
+  {
+    href: "#mabda",
+    kind: "الْقِرَاءَةُ",
+    title: "مَبْدَأُ الْقِرَاءَةِ",
+    author: "صِبْغَةُ اللهِ بِيكْبُولَاط",
+    desc: "Рассказы с переводом и карточки всех слов: девять уроков третьей части.",
+  },
+  {
+    href: "#amil",
+    kind: "النَّحْوُ",
+    title: "مِئَةُ عَامِلٍ فِي النَّحْوِ",
+    author: "عَبْدُ الْقَاهِرِ الْجُرْجَانِيُّ",
+    desc: "Сто управляющих слов: тринадцать видов, значения и примеры из книги, тренажёр.",
+  },
+  {
+    href: "#nahw",
+    kind: "النَّحْوُ",
+    title: "شَرْحُ الْأُنْمُوذَجِ",
+    author: "جَمَالُ الدِّينِ الْأَرْدَبِيلِيُّ",
+    desc: "Глава об имени деревом терминов: определения из книги с переводом.",
+  },
+];
+const HOME_BOOK_KEY = "arabic.homeBook";
+let homeBook = store.get(HOME_BOOK_KEY, 0);
+if (!Number.isInteger(homeBook) || homeBook < 0 || homeBook >= BOOKS.length) homeBook = 0;
+
+function slideStep() {
+  const slides = $("carousel").children;
+  return slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : 1;
+}
+
+function setHomeBook(i) {
+  if (i === homeBook && $("bpTitle").textContent) return;
+  homeBook = i;
+  store.set(HOME_BOOK_KEY, i);
+  const b = BOOKS[i];
+  [...$("carousel").children].forEach((el, k) => el.classList.toggle("active", k === i));
+  [...$("dots").children].forEach((el, k) => el.classList.toggle("on", k === i));
+  const panel = $("bookPanel");
+  panel.classList.remove("swap");
+  void panel.offsetWidth; // перезапуск анимации смены книги
+  panel.classList.add("swap");
+  $("bpKind").textContent = b.kind;
+  $("bpTitle").textContent = b.title;
+  $("bpAuthor").textContent = b.author;
+  $("bpDesc").textContent = b.desc;
+  $("bpOpen").href = b.href;
+}
+
+function scrollToBook(i, smooth = true) {
+  $("carousel").scrollTo({ left: i * slideStep(), behavior: smooth ? "smooth" : "auto" });
+}
+
 function showHome() {
   setView("home");
   document.title = "Arabic";
-  const date = new Intl.DateTimeFormat("ru", { weekday: "long", day: "numeric", month: "long" }).format(new Date());
-  $("homeDate").textContent = date[0].toUpperCase() + date.slice(1);
-  const last = LESSONS.find((l) => l.id === store.get(LAST_KEY, null));
-  $("resume").hidden = !last;
-  if (last) {
-    $("resume").href = "#lesson-" + last.id;
-    $("resumeTitle").textContent = `Урок ${last.id} · ${last.ruTitle}`;
-  }
-  renderCounts().then((stats) => {
-    const n = stats.reduce((a, x) => a + x.n, 0);
-    const learned = stats.reduce((a, x) => a + x.learned, 0);
-    $("mabdaMeta").textContent =
-      `${LESSONS.length} ${plural(LESSONS.length, "урок", "урока", "уроков")} · ${n} ${plural(n, "слово", "слова", "слов")}`;
-    $("mabdaBar").style.width = n ? (learned / n) * 100 + "%" : "0";
-    $("mabdaNote").textContent = learned ? `Выучено ${learned} из ${n}` : "Пока ничего не выучено";
+  requestAnimationFrame(() => {
+    scrollToBook(homeBook, false);
+    setHomeBook(homeBook);
+  });
+}
+
+{
+  let raf = 0;
+  $("carousel").addEventListener("scroll", () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const i = Math.round($("carousel").scrollLeft / slideStep());
+      setHomeBook(Math.max(0, Math.min(BOOKS.length - 1, i)));
+    });
+  }, { passive: true });
+  // Нажатие на соседнюю обложку сначала подвигает её в центр
+  $("carousel").addEventListener("click", (e) => {
+    const slide = e.target.closest(".slide");
+    if (!slide) return;
+    const i = Number(slide.dataset.i);
+    if (i !== homeBook) {
+      e.preventDefault();
+      scrollToBook(i);
+    }
   });
 }
 
@@ -812,11 +875,6 @@ $("quizOpts").addEventListener("click", (e) => {
 $("quizNext").onclick = nextQuiz;
 $("quizAgain").onclick = startQuiz;
 
-// ── Панель главного экрана: размывается при прокрутке, как в iOS ──
-$("homeScreen").addEventListener("scroll", () => {
-  $("homeNav").classList.toggle("scrolled", $("homeScreen").scrollTop > 44);
-}, { passive: true });
-
 // ── Тема: как в системе, светлая или тёмная ─────────────
 let theme = store.get(THEME_KEY, "auto");
 if (!["auto", "light", "dark"].includes(theme)) theme = "auto";
@@ -846,12 +904,7 @@ $("setTheme").addEventListener("click", (e) => {
 applyTheme();
 
 // ── Настройки ───────────────────────────────────────────
-const learnedIn = (obj) => Object.values(obj || {}).filter((v) => v >= LEARNED).length;
-
 function renderSettings() {
-  const words = Object.values(progress).reduce((sum, lesson) => sum + learnedIn(lesson), 0);
-  $("setWords").textContent = `Выучено ${words}`;
-  $("setQuiz").textContent = `Выучено ${learnedIn(quizStore)} из 100`;
   const v = document.querySelector('script[src*="app.js"]')?.src.match(/v=(\w+)/);
   $("setVersion").textContent = v ? v[1] : "—";
 }
@@ -871,7 +924,6 @@ function closeSettings() {
   setTimeout(() => {
     if (!layer.classList.contains("show")) layer.hidden = true;
   }, 300);
-  if (document.body.classList.contains("view-home")) showHome();
 }
 
 $("settingsBtn").onclick = openSettings;
@@ -884,15 +936,12 @@ $("setResetWords").onclick = () => {
   if (!confirm("Сбросить прогресс всех слов уроков? Отметки «Знаю» будут удалены.")) return;
   progress = {};
   store.set(PROGRESS_KEY, progress);
-  renderSettings();
 };
 $("setResetQuiz").onclick = () => {
   if (!confirm("Сбросить прогресс тренажёра «Миату Амиль»?")) return;
   quizStore = {};
   store.set(QUIZ_KEY, quizStore);
-  renderSettings();
 };
-$("setReload").onclick = () => location.reload();
 
 // ── Заставка: убираем после анимации или по нажатию ─────
 const splash = $("splash");
