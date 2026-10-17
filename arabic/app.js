@@ -480,7 +480,7 @@ applySize();
 // Книги-деревья: адрес → файл и подписи
 const TREE_BOOKS = {
   "#nahw": { file: "nahw_ism.json", book: "Шарх аль-Унмузадж", eyebrow: "النَّحْوُ", said: "قَالَ:" },
-  "#amil": { file: "mia_amil.json", book: "Сто управляющих слов", eyebrow: "مِئَةُ عَامِلٍ", sub: "аль-Джурджани · перевод Гойбасханова" },
+  "#amil": { file: "mia_amil.json", book: "Сто управляющих слов", eyebrow: "مِئَةُ عَامِلٍ", sub: "" },
 };
 const treeCache = new Map(); // адрес → JSON книги
 let nahwBook = null; // текущая книга из TREE_BOOKS
@@ -511,7 +511,7 @@ function nodeCard(i, level, cls = "") {
   const toggle = k
     ? `<button class="nb-open" type="button" data-open="${i}" data-level="${level}" aria-expanded="${open}" aria-label="Темы: ${k}">${CHEVRON}</button>`
     : "";
-  return `<div class="nb${open ? " open" : ""}${k ? " has-kids" : ""} ${cls}"><button class="nb-box" type="button" data-i="${i}"><span class="nb-ar" lang="ar" dir="rtl">${esc(n.ar)}</span><span class="nb-ru">${esc(n.ru)}</span>${k ? `<span class="nb-count">${topicCount(n.total ?? k, n.cw)}</span>` : ""}</button>${toggle}</div>`;
+  return `<div class="nb${open ? " open" : ""}${k ? " has-kids" : ""} ${cls}"><button class="nb-box" type="button" data-i="${i}"><span class="nb-ar" lang="ar" dir="rtl">${esc(n.ar)}</span>${n.ru ? `<span class="nb-ru">${esc(n.ru)}</span>` : ""}${k ? `<span class="nb-count">${topicCount(n.total ?? k, n.cw)}</span>` : ""}</button>${toggle}</div>`;
 }
 
 function renderNahw(scrollTo) {
@@ -520,7 +520,7 @@ function renderNahw(scrollTo) {
     const kids = kidsOf(p).map((c) => c._i);
     if (!kids.length) return;
     const head = level
-      ? `<div class="nb-head"><span class="nb-head-ar" lang="ar" dir="rtl">${esc(nahwNodes[p].ar)}</span><span class="nb-head-ru">${esc(nahwNodes[p].ru)} · ${topicCount(nahwNodes[p].total ?? kids.length, nahwNodes[p].cw)}</span></div>`
+      ? `<div class="nb-head"><span class="nb-head-ar" lang="ar" dir="rtl">${esc(nahwNodes[p].ar)}</span><span class="nb-head-ru">${nahwNodes[p].ru ? esc(nahwNodes[p].ru) + " · " : ""}${topicCount(nahwNodes[p].total ?? kids.length, nahwNodes[p].cw)}</span></div>`
       : "";
     html += `<div class="nb-link" id="nb-link-${level}" aria-hidden="true"></div>${head}<div class="nb-level" style="--cols:${colsFor(kids.length)}">${kids.map((c) => nodeCard(c, level)).join("")}</div>`;
   });
@@ -555,7 +555,8 @@ async function showNahw(hash) {
     const root = nahwData.tree;
     document.title = `${root.ru} — Arabic`;
     $("nahwTitle").textContent = root.ar;
-    $("nahwSub").textContent = book.sub || `${root.ru} · ${book.book}`;
+    $("nahwSub").textContent = book.sub ?? `${root.ru} · ${book.book}`;
+    $("nahwSub").hidden = !$("nahwSub").textContent;
     nahwNodes = [];
     nahwParent = [];
     indexNodes(root, null);
