@@ -139,7 +139,7 @@ function setView(view) {
   closeSheet();
   closeQawl();
   toggleSizer(false);
-  document.body.classList.remove("view-home", "view-welcome", "view-nahw");
+  document.body.classList.remove("view-home", "view-welcome", "view-nahw", "view-quiz");
   if (view !== "lesson") document.body.classList.add("view-" + view);
 }
 
@@ -202,6 +202,7 @@ async function openLesson(id) {
 }
 
 async function route() {
+  if (location.hash === "#amil-quiz") return showQuiz();
   if (TREE_BOOKS[location.hash]) return showNahw(location.hash);
   if (location.hash === "#mabda") return showWelcome();
   const id = parseHash();
@@ -480,7 +481,7 @@ applySize();
 // Книги-деревья: адрес → файл и подписи
 const TREE_BOOKS = {
   "#nahw": { file: "nahw_ism.json", book: "Шарх аль-Унмузадж", eyebrow: "النَّحْوُ", said: "قَالَ:" },
-  "#amil": { file: "mia_amil.json", book: "Сто управляющих слов", eyebrow: "مِئَةُ عَامِلٍ", sub: "" },
+  "#amil": { file: "mia_amil.json", book: "Сто управляющих слов", eyebrow: "مِئَةُ عَامِلٍ", sub: "", quiz: true },
 };
 const treeCache = new Map(); // адрес → JSON книги
 let nahwBook = null; // текущая книга из TREE_BOOKS
@@ -539,19 +540,26 @@ function openNode(i) {
   renderNahw(nahwPath.length - 1);
 }
 
+async function loadTreeBook(hash) {
+  if (!treeCache.has(hash)) {
+    const book = TREE_BOOKS[hash];
+    const res = await fetch(book.file);
+    if (!res.ok) throw new Error(`Файл ${book.file} не найден`);
+    treeCache.set(hash, await res.json());
+  }
+  return treeCache.get(hash);
+}
+
 async function showNahw(hash) {
   setView("nahw");
   const book = TREE_BOOKS[hash];
   $("nahwEyebrow").textContent = book.eyebrow;
+  $("quizEntry").hidden = !book.quiz;
+  if (book.quiz) quizEntryStats(hash);
   if (nahwBook === book) return;
   try {
-    if (!treeCache.has(hash)) {
-      const res = await fetch(book.file);
-      if (!res.ok) throw new Error(`Файл ${book.file} не найден`);
-      treeCache.set(hash, await res.json());
-    }
+    nahwData = await loadTreeBook(hash);
     nahwBook = book;
-    nahwData = treeCache.get(hash);
     const root = nahwData.tree;
     document.title = `${root.ru} — Arabic`;
     $("nahwTitle").textContent = root.ar;
@@ -641,6 +649,157 @@ $("qawlBranch").onclick = () => {
   closeQawl();
   openNode(qawlIndex);
 };
+
+// ── Тренажёр «Ста управляющих слов» ─────────────────────
+// Вопрос о слове: «какой это вид?» или «что оно делает?»; ответы и пояснения — из книги
+const QUIZ_KEY = "arabic.amilQuiz"; // { "вид|слово": сколько раз подряд верно }
+const QUIZ_LEN = 10;
+let quizStore = store.get(QUIZ_KEY, {});
+if (typeof quizStore !== "object" || quizStore === null) quizStore = {};
+let quizItems = []; // { n, type, key }
+let quizTypes = [];
+let quizRound = [];
+let quizPos = 0;
+let quizRight = 0;
+
+const shuffle = (a) => {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+const plainAr = (s) => stripHarakat(s).replace(/[ٱأإآ]/g, "ا").replace(/\s*\(.*?\)\s*/g, "").trim();
+
+function collectQuiz(root) {
+  quizItems = [];
+  quizTypes = [];
+  const walk = (n, type) => {
+    if (n.k === "type") quizTypes.push((type = n));
+    if (n.k === "amil") quizItems.push({ n, type, key: `${plainAr(type.ar)}|${plainAr(n.ar)}` });
+    (n.children || []).forEach((c) => walk(c, type));
+  };
+  walk(root, null);
+}
+
+const quizLearnedCount = () => quizItems.filter((it) => (quizStore[it.key] || 0) >= LEARNED).length;
+
+async function quizEntryStats(hash) {
+  try {
+    collectQuiz((await loadTreeBook(hash)).tree);
+    const k = quizLearnedCount();
+    $("quizEntrySub").textContent = k
+      ? `Выучено ${k} из ${quizItems.length}`
+      : "Вид и действие каждого из ста слов";
+  } catch {}
+}
+
+// Слово может стоять в нескольких видах (مَا, لَا) — тогда верны все они
+function correctTypes(it) {
+  const w = plainAr(it.n.ar);
+  return quizTypes.filter((t) => quizItems.some((x) => x.type === t && plainAr(x.n.ar) === w));
+}
+
+function makeQuestion(it) {
+  const mode = Math.random() < 0.5 ? "type" : "act";
+  const right = correctTypes(it);
+  const label = (t) => (mode === "type" ? t.ar : t.act);
+  const rightLabels = new Set(right.map(label));
+  const pool = shuffle([...new Set(quizTypes.map(label))].filter((l) => !rightLabels.has(l)));
+  const opts = shuffle([label(it.type), ...pool.slice(0, 3)]);
+  return { it, mode, opts, rightLabels };
+}
+
+function startQuiz() {
+  // Сначала слова, которые знаешь хуже всего
+  const ranked = shuffle([...quizItems]).sort((a, b) => (quizStore[a.key] || 0) - (quizStore[b.key] || 0));
+  quizRound = ranked.slice(0, QUIZ_LEN).map(makeQuestion);
+  quizPos = 0;
+  quizRight = 0;
+  $("quizDone").hidden = true;
+  $("quizBody").hidden = false;
+  renderQuestion();
+}
+
+function renderQuizMeta() {
+  $("quizStep").textContent = `Вопрос ${Math.min(quizPos + 1, quizRound.length)} из ${quizRound.length}`;
+  $("quizLearned").textContent = `Выучено ${quizLearnedCount()} из ${quizItems.length}`;
+  $("quizBar").style.width = (quizPos / quizRound.length) * 100 + "%";
+}
+
+function renderQuestion() {
+  const q = quizRound[quizPos];
+  renderQuizMeta();
+  $("quizQ").textContent = q.mode === "type" ? "К какому виду относится?" : "Что делает это слово?";
+  $("quizWord").textContent = q.it.n.ar;
+  $("quizOpts").className = "quiz-opts " + q.mode;
+  $("quizOpts").innerHTML = q.opts
+    .map((o, i) => `<button class="quiz-opt" type="button" data-o="${i}"${q.mode === "type" ? ' lang="ar" dir="rtl"' : ""}>${esc(o)}</button>`)
+    .join("");
+  $("quizFb").hidden = true;
+  $("quizNext").hidden = true;
+  $("quizBody").scrollTop = 0;
+}
+
+function answerQuiz(i) {
+  const q = quizRound[quizPos];
+  if (q.answered) return;
+  q.answered = true;
+  const ok = q.rightLabels.has(q.opts[i]);
+  if (ok) quizRight++;
+  quizStore[q.it.key] = ok ? (quizStore[q.it.key] || 0) + 1 : 0;
+  store.set(QUIZ_KEY, quizStore);
+  document.querySelectorAll("#quizOpts .quiz-opt").forEach((b, k) => {
+    b.disabled = true;
+    if (q.rightLabels.has(q.opts[k])) b.classList.add("right");
+    else if (k === i) b.classList.add("wrong");
+  });
+  const t = q.it.type;
+  $("quizVerdict").textContent = ok ? "Верно" : "Неверно";
+  $("quizVerdict").className = "quiz-verdict " + (ok ? "ok" : "bad");
+  $("quizAnswer").innerHTML = `<span lang="ar" dir="rtl">${esc(t.ar)}</span> — ${esc(t.act)}`;
+  $("quizBookAr").textContent = q.it.n.qawl || "";
+  $("quizBookRu").textContent = q.it.n.qawlRu || "";
+  $("quizBook").hidden = !q.it.n.qawl;
+  $("quizFb").hidden = false;
+  $("quizNext").hidden = false;
+  $("quizNext").textContent = quizPos + 1 < quizRound.length ? "Дальше" : "Итог";
+  renderQuizMeta();
+  requestAnimationFrame(() => $("quizFb").scrollIntoView({ behavior: "smooth", block: "nearest" }));
+}
+
+function nextQuiz() {
+  quizPos++;
+  if (quizPos < quizRound.length) return renderQuestion();
+  renderQuizMeta();
+  $("quizBar").style.width = "100%";
+  $("quizStep").textContent = "Готово";
+  $("quizBody").hidden = true;
+  $("quizNext").hidden = true;
+  $("quizDone").hidden = false;
+  $("quizDoneTitle").textContent = `${quizRight} из ${quizRound.length}`;
+  $("quizDoneText").textContent =
+    quizRight === quizRound.length ? "Все ответы верные. Слово считается выученным после двух верных ответов подряд." : "Слова с ошибками попадут в следующий круг первыми.";
+}
+
+async function showQuiz() {
+  setView("quiz");
+  document.title = "Тренажёр — Arabic";
+  try {
+    collectQuiz((await loadTreeBook("#amil")).tree);
+    startQuiz();
+  } catch (err) {
+    alert(err.message);
+    location.hash = "#amil";
+  }
+}
+
+$("quizOpts").addEventListener("click", (e) => {
+  const b = e.target.closest(".quiz-opt");
+  if (b) answerQuiz(Number(b.dataset.o));
+});
+$("quizNext").onclick = nextQuiz;
+$("quizAgain").onclick = startQuiz;
 
 // ── Заставка: убираем после анимации или по нажатию ─────
 const splash = $("splash");
