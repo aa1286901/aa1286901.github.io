@@ -202,7 +202,7 @@ async function openLesson(id) {
 }
 
 async function route() {
-  if (location.hash === "#nahw") return showNahw();
+  if (TREE_BOOKS[location.hash]) return showNahw(location.hash);
   if (location.hash === "#mabda") return showWelcome();
   const id = parseHash();
   if (id === null) {
@@ -477,6 +477,13 @@ applySize();
 
 // ── Грамматика: дерево главы об имени ───────────────────
 // Уровни идут сверху вниз: корень, под ним сетка его тем, под выбранной темой — сетка её тем…
+// Книги-деревья: адрес → файл и подписи
+const TREE_BOOKS = {
+  "#nahw": { file: "nahw_ism.json", book: "Шарх аль-Унмузадж", eyebrow: "النَّحْوُ", said: "قَالَ:" },
+  "#amil": { file: "mia_amil.json", book: "Сто управляющих слов", eyebrow: "مِئَةُ عَامِلٍ" },
+};
+const treeCache = new Map(); // адрес → JSON книги
+let nahwBook = null; // текущая книга из TREE_BOOKS
 let nahwData = null;
 let nahwNodes = []; // все узлы по порядку обхода; индекс — data-i у плашки
 let nahwParent = []; // индекс родителя для каждого узла
@@ -531,22 +538,29 @@ function openNode(i) {
   renderNahw(nahwPath.length - 1);
 }
 
-async function showNahw() {
+async function showNahw(hash) {
   setView("nahw");
-  document.title = "Глава об имени — Arabic";
-  if (nahwData) return;
+  const book = TREE_BOOKS[hash];
+  $("nahwEyebrow").textContent = book.eyebrow;
+  if (nahwBook === book) return;
   try {
-    const res = await fetch("nahw_ism.json");
-    if (!res.ok) throw new Error("Файл nahw_ism.json не найден");
-    nahwData = await res.json();
+    if (!treeCache.has(hash)) {
+      const res = await fetch(book.file);
+      if (!res.ok) throw new Error(`Файл ${book.file} не найден`);
+      treeCache.set(hash, await res.json());
+    }
+    nahwBook = book;
+    nahwData = treeCache.get(hash);
     const root = nahwData.tree;
+    document.title = `${root.ru} — Arabic`;
     $("nahwTitle").textContent = root.ar;
-    $("nahwSub").textContent = `${root.ru} · Шарх аль-Унмузадж`;
+    $("nahwSub").textContent = `${root.ru} · ${book.book}`;
     nahwNodes = [];
     nahwParent = [];
     indexNodes(root, null);
     nahwPath = [0];
     renderNahw();
+    $("nahwScroll").scrollTop = 0;
   } catch (err) {
     alert(err.message);
     location.hash = "";
@@ -586,11 +600,21 @@ function openQawl(i) {
   fill("qawlQuoteBlock", "qawlQuote", n.qawl);
   fill("qawlTrBlock", "qawlTr", n.qawlRu);
   fill("qawlDefBlock", "qawlDef", n.qawl ? "" : n.def);
+  // Примеры: одной строкой (ex) или списком с переводом из книги (exs)
+  const exs = n.exs || [];
   fill("qawlExBlock", "qawlEx", n.ex);
-  $("qawlPage").textContent = n.p ? `Шарх аль-Унмузадж, стр. ${n.p}` : "";
+  $("qawlEx").hidden = !n.ex;
+  if (exs.length) $("qawlExBlock").hidden = false;
+  $("qawlExs").innerHTML = exs
+    .map((x) => `<li><span class="qawl-ex-ar" lang="ar" dir="rtl">${esc(x.ar)}</span>${x.ru ? `<span class="qawl-ex-ru">${esc(x.ru)}</span>` : ""}</li>`)
+    .join("");
+  $("qawlSaid").hidden = !nahwBook.said;
+  $("qawlSaid").textContent = nahwBook.said || "";
+  $("qawlPage").textContent = n.p ? `${nahwBook.book}, стр. ${n.p}` : "";
   const kids = kidsOf(i).length;
   $("qawlBranch").hidden = !kids || nahwPath.includes(i);
   $("qawlBranch").textContent = `Показать темы · ${kids}`;
+  $("qawlExTitle").textContent = exs.length > 1 ? "Примеры" : "Пример";
   $("qawlLayer").hidden = false;
   requestAnimationFrame(() => $("qawlLayer").classList.add("show"));
   $("qawlModal").scrollTop = 0;

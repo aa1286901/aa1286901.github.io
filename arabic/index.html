@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
-    <link rel="stylesheet" href="style.css?v=0033">
+    <link rel="stylesheet" href="style.css?v=0034">
 </head>
 
 <body class="view-home">
@@ -87,6 +87,22 @@
                     <span class="book-note" id="mabdaNote"></span>
                 </span>
             </a>
+            <a class="book" href="#amil" dir="rtl">
+                <span class="cover cover-mia" aria-hidden="true">
+                    <span class="cover-ar">مِئَةُ عَامِلٍ<br>فِي النَّحْوِ</span>
+                    <span class="cover-ru">Сто управляющих<br>слов в синтаксисе</span>
+                </span>
+                <span class="book-info">
+                    <span class="book-kind" lang="ar">النَّحْوُ</span>
+                    <span class="book-title" lang="ar">مِئَةُ عَامِلٍ</span>
+                    <span class="book-author" lang="ar">عَبْدُ الْقَاهِرِ الْجُرْجَانِيُّ</span>
+                    <span class="book-meta" dir="ltr">Перевод А. А. Гойбасханова</span>
+                    <span class="book-chapters" lang="ar">
+                        <span class="chapter on">لَفْظِيَّةٌ ٩٨</span>
+                        <span class="chapter on">مَعْنَوِيَّةٌ ٢</span>
+                    </span>
+                </span>
+            </a>
             <a class="book" href="#nahw" dir="rtl">
                 <span class="cover cover-unm" aria-hidden="true">
                     <span class="cover-ar">شَرْحُ<br>الْأُنْمُوذَجِ</span>
@@ -138,14 +154,14 @@
                 </svg>
                 Книги
             </a>
-            <span class="eyebrow eyebrow-ar" lang="ar" dir="rtl">النَّحْوُ</span>
+            <span class="eyebrow eyebrow-ar" id="nahwEyebrow" lang="ar" dir="rtl">النَّحْوُ</span>
             <span class="navbar-side" aria-hidden="true"></span>
         </div>
         <header class="lesson-head">
             <button class="lesson-title nahw-title" id="nahwTitle" type="button" lang="ar" dir="rtl"></button>
             <div class="lesson-title-ru" id="nahwSub"></div>
         </header>
-        <div class="nahw-scroll">
+        <div class="nahw-scroll" id="nahwScroll">
             <p class="tree-hint">Нажмите на термин — откроется определение, на стрелку — его темы</p>
             <div class="tree" id="nahwTree"></div>
         </div>
@@ -295,7 +311,7 @@
             <div class="qawl-ru" id="qawlRu"></div>
             <div class="qawl-term" id="qawlTerm" lang="ar" dir="rtl"></div>
             <div class="qawl-quote" id="qawlQuoteBlock" lang="ar" dir="rtl">
-                <span class="qawl-said">قَالَ:</span> <span id="qawlQuote"></span>
+                <span class="qawl-said" id="qawlSaid">قَالَ:</span> <span id="qawlQuote"></span>
             </div>
             <div class="qawl-section" id="qawlTrBlock">
                 <div class="eyebrow">Перевод</div>
@@ -306,8 +322,9 @@
                 <p class="qawl-text" id="qawlDef"></p>
             </div>
             <div class="qawl-section" id="qawlExBlock">
-                <div class="eyebrow">Пример</div>
+                <div class="eyebrow" id="qawlExTitle">Пример</div>
                 <p class="qawl-ex" id="qawlEx" lang="ar" dir="rtl"></p>
+                <ul class="qawl-exs" id="qawlExs"></ul>
             </div>
             <div class="qawl-foot">
                 <span class="qawl-page" id="qawlPage"></span>
@@ -316,7 +333,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0033"></script>
+    <script src="app.js?v=0034"></script>
 </body>
 
 </html>
