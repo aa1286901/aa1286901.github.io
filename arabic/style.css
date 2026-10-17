@@ -87,6 +87,7 @@ button {
 }
 
 /* ── Экран выбора урока ─────────────────────────────────── */
+.home,
 .welcome {
     width: 100%;
     max-width: 520px;
@@ -100,6 +101,7 @@ button {
     scrollbar-width: none
 }
 
+.home::-webkit-scrollbar,
 .welcome::-webkit-scrollbar {
     display: none
 }
@@ -243,10 +245,295 @@ button {
     overflow: hidden
 }
 
+body.view-home .app,
 body.view-welcome .app,
 body.view-nahw .app,
+body:not(.view-home) .home,
 body:not(.view-welcome) .welcome {
     display: none
+}
+
+/* Список уроков открывается из книги — сверху своя навигация */
+.welcome {
+    padding-top: calc(env(safe-area-inset-top) + 6px);
+    gap: 14px
+}
+
+.welcome .welcome-head {
+    margin-bottom: 4px
+}
+
+/* ── Главный экран: книжная полка ───────────────────────── */
+.resume {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--card);
+    border-radius: 14px;
+    color: inherit;
+    text-decoration: none
+}
+
+.resume:active {
+    background: var(--pressed)
+}
+
+.resume-icon {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    padding-left: 3px;
+    background: var(--accent);
+    color: var(--on-accent)
+}
+
+.resume-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column
+}
+
+.resume-label {
+    font-size: 13px;
+    color: var(--muted)
+}
+
+.resume-title {
+    font-size: 17px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.shelf {
+    display: flex;
+    flex-direction: column;
+    gap: 14px
+}
+
+.book {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px;
+    background: var(--card);
+    border-radius: 18px;
+    color: inherit;
+    text-decoration: none;
+    transition: transform .15s ease
+}
+
+.book:active {
+    transform: scale(.98);
+    background: var(--pressed)
+}
+
+.book-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px
+}
+
+.book-kind {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted)
+}
+
+.book-title {
+    font-size: 20px;
+    line-height: 25px;
+    font-weight: 700;
+    letter-spacing: -.01em
+}
+
+.book-meta,
+.book-note {
+    font-size: 14px;
+    color: var(--muted)
+}
+
+.book-note {
+    font-size: 13px
+}
+
+.book-progress {
+    height: 5px;
+    margin: 8px 0 3px;
+    border-radius: 3px;
+    background: var(--track);
+    overflow: hidden
+}
+
+.book-progress-bar {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: 3px;
+    background: #1f9d55;
+    transition: width .5s ease
+}
+
+.book-chapters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px
+}
+
+.chapter {
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 13px;
+    background: var(--track);
+    color: var(--faint)
+}
+
+.chapter.on {
+    background: #e7f1e8;
+    color: #1d6b3a;
+    font-weight: 600
+}
+
+/* Обложки — по мотивам настоящих книг */
+.cover {
+    position: relative;
+    flex: none;
+    width: 96px;
+    height: 136px;
+    border-radius: 4px 8px 8px 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: var(--ar);
+    box-shadow: 0 6px 16px var(--shadow), inset 3px 0 0 rgba(0, 0, 0, .25), inset 5px 0 0 rgba(255, 255, 255, .12)
+}
+
+.cover-ar {
+    position: relative;
+    z-index: 1;
+    direction: rtl;
+    text-align: center;
+    font-weight: 700
+}
+
+.cover-mabda {
+    padding: 14px 16px 0 6px;
+    background: linear-gradient(180deg, #13a04a 0%, #0c7a3a 38%, #1f4d4a 62%, #4b2a6c 82%, #7a1e78 100%)
+}
+
+/* Орнаментальная полоса справа и снизу */
+.cover-mabda::before,
+.cover-mabda::after {
+    content: "";
+    position: absolute;
+    background-color: #f3e3c3;
+    background-image: radial-gradient(circle, #d4202c 1.6px, transparent 2px), radial-gradient(circle, #2e8b3e 1px, transparent 1.4px);
+    background-size: 6px 6px, 6px 6px;
+    background-position: 0 0, 3px 3px
+}
+
+.cover-mabda::before {
+    top: 0;
+    bottom: 0;
+    right: 6px;
+    width: 6px
+}
+
+.cover-mabda::after {
+    left: 0;
+    right: 0;
+    bottom: 10px;
+    height: 6px
+}
+
+.cover-mabda .cover-ar {
+    font-size: 19px;
+    line-height: 1.25;
+    color: #fff;
+    text-shadow: 0 1px 0 #0a3a1e, 0 2px 4px rgba(0, 0, 0, .45)
+}
+
+.cover-ru {
+    position: relative;
+    margin-top: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 9px;
+    line-height: 1.15;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-align: center;
+    color: #e3262f;
+    text-shadow: 0 0 2px #fff, 0 0 2px #fff
+}
+
+.cover-unm {
+    padding: 10px 6px 0;
+    background:
+        radial-gradient(ellipse 60% 45% at 58% 58%, rgba(214, 160, 70, .95), rgba(150, 90, 30, .7) 45%, transparent 75%),
+        linear-gradient(160deg, #0f6a3c, #0a4d2b 60%, #073822)
+}
+
+.cover-unm::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(232, 196, 120, .45);
+    border-radius: 2px
+}
+
+.cover-unm .cover-ar {
+    font-size: 17px;
+    line-height: 1.2;
+    color: #f6f0d8;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .5)
+}
+
+.cover-glyph {
+    position: absolute;
+    left: 50%;
+    top: 46px;
+    transform: translateX(-46%);
+    font-size: 66px;
+    line-height: 1;
+    font-weight: 700;
+    background: linear-gradient(180deg, #ffe3a1, #c98a2c 55%, #7a4a12);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .45))
+}
+
+.cover-author {
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 9px;
+    color: #f6f0d8
+}
+
+@media (prefers-color-scheme: dark) {
+    .book-progress-bar {
+        background: #30d158
+    }
+
+    .chapter.on {
+        background: #183a24;
+        color: #6ee08f
+    }
 }
 
 /* ── Грамматика: дерево ─────────────────────────────────── */
