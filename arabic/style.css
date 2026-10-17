@@ -357,6 +357,60 @@ body:not(.view-welcome) .welcome {
     letter-spacing: -.01em
 }
 
+/* Арабские подписи книг */
+.book-info [lang="ar"] {
+    font-family: var(--ar);
+    letter-spacing: 0;
+    text-transform: none
+}
+
+.book-kind[lang="ar"] {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d6b3a
+}
+
+.book-title[lang="ar"] {
+    font-size: 25px;
+    line-height: 1.5
+}
+
+.book-author {
+    font-family: var(--ar);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text-2)
+}
+
+.book-author.small {
+    margin-top: -4px;
+    font-size: 14px;
+    color: var(--muted)
+}
+
+.book-meta[dir="ltr"] {
+    text-align: right
+}
+
+.chapter {
+    font-size: 15px !important;
+    padding: 2px 12px
+}
+
+.eyebrow-ar {
+    font-family: var(--ar);
+    font-size: 17px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--text-2)
+}
+
+@media (prefers-color-scheme: dark) {
+    .book-kind[lang="ar"] {
+        color: #6ee08f
+    }
+}
+
 .book-meta,
 .book-note {
     font-size: 14px;

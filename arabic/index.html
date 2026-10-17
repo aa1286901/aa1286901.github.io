@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
-    <link rel="stylesheet" href="style.css?v=0029">
+    <link rel="stylesheet" href="style.css?v=0030">
 </head>
 
 <body class="view-home">
@@ -73,33 +73,35 @@
         </a>
 
         <nav class="shelf" aria-label="Книги">
-            <a class="book" href="#mabda">
+            <a class="book" href="#mabda" dir="rtl">
                 <span class="cover cover-mabda" aria-hidden="true">
                     <span class="cover-ar">مَبْدَأُ<br>الْقِرَاءَةِ</span>
                     <span class="cover-ru">Мабдауль<br>Къираат</span>
                 </span>
                 <span class="book-info">
-                    <span class="book-kind">Чтение и слова</span>
-                    <span class="book-title">Мабдау-ль-Кыраа</span>
-                    <span class="book-meta" id="mabdaMeta">Рассказы с переводом</span>
+                    <span class="book-kind" lang="ar">الْجُزْءُ الثَّالِثُ</span>
+                    <span class="book-title" lang="ar">مَبْدَأُ الْقِرَاءَةِ</span>
+                    <span class="book-author" lang="ar">صِبْغَةُ اللهِ بِيكْبُولَاط</span>
+                    <span class="book-meta" id="mabdaMeta" dir="ltr">Рассказы с переводом</span>
                     <span class="book-progress" aria-hidden="true"><span class="book-progress-bar" id="mabdaBar"></span></span>
                     <span class="book-note" id="mabdaNote"></span>
                 </span>
             </a>
-            <a class="book" href="#nahw">
+            <a class="book" href="#nahw" dir="rtl">
                 <span class="cover cover-unm" aria-hidden="true">
                     <span class="cover-ar">شَرْحُ<br>الْأُنْمُوذَجِ</span>
                     <span class="cover-glyph">ح</span>
                     <span class="cover-author">الأردبيلي</span>
                 </span>
                 <span class="book-info">
-                    <span class="book-kind">Грамматика</span>
-                    <span class="book-title">Шарх аль-Унмузадж</span>
-                    <span class="book-meta" id="unmMeta">аз-Замахшари · аль-Ардабили</span>
-                    <span class="book-chapters">
-                        <span class="chapter on">Имя</span>
-                        <span class="chapter">Глагол</span>
-                        <span class="chapter">Частица</span>
+                    <span class="book-kind" lang="ar">النَّحْوُ</span>
+                    <span class="book-title" lang="ar">شَرْحُ الْأُنْمُوذَجِ</span>
+                    <span class="book-author" lang="ar">جَمَالُ الدِّينِ الْأَرْدَبِيلِيُّ</span>
+                    <span class="book-author small" lang="ar">عَلَى مَتْنِ الزَّمَخْشَرِيِّ</span>
+                    <span class="book-chapters" lang="ar">
+                        <span class="chapter on">الِاسْمُ</span>
+                        <span class="chapter">الْفِعْلُ</span>
+                        <span class="chapter">الْحَرْفُ</span>
                     </span>
                 </span>
             </a>
@@ -116,7 +118,7 @@
                 </svg>
                 Книги
             </a>
-            <span class="eyebrow">Мабдау-ль-Кыраа</span>
+            <span class="eyebrow eyebrow-ar" lang="ar" dir="rtl">مَبْدَأُ الْقِرَاءَةِ</span>
             <span class="navbar-side" aria-hidden="true"></span>
         </div>
         <header class="welcome-head">
@@ -136,7 +138,7 @@
                 </svg>
                 Книги
             </a>
-            <span class="eyebrow">Грамматика</span>
+            <span class="eyebrow eyebrow-ar" lang="ar" dir="rtl">النَّحْوُ</span>
             <span class="navbar-side" aria-hidden="true"></span>
         </div>
         <header class="nahw-banner">
@@ -317,7 +319,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0029"></script>
+    <script src="app.js?v=0030"></script>
 </body>
 
 </html>
