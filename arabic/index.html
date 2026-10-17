@@ -27,7 +27,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
-    <link rel="stylesheet" href="style.css?v=0037">
+    <script>
+        try {
+            var t = localStorage.getItem("arabic.theme");
+            if (t === '"light"' || t === '"dark"') document.documentElement.dataset.theme = JSON.parse(t);
+        } catch (e) {}
+    </script>
+    <link rel="stylesheet" href="style.css?v=0038">
 </head>
 
 <body class="view-home">
@@ -53,12 +59,19 @@
     </script>
     <!-- Главный экран — книжная полка: адрес / -->
     <section class="home" id="homeScreen">
-        <header class="welcome-head">
-            <div>
-                <div class="eyebrow">Арабский язык</div>
+        <!-- Панель как в iOS: при прокрутке появляется размытый фон и малый заголовок -->
+        <div class="home-nav" id="homeNav">
+            <span class="home-nav-title" aria-hidden="true">Книги</span>
+            <button class="icon-btn" id="settingsBtn" type="button" aria-label="Настройки" aria-haspopup="dialog">
+                <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></svg>
+            </button>
+        </div>
+        <header class="home-hero">
+            <div class="eyebrow" id="homeDate"></div>
+            <div class="home-title-row">
                 <h1 class="welcome-title">Книги</h1>
+                <span class="home-title-ar" lang="ar" dir="rtl">الْمَكْتَبَةُ</span>
             </div>
-            <div class="welcome-ar" lang="ar" dir="rtl">الْمَكْتَبَةُ</div>
         </header>
 
         <a class="resume" id="resume" href="#" hidden>
@@ -335,6 +348,75 @@
         </div>
     </div>
 
+    <!-- Настройки: лист снизу со сгруппированными пунктами, как в iOS -->
+    <div class="set-layer" id="setLayer" hidden>
+        <button class="set-overlay" id="setOverlay" type="button" aria-label="Закрыть настройки"></button>
+        <div class="set-sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+            <div class="set-bar">
+                <span class="set-bar-side" aria-hidden="true"></span>
+                <h2 class="set-title" id="setTitle">Настройки</h2>
+                <button class="set-done" id="setDone" type="button">Готово</button>
+            </div>
+            <div class="set-scroll">
+                <div class="set-group-label">Оформление</div>
+                <div class="set-group">
+                    <div class="set-row column">
+                        <span class="set-row-label">Тема</span>
+                        <div class="set-seg" id="setTheme" role="radiogroup" aria-label="Тема">
+                            <button type="button" role="radio" data-theme="auto">Как в системе</button>
+                            <button type="button" role="radio" data-theme="light">Светлая</button>
+                            <button type="button" role="radio" data-theme="dark">Тёмная</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="set-group-label">Текст рассказов</div>
+                <div class="set-group">
+                    <div class="set-row">
+                        <span class="set-row-label" id="setHarakatLabel">Огласовки<small>Знаки над и под буквами</small></span>
+                        <button class="switch" id="setHarakat" type="button" role="switch" aria-checked="true" aria-labelledby="setHarakatLabel"></button>
+                    </div>
+                    <div class="set-row">
+                        <span class="set-row-label">Размер текста<small id="setSizeLabel"></small></span>
+                        <div class="set-stepper">
+                            <button type="button" id="setSizeDown" aria-label="Уменьшить текст">−</button>
+                            <button type="button" id="setSizeUp" aria-label="Увеличить текст">+</button>
+                        </div>
+                    </div>
+                    <div class="set-preview" id="setPreview" lang="ar" dir="rtl">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ</div>
+                </div>
+
+                <div class="set-group-label">Прогресс</div>
+                <div class="set-group">
+                    <div class="set-row">
+                        <span class="set-row-label">Слова уроков</span>
+                        <span class="set-value" id="setWords"></span>
+                    </div>
+                    <div class="set-row">
+                        <span class="set-row-label">Тренажёр «Миату Амиль»</span>
+                        <span class="set-value" id="setQuiz"></span>
+                    </div>
+                    <button class="set-row set-action danger" id="setResetWords" type="button">Сбросить прогресс слов</button>
+                    <button class="set-row set-action danger" id="setResetQuiz" type="button">Сбросить тренажёр</button>
+                </div>
+                <div class="set-note">Прогресс хранится только на этом устройстве.</div>
+
+                <div class="set-group-label">О приложении</div>
+                <div class="set-group">
+                    <div class="set-row">
+                        <span class="set-row-label">Версия</span>
+                        <span class="set-value" id="setVersion"></span>
+                    </div>
+                    <div class="set-row">
+                        <span class="set-row-label">Книги</span>
+                        <span class="set-value">Мабдаъ аль-Кыраа, Миату Амиль, Шарх аль-Унмузадж</span>
+                    </div>
+                    <button class="set-row set-action" id="setReload" type="button">Обновить приложение</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Перевод слова из рассказа -->
     <button class="sheet-overlay" id="sheetOverlay" type="button" aria-label="Закрыть перевод" hidden></button>
     <div class="word-sheet" id="wordSheet" role="dialog" aria-label="Перевод слова" aria-hidden="true">
@@ -391,7 +473,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0037"></script>
+    <script src="app.js?v=0038"></script>
 </body>
 
 </html>
