@@ -244,8 +244,207 @@ button {
 }
 
 body.view-welcome .app,
+body.view-nahw .app,
 body:not(.view-welcome) .welcome {
     display: none
+}
+
+/* ── Грамматика: дерево ─────────────────────────────────── */
+.section-label {
+    margin: 6px 0 -12px;
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted)
+}
+
+a.lesson-item {
+    color: inherit;
+    text-decoration: none
+}
+
+.nahw {
+    display: none;
+    width: 100%;
+    max-width: 560px;
+    height: 100dvh;
+    margin: auto;
+    padding: calc(env(safe-area-inset-top) + 6px) 16px calc(env(safe-area-inset-bottom) + 28px);
+    flex-direction: column;
+    gap: 14px;
+    overflow: auto;
+    scrollbar-width: none
+}
+
+.nahw::-webkit-scrollbar {
+    display: none
+}
+
+body.view-nahw .nahw {
+    display: flex
+}
+
+.nahw-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-align: center
+}
+
+.nahw-intro {
+    margin: 10px 0 0;
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--text-2);
+    max-width: 440px
+}
+
+.nahw-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px
+}
+
+.nahw-actions .pill-btn {
+    height: 36px;
+    font-size: 14px
+}
+
+.tree {
+    display: flex;
+    flex-direction: column;
+    gap: 12px
+}
+
+.node > summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 12px
+}
+
+.node > summary::-webkit-details-marker {
+    display: none
+}
+
+.node > summary:active {
+    background: var(--pressed)
+}
+
+.tree > .node {
+    background: var(--card);
+    border-radius: 16px;
+    overflow: hidden
+}
+
+.tree > .node > summary {
+    min-height: 60px;
+    padding: 10px 16px
+}
+
+.node-names {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px
+}
+
+.node-ru {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.3
+}
+
+.tree > .node > summary .node-ru {
+    font-size: 17px;
+    font-weight: 600
+}
+
+.node-ar {
+    flex: none;
+    max-width: 55%;
+    font-family: var(--ar);
+    font-size: 19px;
+    line-height: 1.5;
+    text-align: right
+}
+
+.tree > .node > summary .node-ar {
+    font-size: 22px;
+    font-weight: 700
+}
+
+.node-count {
+    flex: none;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 11px;
+    background: var(--fill);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    display: grid;
+    place-items: center;
+    font-variant-numeric: tabular-nums
+}
+
+.node-chevron {
+    flex: none;
+    color: var(--chevron);
+    transition: transform .2s
+}
+
+.node[open] > summary .node-chevron {
+    transform: rotate(180deg)
+}
+
+.node-body {
+    padding: 0 12px 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+}
+
+.node-def {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: var(--text-2)
+}
+
+.node-ex {
+    margin: 0;
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: var(--fill);
+    font-family: var(--ar);
+    font-size: 19px;
+    line-height: 1.7;
+    text-align: right
+}
+
+.node-page {
+    align-self: flex-start;
+    font-size: 12px;
+    color: var(--muted)
+}
+
+.node-children {
+    margin-left: 4px;
+    padding-left: 10px;
+    border-left: 2px solid var(--separator);
+    display: flex;
+    flex-direction: column
 }
 
 .navbar {

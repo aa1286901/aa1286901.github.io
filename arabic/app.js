@@ -101,7 +101,7 @@ function renderLessonList() {
     (l) =>
       `<button class="lesson-item" type="button" data-lesson="${l.id}"><span class="lesson-num">${l.id}</span><span class="lesson-info"><span class="lesson-ru">${esc(l.ruTitle)}</span><span class="lesson-sub"><span class="lesson-count" id="count-${l.id}"></span><span class="lesson-ar" lang="ar" dir="rtl">${esc(l.title)}</span></span></span><svg class="chevron" width="8" height="14" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`,
   ).join("");
-  document.querySelectorAll(".lesson-item").forEach((btn) => {
+  document.querySelectorAll("#lessonList .lesson-item").forEach((btn) => {
     btn.addEventListener("click", () => {
       location.hash = "#lesson-" + btn.dataset.lesson;
     });
@@ -133,13 +133,14 @@ function parseHash() {
 function showWelcome() {
   closeSheet();
   toggleSizer(false);
+  document.body.classList.remove("view-nahw");
   document.body.classList.add("view-welcome");
   document.title = "Arabic";
   renderCounts();
 }
 
 function showLesson(id) {
-  document.body.classList.remove("view-welcome");
+  document.body.classList.remove("view-welcome", "view-nahw");
   const lesson = LESSONS.find((l) => l.id === id);
   if (lesson) {
     $("lessonNumber").textContent = "Урок " + id;
@@ -170,6 +171,7 @@ async function openLesson(id) {
 }
 
 async function route() {
+  if (location.hash === "#nahw") return showNahw();
   const id = parseHash();
   if (id === null) {
     showWelcome();
@@ -440,6 +442,46 @@ document.addEventListener("click", (e) => {
   if (!$("sizePopover").hidden && !e.target.closest("#sizePopover, #sizeBtn")) toggleSizer(false);
 });
 applySize();
+
+// ── Грамматика: дерево главы об имени ───────────────────
+let nahwData = null;
+
+function renderNode(n, depth) {
+  const kids = n.children || [];
+  const meta = [
+    n.def ? `<p class="node-def">${esc(n.def)}</p>` : "",
+    n.ex ? `<p class="node-ex" lang="ar" dir="rtl">${esc(n.ex)}</p>` : "",
+    n.p ? `<span class="node-page">стр. ${n.p}</span>` : "",
+  ].join("");
+  const count = kids.length ? `<span class="node-count">${kids.length}</span>` : "";
+  return `<details class="node depth-${Math.min(depth, 3)}"${depth === 0 ? " open" : ""}><summary><span class="node-names"><span class="node-ru">${esc(n.ru)}</span><span class="node-ar" lang="ar" dir="rtl">${esc(n.ar)}</span></span>${count}<svg class="node-chevron" width="12" height="8" viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="node-body">${meta}${kids.length ? `<div class="node-children">${kids.map((c) => renderNode(c, depth + 1)).join("")}</div>` : ""}</div></details>`;
+}
+
+async function showNahw() {
+  closeSheet();
+  toggleSizer(false);
+  document.body.classList.remove("view-welcome");
+  document.body.classList.add("view-nahw");
+  document.title = "Глава об имени — Arabic";
+  if (nahwData) return;
+  try {
+    const res = await fetch("nahw_ism.json");
+    if (!res.ok) throw new Error("Файл nahw_ism.json не найден");
+    nahwData = await res.json();
+    const root = nahwData.tree;
+    $("nahwTitle").textContent = root.ar;
+    $("nahwSub").textContent = `${root.ru} · ${nahwData.bookRu}`;
+    $("nahwIntro").textContent = root.def;
+    $("nahwTree").innerHTML = root.children.map((c) => renderNode(c, 0)).join("");
+  } catch (err) {
+    alert(err.message);
+    location.hash = "";
+  }
+}
+
+const setAllNodes = (open) => document.querySelectorAll("#nahwTree details").forEach((d) => (d.open = open));
+$("nahwExpand").onclick = () => setAllNodes(true);
+$("nahwCollapse").onclick = () => setAllNodes(false);
 
 // ── Заставка: убираем после анимации или по нажатию ─────
 const splash = $("splash");

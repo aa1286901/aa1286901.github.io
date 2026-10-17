@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
-    <link rel="stylesheet" href="style.css?v=0026">
+    <link rel="stylesheet" href="style.css?v=0027">
 </head>
 
 <body class="view-welcome">
@@ -61,6 +61,43 @@
             <div class="welcome-ar" lang="ar" dir="rtl">الدُّرُوسُ</div>
         </header>
         <nav class="lesson-list" id="lessonList" aria-label="Список уроков"></nav>
+
+        <div class="section-label">Грамматика</div>
+        <nav class="lesson-list" aria-label="Грамматика">
+            <a class="lesson-item" href="#nahw">
+                <span class="lesson-num" aria-hidden="true">ن</span>
+                <span class="lesson-info">
+                    <span class="lesson-ru">Глава об имени</span>
+                    <span class="lesson-sub"><span class="lesson-count">Шарх аль-Унмузадж</span><span class="lesson-ar" lang="ar" dir="rtl">بَابُ الِاسْمِ</span></span>
+                </span>
+                <svg class="chevron" width="8" height="14" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+        </nav>
+    </section>
+
+    <!-- Грамматика: дерево главы об имени, адрес #nahw -->
+    <section class="nahw" id="nahwScreen">
+        <div class="navbar">
+            <a class="back" href="#">
+                <svg width="11" height="18" viewBox="0 0 11 18" aria-hidden="true">
+                    <path d="M9 2L2 9l7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Уроки
+            </a>
+            <span class="eyebrow">Грамматика</span>
+            <span class="navbar-side" aria-hidden="true"></span>
+        </div>
+        <header class="nahw-head">
+            <div class="lesson-title" id="nahwTitle" lang="ar" dir="rtl"></div>
+            <div class="lesson-title-ru" id="nahwSub"></div>
+            <p class="nahw-intro" id="nahwIntro"></p>
+        </header>
+        <div class="nahw-actions">
+            <button class="pill-btn" id="nahwExpand" type="button">Раскрыть всё</button>
+            <button class="pill-btn" id="nahwCollapse" type="button">Свернуть</button>
+        </div>
+        <div class="tree" id="nahwTree"></div>
     </section>
 
     <!-- Экран урока: адрес #lesson-N -->
@@ -197,7 +234,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0026"></script>
+    <script src="app.js?v=0027"></script>
 </body>
 
 </html>
