@@ -506,7 +506,7 @@ async function showNahw() {
     nahwData = await res.json();
     const root = nahwData.tree;
     $("nahwTitle").textContent = root.ar;
-    $("nahwSub").textContent = `${root.ru} · ${nahwData.bookRu}`;
+    $("nahwSub").textContent = `${root.ru} · Шарх аль-Унмузадж`;
     nahwNodes = [];
     $("nahwTree").innerHTML = `<ul class="tr-root">${renderNode(root, -1)}</ul>`;
   } catch (err) {
@@ -528,6 +528,7 @@ const setAllNodes = (open) =>
   document.querySelectorAll("#nahwTree .tr-item").forEach((li, k) => {
     if (li.querySelector(".tr-kids")) setBranch(li, open || k === 0);
   });
+$("nahwTitle").onclick = () => openQawl(0);
 $("nahwExpand").onclick = () => setAllNodes(true);
 $("nahwCollapse").onclick = () => setAllNodes(false);
 
