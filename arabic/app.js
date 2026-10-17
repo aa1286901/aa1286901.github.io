@@ -476,40 +476,59 @@ document.addEventListener("click", (e) => {
 applySize();
 
 // ── Грамматика: дерево главы об имени ───────────────────
+// Уровни идут сверху вниз: корень, под ним сетка его тем, под выбранной темой — сетка её тем…
 let nahwData = null;
 let nahwNodes = []; // все узлы по порядку обхода; индекс — data-i у плашки
+let nahwParent = []; // индекс родителя для каждого узла
+let nahwPath = [0]; // раскрытые узлы от корня вниз
 
-// Схема сверху вниз: плашка термина, под ней ветви в ряд (справа налево)
 const CHEVRON = `<svg width="12" height="8" viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const kidsOf = (i) => nahwNodes[i].children || [];
+const topicCount = (n) => `${n} ${plural(n, "тема", "темы", "тем")}`;
 
-function renderNode(n, depth) {
+function indexNodes(n, parent) {
   const i = nahwNodes.push(n) - 1;
-  const kids = n.children || [];
-  const open = depth < 0;
-  const count = kids.length ? `<span class="tr-count">${kids.length} ${plural(kids.length, "тема", "темы", "тем")}</span>` : "";
-  const toggle = kids.length
-    ? `<button class="tr-toggle" type="button" data-i="${i}" aria-expanded="${open}" aria-label="Ветви: ${kids.length}">${CHEVRON}</button>`
+  nahwParent[i] = parent;
+  n._i = i;
+  (n.children || []).forEach((c) => indexNodes(c, i));
+}
+
+// Колонок: 1 тема — 1, 2 или 4 — по 2, остальное — по 3
+const colsFor = (n) => (n === 1 ? 1 : n === 2 || n === 4 ? 2 : 3);
+
+function nodeCard(i, level, cls = "") {
+  const n = nahwNodes[i];
+  const k = kidsOf(i).length;
+  const open = nahwPath[level + 1] === i;
+  const toggle = k
+    ? `<button class="nb-open" type="button" data-open="${i}" data-level="${level}" aria-expanded="${open}" aria-label="Темы: ${k}">${CHEVRON}</button>`
     : "";
-  const sub = kids.length ? `<ul class="tr-kids">${kids.map((c) => renderNode(c, depth + 1)).join("")}</ul>` : "";
-  const cls = depth < 0 ? "root" : "d" + Math.min(depth, 2);
-  return `<li class="tr-item ${cls}${open ? " open" : ""}" id="tr-${i}"><div class="tr-node"><button class="tr-box" type="button" data-i="${i}"><span class="tr-ar" lang="ar" dir="rtl">${esc(n.ar)}</span><span class="tr-ru">${esc(n.ru)}</span>${count}</button>${toggle}</div>${sub}</li>`;
+  return `<div class="nb${open ? " open" : ""}${k ? " has-kids" : ""} ${cls}"><button class="nb-box" type="button" data-i="${i}"><span class="nb-ar" lang="ar" dir="rtl">${esc(n.ar)}</span><span class="nb-ru">${esc(n.ru)}</span>${k ? `<span class="nb-count">${topicCount(k)}</span>` : ""}</button>${toggle}</div>`;
 }
 
-function setBranch(li, open) {
-  li.classList.toggle("open", open);
-  li.querySelector(":scope > .tr-node > .tr-toggle")?.setAttribute("aria-expanded", open);
+function renderNahw(scrollTo) {
+  let html = `<div class="nb-level nb-top">${nodeCard(0, -1, "root")}</div>`;
+  nahwPath.forEach((p, level) => {
+    const kids = kidsOf(p).map((c) => c._i);
+    if (!kids.length) return;
+    const head = level
+      ? `<div class="nb-head"><span class="nb-head-ar" lang="ar" dir="rtl">${esc(nahwNodes[p].ar)}</span><span class="nb-head-ru">${esc(nahwNodes[p].ru)} · ${topicCount(kids.length)}</span></div>`
+      : "";
+    html += `<div class="nb-link" id="nb-link-${level}" aria-hidden="true"></div>${head}<div class="nb-level" style="--cols:${colsFor(kids.length)}">${kids.map((c) => nodeCard(c, level)).join("")}</div>`;
+  });
+  $("nahwTree").innerHTML = html;
+  if (scrollTo != null) {
+    const el = $("nb-link-" + scrollTo);
+    if (el) requestAnimationFrame(() => el.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
 }
 
-// Раскрытую ветвь подвинуть в центр экрана
-function revealBranch(li) {
-  const kids = li.querySelector(":scope > .tr-kids");
-  if (kids) requestAnimationFrame(() => kids.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" }));
-}
-
-function centerTree() {
-  const t = $("nahwTree");
-  t.scrollLeft = (t.scrollWidth - t.clientWidth) / 2;
-  t.scrollTop = 0;
+// Раскрыть узел: путь до него от корня
+function openNode(i) {
+  const chain = [];
+  for (let j = i; j != null; j = nahwParent[j]) chain.unshift(j);
+  nahwPath = kidsOf(i).length ? chain : chain.slice(0, -1);
+  renderNahw(nahwPath.length - 1);
 }
 
 async function showNahw() {
@@ -524,8 +543,10 @@ async function showNahw() {
     $("nahwTitle").textContent = root.ar;
     $("nahwSub").textContent = `${root.ru} · Шарх аль-Унмузадж`;
     nahwNodes = [];
-    $("nahwTree").innerHTML = `<ul class="tr-root">${renderNode(root, -1)}</ul>`;
-    requestAnimationFrame(centerTree);
+    nahwParent = [];
+    indexNodes(root, null);
+    nahwPath = [0];
+    renderNahw();
   } catch (err) {
     alert(err.message);
     location.hash = "";
@@ -533,47 +554,21 @@ async function showNahw() {
 }
 
 $("nahwTree").addEventListener("click", (e) => {
-  const btn = e.target.closest("button[data-i]");
-  if (!btn) return;
-  if (btn.classList.contains("tr-toggle")) {
-    const li = btn.closest(".tr-item");
-    const open = !li.classList.contains("open");
-    setBranch(li, open);
-    if (open) revealBranch(li);
-  } else openQawl(Number(btn.dataset.i));
+  const open = e.target.closest("button[data-open]");
+  if (open) {
+    const i = Number(open.dataset.open);
+    const level = Number(open.dataset.level);
+    const isOpen = nahwPath[level + 1] === i;
+    nahwPath = nahwPath.slice(0, level + 1);
+    if (!isOpen) nahwPath.push(i);
+    renderNahw(isOpen ? null : level + 1);
+    return;
+  }
+  const box = e.target.closest("button[data-i]");
+  if (box) openQawl(Number(box.dataset.i));
 });
 
-const setAllNodes = (open) =>
-  document.querySelectorAll("#nahwTree .tr-item").forEach((li, k) => {
-    if (li.querySelector(".tr-kids")) setBranch(li, open || k === 0);
-  });
 $("nahwTitle").onclick = () => openQawl(0);
-$("nahwExpand").onclick = () => setAllNodes(true);
-$("nahwCollapse").onclick = () => {
-  setAllNodes(false);
-  centerTree();
-};
-
-// Мышью схему можно двигать перетаскиванием (на телефоне — обычная прокрутка)
-{
-  const t = $("nahwTree");
-  let drag = null;
-  t.addEventListener("pointerdown", (e) => {
-    if (e.pointerType !== "mouse" || e.button !== 0) return;
-    drag = { x: e.clientX, y: e.clientY, left: t.scrollLeft, top: t.scrollTop, moved: false };
-  });
-  window.addEventListener("pointermove", (e) => {
-    if (!drag) return;
-    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-    if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
-    t.scrollLeft = drag.left - dx;
-    t.scrollTop = drag.top - dy;
-  });
-  window.addEventListener("pointerup", () => {
-    if (drag?.moved) t.addEventListener("click", (e) => e.stopPropagation(), { capture: true, once: true });
-    drag = null;
-  });
-}
 
 // ── Окно с определением из книги ────────────────────────
 let qawlIndex = null;
@@ -593,10 +588,9 @@ function openQawl(i) {
   fill("qawlDefBlock", "qawlDef", n.qawl ? "" : n.def);
   fill("qawlExBlock", "qawlEx", n.ex);
   $("qawlPage").textContent = n.p ? `Шарх аль-Унмузадж, стр. ${n.p}` : "";
-  const kids = (n.children || []).length;
-  const li = $("tr-" + i);
-  $("qawlBranch").hidden = !kids || li.classList.contains("open");
-  $("qawlBranch").textContent = `Показать ветви · ${kids}`;
+  const kids = kidsOf(i).length;
+  $("qawlBranch").hidden = !kids || nahwPath.includes(i);
+  $("qawlBranch").textContent = `Показать темы · ${kids}`;
   $("qawlLayer").hidden = false;
   requestAnimationFrame(() => $("qawlLayer").classList.add("show"));
   $("qawlModal").scrollTop = 0;
@@ -618,10 +612,8 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeQawl();
 });
 $("qawlBranch").onclick = () => {
-  const li = $("tr-" + qawlIndex);
   closeQawl();
-  setBranch(li, true);
-  revealBranch(li);
+  openNode(qawlIndex);
 };
 
 // ── Заставка: убираем после анимации или по нажатию ─────

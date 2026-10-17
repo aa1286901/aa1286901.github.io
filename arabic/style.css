@@ -642,178 +642,184 @@ body.view-nahw .nahw {
     opacity: .6
 }
 
-/* Схема — в карточке, как слова урока; занимает остаток экрана */
-.nahw > .tree-card {
-    flex: 1 1 0;
-    min-height: 300px
-}
-
+/* Шапка закреплена, прокручиваются только темы */
 body.view-nahw .nahw {
-    overflow: hidden
+    overflow: hidden;
+    padding-bottom: 0
 }
 
-.tree-card {
-    flex: 1;
+.nahw > .nahw-scroll {
+    flex: 1 1 0;
     min-height: 0;
-    background: var(--card);
-    border-radius: 24px;
-    padding: 14px 0 0;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    overflow: hidden
-}
-
-.tree-top {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 0 18px
-}
-
-.tree-hint {
-    font-size: 13px;
-    color: var(--muted)
-}
-
-.nahw-actions {
-    display: flex;
-    gap: 8px
-}
-
-.nahw-actions .chip {
-    height: 34px;
-    padding: 0 14px;
-    border: 0;
-    border-radius: 17px;
-    background: var(--fill);
-    color: var(--text);
-    font-size: 15px
-}
-
-.nahw-actions .chip:active {
-    background: var(--pressed)
-}
-
-/* ── Схема: сверху вниз, ветви в ряд, прокрутка по X и Y ── */
-.tree {
-    --line: var(--dot);
-    --gap: 22px;
-    flex: 1;
-    min-height: 0;
-    overflow: auto;
+    margin: 0 -16px;
+    padding: 4px 16px calc(env(safe-area-inset-bottom) + 32px);
+    overflow-y: auto;
+    overflow-x: hidden;
     overscroll-behavior: contain;
-    padding: 14px 0 40px;
-    direction: ltr;
     scrollbar-width: none
 }
 
-.tree::-webkit-scrollbar {
+.nahw-scroll::-webkit-scrollbar {
     display: none
 }
 
-.tree ul {
-    list-style: none;
-    margin: 0;
-    padding: 0
+.tree-hint {
+    margin: 0 0 14px;
+    font-size: 13px;
+    text-align: center;
+    color: var(--muted)
 }
 
-.tr-root {
-    display: flex;
-    justify-content: center;
-    width: max-content;
-    min-width: 100%;
-    padding: 0 16px !important
+/* ── Уровни тем: сетка по 1–3 в ряд ── */
+.nb-level {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+    gap: 10px;
+    direction: rtl;
+    animation: level-in .25s ease
 }
 
-.tr-item {
+.nb-top {
+    grid-template-columns: minmax(0, 260px);
+    justify-content: center
+}
+
+@keyframes level-in {
+    from {
+        opacity: 0;
+        transform: translateY(-8px)
+    }
+}
+
+/* Линия между уровнями */
+.nb-link {
+    width: 2px;
+    height: 26px;
+    scroll-margin-top: 4px;
+    margin: 0 auto;
+    background: var(--dot);
+    border-radius: 1px
+}
+
+/* Подпись уровня: чьи это темы */
+.nb-head {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 12px;
+    padding: 6px 16px 8px;
+    border-radius: 16px;
+    background: var(--accent-soft);
     display: flex;
     flex-direction: column;
-    align-items: center
+    align-items: center;
+    text-align: center;
+    animation: level-in .25s ease
 }
 
-.tr-node {
+.nb-head-ar {
+    font-family: var(--ar);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.5
+}
+
+.nb-head-ru {
+    font-size: 12.5px;
+    color: var(--accent)
+}
+
+.nb-head + .nb-level {
+    margin-top: 0
+}
+
+.nb-link + .nb-head {
+    margin-top: 0
+}
+
+.nb {
     position: relative;
     display: flex;
-    flex-direction: column;
-    align-items: center
+    flex-direction: column
 }
 
-.tr-box {
-    min-width: 104px;
-    max-width: 180px;
-    padding: 9px 14px 10px;
+.nb.has-kids {
+    padding-bottom: 14px
+}
+
+.nb-box {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 8px 14px;
     border: 1.5px solid transparent;
     border-radius: 18px;
-    background: var(--fill);
+    background: var(--card);
     color: var(--text);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    justify-content: center;
+    gap: 3px;
     text-align: center;
-    transition: transform .12s ease, background .15s
+    transition: transform .12s ease, background .15s, border-color .15s
 }
 
-.tr-box:active {
+.nb.has-kids .nb-box {
+    padding-bottom: 20px
+}
+
+.nb-box:active {
     transform: scale(.97);
     background: var(--pressed)
 }
 
-.tr-node:has(.tr-toggle) > .tr-box {
-    padding-bottom: 19px
-}
-
-.tr-ar {
+.nb-ar {
     font-family: var(--ar);
-    font-size: 20px;
-    line-height: 1.5
+    font-size: 19px;
+    line-height: 1.5;
+    overflow-wrap: anywhere
 }
 
-.tr-ru {
+.nb-ru {
     font-size: 12.5px;
     line-height: 1.3;
-    color: var(--muted)
+    color: var(--muted);
+    direction: ltr
 }
 
-.tr-count {
+.nb-count {
     font-size: 12px;
     font-weight: 600;
     white-space: nowrap;
-    color: var(--faint)
+    color: var(--faint);
+    direction: ltr
 }
 
-.root > .tr-node .tr-box {
-    min-width: 200px;
-    padding: 14px 24px;
+/* Две и одна колонка — плашки крупнее */
+.nb-level[style*="--cols:2"] .nb-ar,
+.nb-level[style*="--cols:1"] .nb-ar {
+    font-size: 22px
+}
+
+.root .nb-box {
+    padding: 16px 20px 24px;
     border-color: var(--accent);
     background: var(--accent-soft)
 }
 
-.root > .tr-node .tr-ar {
+.root .nb-ar {
     font-size: 27px;
     font-weight: 700
 }
 
-.d0 > .tr-node .tr-box {
-    min-width: 160px;
-    border-color: var(--dot)
+.nb.open .nb-box {
+    border-color: var(--accent)
 }
 
-.d0 > .tr-node .tr-ar {
-    font-size: 23px;
-    font-weight: 700
-}
-
-.d1 > .tr-node .tr-ar {
-    font-weight: 600
-}
-
-/* Круглая кнопка ветвей под плашкой */
-.tr-toggle {
+/* Круглая стрелка под плашкой */
+.nb-open {
     position: absolute;
     left: 50%;
-    bottom: -15px;
+    bottom: 0;
     z-index: 1;
     width: 30px;
     height: 30px;
@@ -822,99 +828,24 @@ body.view-nahw .nahw {
     display: grid;
     place-items: center;
     transform: translateX(-50%);
-    background: var(--card);
+    background: var(--bg);
     color: var(--muted);
     box-shadow: 0 0 0 1.5px var(--dot)
 }
 
-.tr-toggle svg {
+.nb-open svg {
     transition: transform .2s
 }
 
-.tr-item.open > .tr-node .tr-toggle {
+.nb.open .nb-open,
+.root .nb-open {
     color: var(--on-accent);
     background: var(--accent);
     box-shadow: none
 }
 
-.tr-item.open > .tr-node .tr-toggle svg {
+.nb.open .nb-open svg {
     transform: rotate(180deg)
-}
-
-/* Ветви: ряд справа налево, линии соединяют центры */
-.tr-kids {
-    position: relative;
-    display: none;
-    flex-direction: row-reverse;
-    justify-content: center;
-    margin-top: 15px;
-    padding-top: var(--gap) !important
-}
-
-.tr-item.open > .tr-kids {
-    display: flex;
-    animation: branch-in .22s ease
-}
-
-@keyframes branch-in {
-    from {
-        opacity: 0;
-        transform: translateY(-6px)
-    }
-}
-
-.tr-kids::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 50%;
-    height: var(--gap);
-    border-left: 1.5px solid var(--line)
-}
-
-.tr-kids > .tr-item {
-    position: relative;
-    padding: var(--gap) 6px 0
-}
-
-.tr-kids > .tr-item::before,
-.tr-kids > .tr-item::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    width: 50%;
-    border-top: 1.5px solid var(--line)
-}
-
-.tr-kids > .tr-item::before {
-    left: 0
-}
-
-.tr-kids > .tr-item::after {
-    right: 0
-}
-
-/* первый по порядку стоит справа, последний — слева */
-.tr-kids > .tr-item:first-child::after,
-.tr-kids > .tr-item:last-child::before {
-    display: none
-}
-
-.tr-kids > .tr-item > .tr-node::before {
-    content: "";
-    position: absolute;
-    top: calc(-1 * var(--gap));
-    left: 50%;
-    height: var(--gap);
-    border-left: 1.5px solid var(--line)
-}
-
-.tr-kids > .tr-item:only-child {
-    padding-top: 0
-}
-
-.tr-kids > .tr-item:only-child > .tr-node::before {
-    display: none
 }
 
 /* ── Окно определения ── */
