@@ -18,6 +18,7 @@ const SIZE_KEY = "arabic.storySize";
 const PROGRESS_KEY = "arabic.progress";
 const FILTER_KEY = "arabic.filter";
 const HARAKAT_KEY = "arabic.harakat";
+const THEME_KEY = "arabic.theme";
 const LAST_KEY = "arabic.lastLesson";
 
 // Слово считается выученным после двух ответов «Знаю» подряд
@@ -137,6 +138,7 @@ function parseHash() {
 // view: home | welcome | nahw | lesson (у урока своего класса нет)
 function setView(view) {
   closeSheet();
+  closeSettings();
   closeQawl();
   toggleSizer(false);
   document.body.classList.remove("view-home", "view-welcome", "view-nahw", "view-quiz");
@@ -147,6 +149,8 @@ function setView(view) {
 function showHome() {
   setView("home");
   document.title = "Arabic";
+  const date = new Intl.DateTimeFormat("ru", { weekday: "long", day: "numeric", month: "long" }).format(new Date());
+  $("homeDate").textContent = date[0].toUpperCase() + date.slice(1);
   const last = LESSONS.find((l) => l.id === store.get(LAST_KEY, null));
   $("resume").hidden = !last;
   if (last) {
@@ -427,16 +431,20 @@ $("sheetOverlay").onclick = closeSheet;
 $("wordSheet").onclick = closeSheet;
 
 // ── Огласовки в рассказе ────────────────────────────────
+// Переключатель есть в меню «Aa» урока и в настройках — держим их в одном состоянии
 function applyHarakat() {
-  $("harakatSwitch").setAttribute("aria-checked", String(showHarakat));
+  ["harakatSwitch", "setHarakat"].forEach((id) => $(id).setAttribute("aria-checked", String(showHarakat)));
+  $("setPreview").textContent = showHarakat ? "بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ" : stripHarakat("بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ");
 }
-$("harakatSwitch").onclick = () => {
+function toggleHarakat() {
   showHarakat = !showHarakat;
   store.set(HARAKAT_KEY, showHarakat);
   applyHarakat();
   closeSheet();
   renderStory();
-};
+}
+$("harakatSwitch").onclick = toggleHarakat;
+$("setHarakat").onclick = toggleHarakat;
 applyHarakat();
 
 // ── Размер текста рассказа ──────────────────────────────
@@ -449,6 +457,9 @@ function applySize() {
   $("sizeLabel").textContent = SIZE_LABELS[sizeIndex];
   $("sizeDown").disabled = sizeIndex === 0;
   $("sizeUp").disabled = sizeIndex === STORY_SIZES.length - 1;
+  $("setSizeLabel").textContent = SIZE_LABELS[sizeIndex];
+  $("setSizeDown").disabled = $("sizeDown").disabled;
+  $("setSizeUp").disabled = $("sizeUp").disabled;
   store.set(SIZE_KEY, sizeIndex);
 }
 
@@ -462,11 +473,11 @@ $("sizeBtn").onclick = (e) => {
   closeSheet();
   toggleSizer($("sizePopover").hidden);
 };
-$("sizeDown").onclick = () => {
+$("sizeDown").onclick = $("setSizeDown").onclick = () => {
   sizeIndex = Math.max(0, sizeIndex - 1);
   applySize();
 };
-$("sizeUp").onclick = () => {
+$("sizeUp").onclick = $("setSizeUp").onclick = () => {
   sizeIndex = Math.min(STORY_SIZES.length - 1, sizeIndex + 1);
   applySize();
 };
@@ -800,6 +811,88 @@ $("quizOpts").addEventListener("click", (e) => {
 });
 $("quizNext").onclick = nextQuiz;
 $("quizAgain").onclick = startQuiz;
+
+// ── Панель главного экрана: размывается при прокрутке, как в iOS ──
+$("homeScreen").addEventListener("scroll", () => {
+  $("homeNav").classList.toggle("scrolled", $("homeScreen").scrollTop > 44);
+}, { passive: true });
+
+// ── Тема: как в системе, светлая или тёмная ─────────────
+let theme = store.get(THEME_KEY, "auto");
+if (!["auto", "light", "dark"].includes(theme)) theme = "auto";
+
+function applyTheme() {
+  const root = document.documentElement;
+  if (theme === "auto") delete root.dataset.theme;
+  else root.dataset.theme = theme;
+  // Цвет строки состояния: при выбранной теме — её цвет, иначе по системе
+  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
+    const dark = theme === "dark" || (theme === "auto" && m.media.includes("dark"));
+    m.content = dark ? "#000000" : "#F2F2F7";
+  });
+  document.querySelectorAll("#setTheme button").forEach((b) => {
+    const on = b.dataset.theme === theme;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-checked", String(on));
+  });
+}
+$("setTheme").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-theme]");
+  if (!b) return;
+  theme = b.dataset.theme;
+  store.set(THEME_KEY, theme);
+  applyTheme();
+});
+applyTheme();
+
+// ── Настройки ───────────────────────────────────────────
+const learnedIn = (obj) => Object.values(obj || {}).filter((v) => v >= LEARNED).length;
+
+function renderSettings() {
+  const words = Object.values(progress).reduce((sum, lesson) => sum + learnedIn(lesson), 0);
+  $("setWords").textContent = `Выучено ${words}`;
+  $("setQuiz").textContent = `Выучено ${learnedIn(quizStore)} из 100`;
+  const v = document.querySelector('script[src*="app.js"]')?.src.match(/v=(\w+)/);
+  $("setVersion").textContent = v ? v[1] : "—";
+}
+
+function openSettings() {
+  renderSettings();
+  $("setLayer").hidden = false;
+  requestAnimationFrame(() => $("setLayer").classList.add("show"));
+  $("settingsBtn").setAttribute("aria-expanded", "true");
+}
+
+function closeSettings() {
+  const layer = $("setLayer");
+  if (layer.hidden || !layer.classList.contains("show")) return;
+  layer.classList.remove("show");
+  $("settingsBtn").setAttribute("aria-expanded", "false");
+  setTimeout(() => {
+    if (!layer.classList.contains("show")) layer.hidden = true;
+  }, 300);
+  if (document.body.classList.contains("view-home")) showHome();
+}
+
+$("settingsBtn").onclick = openSettings;
+$("setDone").onclick = closeSettings;
+$("setOverlay").onclick = closeSettings;
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeSettings();
+});
+$("setResetWords").onclick = () => {
+  if (!confirm("Сбросить прогресс всех слов уроков? Отметки «Знаю» будут удалены.")) return;
+  progress = {};
+  store.set(PROGRESS_KEY, progress);
+  renderSettings();
+};
+$("setResetQuiz").onclick = () => {
+  if (!confirm("Сбросить прогресс тренажёра «Миату Амиль»?")) return;
+  quizStore = {};
+  store.set(QUIZ_KEY, quizStore);
+  renderSettings();
+};
+$("setReload").onclick = () => location.reload();
 
 // ── Заставка: убираем после анимации или по нажатию ─────
 const splash = $("splash");

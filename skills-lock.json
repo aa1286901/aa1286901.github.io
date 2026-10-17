@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "apple-hig-designer": {
+      "source": "jamesrochabrun/skills",
+      "sourceType": "github",
+      "skillPath": "skills/apple-hig-designer/SKILL.md",
+      "computedHash": "d6f35edf97a7545d967e4d5bbb5666712d732c9e40328835d8f3f585ae416f0a"
+    },
     "brainstorming": {
       "source": "obra/superpowers",
       "sourceType": "github",
