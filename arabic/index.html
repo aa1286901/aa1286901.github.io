@@ -27,10 +27,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
-    <link rel="stylesheet" href="style.css?v=0027">
+    <link rel="stylesheet" href="style.css?v=0028">
 </head>
 
-<body class="view-welcome">
+<body class="view-home">
     <!-- Заставка: только при запуске с экрана «Домой» (или с ?splash для проверки) -->
     <div class="splash" id="splash" aria-hidden="true">
         <div class="splash-tile"><img class="splash-glyph" src="icons/glyph.png" alt=""></div>
@@ -51,28 +51,79 @@
             else s.remove();
         })();
     </script>
-    <!-- Экран выбора урока: адрес / -->
-    <section class="welcome" id="welcomeScreen">
+    <!-- Главный экран — книжная полка: адрес / -->
+    <section class="home" id="homeScreen">
         <header class="welcome-head">
             <div>
                 <div class="eyebrow">Арабский язык</div>
-                <h1 class="welcome-title">Уроки</h1>
+                <h1 class="welcome-title">Книги</h1>
             </div>
+            <div class="welcome-ar" lang="ar" dir="rtl">الْمَكْتَبَةُ</div>
+        </header>
+
+        <a class="resume" id="resume" href="#" hidden>
+            <span class="resume-icon" aria-hidden="true">
+                <svg width="14" height="16" viewBox="0 0 14 16"><path d="M2 1.5v13L13 8z" fill="currentColor"/></svg>
+            </span>
+            <span class="resume-info">
+                <span class="resume-label">Продолжить</span>
+                <span class="resume-title" id="resumeTitle"></span>
+            </span>
+            <svg class="chevron" width="8" height="14" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+
+        <nav class="shelf" aria-label="Книги">
+            <a class="book" href="#mabda">
+                <span class="cover cover-mabda" aria-hidden="true">
+                    <span class="cover-ar">مَبْدَأُ<br>الْقِرَاءَةِ</span>
+                    <span class="cover-ru">Мабдауль<br>Къираат</span>
+                </span>
+                <span class="book-info">
+                    <span class="book-kind">Чтение и слова</span>
+                    <span class="book-title">Мабдау-ль-Кыраа</span>
+                    <span class="book-meta" id="mabdaMeta">Рассказы с переводом</span>
+                    <span class="book-progress" aria-hidden="true"><span class="book-progress-bar" id="mabdaBar"></span></span>
+                    <span class="book-note" id="mabdaNote"></span>
+                </span>
+            </a>
+            <a class="book" href="#nahw">
+                <span class="cover cover-unm" aria-hidden="true">
+                    <span class="cover-ar">شَرْحُ<br>الْأُنْمُوذَجِ</span>
+                    <span class="cover-glyph">ح</span>
+                    <span class="cover-author">الأردبيلي</span>
+                </span>
+                <span class="book-info">
+                    <span class="book-kind">Грамматика</span>
+                    <span class="book-title">Шарх аль-Унмузадж</span>
+                    <span class="book-meta" id="unmMeta">аз-Замахшари · аль-Ардабили</span>
+                    <span class="book-chapters">
+                        <span class="chapter on">Имя</span>
+                        <span class="chapter">Глагол</span>
+                        <span class="chapter">Частица</span>
+                    </span>
+                </span>
+            </a>
+        </nav>
+    </section>
+
+    <!-- Мабдау-ль-Кыраа: список уроков, адрес #mabda -->
+    <section class="welcome" id="welcomeScreen">
+        <div class="navbar">
+            <a class="back" href="#">
+                <svg width="11" height="18" viewBox="0 0 11 18" aria-hidden="true">
+                    <path d="M9 2L2 9l7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Книги
+            </a>
+            <span class="eyebrow">Мабдау-ль-Кыраа</span>
+            <span class="navbar-side" aria-hidden="true"></span>
+        </div>
+        <header class="welcome-head">
+            <h1 class="welcome-title">Уроки</h1>
             <div class="welcome-ar" lang="ar" dir="rtl">الدُّرُوسُ</div>
         </header>
         <nav class="lesson-list" id="lessonList" aria-label="Список уроков"></nav>
-
-        <div class="section-label">Грамматика</div>
-        <nav class="lesson-list" aria-label="Грамматика">
-            <a class="lesson-item" href="#nahw">
-                <span class="lesson-num" aria-hidden="true">ن</span>
-                <span class="lesson-info">
-                    <span class="lesson-ru">Глава об имени</span>
-                    <span class="lesson-sub"><span class="lesson-count">Шарх аль-Унмузадж</span><span class="lesson-ar" lang="ar" dir="rtl">بَابُ الِاسْمِ</span></span>
-                </span>
-                <svg class="chevron" width="8" height="14" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-        </nav>
     </section>
 
     <!-- Грамматика: дерево главы об имени, адрес #nahw -->
@@ -83,7 +134,7 @@
                     <path d="M9 2L2 9l7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
                         stroke-linejoin="round" />
                 </svg>
-                Уроки
+                Книги
             </a>
             <span class="eyebrow">Грамматика</span>
             <span class="navbar-side" aria-hidden="true"></span>
@@ -103,7 +154,7 @@
     <!-- Экран урока: адрес #lesson-N -->
     <div class="app" id="mainContent">
         <div class="navbar">
-            <a class="back" id="backBtn" href="#">
+            <a class="back" id="backBtn" href="#mabda">
                 <svg width="11" height="18" viewBox="0 0 11 18" aria-hidden="true">
                     <path d="M9 2L2 9l7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
                         stroke-linejoin="round" />
@@ -234,7 +285,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0027"></script>
+    <script src="app.js?v=0028"></script>
 </body>
 
 </html>

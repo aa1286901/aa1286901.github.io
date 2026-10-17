@@ -18,6 +18,7 @@ const SIZE_KEY = "arabic.storySize";
 const PROGRESS_KEY = "arabic.progress";
 const FILTER_KEY = "arabic.filter";
 const HARAKAT_KEY = "arabic.harakat";
+const LAST_KEY = "arabic.lastLesson";
 
 // Слово считается выученным после двух ответов «Знаю» подряд
 const LEARNED = 2;
@@ -111,36 +112,64 @@ function renderLessonList() {
 
 // Число слов и выученных подгружается в фоне; ошибка просто оставляет строку пустой
 function renderCounts() {
-  LESSONS.forEach((l) =>
-    loadLesson(l.id)
-      .then((data) => {
-        const n = data.words.length;
-        const learned = data.words.filter((w) => isLearned(w, l.id)).length;
-        $("count-" + l.id).textContent =
-          `${n} ${plural(n, "слово", "слова", "слов")}` + (learned ? ` · ${learned} выучено` : "");
-      })
-      .catch(() => {}),
+  return Promise.all(
+    LESSONS.map((l) =>
+      loadLesson(l.id)
+        .then((data) => {
+          const n = data.words.length;
+          const learned = data.words.filter((w) => isLearned(w, l.id)).length;
+          $("count-" + l.id).textContent =
+            `${n} ${plural(n, "слово", "слова", "слов")}` + (learned ? ` · ${learned} выучено` : "");
+          return { n, learned };
+        })
+        .catch(() => ({ n: 0, learned: 0 })),
+    ),
   );
 }
 renderLessonList();
 
-// ── Hash-роутер: #lesson-N ──────────────────────────────
+// ── Hash-роутер: / книги, #mabda уроки, #lesson-N, #nahw ─
 function parseHash() {
   const m = location.hash.match(/^#lesson-(\d+)$/);
   return m ? Number(m[1]) : null;
 }
 
-function showWelcome() {
+// view: home | welcome | nahw | lesson (у урока своего класса нет)
+function setView(view) {
   closeSheet();
   toggleSizer(false);
-  document.body.classList.remove("view-nahw");
-  document.body.classList.add("view-welcome");
+  document.body.classList.remove("view-home", "view-welcome", "view-nahw");
+  if (view !== "lesson") document.body.classList.add("view-" + view);
+}
+
+// Главный экран: обложки книг, общий прогресс и «Продолжить»
+function showHome() {
+  setView("home");
   document.title = "Arabic";
+  const last = LESSONS.find((l) => l.id === store.get(LAST_KEY, null));
+  $("resume").hidden = !last;
+  if (last) {
+    $("resume").href = "#lesson-" + last.id;
+    $("resumeTitle").textContent = `Урок ${last.id} · ${last.ruTitle}`;
+  }
+  renderCounts().then((stats) => {
+    const n = stats.reduce((a, x) => a + x.n, 0);
+    const learned = stats.reduce((a, x) => a + x.learned, 0);
+    $("mabdaMeta").textContent =
+      `${LESSONS.length} ${plural(LESSONS.length, "урок", "урока", "уроков")} · ${n} ${plural(n, "слово", "слова", "слов")}`;
+    $("mabdaBar").style.width = n ? (learned / n) * 100 + "%" : "0";
+    $("mabdaNote").textContent = learned ? `Выучено ${learned} из ${n}` : "Пока ничего не выучено";
+  });
+}
+
+function showWelcome() {
+  setView("welcome");
+  document.title = "Уроки — Arabic";
   renderCounts();
 }
 
 function showLesson(id) {
-  document.body.classList.remove("view-welcome", "view-nahw");
+  setView("lesson");
   const lesson = LESSONS.find((l) => l.id === id);
   if (lesson) {
     $("lessonNumber").textContent = "Урок " + id;
@@ -156,6 +185,7 @@ async function openLesson(id) {
     if (!Array.isArray(data.words) || !Array.isArray(data.story))
       throw new Error("Неверная структура JSON");
     lessonId = id;
+    store.set(LAST_KEY, id);
     words = data.words;
     story = data.story;
     sentences = Array.isArray(data.sentences) ? data.sentences : [];
@@ -166,21 +196,22 @@ async function openLesson(id) {
     showLesson(id);
   } catch (err) {
     alert(err.message);
-    location.hash = "";
+    location.hash = "#mabda";
   }
 }
 
 async function route() {
   if (location.hash === "#nahw") return showNahw();
+  if (location.hash === "#mabda") return showWelcome();
   const id = parseHash();
   if (id === null) {
-    showWelcome();
+    showHome();
   } else {
     const lessonExists = LESSONS.some((lesson) => lesson.id === id);
     if (lessonExists) await openLesson(id);
     else {
       alert("Этот урок пока недоступен");
-      location.hash = "";
+      location.hash = "#mabda";
     }
   }
 }
@@ -458,10 +489,7 @@ function renderNode(n, depth) {
 }
 
 async function showNahw() {
-  closeSheet();
-  toggleSizer(false);
-  document.body.classList.remove("view-welcome");
-  document.body.classList.add("view-nahw");
+  setView("nahw");
   document.title = "Глава об имени — Arabic";
   if (nahwData) return;
   try {
