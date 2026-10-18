@@ -21,7 +21,10 @@ const HARAKAT_KEY = "arabic.harakat";
 const THEME_KEY = "arabic.theme";
 const TILT_KEY = "arabic.tilt"; // наклон книг от датчика движения (по умолчанию выключен)
 let tiltSensor = () => {};
+let sayBtn = null; // кнопка, чей текст сейчас звучит
+let sayId = 0; // номер последнего чтения: конец старого чтения не учитываем
 const LAST_KEY = "arabic.lastLesson";
+const PLACE_KEY = "arabic.place"; // где остановились: урок, карточка, ветки дерева, прокрутка
 
 // Слово считается выученным после двух ответов «Знаю» подряд
 const LEARNED = 2;
@@ -75,6 +78,15 @@ const store = {
     } catch {}
   },
 };
+
+// ── Место в книге ───────────────────────────────────────
+let place = store.get(PLACE_KEY, {});
+if (typeof place !== "object" || place === null) place = {};
+const savePlace = () => store.set(PLACE_KEY, place);
+const lessonPlace = (id = lessonId) => (place["lesson-" + id] ||= {});
+// Книга открывается там, где её оставили: «Мабда» — на последнем уроке, если из него не выходили
+const bookHref = (i) => (BOOKS[i].href === "#mabda" && place.mabda ? "#lesson-" + place.mabda : BOOKS[i].href);
+const lineText = (line) => (line || []).map((t) => t.arabic).join(" ");
 
 function loadLesson(id) {
   if (!lessonData.has(id)) {
@@ -148,6 +160,7 @@ function setView(view) {
   closeReader();
   hideNetError();
   toggleSizer(false);
+  stopSpeech();
   document.body.classList.remove("view-home", "view-welcome", "view-nahw", "view-quiz");
   if (view !== "lesson") document.body.classList.add("view-" + view);
   if (view !== currentView) {
@@ -251,6 +264,10 @@ function showHome() {
 
 function showWelcome() {
   setView("welcome");
+  if (prevView === "lesson" && place.mabda) {
+    delete place.mabda;
+    savePlace();
+  }
   document.title = "Уроки — Arabic";
   renderCounts();
 }
@@ -280,10 +297,19 @@ async function openLesson(id) {
     story = data.story;
     sentences = Array.isArray(data.sentences) ? data.sentences : [];
     dict = new Map(words.map((w) => [w.arabic, w]));
+    // Где остановились в этом уроке: вкладка, карточка, прокрутка рассказа
+    const saved = { ...lessonPlace(id) };
+    place.mabda = id;
     buildDeck();
+    const at = deck.findIndex((i) => words[i].arabic === saved.word);
+    if (at > 0) showWord(at);
     renderStory();
-    $("storyScreen").querySelector(".story-card").scrollTop = 0;
+    setMode(saved.mode === "story" ? "story" : "words");
     showLesson(id);
+    savePlace();
+    $("mainContent").classList.remove("is-loading");
+    // прокрутку ставим, когда текст уже на экране
+    $("storyScreen").querySelector(".story-card").scrollTop = saved.scroll || 0;
   } catch (err) {
     showNetError(() => openLesson(id), "#mabda");
   } finally {
@@ -345,6 +371,7 @@ function buildDeck() {
 
 // ── Карточки ────────────────────────────────────────────
 function renderWord() {
+  stopSpeech();
   const card = $("wordCard");
   card.classList.remove("revealed");
   card.classList.toggle("empty", !deck.length);
@@ -367,6 +394,10 @@ function renderWord() {
   $("partOfSpeech").textContent = w.type;
   $("learnedMark").hidden = !isLearned(w);
   $("topCounter").textContent = `${pos + 1} из ${deck.length}`;
+  if (lessonId) {
+    lessonPlace().word = w.arabic;
+    savePlace();
+  }
   $("progressBar").style.width = `${((pos + 1) / deck.length) * 100}%`;
 }
 
@@ -492,6 +523,33 @@ $("emptyReset").onclick = () => {
   card.addEventListener("click", (e) => suppressClick && e.stopPropagation(), true);
 }
 
+// Прокрутка рассказа и дерева запоминается, когда палец отпустил
+{
+  let t = 0;
+  const remember = (fn) => () => {
+    clearTimeout(t);
+    t = setTimeout(fn, 300);
+  };
+  $("storyScreen").querySelector(".story-card").addEventListener(
+    "scroll",
+    remember(() => {
+      if (!lessonId || currentView !== "lesson") return;
+      lessonPlace().scroll = Math.round($("storyScreen").querySelector(".story-card").scrollTop);
+      savePlace();
+    }),
+    { passive: true },
+  );
+  $("nahwScroll").addEventListener(
+    "scroll",
+    remember(() => {
+      if (!nahwHash || currentView !== "nahw") return;
+      treePlace().scroll = Math.round($("nahwScroll").scrollTop);
+      savePlace();
+    }),
+    { passive: true },
+  );
+}
+
 // ── Режим: Слова / Текст ────────────────────────────────
 function setMode(mode) {
   const wordsMode = mode === "words";
@@ -502,6 +560,10 @@ function setMode(mode) {
   $("wordsTab").setAttribute("aria-selected", wordsMode);
   $("storyTab").setAttribute("aria-selected", !wordsMode);
   $("mainContent").classList.toggle("story-mode", !wordsMode);
+  if (lessonId) {
+    lessonPlace().mode = mode;
+    savePlace();
+  }
   if (wordsMode) {
     toggleSizer(false);
     closeSheet();
@@ -528,6 +590,7 @@ function renderStory() {
 }
 
 function closeSheet() {
+  if ($("wordSheet").classList.contains("show")) stopSpeech();
   $("wordSheet").classList.remove("show");
   $("wordSheet").setAttribute("aria-hidden", "true");
   $("sheetOverlay").hidden = true;
@@ -561,6 +624,7 @@ $("storyText").addEventListener("click", (e) => {
     $("popupDictText").textContent = entry.translation;
   }
   // Перевод всего предложения — по кнопке
+  $("saySentence").dataset.say = lineText(story[Number(line.dataset.line)]);
   const sentence = sentences[Number(line.dataset.line)];
   $("sentenceBlock").hidden = !sentence;
   $("sentenceText").textContent = sentence || "";
@@ -646,6 +710,8 @@ let nahwData = null;
 let nahwNodes = []; // все узлы по порядку обхода; индекс — data-i у плашки
 let nahwParent = []; // индекс родителя для каждого узла
 let nahwPath = [0]; // раскрытые узлы от корня вниз
+let nahwHash = null; // адрес открытой книги (#nahw, #amil)
+const treePlace = () => (place[nahwHash] ||= {});
 
 const CHEVRON = `<svg width="12" height="8" viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const kidsOf = (i) => nahwNodes[i].children || [];
@@ -673,6 +739,10 @@ function nodeCard(i, level, cls = "") {
 }
 
 function renderNahw(scrollTo) {
+  if (nahwHash) {
+    treePlace().path = nahwPath;
+    savePlace();
+  }
   let html = `<div class="nb-level nb-top">${nodeCard(0, -1, "root")}</div>`;
   nahwPath.forEach((p, level) => {
     const kids = kidsOf(p).map((c) => c._i);
@@ -730,11 +800,17 @@ async function showNahw(hash) {
     nahwNodes = [];
     nahwParent = [];
     indexNodes(root, null);
-    nahwPath = [0];
+    // Раскрытые ветки и прокрутка — как были в прошлый раз
+    nahwHash = hash;
+    const saved = treePlace();
+    const path = Array.isArray(saved.path) ? saved.path : [];
+    const valid = path[0] === 0 && path.every((p, k) => !k || nahwParent[p] === path[k - 1]);
+    nahwPath = valid ? path : [0];
     renderNahw();
-    $("nahwScroll").scrollTop = 0;
+    $("nahwScroll").scrollTop = valid ? saved.scroll || 0 : 0;
   } catch (err) {
     nahwBook = null;
+    nahwHash = null;
     showNetError(() => showNahw(hash), "");
   }
 }
@@ -775,10 +851,10 @@ function openQawl(i) {
   // Примеры: одной строкой (ex) или списком с переводом из книги (exs)
   const exs = n.exs || [];
   fill("qawlExBlock", "qawlEx", n.ex);
-  $("qawlEx").hidden = !n.ex;
+  $("qawlExRow").hidden = !n.ex;
   if (exs.length) $("qawlExBlock").hidden = false;
   $("qawlExs").innerHTML = exs
-    .map((x) => `<li><span class="qawl-ex-ar" lang="ar" dir="rtl">${esc(x.ar)}</span>${x.ru ? `<span class="qawl-ex-ru">${esc(x.ru)}</span>` : ""}</li>`)
+    .map((x) => `<li><span class="qawl-ex-ar" lang="ar" dir="rtl">${esc(x.ar)}</span>${x.ru ? `<span class="qawl-ex-ru">${esc(x.ru)}</span>` : ""}<button class="say say-float" type="button" data-say="${esc(x.ar)}" aria-label="Произнести пример">${SAY_ICON}</button></li>`)
     .join("");
   $("qawlSaid").hidden = !nahwBook.said;
   $("qawlSaid").textContent = nahwBook.said || "";
@@ -796,6 +872,7 @@ function openQawl(i) {
 function closeQawl() {
   const layer = $("qawlLayer");
   if (layer.hidden) return;
+  stopSpeech();
   layer.classList.remove("show");
   setTimeout(() => {
     if (!layer.classList.contains("show")) layer.hidden = true;
@@ -890,6 +967,7 @@ function renderQuizMeta() {
 }
 
 function renderQuestion() {
+  stopSpeech();
   const q = quizRound[quizPos];
   renderQuizMeta();
   $("quizQ").textContent = q.mode === "type" ? "К какому виду относится?" : "Что делает это слово?";
@@ -1038,6 +1116,177 @@ $("setTheme").addEventListener("click", (e) => {
 });
 applyTheme();
 
+// ── Произношение: арабский текст читает голос телефона ──
+const VOICE_KEY = "arabic.voice"; // { gender, uri, rate }
+const RATES = [0.6, 0.8, 1];
+// У голосов нет пола в API — узнаём по имени (Majed, Tarik — мужские; Laila, Mariam — женские)
+const MALE_RE = /maged|majed|tarik|tariq|hamed|naayf|shakir|hamdan|fahed|omar|ahmad|ahmed|hassan|khalid|salim|bassel|male\b/i;
+const FEMALE_RE = /laila|layla|mariam|maryam|amira|zariyah|salma|hoda|zeina|fatima|nour|noura|rana|dalia|reem|aisha|hala|amal|sana|female/i;
+const SAY_ICON =
+  '<svg class="ic-play" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 9.5v5h3.8l4.7 4v-13l-4.7 4H3.5z" fill="currentColor"/><path d="M15.5 8.8a4.5 4.5 0 0 1 0 6.4M18.3 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>' +
+  '<svg class="ic-stop" width="13" height="13" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="2.5" fill="currentColor"/></svg>';
+const tts = "speechSynthesis" in window ? window.speechSynthesis : null;
+let voiceCfg = store.get(VOICE_KEY, {});
+if (typeof voiceCfg !== "object" || voiceCfg === null) voiceCfg = {};
+voiceCfg = {
+  gender: voiceCfg.gender === "female" ? "female" : "male",
+  uri: typeof voiceCfg.uri === "string" ? voiceCfg.uri : "",
+  rate: RATES.includes(voiceCfg.rate) ? voiceCfg.rate : 0.8,
+};
+let arVoices = [];
+
+const genderOf = (v) => (FEMALE_RE.test(v.name) ? "female" : MALE_RE.test(v.name) ? "male" : "");
+// Улучшенные голоса iPhone звучат естественнее — ставим их первыми
+const voiceRank = (v) => (/premium/i.test(v.voiceURI) ? 0 : /enhanced/i.test(v.voiceURI) ? 1 : 2);
+const voiceLabel = (v) => v.name.replace(/\s*\(.*\)$/, "") + (voiceRank(v) < 2 ? " · улучшенный" : "");
+
+function loadVoices() {
+  if (!tts) return;
+  const seen = new Set();
+  arVoices = tts
+    .getVoices()
+    .filter((v) => /^ar([-_]|$)/i.test(v.lang) && !seen.has(v.voiceURI) && seen.add(v.voiceURI))
+    .sort((a, b) => voiceRank(a) - voiceRank(b) || a.name.localeCompare(b.name));
+  applyVoiceSetting();
+}
+
+function currentVoice() {
+  return (
+    arVoices.find((v) => v.voiceURI === voiceCfg.uri) ||
+    arVoices.find((v) => genderOf(v) === voiceCfg.gender) ||
+    arVoices.find((v) => !genderOf(v)) ||
+    arVoices[0] ||
+    null
+  );
+}
+
+function setSaying(btn) {
+  sayBtn?.classList.remove("playing");
+  sayBtn = btn;
+  btn?.classList.add("playing");
+}
+
+function stopSpeech() {
+  if (!sayBtn) return;
+  sayId++;
+  tts?.cancel();
+  setSaying(null);
+}
+
+// Длинный текст читаем по фразам: так паузы естественнее и iPhone не обрывает чтение
+function speak(text, btn, onEnd) {
+  if (!tts) return toast("Этот браузер не умеет читать вслух");
+  const parts = String(text)
+    .replace(/[«»"“”()[\]]/g, " ")
+    .split(/(?<=[.!?؟؛:\n])\s*/)
+    .map((x) => x.trim())
+    .filter(Boolean);
+  if (!parts.length) return;
+  const id = ++sayId;
+  const v = currentVoice();
+  setSaying(btn);
+  const go = () => {
+    if (id !== sayId) return;
+    parts.forEach((part, k) => {
+      const u = new SpeechSynthesisUtterance(part);
+      u.lang = v?.lang || "ar-SA";
+      if (v) u.voice = v;
+      u.rate = voiceCfg.rate;
+      if (k === parts.length - 1)
+        u.onend = () => {
+          if (id !== sayId) return;
+          setSaying(null);
+          onEnd?.();
+        };
+      u.onerror = (e) => {
+        if (id === sayId && e.error !== "interrupted" && e.error !== "canceled") setSaying(null);
+      };
+      tts.speak(u);
+    });
+  };
+  // iPhone иногда пропускает новую фразу сразу после остановки старой
+  if (tts.speaking || tts.pending) {
+    tts.cancel();
+    setTimeout(go, 80);
+  } else go();
+}
+
+// Все кнопки «прослушать»: текст из соседнего элемента или из data-say
+document.querySelectorAll(".say").forEach((b) => b.insertAdjacentHTML("afterbegin", SAY_ICON));
+document.addEventListener(
+  "click",
+  (e) => {
+    const b = e.target.closest(".say");
+    if (!b || b.id === "readerPlay") return;
+    e.stopPropagation();
+    e.preventDefault();
+    if (b === sayBtn) return stopSpeech();
+    const text = b.dataset.sayFrom ? $(b.dataset.sayFrom)?.textContent : b.dataset.say;
+    if (text) speak(text, b);
+  },
+  true,
+);
+document.addEventListener("visibilitychange", () => document.hidden && stopSpeech());
+
+// Настройки голоса
+function applyVoiceSetting() {
+  $("setVoiceGender").querySelectorAll("button").forEach((b) => {
+    const on = b.dataset.gender === voiceCfg.gender;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-checked", String(on));
+  });
+  $("setRate").querySelectorAll("button").forEach((b) => {
+    const on = Number(b.dataset.rate) === voiceCfg.rate;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-checked", String(on));
+  });
+  const v = currentVoice();
+  const fit = arVoices.filter((x) => genderOf(x) === voiceCfg.gender || !genderOf(x));
+  const list = fit.length ? fit : arVoices;
+  if (v && !list.includes(v)) list.unshift(v);
+  $("setVoiceRow").hidden = !list.length;
+  $("setVoice").innerHTML = list
+    .map((x) => `<option value="${esc(x.voiceURI)}"${x === v ? " selected" : ""}>${esc(voiceLabel(x))}</option>`)
+    .join("");
+  const where = "Настройки iPhone → Универсальный доступ → Устный контент → Голоса → Арабский";
+  const hasGender = arVoices.some((x) => genderOf(x) === voiceCfg.gender);
+  $("setVoiceNote").textContent = !tts
+    ? "Этот браузер не умеет читать вслух."
+    : !arVoices.length
+      ? `Арабский голос не найден. Добавьте его: ${where}.`
+      : !hasGender
+        ? `${voiceCfg.gender === "female" ? "Женский" : "Мужской"} арабский голос не установлен. Скачайте его: ${where} — и перезапустите приложение.`
+        : `Голоса «улучшенный» звучат естественнее. Скачать их можно здесь: ${where}.`;
+}
+
+function saveVoice() {
+  store.set(VOICE_KEY, voiceCfg);
+  applyVoiceSetting();
+}
+$("setVoiceGender").onclick = (e) => {
+  const b = e.target.closest("button[data-gender]");
+  if (!b || b.dataset.gender === voiceCfg.gender) return;
+  voiceCfg.gender = b.dataset.gender;
+  voiceCfg.uri = "";
+  saveVoice();
+};
+$("setRate").onclick = (e) => {
+  const b = e.target.closest("button[data-rate]");
+  if (!b) return;
+  voiceCfg.rate = Number(b.dataset.rate);
+  saveVoice();
+};
+$("setVoice").onchange = () => {
+  voiceCfg.uri = $("setVoice").value;
+  saveVoice();
+};
+$("setVoiceTest").onclick = () =>
+  sayBtn === $("setVoiceTest") ? stopSpeech() : speak("بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ. السَّلَامُ عَلَيْكُمْ", $("setVoiceTest"));
+if (tts) {
+  loadVoices();
+  tts.addEventListener?.("voiceschanged", loadVoices);
+} else applyVoiceSetting();
+
 // ── Настройки ───────────────────────────────────────────
 function renderSettings() {
   const v = document.querySelector('script[src*="app.js"]')?.src.match(/v=(\w+)/);
@@ -1118,7 +1367,7 @@ const fullFrame = () => boxFrame({ left: 0, top: 0, width: innerWidth, height: i
 
 async function openBookAnimated(i) {
   if (flying) return;
-  const href = BOOKS[i].href;
+  const href = bookHref(i);
   const f = makeFly(i);
   if (!f) return (location.hash = href);
   flying = true;
@@ -1322,6 +1571,10 @@ function renderReaderLine(smooth = true) {
   $("readerCount").textContent = `Строка ${readerLine + 1} из ${story.length}`;
   $("readerTrText").hidden = !readerTr || !sentences[readerLine];
   $("readerTrText").textContent = sentences[readerLine] || "";
+  if (lessonId) {
+    lessonPlace().line = readerLine;
+    savePlace();
+  }
 }
 
 function openReader() {
@@ -1330,18 +1583,32 @@ function openReader() {
   toggleSizer(false);
   $("readerText").innerHTML = story
     .map((line, k) => {
-      const text = line.map((t) => (showHarakat ? t.arabic : stripHarakat(t.arabic))).join(" ");
+      const text = showHarakat ? lineText(line) : stripHarakat(lineText(line));
       return `<span class="reader-line" data-l="${k}">${esc(text)}.</span>`;
     })
     .join("");
-  readerLine = 0;
+  const saved = lessonPlace().line;
+  readerLine = Number.isInteger(saved) && saved < story.length ? saved : 0;
   $("reader").hidden = false;
   requestAnimationFrame(() => renderReaderLine(false));
 }
 
 function closeReader() {
+  if (!$("reader").hidden) stopSpeech();
   $("reader").hidden = true;
 }
+
+// «Слушать»: строка за строкой, подсветка идёт за голосом
+function readerSpeak() {
+  speak(lineText(story[readerLine]), $("readerPlay"), () => {
+    if (readerLine >= story.length - 1) return;
+    readerLine++;
+    renderReaderLine();
+    readerSpeak();
+  });
+}
+$("readerPlay").insertAdjacentHTML("afterbegin", SAY_ICON);
+$("readerPlay").onclick = () => (sayBtn === $("readerPlay") ? stopSpeech() : readerSpeak());
 
 function stepReader(d) {
   readerLine = Math.max(0, Math.min(story.length - 1, readerLine + d));
@@ -1358,10 +1625,12 @@ $("readerTr").onclick = () => {
 $("readerText").addEventListener("click", (e) => {
   const line = e.target.closest(".reader-line");
   const k = line ? Number(line.dataset.l) : readerLine;
+  const playing = sayBtn === $("readerPlay");
   if (k !== readerLine) {
     readerLine = k;
     renderReaderLine();
   } else stepReader(1);
+  if (playing) readerSpeak();
 });
 document.addEventListener("keydown", (e) => {
   if ($("reader").hidden) return;
