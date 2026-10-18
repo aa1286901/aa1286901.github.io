@@ -3273,25 +3273,7 @@ html.splash-on .splash {
     flex: none
 }
 
-/* Выбор голоса в настройках */
-.set-seg.two {
-    grid-template-columns: repeat(2, 1fr)
-}
-
 .set-row[hidden] {
     display: none
 }
 
-.set-select {
-    max-width: 58%;
-    min-width: 0;
-    border: 0;
-    background: none;
-    color: var(--muted);
-    font: inherit;
-    font-size: 17px;
-    text-align: right;
-    text-align-last: right;
-    -webkit-appearance: none;
-    appearance: none
-}
