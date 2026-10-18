@@ -33,11 +33,11 @@
             if (t === '"light"' || t === '"dark"') document.documentElement.dataset.theme = JSON.parse(t);
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="style.css?v=0045">
+    <link rel="stylesheet" href="style.css?v=0046">
 </head>
 
 <body class="view-home">
-    <!-- Заставка: только при запуске с экрана «Домой» (или с ?splash для проверки) -->
+    <!-- Заставка: при каждом запуске с экрана «Домой» (или с ?splash для проверки) -->
     <div class="splash" id="splash" aria-hidden="true">
         <!-- Иконка собирается: книга раскрывается, из неё поднимается золотая «ع» -->
         <div class="splash-tile">
@@ -71,12 +71,10 @@
             var s = document.getElementById("splash");
             var standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
             var forced = /[?&]splash\b/.test(location.search);
-            var seen = false;
-            try {
-                seen = sessionStorage.getItem("arabic.splash") === "1";
-                sessionStorage.setItem("arabic.splash", "1");
-            } catch (e) {}
-            if (forced || (standalone && !seen)) document.documentElement.classList.add("splash-on");
+            // Каждый запуск приложения с экрана «Домой» — это новая загрузка страницы,
+            // возврат из фона страницу не перезагружает, поэтому лишних показов нет.
+            // (sessionStorage на iPhone переживает закрытие приложения и прятал заставку.)
+            if (forced || standalone) document.documentElement.classList.add("splash-on");
             else s.remove();
         })();
     </script>
@@ -527,7 +525,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0045"></script>
+    <script src="app.js?v=0046"></script>
 </body>
 
 </html>
