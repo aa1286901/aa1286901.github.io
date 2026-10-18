@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим приложения Arabic.
 // Свои файлы — «сначала сеть»: обновления видны сразу, без интернета берётся кэш.
 // Шрифты Google — «сначала кэш»: они не меняются.
-const VERSION = "0044";
+const VERSION = "0045";
 const CACHE = "arabic-" + VERSION;
 const FONT_CACHE = "arabic-fonts";
 
@@ -15,7 +15,6 @@ const PRECACHE = [
   "icons/icon-512.png",
   "icons/apple-touch-icon.png",
   "icons/favicon-32.png",
-  "icons/splash.png",
   "icons/dev.jpg",
   "nahw_ism.json",
   "mia_amil.json",
