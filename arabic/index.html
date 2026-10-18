@@ -34,7 +34,7 @@
             if (localStorage.getItem("arabic.motion") === "true") document.documentElement.dataset.motion = "on";
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="style.css?v=0048">
+    <link rel="stylesheet" href="style.css?v=0049">
 </head>
 
 <body class="view-home">
@@ -399,6 +399,10 @@
 
                 <div class="set-group">
                     <div class="set-row">
+                        <span class="set-row-label" id="setTiltLabel">Наклон книг от движения<small>iPhone спрашивает разрешение при каждом запуске</small></span>
+                        <button class="switch" id="setTilt" type="button" role="switch" aria-checked="false" aria-labelledby="setTiltLabel"></button>
+                    </div>
+                    <div class="set-row">
                         <span class="set-row-label" id="setMotionLabel">Анимации всегда<small>Даже при «Уменьшении движения» в iPhone</small></span>
                         <button class="switch" id="setMotion" type="button" role="switch" aria-checked="false" aria-labelledby="setMotionLabel"></button>
                     </div>
@@ -559,7 +563,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0048"></script>
+    <script src="app.js?v=0049"></script>
 </body>
 
 </html>
