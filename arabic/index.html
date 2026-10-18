@@ -33,7 +33,7 @@
             if (t === '"light"' || t === '"dark"') document.documentElement.dataset.theme = JSON.parse(t);
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="style.css?v=0039">
+    <link rel="stylesheet" href="style.css?v=0040">
 </head>
 
 <body class="view-home">
@@ -70,34 +70,54 @@
         </header>
 
         <div class="lib-stage">
+            <div class="showcase">
             <nav class="carousel" id="carousel" aria-label="Книги">
             <a class="slide" href="#mabda" data-i="0">
-                <span class="cover-frame">
+                <span class="book3d book-mabda">
+                    <span class="face front cover-frame">
                     <span class="cover cover-mabda" aria-hidden="true">
                         <span class="cover-ar">مَبْدَأُ<br>الْقِرَاءَةِ</span>
                         <span class="cover-ru">Мабдауль<br>Къираат</span>
                     </span>
                 </span>
+                    <span class="face spine" aria-hidden="true"><span class="spine-title" lang="ar">مَبْدَأُ الْقِرَاءَةِ</span></span>
+                    <span class="face pages" aria-hidden="true"></span>
+                    <span class="face back" aria-hidden="true"></span>
+                </span>
+                <span class="floor" aria-hidden="true"></span>
             </a>
             <a class="slide" href="#amil" data-i="1">
-                <span class="cover-frame">
+                <span class="book3d book-mia">
+                    <span class="face front cover-frame">
                     <span class="cover cover-mia" aria-hidden="true">
                         <span class="cover-ar">مِئَةُ عَامِلٍ<br>فِي النَّحْوِ</span>
                         <span class="cover-ru">Сто управляющих<br>слов в синтаксисе</span>
                     </span>
                 </span>
+                    <span class="face spine" aria-hidden="true"><span class="spine-title" lang="ar">مِئَةُ عَامِلٍ</span></span>
+                    <span class="face pages" aria-hidden="true"></span>
+                    <span class="face back" aria-hidden="true"></span>
+                </span>
+                <span class="floor" aria-hidden="true"></span>
             </a>
             <a class="slide" href="#nahw" data-i="2">
-                <span class="cover-frame">
+                <span class="book3d book-unm">
+                    <span class="face front cover-frame">
                     <span class="cover cover-unm" aria-hidden="true">
                         <span class="cover-ar">شَرْحُ<br>الْأُنْمُوذَجِ</span>
                         <span class="cover-glyph">ح</span>
                         <span class="cover-author">الأردبيلي</span>
                     </span>
                 </span>
+                    <span class="face spine" aria-hidden="true"><span class="spine-title" lang="ar">شَرْحُ الْأُنْمُوذَجِ</span></span>
+                    <span class="face pages" aria-hidden="true"></span>
+                    <span class="face back" aria-hidden="true"></span>
+                </span>
+                <span class="floor" aria-hidden="true"></span>
             </a>
             </nav>
             <div class="dots" id="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            </div>
 
             <div class="book-panel" id="bookPanel" aria-live="polite">
                 <div class="bp-kind" id="bpKind" lang="ar" dir="rtl"></div>
@@ -430,7 +450,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0039"></script>
+    <script src="app.js?v=0040"></script>
 </body>
 
 </html>

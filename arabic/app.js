@@ -183,7 +183,12 @@ function setHomeBook(i) {
   homeBook = i;
   store.set(HOME_BOOK_KEY, i);
   const b = BOOKS[i];
-  [...$("carousel").children].forEach((el, k) => el.classList.toggle("active", k === i));
+  // Книги слева и справа от центральной разворачиваются к ней, как в Cover Flow
+  [...$("carousel").children].forEach((el, k) => {
+    el.classList.toggle("active", k === i);
+    el.classList.toggle("left", k < i);
+    el.classList.toggle("right", k > i);
+  });
   [...$("dots").children].forEach((el, k) => el.classList.toggle("on", k === i));
   const panel = $("bookPanel");
   panel.classList.remove("swap");
