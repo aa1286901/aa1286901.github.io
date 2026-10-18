@@ -19,6 +19,8 @@ const PROGRESS_KEY = "arabic.progress";
 const FILTER_KEY = "arabic.filter";
 const HARAKAT_KEY = "arabic.harakat";
 const THEME_KEY = "arabic.theme";
+const TILT_KEY = "arabic.tilt"; // наклон книг от датчика движения (по умолчанию выключен)
+let tiltSensor = () => {};
 const LAST_KEY = "arabic.lastLesson";
 
 // Слово считается выученным после двух ответов «Знаю» подряд
@@ -979,6 +981,18 @@ function applyTheme() {
     b.setAttribute("aria-checked", String(on));
   });
 }
+// ── Наклон книг от движения телефона ────────────────────
+function applyTiltSetting() {
+  $("setTilt").setAttribute("aria-checked", String(store.get(TILT_KEY, false) === true));
+}
+$("setTilt").onclick = () => {
+  const on = store.get(TILT_KEY, false) !== true;
+  store.set(TILT_KEY, on);
+  applyTiltSetting();
+  tiltSensor(on, true);
+};
+applyTiltSetting();
+
 // ── «Анимации всегда» ───────────────────────────────────
 function applyMotion() {
   $("setMotion").setAttribute("aria-checked", String(document.documentElement.dataset.motion === "on"));
@@ -1192,14 +1206,33 @@ $("bpOpen").addEventListener("click", (e) => {
     aim(clamp(-(e.beta - tilt.base.b) * 0.3, 6), clamp((e.gamma - tilt.base.g) * 0.45, 10));
   };
   {
+    // Датчик движения — только если наклон включён в настройках.
+    // iPhone спрашивает разрешение при каждом запуске приложения, поэтому по умолчанию он выключен.
     const DOE = window.DeviceOrientationEvent;
-    if (DOE && typeof DOE.requestPermission === "function") {
-      // iPhone спрашивает разрешение — по первому касанию витрины
-      sc.addEventListener("click", function ask() {
-        sc.removeEventListener("click", ask);
-        DOE.requestPermission().then((st) => st === "granted" && addEventListener("deviceorientation", onOrient)).catch(() => {});
-      });
-    } else if (DOE) addEventListener("deviceorientation", onOrient);
+    const needsAsk = DOE && typeof DOE.requestPermission === "function";
+    let listening = false;
+    const listen = () => {
+      if (!listening) addEventListener("deviceorientation", onOrient);
+      listening = true;
+    };
+    tiltSensor = (on, fromTap) => {
+      if (!DOE) return;
+      if (!on) {
+        removeEventListener("deviceorientation", onOrient);
+        listening = false;
+        tilt.base = null;
+        return aim(0, 0);
+      }
+      if (!needsAsk) return listen();
+      // На iPhone спросить можно только в ответ на касание
+      if (fromTap) DOE.requestPermission().then((st) => st === "granted" && listen()).catch(() => {});
+      else
+        sc.addEventListener("click", function ask() {
+          sc.removeEventListener("click", ask);
+          if (store.get(TILT_KEY, false)) tiltSensor(true, true);
+        });
+    };
+    if (store.get(TILT_KEY, false)) tiltSensor(true, false);
     sc.addEventListener("pointermove", (e) => {
       if (e.pointerType !== "mouse" || motionOff()) return;
       const r = sc.getBoundingClientRect();
