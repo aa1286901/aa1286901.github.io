@@ -167,6 +167,41 @@ button {
     flex: none
 }
 
+/* Список уроков: шапка и заголовок стоят на месте, прокручивается только список */
+.welcome {
+    overflow: hidden
+}
+
+.welcome > .navbar,
+.welcome > .welcome-head {
+    flex: none
+}
+
+.welcome > .lesson-list {
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none
+}
+
+.welcome > .lesson-list::-webkit-scrollbar {
+    display: none
+}
+
+.welcome-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0 4px
+}
+
+.welcome-ar {
+    font-family: var(--ar);
+    font-size: 24px;
+    color: var(--faint)
+}
+
 .lesson-item {
     position: relative;
     width: 100%;
@@ -2367,17 +2402,28 @@ html.splash-on .splash {
 
 }
 
+/* «Уменьшение движения» в системе — если в настройках не включено «Анимации всегда».
+   Заставка тогда стоит без движения выбранное время и растворяется в конце. */
 @media(prefers-reduced-motion:reduce) {
-    * {
+    :root:not([data-motion="on"]) * {
         transition: none !important
     }
 
-    .splash *,
-    html.splash-on .splash {
-        animation-duration: .01s !important;
-        animation-delay: 0s !important
+    :root:not([data-motion="on"]) .splash * {
+        animation: none !important
     }
 
+    :root:not([data-motion="on"]) .splash-glow {
+        opacity: .55
+    }
+
+    :root:not([data-motion="on"]) .splash-bar {
+        display: none
+    }
+
+    html.splash-on:not([data-motion="on"]) .splash {
+        animation: splash-out .2s calc(var(--splash-total, 5s) - .2s) ease forwards !important
+    }
 }
 
 /* ── Главный экран: витрина с объёмными книгами и карточка описания ── */
