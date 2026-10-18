@@ -549,6 +549,10 @@ body:not(.view-welcome) .welcome {
     color: var(--muted)
 }
 
+.set-seg.four {
+    grid-template-columns: repeat(4, 1fr)
+}
+
 .set-seg {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -2187,9 +2191,10 @@ body.view-quiz .quiz {
     cursor: pointer
 }
 
+/* Растворяется в конце выбранной длительности (--splash-total из настроек) */
 html.splash-on .splash {
     display: flex;
-    animation: splash-out 3s ease forwards
+    animation: splash-out .45s calc(var(--splash-total, 5s) - .45s) ease forwards
 }
 
 /* ── Иконка-заставка: 0–0,5 с плитка, 0,35–1,15 книга раскрывается,
@@ -2210,7 +2215,45 @@ html.splash-on .splash {
     inset: 0;
     background: radial-gradient(ellipse 70% 55% at 50% 40%, rgba(232, 190, 110, .6), transparent 70%);
     opacity: 0;
-    animation: splash-glow 1.4s 1s ease-out both
+    /* вспышка, затем свет мягко «дышит», пока заставка на экране */
+    animation: splash-glow 1.4s 1s ease-out both, splash-breathe 2.4s 2.4s ease-in-out infinite
+}
+
+@keyframes splash-breathe {
+    0%, 100% { opacity: .55 }
+    50% { opacity: .9 }
+}
+
+/* Полоска оставшегося времени */
+.splash-bar {
+    width: 120px;
+    height: 3px;
+    margin-top: 6px;
+    border-radius: 2px;
+    background: var(--track);
+    overflow: hidden;
+    animation: splash-rise .5s 1.7s ease-out both
+}
+
+.splash-bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #1f9d55;
+    transform-origin: left;
+    animation: splash-progress var(--splash-total, 5s) linear both
+}
+
+@keyframes splash-progress {
+    from { transform: scaleX(0) }
+}
+
+.splash-skip {
+    position: absolute;
+    bottom: calc(env(safe-area-inset-bottom) + 28px);
+    font-size: 13px;
+    color: var(--faint);
+    animation: splash-rise .5s 2.2s ease-out both
 }
 
 .splash-book {
@@ -2272,8 +2315,7 @@ html.splash-on .splash {
 }
 
 @keyframes splash-out {
-    0%, 86% { opacity: 1 }
-    100% { opacity: 0; visibility: hidden }
+    to { opacity: 0; visibility: hidden }
 }
 
 @keyframes splash-tile {
