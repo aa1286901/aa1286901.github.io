@@ -3277,3 +3277,13 @@ html.splash-on .splash {
     display: none
 }
 
+
+.segmented[hidden] {
+    display: none
+}
+
+/* Пропуск в упражнениях */
+.story-word[data-type="пропуск"] {
+    color: var(--accent);
+    letter-spacing: 2px
+}

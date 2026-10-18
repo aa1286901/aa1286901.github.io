@@ -399,7 +399,9 @@ async function openLesson(id) {
     const at = deck.findIndex((i) => words[i].arabic === saved.word);
     if (at > 0) showWord(at);
     renderStory();
-    setMode(saved.mode === "story" ? "story" : "words");
+    // Без карточек (упражнения) — сразу текст, вкладки не нужны
+    $("modeTabs").hidden = !words.length;
+    setMode(saved.mode === "story" || !words.length ? "story" : "words");
     showLesson(id);
     savePlace();
     $("mainContent").classList.remove("is-loading");
