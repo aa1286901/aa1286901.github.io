@@ -1117,11 +1117,8 @@ $("setTheme").addEventListener("click", (e) => {
 applyTheme();
 
 // ── Произношение: арабский текст читает голос телефона ──
-const VOICE_KEY = "arabic.voice"; // { gender, uri, rate }
+const VOICE_KEY = "arabic.voice"; // { uri, rate }; uri "" — голос, выбранный в настройках iPhone
 const RATES = [0.6, 0.8, 1];
-// У голосов нет пола в API — узнаём по имени (Majed, Tarik — мужские; Laila, Mariam — женские)
-const MALE_RE = /maged|majed|tarik|tariq|hamed|naayf|shakir|hamdan|fahed|omar|ahmad|ahmed|hassan|khalid|salim|bassel|male\b/i;
-const FEMALE_RE = /laila|layla|mariam|maryam|amira|zariyah|salma|hoda|zeina|fatima|nour|noura|rana|dalia|reem|aisha|hala|amal|sana|female/i;
 const SAY_ICON =
   '<svg class="ic-play" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 9.5v5h3.8l4.7 4v-13l-4.7 4H3.5z" fill="currentColor"/><path d="M15.5 8.8a4.5 4.5 0 0 1 0 6.4M18.3 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>' +
   '<svg class="ic-stop" width="13" height="13" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="2.5" fill="currentColor"/></svg>';
@@ -1129,16 +1126,17 @@ const tts = "speechSynthesis" in window ? window.speechSynthesis : null;
 let voiceCfg = store.get(VOICE_KEY, {});
 if (typeof voiceCfg !== "object" || voiceCfg === null) voiceCfg = {};
 voiceCfg = {
-  gender: voiceCfg.gender === "female" ? "female" : "male",
   uri: typeof voiceCfg.uri === "string" ? voiceCfg.uri : "",
   rate: RATES.includes(voiceCfg.rate) ? voiceCfg.rate : 0.8,
 };
 let arVoices = [];
 
-const genderOf = (v) => (FEMALE_RE.test(v.name) ? "female" : MALE_RE.test(v.name) ? "male" : "");
 // Улучшенные голоса iPhone звучат естественнее — ставим их первыми
-const voiceRank = (v) => (/premium/i.test(v.voiceURI) ? 0 : /enhanced/i.test(v.voiceURI) ? 1 : 2);
-const voiceLabel = (v) => v.name.replace(/\s*\(.*\)$/, "") + (voiceRank(v) < 2 ? " · улучшенный" : "");
+const voiceRank = (v) => (/premium/i.test(v.voiceURI + v.name) ? 0 : /enhanced/i.test(v.voiceURI + v.name) ? 1 : 2);
+const voiceLabel = (v) => {
+  const name = v.name.replace(/\s*\(.*\)$/, "");
+  return name + [" (высшее качество)", " (улучшенный)", ""][voiceRank(v)];
+};
 
 function loadVoices() {
   if (!tts) return;
@@ -1150,15 +1148,8 @@ function loadVoices() {
   applyVoiceSetting();
 }
 
-function currentVoice() {
-  return (
-    arVoices.find((v) => v.voiceURI === voiceCfg.uri) ||
-    arVoices.find((v) => genderOf(v) === voiceCfg.gender) ||
-    arVoices.find((v) => !genderOf(v)) ||
-    arVoices[0] ||
-    null
-  );
-}
+// null — голос не задаём: iPhone читает тем, что отмечен в его настройках
+const currentVoice = () => (voiceCfg.uri && arVoices.find((v) => v.voiceURI === voiceCfg.uri)) || null;
 
 function setSaying(btn) {
   sayBtn?.classList.remove("playing");
@@ -1189,7 +1180,7 @@ function speak(text, btn, onEnd) {
     if (id !== sayId) return;
     parts.forEach((part, k) => {
       const u = new SpeechSynthesisUtterance(part);
-      u.lang = v?.lang || "ar-SA";
+      u.lang = v?.lang || arVoices[0]?.lang || "ar-001";
       if (v) u.voice = v;
       u.rate = voiceCfg.rate;
       if (k === parts.length - 1)
@@ -1230,46 +1221,26 @@ document.addEventListener("visibilitychange", () => document.hidden && stopSpeec
 
 // Настройки голоса
 function applyVoiceSetting() {
-  $("setVoiceGender").querySelectorAll("button").forEach((b) => {
-    const on = b.dataset.gender === voiceCfg.gender;
-    b.classList.toggle("on", on);
-    b.setAttribute("aria-checked", String(on));
-  });
   $("setRate").querySelectorAll("button").forEach((b) => {
     const on = Number(b.dataset.rate) === voiceCfg.rate;
     b.classList.toggle("on", on);
     b.setAttribute("aria-checked", String(on));
   });
   const v = currentVoice();
-  const fit = arVoices.filter((x) => genderOf(x) === voiceCfg.gender || !genderOf(x));
-  const list = fit.length ? fit : arVoices;
-  if (v && !list.includes(v)) list.unshift(v);
-  $("setVoiceRow").hidden = !list.length;
-  $("setVoice").innerHTML = list
-    .map((x) => `<option value="${esc(x.voiceURI)}"${x === v ? " selected" : ""}>${esc(voiceLabel(x))}</option>`)
-    .join("");
+  $("setVoiceRow").hidden = !tts;
+  $("setVoice").innerHTML =
+    `<option value="">Как в iPhone</option>` +
+    arVoices.map((x) => `<option value="${esc(x.voiceURI)}"${x === v ? " selected" : ""}>${esc(voiceLabel(x))}</option>`).join("");
   const where = "Настройки iPhone → Универсальный доступ → Устный контент → Голоса → Арабский";
-  const hasGender = arVoices.some((x) => genderOf(x) === voiceCfg.gender);
   $("setVoiceNote").textContent = !tts
     ? "Этот браузер не умеет читать вслух."
-    : !arVoices.length
-      ? `Арабский голос не найден. Добавьте его: ${where}.`
-      : !hasGender
-        ? `${voiceCfg.gender === "female" ? "Женский" : "Мужской"} арабский голос не установлен. Скачайте его: ${where} — и перезапустите приложение.`
-        : `Голоса «улучшенный» звучат естественнее. Скачать их можно здесь: ${where}.`;
+    : `«Как в iPhone» — голос, отмеченный галочкой здесь: ${where}. В списке выше только голоса, которые iPhone открывает приложениям: если скачанного голоса нет, скачайте там же его обычную версию и перезапустите приложение.`;
 }
 
 function saveVoice() {
   store.set(VOICE_KEY, voiceCfg);
   applyVoiceSetting();
 }
-$("setVoiceGender").onclick = (e) => {
-  const b = e.target.closest("button[data-gender]");
-  if (!b || b.dataset.gender === voiceCfg.gender) return;
-  voiceCfg.gender = b.dataset.gender;
-  voiceCfg.uri = "";
-  saveVoice();
-};
 $("setRate").onclick = (e) => {
   const b = e.target.closest("button[data-rate]");
   if (!b) return;

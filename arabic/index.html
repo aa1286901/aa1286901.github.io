@@ -34,7 +34,7 @@
             if (localStorage.getItem("arabic.motion") === "true") document.documentElement.dataset.motion = "on";
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="style.css?v=0050">
+    <link rel="stylesheet" href="style.css?v=0051">
 </head>
 
 <body class="view-home">
@@ -428,16 +428,9 @@
 
                 <div class="set-group-label">Произношение</div>
                 <div class="set-group">
-                    <div class="set-row column">
-                        <span class="set-row-label">Голос</span>
-                        <div class="set-seg two" id="setVoiceGender" role="radiogroup" aria-label="Голос">
-                            <button type="button" role="radio" data-gender="male">Мужской</button>
-                            <button type="button" role="radio" data-gender="female">Женский</button>
-                        </div>
-                    </div>
                     <label class="set-row" id="setVoiceRow">
-                        <span class="set-row-label">Голос телефона</span>
-                        <select class="set-select" id="setVoice" aria-label="Голос телефона"></select>
+                        <span class="set-row-label">Голос</span>
+                        <select class="set-select" id="setVoice" aria-label="Голос"></select>
                     </label>
                     <div class="set-row column">
                         <span class="set-row-label">Скорость</span>
@@ -596,7 +589,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0050"></script>
+    <script src="app.js?v=0051"></script>
 </body>
 
 </html>
