@@ -2279,8 +2279,9 @@ html.splash-on .splash {
 }
 
 /* Книга: обложка, корешок, срез страниц и задняя сторона */
+/* Корешок справа, как у арабских книг */
 .book3d {
-    --ry: 26deg;
+    --ry: -26deg;
     position: relative;
     display: block;
     width: var(--cw);
@@ -2291,19 +2292,19 @@ html.splash-on .splash {
 }
 
 .slide.left .book3d {
-    --ry: 48deg;
+    --ry: 48deg;    /* слева видна сторона со срезом страниц */
     transform: rotateY(var(--ry)) scale(.8);
     opacity: .75
 }
 
 .slide.right .book3d {
-    --ry: -48deg;
+    --ry: -48deg;   /* справа виден корешок */
     transform: rotateY(var(--ry)) scale(.8);
     opacity: .75
 }
 
 .slide.active:active .book3d {
-    transform: rotateY(8deg) scale(.97)
+    transform: rotateY(-8deg) scale(.97)
 }
 
 .face {
@@ -2323,7 +2324,7 @@ html.splash-on .splash {
 .back {
     left: 0;
     width: var(--cw);
-    border-radius: 12px 3px 3px 12px;
+    border-radius: 3px 12px 12px 3px;
     transform: rotateY(180deg) translateZ(calc(var(--d) / 2));
     background: var(--spine)
 }
@@ -2335,9 +2336,9 @@ html.splash-on .splash {
 }
 
 .spine {
-    transform: rotateY(-90deg) translateZ(calc(var(--cw) / 2));
+    transform: rotateY(90deg) translateZ(calc(var(--cw) / 2));
     background:
-        linear-gradient(90deg, rgba(0, 0, 0, .28), rgba(255, 255, 255, .12) 45%, rgba(0, 0, 0, .18)),
+        linear-gradient(90deg, rgba(0, 0, 0, .18), rgba(255, 255, 255, .14) 55%, rgba(0, 0, 0, .28)),
         var(--spine);
     display: flex;
     align-items: center;
@@ -2357,7 +2358,7 @@ html.splash-on .splash {
 .pages {
     top: 1.5%;
     height: 97%;
-    transform: rotateY(90deg) translateZ(calc(var(--cw) / 2 - 3px));
+    transform: rotateY(-90deg) translateZ(calc(var(--cw) / 2 - 3px));
     background:
         linear-gradient(90deg, rgba(0, 0, 0, .14), transparent 30%, transparent 75%, rgba(0, 0, 0, .1)),
         repeating-linear-gradient(90deg, #fbf8ef 0 1.5px, #e6e0d2 1.5px 2.5px)
@@ -2382,7 +2383,7 @@ html.splash-on .splash {
 .cover-frame {
     display: block;
     height: var(--ch);
-    border-radius: 3px 12px 12px 3px;
+    border-radius: 12px 3px 3px 12px;
     overflow: hidden
 }
 
@@ -2391,8 +2392,8 @@ html.splash-on .splash {
     top: 0;
     left: 0;
     zoom: var(--k);   /* zoom, а не scale: текст обложки остаётся чётким и в 3D */
-    border-radius: 1.5px 6px 6px 1.5px;
-    box-shadow: inset 2px 0 0 rgba(0, 0, 0, .2), inset 3.5px 0 0 rgba(255, 255, 255, .12)
+    border-radius: 6px 1.5px 1.5px 6px;
+    box-shadow: inset -2px 0 0 rgba(0, 0, 0, .2), inset -3.5px 0 0 rgba(255, 255, 255, .12)
 }
 
 /* Блик по обложке */
@@ -2402,7 +2403,7 @@ html.splash-on .splash {
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: linear-gradient(100deg, rgba(255, 255, 255, .22), transparent 30%, transparent 72%, rgba(0, 0, 0, .1))
+    background: linear-gradient(260deg, rgba(255, 255, 255, .22), transparent 30%, transparent 72%, rgba(0, 0, 0, .1))
 }
 
 /* Тень на «полу» под книгой */
