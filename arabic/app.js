@@ -1117,39 +1117,19 @@ $("setTheme").addEventListener("click", (e) => {
 applyTheme();
 
 // ── Произношение: арабский текст читает голос телефона ──
-const VOICE_KEY = "arabic.voice"; // { uri, rate }; uri "" — голос, выбранный в настройках iPhone
-const RATES = [0.6, 0.8, 1];
+// Голос и скорость речи выбираются в настройках самого iPhone; чуть медленнее обычного — удобнее учить
+const SPEECH_RATE = 0.8;
 const SAY_ICON =
   '<svg class="ic-play" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 9.5v5h3.8l4.7 4v-13l-4.7 4H3.5z" fill="currentColor"/><path d="M15.5 8.8a4.5 4.5 0 0 1 0 6.4M18.3 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>' +
   '<svg class="ic-stop" width="13" height="13" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="2.5" fill="currentColor"/></svg>';
 const tts = "speechSynthesis" in window ? window.speechSynthesis : null;
-let voiceCfg = store.get(VOICE_KEY, {});
-if (typeof voiceCfg !== "object" || voiceCfg === null) voiceCfg = {};
-voiceCfg = {
-  uri: typeof voiceCfg.uri === "string" ? voiceCfg.uri : "",
-  rate: RATES.includes(voiceCfg.rate) ? voiceCfg.rate : 0.8,
-};
-let arVoices = [];
-
-// Улучшенные голоса iPhone звучат естественнее — ставим их первыми
-const voiceRank = (v) => (/premium/i.test(v.voiceURI + v.name) ? 0 : /enhanced/i.test(v.voiceURI + v.name) ? 1 : 2);
-const voiceLabel = (v) => {
-  const name = v.name.replace(/\s*\(.*\)$/, "");
-  return name + [" (высшее качество)", " (улучшенный)", ""][voiceRank(v)];
-};
-
+// Язык речи берём у арабского голоса телефона (на iPhone — «ar-001»), сам голос не задаём:
+// iPhone читает тем, что отмечен в его настройках
+let speechLang = "ar-001";
 function loadVoices() {
-  if (!tts) return;
-  const seen = new Set();
-  arVoices = tts
-    .getVoices()
-    .filter((v) => /^ar([-_]|$)/i.test(v.lang) && !seen.has(v.voiceURI) && seen.add(v.voiceURI))
-    .sort((a, b) => voiceRank(a) - voiceRank(b) || a.name.localeCompare(b.name));
-  applyVoiceSetting();
+  const v = tts?.getVoices().find((x) => /^ar([-_]|$)/i.test(x.lang));
+  if (v) speechLang = v.lang;
 }
-
-// null — голос не задаём: iPhone читает тем, что отмечен в его настройках
-const currentVoice = () => (voiceCfg.uri && arVoices.find((v) => v.voiceURI === voiceCfg.uri)) || null;
 
 function setSaying(btn) {
   sayBtn?.classList.remove("playing");
@@ -1174,15 +1154,13 @@ function speak(text, btn, onEnd) {
     .filter(Boolean);
   if (!parts.length) return;
   const id = ++sayId;
-  const v = currentVoice();
   setSaying(btn);
   const go = () => {
     if (id !== sayId) return;
     parts.forEach((part, k) => {
       const u = new SpeechSynthesisUtterance(part);
-      u.lang = v?.lang || arVoices[0]?.lang || "ar-001";
-      if (v) u.voice = v;
-      u.rate = voiceCfg.rate;
+      u.lang = speechLang;
+      u.rate = SPEECH_RATE;
       if (k === parts.length - 1)
         u.onend = () => {
           if (id !== sayId) return;
@@ -1219,44 +1197,13 @@ document.addEventListener(
 );
 document.addEventListener("visibilitychange", () => document.hidden && stopSpeech());
 
-// Настройки голоса
-function applyVoiceSetting() {
-  $("setRate").querySelectorAll("button").forEach((b) => {
-    const on = Number(b.dataset.rate) === voiceCfg.rate;
-    b.classList.toggle("on", on);
-    b.setAttribute("aria-checked", String(on));
-  });
-  const v = currentVoice();
-  $("setVoiceRow").hidden = !tts;
-  $("setVoice").innerHTML =
-    `<option value="">Как в iPhone</option>` +
-    arVoices.map((x) => `<option value="${esc(x.voiceURI)}"${x === v ? " selected" : ""}>${esc(voiceLabel(x))}</option>`).join("");
-  const where = "Настройки iPhone → Универсальный доступ → Устный контент → Голоса → Арабский";
-  $("setVoiceNote").textContent = !tts
-    ? "Этот браузер не умеет читать вслух."
-    : `«Как в iPhone» — голос, отмеченный галочкой здесь: ${where}. В списке выше только голоса, которые iPhone открывает приложениям: если скачанного голоса нет, скачайте там же его обычную версию и перезапустите приложение.`;
-}
-
-function saveVoice() {
-  store.set(VOICE_KEY, voiceCfg);
-  applyVoiceSetting();
-}
-$("setRate").onclick = (e) => {
-  const b = e.target.closest("button[data-rate]");
-  if (!b) return;
-  voiceCfg.rate = Number(b.dataset.rate);
-  saveVoice();
-};
-$("setVoice").onchange = () => {
-  voiceCfg.uri = $("setVoice").value;
-  saveVoice();
-};
+// Настройки: только «Прослушать» — голос меняется в настройках iPhone
 $("setVoiceTest").onclick = () =>
   sayBtn === $("setVoiceTest") ? stopSpeech() : speak("بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ. السَّلَامُ عَلَيْكُمْ", $("setVoiceTest"));
 if (tts) {
   loadVoices();
   tts.addEventListener?.("voiceschanged", loadVoices);
-} else applyVoiceSetting();
+} else $("setVoiceNote").textContent = "Этот браузер не умеет читать вслух.";
 
 // ── Настройки ───────────────────────────────────────────
 function renderSettings() {

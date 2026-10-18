@@ -34,7 +34,7 @@
             if (localStorage.getItem("arabic.motion") === "true") document.documentElement.dataset.motion = "on";
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="style.css?v=0051">
+    <link rel="stylesheet" href="style.css?v=0052">
 </head>
 
 <body class="view-home">
@@ -428,21 +428,13 @@
 
                 <div class="set-group-label">Произношение</div>
                 <div class="set-group">
-                    <label class="set-row" id="setVoiceRow">
+                    <div class="set-row">
                         <span class="set-row-label">Голос</span>
-                        <select class="set-select" id="setVoice" aria-label="Голос"></select>
-                    </label>
-                    <div class="set-row column">
-                        <span class="set-row-label">Скорость</span>
-                        <div class="set-seg" id="setRate" role="radiogroup" aria-label="Скорость речи">
-                            <button type="button" role="radio" data-rate="0.6">Медленно</button>
-                            <button type="button" role="radio" data-rate="0.8">Спокойно</button>
-                            <button type="button" role="radio" data-rate="1">Обычно</button>
-                        </div>
+                        <span class="set-value">Как в iPhone</span>
                     </div>
                     <button class="set-row set-action" id="setVoiceTest" type="button">Прослушать</button>
                 </div>
-                <div class="set-note" id="setVoiceNote"></div>
+                <div class="set-note" id="setVoiceNote">Голос меняется в настройках iPhone: Универсальный доступ → Устный контент → Голоса → Арабский. Отметьте галочкой нужный голос, например «Лайла (улучшенный)» или «Маджед (улучшенный)».</div>
 
                 <div class="set-group-label">Текст рассказов</div>
                 <div class="set-group">
@@ -589,7 +581,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0051"></script>
+    <script src="app.js?v=0052"></script>
 </body>
 
 </html>
