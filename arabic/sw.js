@@ -1,24 +1,24 @@
 // Service worker: офлайн-режим приложения Arabic.
 // Свои файлы — «сначала сеть»: обновления видны сразу, без интернета берётся кэш.
 // Шрифты Google — «сначала кэш»: они не меняются.
-const VERSION = "0052";
+const VERSION = "0053";
 const CACHE = "arabic-" + VERSION;
 const FONT_CACHE = "arabic-fonts";
 
 const PRECACHE = [
   "./",
   "index.html",
-  `style.css?v=${VERSION}`,
-  `app.js?v=${VERSION}`,
+  `css/style.css?v=${VERSION}`,
+  `js/app.js?v=${VERSION}`,
   "manifest.webmanifest",
   "icons/icon-192.png",
   "icons/icon-512.png",
   "icons/apple-touch-icon.png",
   "icons/favicon-32.png",
   "icons/dev.jpg",
-  "nahw_ism.json",
-  "mia_amil.json",
-  ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => `lesson_${n}.json`),
+  "data/books/nahw_ism.json",
+  "data/books/mia_amil.json",
+  ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => `data/lessons/lesson_${n}.json`),
 ];
 
 self.addEventListener("install", (event) => {
