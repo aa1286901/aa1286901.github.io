@@ -1,4 +1,4 @@
-// Данные урока (words, story, sentences) вынесены в lesson_<id>.json
+// Данные урока (words, story, sentences) вынесены в data/lessons/lesson_<id>.json
 const LESSONS = [
   { id: 1, title: "عِنْدَ الْمُعَلِّمِ الْمَرِيضِ", ruTitle: "Возле больного учителя" },
   { id: 2, title: "عِنْدَ الْمُعَلِّمِ الْمَرِيضِ", ruTitle: "Возле больного учителя" },
@@ -90,8 +90,8 @@ const lineText = (line) => (line || []).map((t) => t.arabic).join(" ");
 
 function loadLesson(id) {
   if (!lessonData.has(id)) {
-    const p = fetch(`lesson_${id}.json`).then((res) => {
-      if (!res.ok) throw new Error(`Файл lesson_${id}.json не найден`);
+    const p = fetch(`data/lessons/lesson_${id}.json`).then((res) => {
+      if (!res.ok) throw new Error(`Файл data/lessons/lesson_${id}.json не найден`);
       return res.json();
     });
     p.catch(() => lessonData.delete(id));
@@ -701,8 +701,8 @@ applySize();
 // Уровни идут сверху вниз: корень, под ним сетка его тем, под выбранной темой — сетка её тем…
 // Книги-деревья: адрес → файл и подписи
 const TREE_BOOKS = {
-  "#nahw": { file: "nahw_ism.json", book: "Шарх аль-Унмузадж", eyebrow: "النَّحْوُ", said: "قَالَ:" },
-  "#amil": { file: "mia_amil.json", book: "Сто управляющих слов", eyebrow: "مِئَةُ عَامِلٍ", sub: "", quiz: true },
+  "#nahw": { file: "data/books/nahw_ism.json", book: "Шарх аль-Унмузадж", eyebrow: "النَّحْوُ", said: "قَالَ:" },
+  "#amil": { file: "data/books/mia_amil.json", book: "Сто управляющих слов", eyebrow: "مِئَةُ عَامِلٍ", sub: "", quiz: true },
 };
 const treeCache = new Map(); // адрес → JSON книги
 let nahwBook = null; // текущая книга из TREE_BOOKS
