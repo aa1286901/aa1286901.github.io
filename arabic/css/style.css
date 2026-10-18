@@ -3287,3 +3287,7 @@ html.splash-on .splash {
     color: var(--accent);
     letter-spacing: 2px
 }
+
+.say[hidden] {
+    display: none
+}
