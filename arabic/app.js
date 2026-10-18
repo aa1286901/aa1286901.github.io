@@ -1355,7 +1355,7 @@ if (splash) {
     if (e.target === splash) hideSplash();
   });
   splash.addEventListener("click", hideSplash);
-  setTimeout(hideSplash, 3000); // на случай, если анимация не сработала
+  setTimeout(hideSplash, 3600); // на случай, если анимация не сработала
 }
 
 // ── Инициализация ───────────────────────────────────────

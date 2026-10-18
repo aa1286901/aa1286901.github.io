@@ -33,13 +33,36 @@
             if (t === '"light"' || t === '"dark"') document.documentElement.dataset.theme = JSON.parse(t);
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="style.css?v=0044">
+    <link rel="stylesheet" href="style.css?v=0045">
 </head>
 
 <body class="view-home">
     <!-- Заставка: только при запуске с экрана «Домой» (или с ?splash для проверки) -->
     <div class="splash" id="splash" aria-hidden="true">
-        <div class="splash-tile"><img class="splash-icon" src="icons/splash.png" alt=""></div>
+        <!-- Иконка собирается: книга раскрывается, из неё поднимается золотая «ع» -->
+        <div class="splash-tile">
+            <span class="splash-glow"></span>
+            <span class="splash-letter" lang="ar">ع</span>
+            <svg class="splash-book" viewBox="150 500 724 240" aria-hidden="true">
+                <defs>
+                    <linearGradient id="spl" x1="0" x2="1"><stop offset="0" stop-color="#efe5cd"/><stop offset=".85" stop-color="#fffaf0"/><stop offset="1" stop-color="#e2d6b8"/></linearGradient>
+                    <linearGradient id="spr" x1="1" x2="0"><stop offset="0" stop-color="#efe5cd"/><stop offset=".85" stop-color="#fffaf0"/><stop offset="1" stop-color="#e2d6b8"/></linearGradient>
+                </defs>
+                <g class="splash-page left">
+                    <path d="M168 676 Q340 628 512 690 L512 726 Q340 664 168 712 Z" fill="#c9b78f"/>
+                    <path d="M168 664 Q340 616 512 678 L512 704 Q340 642 168 690 Z" fill="#efe6cf"/>
+                    <path d="M512 678 Q340 616 168 664 L168 548 Q340 500 512 562 Z" fill="url(#spl)"/>
+                    <g stroke="#cdbf9c" stroke-width="7" stroke-linecap="round" fill="none"><path d="M230 586 Q330 560 460 592"/><path d="M230 616 Q330 590 460 622"/><path d="M230 646 Q330 620 420 646"/></g>
+                </g>
+                <g class="splash-page right">
+                    <path d="M512 690 Q684 628 856 676 L856 712 Q684 664 512 726 Z" fill="#c9b78f"/>
+                    <path d="M512 678 Q684 616 856 664 L856 690 Q684 642 512 704 Z" fill="#efe6cf"/>
+                    <path d="M512 678 Q684 616 856 664 L856 548 Q684 500 512 562 Z" fill="url(#spr)"/>
+                    <g stroke="#cdbf9c" stroke-width="7" stroke-linecap="round" fill="none"><path d="M564 592 Q694 560 794 586"/><path d="M564 622 Q694 590 794 616"/><path d="M604 646 Q694 620 794 646"/></g>
+                </g>
+                <path class="splash-spine" d="M512 562 L512 678" stroke="#b9a57b" stroke-width="6"/>
+            </svg>
+        </div>
         <div class="splash-name">Arabic</div>
         <div class="splash-sub">Библиотека арабских книг</div>
     </div>
@@ -504,7 +527,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0044"></script>
+    <script src="app.js?v=0045"></script>
 </body>
 
 </html>
