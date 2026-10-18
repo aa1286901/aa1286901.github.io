@@ -13,7 +13,7 @@ arabic/
 │   └── app.js            вся логика приложения
 ├── data/
 │   ├── lessons/          уроки «Мабда аль-Кираа» по частям:
-│   │   ├── part1/        lesson_1.json … lesson_5.json
+│   │   ├── part1/        lesson_1.json … lesson_52.json, exercises.json
 │   │   ├── part2/        lesson_1.json … lesson_5.json
 │   │   └── part3/        lesson_1.json … lesson_9.json
 │   └── books/            деревья книг: mia_amil.json, nahw_ism.json

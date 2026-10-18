@@ -34,7 +34,7 @@
             if (localStorage.getItem("arabic.motion") === "true") document.documentElement.dataset.motion = "on";
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="css/style.css?v=0054">
+    <link rel="stylesheet" href="css/style.css?v=0055">
 </head>
 
 <body class="view-home">
@@ -287,7 +287,7 @@
             <div class="lesson-title-ru" id="lessonTitleRu"></div>
         </div>
 
-        <div class="segmented" role="tablist" aria-label="Режим урока">
+        <div class="segmented" id="modeTabs" role="tablist" aria-label="Режим урока">
             <button class="segment active" id="wordsTab" role="tab" aria-selected="true">Слова</button>
             <button class="segment" id="storyTab" role="tab" aria-selected="false">Текст</button>
         </div>
@@ -581,7 +581,7 @@
         </div>
     </div>
 
-    <script src="js/app.js?v=0054"></script>
+    <script src="js/app.js?v=0055"></script>
 </body>
 
 </html>
