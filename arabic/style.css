@@ -3149,3 +3149,149 @@ html.splash-on .splash {
 @keyframes toast-in {
     from { transform: translate(-50%, -16px); opacity: 0 }
 }
+
+/* ── Произношение: круглые кнопки «прослушать» ── */
+.say {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    padding: 0;
+    display: inline-grid;
+    place-items: center;
+    background: var(--accent-soft);
+    color: var(--accent);
+    -webkit-tap-highlight-color: transparent
+}
+
+.say:active {
+    transform: scale(.92)
+}
+
+.say .ic-stop,
+.say-icon .ic-stop,
+.say.playing .ic-play,
+.say-icon.playing .ic-play {
+    display: none
+}
+
+.say.playing .ic-stop,
+.say-icon.playing .ic-stop {
+    display: block
+}
+
+.say.playing,
+.say-icon.playing {
+    background: var(--accent);
+    color: var(--on-accent);
+    animation: say-pulse 1.4s ease-out infinite
+}
+
+@keyframes say-pulse {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent) }
+    100% { box-shadow: 0 0 0 10px transparent }
+}
+
+.say-float {
+    position: absolute;
+    top: 8px;
+    left: 8px
+}
+
+.qawl-quote,
+.quiz-book,
+.qawl-exs li {
+    position: relative;
+    padding-left: 52px
+}
+
+/* Карточка слова: кнопка под счётчиком, справа */
+.card-say {
+    align-self: flex-end;
+    margin-top: 12px;
+    margin-bottom: -48px;
+    position: relative;
+    z-index: 1
+}
+
+.quiz-word-row,
+.qawl-term-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px
+}
+
+.qawl-term-row {
+    margin-top: -8px
+}
+
+.qawl-term-row .qawl-term {
+    margin-top: 0
+}
+
+.qawl-ex-row {
+    display: flex;
+    align-items: center;
+    gap: 8px
+}
+
+.qawl-ex-row .qawl-ex {
+    flex: 1
+}
+
+.qawl-ex-row[hidden] {
+    display: none
+}
+
+.sentence-actions .sentence-toggle {
+    white-space: nowrap
+}
+
+.sentence-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px
+}
+
+.say-pill {
+    width: auto;
+    height: 32px;
+    padding: 0 12px 0 8px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600
+}
+
+.say-pill .ic-play,
+.say-pill .ic-stop {
+    flex: none
+}
+
+/* Выбор голоса в настройках */
+.set-seg.two {
+    grid-template-columns: repeat(2, 1fr)
+}
+
+.set-row[hidden] {
+    display: none
+}
+
+.set-select {
+    max-width: 58%;
+    min-width: 0;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font: inherit;
+    font-size: 17px;
+    text-align: right;
+    text-align-last: right;
+    -webkit-appearance: none;
+    appearance: none
+}

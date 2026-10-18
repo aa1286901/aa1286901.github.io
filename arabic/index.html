@@ -34,7 +34,7 @@
             if (localStorage.getItem("arabic.motion") === "true") document.documentElement.dataset.motion = "on";
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="style.css?v=0049">
+    <link rel="stylesheet" href="style.css?v=0050">
 </head>
 
 <body class="view-home">
@@ -237,12 +237,13 @@
             </div>
             <div class="quiz-body" id="quizBody">
                 <div class="quiz-q" id="quizQ"></div>
-                <div class="quiz-word" id="quizWord" lang="ar" dir="rtl"></div>
+                <div class="quiz-word-row"><div class="quiz-word" id="quizWord" lang="ar" dir="rtl"></div><button class="say" type="button" data-say-from="quizWord" aria-label="Произнести"></button></div>
                 <div class="quiz-opts" id="quizOpts"></div>
                 <div class="quiz-fb" id="quizFb" hidden>
                     <div class="quiz-verdict" id="quizVerdict"></div>
                     <div class="quiz-answer" id="quizAnswer"></div>
                     <div class="quiz-book" id="quizBook">
+                        <button class="say say-float" type="button" data-say-from="quizBookAr" aria-label="Прочитать текст книги"></button>
                         <p class="quiz-book-ar" id="quizBookAr" lang="ar" dir="rtl"></p>
                         <p class="quiz-book-ru" id="quizBookRu"></p>
                     </div>
@@ -303,6 +304,7 @@
                     </div>
                     <div class="progress" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
                 </div>
+                <button class="say card-say" type="button" data-say-from="arabicWord" aria-label="Произнести слово"></button>
 
                 <button class="card-face" id="cardFace" type="button" aria-label="Показать перевод">
                     <span class="arabic-word" id="arabicWord" lang="ar" dir="rtl"></span>
@@ -424,6 +426,31 @@
                 </div>
                 <div class="set-note">Заставка появляется при запуске с экрана «Домой». Касание экрана её пропускает.</div>
 
+                <div class="set-group-label">Произношение</div>
+                <div class="set-group">
+                    <div class="set-row column">
+                        <span class="set-row-label">Голос</span>
+                        <div class="set-seg two" id="setVoiceGender" role="radiogroup" aria-label="Голос">
+                            <button type="button" role="radio" data-gender="male">Мужской</button>
+                            <button type="button" role="radio" data-gender="female">Женский</button>
+                        </div>
+                    </div>
+                    <label class="set-row" id="setVoiceRow">
+                        <span class="set-row-label">Голос телефона</span>
+                        <select class="set-select" id="setVoice" aria-label="Голос телефона"></select>
+                    </label>
+                    <div class="set-row column">
+                        <span class="set-row-label">Скорость</span>
+                        <div class="set-seg" id="setRate" role="radiogroup" aria-label="Скорость речи">
+                            <button type="button" role="radio" data-rate="0.6">Медленно</button>
+                            <button type="button" role="radio" data-rate="0.8">Спокойно</button>
+                            <button type="button" role="radio" data-rate="1">Обычно</button>
+                        </div>
+                    </div>
+                    <button class="set-row set-action" id="setVoiceTest" type="button">Прослушать</button>
+                </div>
+                <div class="set-note" id="setVoiceNote"></div>
+
                 <div class="set-group-label">Текст рассказов</div>
                 <div class="set-group">
                     <div class="set-row">
@@ -484,6 +511,7 @@
                 <svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
             </button>
             <span class="reader-count" id="readerCount"></span>
+            <button class="icon-btn say-icon" id="readerPlay" type="button" aria-label="Слушать рассказ"></button>
             <button class="icon-btn" id="readerTr" type="button" aria-label="Перевод строки" aria-pressed="false">
                 <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h9M8.5 3v2M6 5c.5 3 2.5 5.5 5 7M11 5c-.8 3.5-3.3 6.5-7 8M13 21l4-9 4 9M14.4 18h5.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
@@ -516,6 +544,7 @@
                 <div class="sheet-translation" id="popupTranslation"></div>
                 <div class="pill" id="popupType"></div>
             </div>
+            <button class="say" type="button" data-say-from="popupArabic" aria-label="Произнести слово"></button>
             <div class="sheet-arabic" id="popupArabic" lang="ar" dir="rtl"></div>
         </div>
         <div class="sheet-dict" id="popupDictBlock">
@@ -526,7 +555,10 @@
             </div>
         </div>
         <div class="sheet-sentence" id="sentenceBlock">
-            <button class="sentence-toggle" id="sentenceToggle" type="button" aria-expanded="false">Перевод предложения</button>
+            <div class="sentence-actions">
+                <button class="sentence-toggle" id="sentenceToggle" type="button" aria-expanded="false">Перевод предложения</button>
+                <button class="say say-pill" id="saySentence" type="button" aria-label="Прочитать предложение"><span>Слушать</span></button>
+            </div>
             <div class="sentence-text" id="sentenceText" hidden></div>
         </div>
     </div>
@@ -539,8 +571,9 @@
                 <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
             </button>
             <div class="qawl-ru" id="qawlRu"></div>
-            <div class="qawl-term" id="qawlTerm" lang="ar" dir="rtl"></div>
+            <div class="qawl-term-row"><div class="qawl-term" id="qawlTerm" lang="ar" dir="rtl"></div><button class="say" type="button" data-say-from="qawlTerm" aria-label="Произнести термин"></button></div>
             <div class="qawl-quote" id="qawlQuoteBlock" lang="ar" dir="rtl">
+                <button class="say say-float" type="button" data-say-from="qawlQuote" aria-label="Прочитать слова автора"></button>
                 <span class="qawl-said" id="qawlSaid">قَالَ:</span> <span id="qawlQuote"></span>
             </div>
             <div class="qawl-section" id="qawlTrBlock">
@@ -553,7 +586,7 @@
             </div>
             <div class="qawl-section" id="qawlExBlock">
                 <div class="eyebrow" id="qawlExTitle">Пример</div>
-                <p class="qawl-ex" id="qawlEx" lang="ar" dir="rtl"></p>
+                <div class="qawl-ex-row" id="qawlExRow"><p class="qawl-ex" id="qawlEx" lang="ar" dir="rtl"></p><button class="say" type="button" data-say-from="qawlEx" aria-label="Произнести пример"></button></div>
                 <ul class="qawl-exs" id="qawlExs"></ul>
             </div>
             <div class="qawl-foot">
@@ -563,7 +596,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0049"></script>
+    <script src="app.js?v=0050"></script>
 </body>
 
 </html>
