@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим приложения Arabic.
 // Свои файлы — «сначала сеть»: обновления видны сразу, без интернета берётся кэш.
 // Шрифты Google — «сначала кэш»: они не меняются.
-const VERSION = "0041";
+const VERSION = "0042";
 const CACHE = "arabic-" + VERSION;
 const FONT_CACHE = "arabic-fonts";
 

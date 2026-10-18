@@ -413,6 +413,7 @@ body:not(.view-welcome) .welcome {
     text-align: left
 }
 
+.set-link + .set-link::before,
 .set-row + .set-row::before,
 .set-row + .set-preview::before {
     content: "";
@@ -452,6 +453,71 @@ body:not(.view-welcome) .welcome {
 
 .set-action.danger {
     color: #ff3b30
+}
+
+/* Разработчик и ссылки */
+.set-dev {
+    justify-content: flex-start
+}
+
+.set-dev-avatar {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(145deg, #34c759, #0a84ff);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700
+}
+
+.set-link {
+    justify-content: flex-start;
+    color: var(--text);
+    text-decoration: none
+}
+
+.set-link:active {
+    background: var(--pressed)
+}
+
+.set-link .set-row-label {
+    flex: 1
+}
+
+.set-icon {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    display: grid;
+    place-items: center;
+    color: #fff
+}
+
+.set-icon.tg {
+    background: #2aabee
+}
+
+.set-icon.gh {
+    background: #24292f
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .set-icon.gh {
+        background: #4a5058
+    }
+}
+
+:root[data-theme="dark"] .set-icon.gh {
+    background: #4a5058
+}
+
+.set-chev {
+    flex: none;
+    color: var(--chevron)
 }
 
 .set-note {
