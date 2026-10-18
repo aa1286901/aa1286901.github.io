@@ -33,7 +33,7 @@
             if (t === '"light"' || t === '"dark"') document.documentElement.dataset.theme = JSON.parse(t);
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="style.css?v=0046">
+    <link rel="stylesheet" href="style.css?v=0047">
 </head>
 
 <body class="view-home">
@@ -65,6 +65,8 @@
         </div>
         <div class="splash-name">Arabic</div>
         <div class="splash-sub">Библиотека арабских книг</div>
+        <div class="splash-bar" aria-hidden="true"><span></span></div>
+        <div class="splash-skip">Коснитесь, чтобы пропустить</div>
     </div>
     <script>
         (function () {
@@ -74,6 +76,14 @@
             // Каждый запуск приложения с экрана «Домой» — это новая загрузка страницы,
             // возврат из фона страницу не перезагружает, поэтому лишних показов нет.
             // (sessionStorage на iPhone переживает закрытие приложения и прятал заставку.)
+            // Длительность из настроек: 3, 5, 10 или 15 секунд
+            var sec = 5;
+            try {
+                var v = JSON.parse(localStorage.getItem("arabic.splashSec"));
+                if ([3, 5, 10, 15].indexOf(v) >= 0) sec = v;
+            } catch (e) {}
+            document.documentElement.style.setProperty("--splash-total", sec + "s");
+            document.documentElement.dataset.splashSec = sec;
             if (forced || standalone) document.documentElement.classList.add("splash-on");
             else s.remove();
         })();
@@ -386,6 +396,21 @@
                     </div>
                 </div>
 
+                <div class="set-group-label">Заставка при запуске</div>
+                <div class="set-group">
+                    <div class="set-row column">
+                        <span class="set-row-label">Длительность</span>
+                        <div class="set-seg four" id="setSplash" role="radiogroup" aria-label="Длительность заставки">
+                            <button type="button" role="radio" data-sec="3">3 с</button>
+                            <button type="button" role="radio" data-sec="5">5 с</button>
+                            <button type="button" role="radio" data-sec="10">10 с</button>
+                            <button type="button" role="radio" data-sec="15">15 с</button>
+                        </div>
+                    </div>
+                    <button class="set-row set-action" id="setSplashShow" type="button">Показать заставку</button>
+                </div>
+                <div class="set-note">Заставка появляется при запуске с экрана «Домой». Касание экрана её пропускает.</div>
+
                 <div class="set-group-label">Текст рассказов</div>
                 <div class="set-group">
                     <div class="set-row">
@@ -525,7 +550,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0046"></script>
+    <script src="app.js?v=0047"></script>
 </body>
 
 </html>

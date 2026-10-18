@@ -979,6 +979,29 @@ function applyTheme() {
     b.setAttribute("aria-checked", String(on));
   });
 }
+// ── Длительность заставки ───────────────────────────────
+const SPLASH_KEY = "arabic.splashSec";
+function applySplashSetting() {
+  const sec = Number(document.documentElement.dataset.splashSec) || 5;
+  document.querySelectorAll("#setSplash button").forEach((b) => {
+    const on = Number(b.dataset.sec) === sec;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-checked", String(on));
+  });
+}
+$("setSplash").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-sec]");
+  if (!b) return;
+  const sec = Number(b.dataset.sec);
+  store.set(SPLASH_KEY, sec);
+  document.documentElement.dataset.splashSec = sec;
+  document.documentElement.style.setProperty("--splash-total", sec + "s");
+  applySplashSetting();
+});
+// Посмотреть заставку сразу: страница перезагружается с ?splash
+$("setSplashShow").onclick = () => location.replace("./?splash" + location.hash);
+applySplashSetting();
+
 $("setTheme").addEventListener("click", (e) => {
   const b = e.target.closest("button[data-theme]");
   if (!b) return;
@@ -1350,12 +1373,15 @@ if (splash) {
   const hideSplash = () => {
     splash.remove();
     document.documentElement.classList.remove("splash-on");
+    // ?splash из предпросмотра больше не нужен в адресе
+    if (/[?&]splash\b/.test(location.search)) history.replaceState(null, "", location.pathname + location.hash);
   };
   splash.addEventListener("animationend", (e) => {
     if (e.target === splash) hideSplash();
   });
   splash.addEventListener("click", hideSplash);
-  setTimeout(hideSplash, 3600); // на случай, если анимация не сработала
+  // на случай, если анимация не сработала
+  setTimeout(hideSplash, (Number(document.documentElement.dataset.splashSec) || 5) * 1000 + 600);
 }
 
 // ── Инициализация ───────────────────────────────────────
