@@ -1,15 +1,51 @@
-// Данные урока (words, story, sentences) вынесены в data/lessons/lesson_<id>.json
-const LESSONS = [
-  { id: 1, title: "عِنْدَ الْمُعَلِّمِ الْمَرِيضِ", ruTitle: "Возле больного учителя" },
-  { id: 2, title: "عِنْدَ الْمُعَلِّمِ الْمَرِيضِ", ruTitle: "Возле больного учителя" },
-  { id: 3, title: "عَاقِبَةُ الْحِرْصِ", ruTitle: "Последствие алчности" },
-  { id: 4, title: "الرَّجُلُ وَأَوْلَادُهُ", ruTitle: "Мужчина и его дети" },
-  { id: 5, title: "الْمَطَرُ", ruTitle: "Дождь" },
-  { id: 6, title: "الْحَمَامَةُ وَالنَّمْلَةُ", ruTitle: "Голубь и муравей" },
-  { id: 7, title: "الْأَسَدُ", ruTitle: "Лев" },
-  { id: 8, title: "الْأَسَدُ وَالْأَرْنَبُ وَالْوُحُوشُ", ruTitle: "Лев, заяц и дикие животные" },
-  { id: 9, title: "حُقُوقُ الْوَالِدَيْنِ", ruTitle: "Долг перед родителями" },
+// Книга «Мабда аль-Кираа»: три части; урок — data/lessons/part<часть>/lesson_<номер>.json
+const PARTS = [
+  {
+    id: 1,
+    ar: "الْجُزْءُ الْأَوَّلُ",
+    ru: "Часть первая",
+    lessons: [
+      ["اَلدَّرْسُ الْأَوَّلُ", "Книга, перо и доска"],
+      ["اَلدَّرْسُ الثَّانِي", "В классе"],
+      ["اَلدَّرْسُ الثَّالِثُ", "Портфель, пенал и комната"],
+      ["اَلدَّرْسُ الرَّابِعُ", "Чай и еда"],
+      ["اَلدَّرْسُ الْخَامِسُ", "Шкаф, кровать и хлеб"],
+    ],
+  },
+  {
+    id: 2,
+    ar: "الْجُزْءُ الثَّانِي",
+    ru: "Часть вторая",
+    lessons: [
+      ["فَرِيدٌ", "Фарид"],
+      ["فِي الْكُتَّابِ", "В начальной школе"],
+      ["كَلْبُ فَرِيدٍ", "Собака Фарида"],
+      ["اَلْكُتَّابُ", "Начальная школа"],
+      ["مَنْفَعَةُ الْقِرَاءَةِ", "Польза чтения"],
+    ],
+  },
+  {
+    id: 3,
+    ar: "الْجُزْءُ الثَّالِثُ",
+    ru: "Часть третья",
+    lessons: [
+      ["عِنْدَ الْمُعَلِّمِ الْمَرِيضِ", "Возле больного учителя"],
+      ["عِنْدَ الْمُعَلِّمِ الْمَرِيضِ", "Возле больного учителя"],
+      ["عَاقِبَةُ الْحِرْصِ", "Последствие алчности"],
+      ["الرَّجُلُ وَأَوْلَادُهُ", "Мужчина и его дети"],
+      ["الْمَطَرُ", "Дождь"],
+      ["الْحَمَامَةُ وَالنَّمْلَةُ", "Голубь и муравей"],
+      ["الْأَسَدُ", "Лев"],
+      ["الْأَسَدُ وَالْأَرْنَبُ وَالْوُحُوشُ", "Лев, заяц и дикие животные"],
+      ["حُقُوقُ الْوَالِدَيْنِ", "Долг перед родителями"],
+    ],
+  },
 ];
+// Урок задаётся ключом «часть-номер», например "2-4"
+const LESSONS = PARTS.flatMap((p) =>
+  p.lessons.map(([title, ruTitle], i) => ({ key: `${p.id}-${i + 1}`, part: p.id, n: i + 1, title, ruTitle })),
+);
+
 
 // Шаги размера текста рассказа
 const STORY_SIZES = [19, 21, 23, 26, 29, 32];
@@ -48,6 +84,7 @@ let words = [];
 let dict = new Map();
 let story = [];
 let sentences = [];
+let ends = []; // знак в конце каждой строки рассказа; по умолчанию точка
 let deck = []; // индексы слов в текущем наборе карточек
 let pos = 0;
 const lessonData = new Map(); // id → Promise с JSON урока
@@ -84,14 +121,24 @@ let place = store.get(PLACE_KEY, {});
 if (typeof place !== "object" || place === null) place = {};
 const savePlace = () => store.set(PLACE_KEY, place);
 const lessonPlace = (id = lessonId) => (place["lesson-" + id] ||= {});
-// Книга открывается там, где её оставили: «Мабда» — на последнем уроке, если из него не выходили
-const bookHref = (i) => (BOOKS[i].href === "#mabda" && place.mabda ? "#lesson-" + place.mabda : BOOKS[i].href);
+// Книга открывается там, где её оставили: «Мабда» — на последнем уроке, если из него не выходили,
+// иначе на последней открытой части
+function bookHref(i) {
+  if (BOOKS[i].href !== "#mabda") return BOOKS[i].href;
+  if (place.mabda) return "#lesson-" + place.mabda;
+  return place.mabdaPart ? "#mabda-" + place.mabdaPart : "#mabda";
+}
 const lineText = (line) => (line || []).map((t) => t.arabic).join(" ");
+
+const lessonFile = (key) => {
+  const [p, n] = key.split("-");
+  return `data/lessons/part${p}/lesson_${n}.json`;
+};
 
 function loadLesson(id) {
   if (!lessonData.has(id)) {
-    const p = fetch(`data/lessons/lesson_${id}.json`).then((res) => {
-      if (!res.ok) throw new Error(`Файл data/lessons/lesson_${id}.json не найден`);
+    const p = fetch(lessonFile(id)).then((res) => {
+      if (!res.ok) throw new Error(`Файл ${lessonFile(id)} не найден`);
       return res.json();
     });
     p.catch(() => lessonData.delete(id));
@@ -103,6 +150,22 @@ function loadLesson(id) {
 // ── Прогресс: { [урок]: { [слово]: число «Знаю» подряд } } ──
 let progress = store.get(PROGRESS_KEY, {});
 if (typeof progress !== "object" || progress === null) progress = {};
+// Раньше в книге была только третья часть, и уроки звались просто номером
+for (const k of Object.keys(progress))
+  if (/^\d+$/.test(k)) {
+    progress["3-" + k] ??= progress[k];
+    delete progress[k];
+  }
+for (const k of Object.keys(place)) {
+  const m = k.match(/^lesson-(\d+)$/);
+  if (m) {
+    place["lesson-3-" + m[1]] ??= place[k];
+    delete place[k];
+  }
+}
+if (typeof place.mabda === "number") place.mabda = "3-" + place.mabda;
+store.set(PROGRESS_KEY, progress);
+savePlace();
 
 const boxOf = (w, id = lessonId) => progress[id]?.[w.arabic] ?? 0;
 const isLearned = (w, id = lessonId) => boxOf(w, id) >= LEARNED;
@@ -111,42 +174,62 @@ function setBox(w, box) {
   store.set(PROGRESS_KEY, progress);
 }
 
-// ── Список уроков на главном экране ─────────────────────
+// ── «Мабда»: список частей, а в части — список уроков ──
+const CHEVRON_RIGHT = `<svg class="chevron" width="8" height="14" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+let listPart = null; // открытая часть; null — список частей
+
 function renderLessonList() {
-  $("lessonList").innerHTML = LESSONS.map(
-    (l) =>
-      `<button class="lesson-item" type="button" data-lesson="${l.id}"><span class="lesson-num">${l.id}</span><span class="lesson-info"><span class="lesson-ru">${esc(l.ruTitle)}</span><span class="lesson-sub"><span class="lesson-count" id="count-${l.id}"></span><span class="lesson-ar" lang="ar" dir="rtl">${esc(l.title)}</span></span></span><svg class="chevron" width="8" height="14" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`,
-  ).join("");
-  document.querySelectorAll("#lessonList .lesson-item").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      location.hash = "#lesson-" + btn.dataset.lesson;
-    });
-  });
+  const items = listPart
+    ? LESSONS.filter((l) => l.part === listPart).map(
+        (l) =>
+          `<button class="lesson-item" type="button" data-lesson="${l.key}"><span class="lesson-num">${l.n}</span><span class="lesson-info"><span class="lesson-ru">${esc(l.ruTitle)}</span><span class="lesson-sub"><span class="lesson-count" id="count-${l.key}"></span><span class="lesson-ar" lang="ar" dir="rtl">${esc(l.title)}</span></span></span>${CHEVRON_RIGHT}</button>`,
+      )
+    : PARTS.map(
+        (p) =>
+          `<button class="lesson-item" type="button" data-part="${p.id}"><span class="lesson-num">${p.id}</span><span class="lesson-info"><span class="lesson-ru">${esc(p.ru)}</span><span class="lesson-sub"><span class="lesson-count" id="count-part-${p.id}">${p.lessons.length} ${plural(p.lessons.length, "урок", "урока", "уроков")}</span><span class="lesson-ar" lang="ar" dir="rtl">${esc(p.ar)}</span></span></span>${CHEVRON_RIGHT}</button>`,
+      );
+  $("lessonList").innerHTML = items.join("");
   renderCounts();
 }
 
+$("lessonList").addEventListener("click", (e) => {
+  const b = e.target.closest(".lesson-item");
+  if (!b) return;
+  location.hash = b.dataset.part ? "#mabda-" + b.dataset.part : "#lesson-" + b.dataset.lesson;
+});
+
 // Число слов и выученных подгружается в фоне; ошибка просто оставляет строку пустой
 function renderCounts() {
+  const count = (l) =>
+    loadLesson(l.key)
+      .then((data) => ({ n: data.words.length, learned: data.words.filter((w) => isLearned(w, l.key)).length }))
+      .catch(() => ({ n: 0, learned: 0 }));
+  if (!listPart) {
+    // у части: сколько уроков и сколько слов уже выучено
+    return Promise.all(
+      PARTS.map((p) =>
+        Promise.all(LESSONS.filter((l) => l.part === p.id).map(count)).then((all) => {
+          const learned = all.reduce((a, c) => a + c.learned, 0);
+          const el = $("count-part-" + p.id);
+          if (el) el.textContent = `${p.lessons.length} ${plural(p.lessons.length, "урок", "урока", "уроков")}` + (learned ? ` · ${learned} выучено` : "");
+        }),
+      ),
+    );
+  }
   return Promise.all(
-    LESSONS.map((l) =>
-      loadLesson(l.id)
-        .then((data) => {
-          const n = data.words.length;
-          const learned = data.words.filter((w) => isLearned(w, l.id)).length;
-          $("count-" + l.id).textContent =
-            `${n} ${plural(n, "слово", "слова", "слов")}` + (learned ? ` · ${learned} выучено` : "");
-          return { n, learned };
-        })
-        .catch(() => ({ n: 0, learned: 0 })),
+    LESSONS.filter((l) => l.part === listPart).map((l) =>
+      count(l).then(({ n, learned }) => {
+        const el = $("count-" + l.key);
+        if (el && n) el.textContent = `${n} ${plural(n, "слово", "слова", "слов")}` + (learned ? ` · ${learned} выучено` : "");
+      }),
     ),
   );
 }
-renderLessonList();
 
 // ── Hash-роутер: / книги, #mabda уроки, #lesson-N, #nahw ─
 function parseHash() {
-  const m = location.hash.match(/^#lesson-(\d+)$/);
-  return m ? Number(m[1]) : null;
+  const m = location.hash.match(/^#lesson-(\d+-\d+)$/);
+  return m ? m[1] : null;
 }
 
 // view: home | welcome | nahw | lesson (у урока своего класса нет)
@@ -176,7 +259,7 @@ const BOOKS = [
     kind: "الْقِرَاءَةُ",
     title: "مَبْدَأُ الْقِرَاءَةِ",
     author: "صِبْغَةُ اللهِ بِيكْبُولَاط",
-    desc: "Рассказы с переводом и карточки всех слов: девять уроков третьей части.",
+    desc: "Рассказы с переводом и карточки всех слов: три части книги, девятнадцать уроков.",
   },
   {
     href: "#amil",
@@ -262,24 +345,32 @@ function showHome() {
   });
 }
 
-function showWelcome() {
+function showWelcome(part = null) {
   setView("welcome");
-  if (prevView === "lesson" && place.mabda) {
-    delete place.mabda;
-    savePlace();
-  }
-  document.title = "Уроки — Arabic";
-  renderCounts();
+  // Вышли из урока или части сами — в следующий раз книга откроется здесь
+  const p = PARTS.find((x) => x.id === part);
+  if (prevView === "lesson") delete place.mabda;
+  if (p) place.mabdaPart = part;
+  else delete place.mabdaPart;
+  savePlace();
+  listPart = p ? part : null;
+  $("welcomeTitle").textContent = p ? p.ru : "Части книги";
+  $("welcomeAr").textContent = p ? p.ar : "الْأَجْزَاءُ";
+  $("welcomeBack").setAttribute("href", p ? "#mabda" : "#");
+  $("welcomeBack").setAttribute("aria-label", p ? "Назад: Части" : "Назад: Книги");
+  document.title = (p ? p.ru : "Мабда аль-Кираа") + " — Arabic";
+  renderLessonList();
 }
 
 function showLesson(id) {
   setView("lesson");
-  const lesson = LESSONS.find((l) => l.id === id);
+  const lesson = LESSONS.find((l) => l.key === id);
   if (lesson) {
-    $("lessonNumber").textContent = "Урок " + id;
+    $("lessonNumber").textContent = `Часть ${lesson.part} · Урок ${lesson.n}`;
     $("lessonTitle").textContent = lesson.title;
     $("lessonTitleRu").textContent = lesson.ruTitle || "";
-    document.title = `${lesson.ruTitle} — Урок ${id}`;
+    $("backBtn").setAttribute("href", "#mabda-" + lesson.part);
+    document.title = `${lesson.ruTitle} — Урок ${lesson.n}`;
   }
 }
 
@@ -296,6 +387,7 @@ async function openLesson(id) {
     words = data.words;
     story = data.story;
     sentences = Array.isArray(data.sentences) ? data.sentences : [];
+    ends = Array.isArray(data.ends) ? data.ends : [];
     dict = new Map(words.map((w) => [w.arabic, w]));
     // Где остановились в этом уроке: вкладка, карточка, прокрутка рассказа
     const saved = { ...lessonPlace(id) };
@@ -311,7 +403,7 @@ async function openLesson(id) {
     // прокрутку ставим, когда текст уже на экране
     $("storyScreen").querySelector(".story-card").scrollTop = saved.scroll || 0;
   } catch (err) {
-    showNetError(() => openLesson(id), "#mabda");
+    showNetError(() => openLesson(id), "#mabda-" + id.split("-")[0]);
   } finally {
     $("mainContent").classList.remove("is-loading");
   }
@@ -321,11 +413,16 @@ async function route() {
   if (location.hash === "#amil-quiz") return showQuiz();
   if (TREE_BOOKS[location.hash]) return showNahw(location.hash);
   if (location.hash === "#mabda") return showWelcome();
+  const part = location.hash.match(/^#mabda-(\d+)$/);
+  if (part) return showWelcome(Number(part[1]));
+  // старые ссылки «#lesson-5» вели в третью часть
+  const legacy = location.hash.match(/^#lesson-(\d+)$/);
+  if (legacy) return location.replace("#lesson-3-" + legacy[1]);
   const id = parseHash();
   if (id === null) {
     showHome();
   } else {
-    const lessonExists = LESSONS.some((lesson) => lesson.id === id);
+    const lessonExists = LESSONS.some((lesson) => lesson.key === id);
     if (lessonExists) await openLesson(id);
     else {
       showNetError(null, "#mabda", "Урок не найден", "Такого урока в книге пока нет.");
@@ -584,7 +681,7 @@ function renderStory() {
             ({ arabic, translation, type, lemma }) =>
               `<span class="story-word" data-arabic="${esc(arabic)}" data-translation="${esc(translation)}" data-type="${esc(type)}" data-lemma="${esc(lemma)}">${esc(showHarakat ? arabic : stripHarakat(arabic))}</span>`,
           )
-          .join(" ")}.</span>`,
+          .join(" ")}${esc(ends[li] ?? ".")}</span>`,
     )
     .join(" ");
 }
@@ -1502,7 +1599,7 @@ function openReader() {
   $("readerText").innerHTML = story
     .map((line, k) => {
       const text = showHarakat ? lineText(line) : stripHarakat(lineText(line));
-      return `<span class="reader-line" data-l="${k}">${esc(text)}.</span>`;
+      return `<span class="reader-line" data-l="${k}">${esc(text + (ends[k] ?? "."))}</span>`;
     })
     .join("");
   const saved = lessonPlace().line;

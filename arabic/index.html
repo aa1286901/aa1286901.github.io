@@ -34,7 +34,7 @@
             if (localStorage.getItem("arabic.motion") === "true") document.documentElement.dataset.motion = "on";
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="css/style.css?v=0053">
+    <link rel="stylesheet" href="css/style.css?v=0054">
 </head>
 
 <body class="view-home">
@@ -164,7 +164,7 @@
     <!-- Мабдау-ль-Кыраа: список уроков, адрес #mabda -->
     <section class="welcome" id="welcomeScreen">
         <div class="navbar">
-            <a class="back" href="#">
+            <a class="back" id="welcomeBack" href="#">
                 <svg width="11" height="18" viewBox="0 0 11 18" aria-hidden="true">
                     <path d="M9 2L2 9l7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
                         stroke-linejoin="round" />
@@ -175,8 +175,8 @@
             <span class="navbar-side" aria-hidden="true"></span>
         </div>
         <header class="welcome-head">
-            <h1 class="welcome-title">Уроки</h1>
-            <div class="welcome-ar" lang="ar" dir="rtl">الدُّرُوسُ</div>
+            <h1 class="welcome-title" id="welcomeTitle">Части книги</h1>
+            <div class="welcome-ar" id="welcomeAr" lang="ar" dir="rtl">الْأَجْزَاءُ</div>
         </header>
         <nav class="lesson-list" id="lessonList" aria-label="Список уроков"></nav>
     </section>
@@ -581,7 +581,7 @@
         </div>
     </div>
 
-    <script src="js/app.js?v=0053"></script>
+    <script src="js/app.js?v=0054"></script>
 </body>
 
 </html>

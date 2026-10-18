@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим приложения Arabic.
 // Свои файлы — «сначала сеть»: обновления видны сразу, без интернета берётся кэш.
 // Шрифты Google — «сначала кэш»: они не меняются.
-const VERSION = "0053";
+const VERSION = "0054";
 const CACHE = "arabic-" + VERSION;
 const FONT_CACHE = "arabic-fonts";
 
@@ -18,7 +18,10 @@ const PRECACHE = [
   "icons/dev.jpg",
   "data/books/nahw_ism.json",
   "data/books/mia_amil.json",
-  ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => `data/lessons/lesson_${n}.json`),
+  // уроки: часть 1 и 2 — по 5, часть 3 — 9
+  ...[[1, 5], [2, 5], [3, 9]].flatMap(([p, k]) =>
+    Array.from({ length: k }, (_, i) => `data/lessons/part${p}/lesson_${i + 1}.json`),
+  ),
 ];
 
 self.addEventListener("install", (event) => {
