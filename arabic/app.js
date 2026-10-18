@@ -136,13 +136,22 @@ function parseHash() {
 }
 
 // view: home | welcome | nahw | lesson (у урока своего класса нет)
+let currentView = "home";
+let prevView = null;
+
 function setView(view) {
   closeSheet();
   closeSettings();
   closeQawl();
+  closeReader();
+  hideNetError();
   toggleSizer(false);
   document.body.classList.remove("view-home", "view-welcome", "view-nahw", "view-quiz");
   if (view !== "lesson") document.body.classList.add("view-" + view);
+  if (view !== currentView) {
+    prevView = currentView;
+    currentView = view;
+  }
 }
 
 // Главный экран: обложки листаются вбок, под активной — описание книги
@@ -190,6 +199,7 @@ function setHomeBook(i) {
     el.classList.toggle("right", k > i);
   });
   [...$("dots").children].forEach((el, k) => el.classList.toggle("on", k === i));
+  $("showcase").dataset.book = i;
   const panel = $("bookPanel");
   panel.classList.remove("swap");
   void panel.offsetWidth; // перезапуск анимации смены книги
@@ -208,9 +218,12 @@ function scrollToBook(i, smooth = true) {
 function showHome() {
   setView("home");
   document.title = "Arabic";
+  const fromBook = ["welcome", "nahw", "quiz"].includes(prevView) && !skipCloseAnim;
+  skipCloseAnim = false;
   requestAnimationFrame(() => {
     scrollToBook(homeBook, false);
     setHomeBook(homeBook);
+    if (fromBook) requestAnimationFrame(() => closeBookAnimated(homeBook));
   });
 }
 
@@ -228,10 +241,9 @@ function showHome() {
     const slide = e.target.closest(".slide");
     if (!slide) return;
     const i = Number(slide.dataset.i);
-    if (i !== homeBook) {
-      e.preventDefault();
-      scrollToBook(i);
-    }
+    e.preventDefault();
+    if (i !== homeBook) scrollToBook(i);
+    else openBookAnimated(i);
   });
 }
 
@@ -253,6 +265,9 @@ function showLesson(id) {
 }
 
 async function openLesson(id) {
+  // Пока урок грузится — экран урока с заглушками вместо пустоты
+  showLesson(id);
+  $("mainContent").classList.add("is-loading");
   try {
     const data = await loadLesson(id);
     if (!Array.isArray(data.words) || !Array.isArray(data.story))
@@ -268,8 +283,9 @@ async function openLesson(id) {
     $("storyScreen").querySelector(".story-card").scrollTop = 0;
     showLesson(id);
   } catch (err) {
-    alert(err.message);
-    location.hash = "#mabda";
+    showNetError(() => openLesson(id), "#mabda");
+  } finally {
+    $("mainContent").classList.remove("is-loading");
   }
 }
 
@@ -284,8 +300,7 @@ async function route() {
     const lessonExists = LESSONS.some((lesson) => lesson.id === id);
     if (lessonExists) await openLesson(id);
     else {
-      alert("Этот урок пока недоступен");
-      location.hash = "#mabda";
+      showNetError(null, "#mabda", "Урок не найден", "Такого урока в книге пока нет.");
     }
   }
 }
@@ -403,16 +418,77 @@ $("emptyReset").onclick = () => {
   buildDeck();
 };
 
-let startX = 0;
-$("wordCard").addEventListener("touchstart", (e) => (startX = e.changedTouches[0].clientX), { passive: true });
-$("wordCard").addEventListener(
-  "touchend",
-  (e) => {
-    const dx = e.changedTouches[0].clientX - startX;
-    if (Math.abs(dx) > 45) showWord(pos + (dx < 0 ? 1 : -1));
-  },
-  { passive: true },
-);
+// Смахивание карточки, как в Tinder: вправо — «Знаю», влево — «Не знаю»
+{
+  const card = $("wordCard");
+  const yes = card.querySelector(".stamp.yes");
+  const no = card.querySelector(".stamp.no");
+  let drag = null;
+  let suppressClick = false;
+  const setDrag = (dx) => {
+    card.style.transform = `translateX(${dx}px) rotate(${dx / 22}deg)`;
+    yes.style.opacity = Math.max(0, Math.min(1, dx / 90));
+    no.style.opacity = Math.max(0, Math.min(1, -dx / 90));
+  };
+  const reset = () => {
+    card.style.transform = "";
+    yes.style.opacity = no.style.opacity = 0;
+  };
+  card.addEventListener("pointerdown", (e) => {
+    if (!deck.length || e.button > 0 || e.target.closest(".grade-nav, .card-nav, .empty-state, .chips")) return;
+    drag = { x: e.clientX, y: e.clientY, dx: 0, on: false, id: e.pointerId };
+  });
+  card.addEventListener("pointermove", (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x;
+    const dy = e.clientY - drag.y;
+    if (!drag.on) {
+      if (Math.abs(dy) > 12 && Math.abs(dy) > Math.abs(dx)) return (drag = null);
+      if (Math.abs(dx) < 10) return;
+      drag.on = true;
+      card.classList.add("dragging");
+      card.setPointerCapture(e.pointerId);
+    }
+    drag.dx = dx;
+    setDrag(dx);
+  });
+  const end = () => {
+    if (!drag) return;
+    const { dx, on } = drag;
+    drag = null;
+    card.classList.remove("dragging");
+    if (!on) return;
+    suppressClick = true;
+    setTimeout(() => (suppressClick = false), 50);
+    const limit = Math.min(110, card.offsetWidth * 0.28);
+    if (Math.abs(dx) < limit) {
+      // не дотянули — карточка возвращается на место
+      card.animate([{ transform: card.style.transform }, { transform: "none" }], { duration: 250, easing: "cubic-bezier(.2,.8,.2,1)" });
+      return reset();
+    }
+    const dir = Math.sign(dx);
+    const fly = card.animate(
+      [{ transform: card.style.transform }, { transform: `translateX(${dir * innerWidth}px) rotate(${dir * 24}deg)` }],
+      { duration: 240, easing: "ease-in", fill: "forwards" },
+    );
+    fly.finished.then(() => {
+      fly.cancel();
+      reset();
+      grade(dir > 0);
+      card.classList.remove("card-in");
+      void card.offsetWidth;
+      card.classList.add("card-in");
+    });
+  };
+  card.addEventListener("pointerup", end);
+  card.addEventListener("pointercancel", () => {
+    if (drag?.on) reset();
+    drag = null;
+    card.classList.remove("dragging");
+  });
+  // После перетаскивания не открываем перевод случайным касанием
+  card.addEventListener("click", (e) => suppressClick && e.stopPropagation(), true);
+}
 
 // ── Режим: Слова / Текст ────────────────────────────────
 function setMode(mode) {
@@ -636,6 +712,11 @@ async function showNahw(hash) {
   $("quizEntry").hidden = !book.quiz;
   if (book.quiz) quizEntryStats(hash);
   if (nahwBook === book) return;
+  if (!treeCache.has(hash)) {
+    $("nahwTitle").textContent = "";
+    $("nahwSub").textContent = "";
+    $("nahwTree").innerHTML = `<div class="skel-grid"><span class="skeleton wide"></span>${'<span class="skeleton"></span>'.repeat(4)}</div>`;
+  }
   try {
     nahwData = await loadTreeBook(hash);
     nahwBook = book;
@@ -651,8 +732,8 @@ async function showNahw(hash) {
     renderNahw();
     $("nahwScroll").scrollTop = 0;
   } catch (err) {
-    alert(err.message);
-    location.hash = "";
+    nahwBook = null;
+    showNetError(() => showNahw(hash), "");
   }
 }
 
@@ -868,8 +949,7 @@ async function showQuiz() {
     collectQuiz((await loadTreeBook("#amil")).tree);
     startQuiz();
   } catch (err) {
-    alert(err.message);
-    location.hash = "#amil";
+    showNetError(showQuiz, "#amil");
   }
 }
 
@@ -947,6 +1027,322 @@ $("setResetQuiz").onclick = () => {
   quizStore = {};
   store.set(QUIZ_KEY, quizStore);
 };
+
+// ── Открытие книги: обложка распахивается, страница заполняет экран ──
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let skipCloseAnim = false;
+let flying = false;
+
+// Летающая копия обложки поверх экрана, в размере настоящей книги
+function makeFly(i) {
+  const slide = $("carousel").children[i];
+  const front = slide?.querySelector(".front");
+  if (!front || reduceMotion || !Element.prototype.animate) return null;
+  const r = front.getBoundingClientRect();
+  const w = front.offsetWidth;
+  const h = front.offsetHeight;
+  const box = { left: r.left + r.width / 2 - w / 2, top: r.top + r.height / 2 - h / 2, width: w, height: h };
+  const fly = document.createElement("div");
+  fly.className = "book-fly";
+  fly.style.setProperty("--k", getComputedStyle($("homeScreen")).getPropertyValue("--k"));
+  fly.innerHTML = '<div class="fly-page"></div>';
+  const cover = front.cloneNode(true);
+  cover.className = "fly-cover cover-frame";
+  Object.assign(cover.style, { width: w + "px", height: h + "px" });
+  fly.appendChild(cover);
+  document.body.appendChild(fly);
+  return { fly, cover, slide, box };
+}
+
+const boxFrame = (b, radius) => ({
+  left: b.left + "px",
+  top: b.top + "px",
+  width: b.width + "px",
+  height: b.height + "px",
+  borderRadius: radius,
+});
+const fullFrame = () => boxFrame({ left: 0, top: 0, width: innerWidth, height: innerHeight }, "0px");
+
+async function openBookAnimated(i) {
+  if (flying) return;
+  const href = BOOKS[i].href;
+  const f = makeFly(i);
+  if (!f) return (location.hash = href);
+  flying = true;
+  const { fly, cover, slide, box } = f;
+  slide.style.visibility = "hidden";
+  // Корешок справа — обложка открывается вокруг правого края
+  cover.animate([{ transform: "rotateY(0deg)" }, { transform: "rotateY(115deg)", opacity: 0.2 }], {
+    duration: 420,
+    easing: "cubic-bezier(.45,0,.2,1)",
+    fill: "forwards",
+  });
+  await fly.animate([boxFrame(box, "12px"), fullFrame()], {
+    duration: 460,
+    delay: 170,
+    easing: "cubic-bezier(.2,.8,.2,1)",
+    fill: "forwards",
+  }).finished;
+  location.hash = href;
+  await new Promise((r) => setTimeout(r, 60));
+  await fly.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, fill: "forwards" }).finished;
+  fly.remove();
+  slide.style.visibility = "";
+  flying = false;
+}
+
+// Возврат в библиотеку: страница сжимается обратно в книгу и обложка закрывается
+async function closeBookAnimated(i) {
+  if (flying) return;
+  const f = makeFly(i);
+  if (!f) return;
+  flying = true;
+  const { fly, cover, slide, box } = f;
+  slide.style.visibility = "hidden";
+  cover.style.transform = "rotateY(115deg)";
+  cover.style.opacity = "0";
+  const shrink = fly.animate([fullFrame(), boxFrame(box, "12px")], {
+    duration: 420,
+    easing: "cubic-bezier(.2,.8,.2,1)",
+    fill: "forwards",
+  });
+  const close = cover.animate([{ transform: "rotateY(115deg)", opacity: 0.2 }, { transform: "rotateY(0deg)", opacity: 1 }], {
+    duration: 380,
+    delay: 220,
+    easing: "cubic-bezier(.2,.8,.2,1)",
+    fill: "forwards",
+  });
+  await Promise.all([shrink.finished, close.finished]);
+  slide.style.visibility = "";
+  fly.remove();
+  flying = false;
+}
+
+$("bpOpen").addEventListener("click", (e) => {
+  e.preventDefault();
+  openBookAnimated(homeBook);
+});
+
+// ── Наклон книг вслед за телефоном (или мышью на компьютере) ──
+{
+  document.querySelectorAll(".book3d").forEach((book) => {
+    const t = document.createElement("span");
+    t.className = "tilt";
+    book.before(t);
+    t.appendChild(book);
+  });
+  const sc = $("showcase");
+  const tilt = { x: 0, y: 0, tx: 0, ty: 0, base: null, raf: 0 };
+  const clamp = (v, m) => Math.max(-m, Math.min(m, v));
+  const loop = () => {
+    tilt.x += (tilt.tx - tilt.x) * 0.12;
+    tilt.y += (tilt.ty - tilt.y) * 0.12;
+    sc.style.setProperty("--tilt-x", tilt.x.toFixed(2) + "deg");
+    sc.style.setProperty("--tilt-y", tilt.y.toFixed(2) + "deg");
+    const still = Math.abs(tilt.tx - tilt.x) < 0.01 && Math.abs(tilt.ty - tilt.y) < 0.01;
+    tilt.raf = still ? 0 : requestAnimationFrame(loop);
+  };
+  const aim = (x, y) => {
+    tilt.tx = x;
+    tilt.ty = y;
+    if (!tilt.raf) tilt.raf = requestAnimationFrame(loop);
+  };
+  const onOrient = (e) => {
+    if (currentView !== "home" || e.beta == null) return;
+    if (!tilt.base) tilt.base = { b: e.beta, g: e.gamma };
+    aim(clamp(-(e.beta - tilt.base.b) * 0.3, 6), clamp((e.gamma - tilt.base.g) * 0.45, 10));
+  };
+  if (!reduceMotion) {
+    const DOE = window.DeviceOrientationEvent;
+    if (DOE && typeof DOE.requestPermission === "function") {
+      // iPhone спрашивает разрешение — по первому касанию витрины
+      sc.addEventListener("click", function ask() {
+        sc.removeEventListener("click", ask);
+        DOE.requestPermission().then((st) => st === "granted" && addEventListener("deviceorientation", onOrient)).catch(() => {});
+      });
+    } else if (DOE) addEventListener("deviceorientation", onOrient);
+    sc.addEventListener("pointermove", (e) => {
+      if (e.pointerType !== "mouse") return;
+      const r = sc.getBoundingClientRect();
+      aim(clamp(-((e.clientY - r.top) / r.height - 0.5) * 12, 6), clamp(((e.clientX - r.left) / r.width - 0.5) * 20, 10));
+    });
+    sc.addEventListener("pointerleave", () => aim(0, 0));
+  }
+}
+
+// ── Возврат свайпом от левого края, как в iPhone ──
+const VIEW_EL = { welcome: "welcomeScreen", nahw: "nahwScreen", quiz: "quizScreen", lesson: "mainContent" };
+{
+  let edge = null;
+  const blocked = () =>
+    currentView === "home" ||
+    !$("reader").hidden ||
+    !$("setLayer").hidden ||
+    !$("qawlLayer").hidden ||
+    !$("netLayer").hidden ||
+    $("wordSheet").classList.contains("show");
+  document.addEventListener("touchstart", (e) => {
+    const t = e.touches[0];
+    if (e.touches.length !== 1 || t.clientX > 24 || blocked()) return;
+    const el = $(VIEW_EL[currentView]);
+    const back = el?.querySelector(".navbar .back");
+    if (back) edge = { x: t.clientX, y: t.clientY, el, href: back.getAttribute("href"), on: false, dx: 0, t: Date.now() };
+  }, { passive: true });
+  document.addEventListener("touchmove", (e) => {
+    if (!edge) return;
+    const t = e.touches[0];
+    const dx = t.clientX - edge.x;
+    const dy = t.clientY - edge.y;
+    if (!edge.on) {
+      if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) return (edge = null);
+      if (dx < 8) return;
+      edge.on = true;
+      edge.el.style.boxShadow = "-12px 0 30px rgba(0,0,0,.18)";
+    }
+    e.preventDefault();
+    edge.dx = Math.max(0, dx);
+    edge.el.style.transform = `translateX(${edge.dx}px)`;
+  }, { passive: false });
+  const done = (el) => {
+    el.style.transform = "";
+    el.style.boxShadow = "";
+  };
+  document.addEventListener("touchend", () => {
+    if (!edge) return;
+    const { el, dx, on, href, t } = edge;
+    edge = null;
+    if (!on) return;
+    const fast = dx / Math.max(1, Date.now() - t) > 0.5;
+    if (dx > innerWidth * 0.33 || (fast && dx > 40)) {
+      el.animate([{ transform: `translateX(${dx}px)` }, { transform: `translateX(${innerWidth}px)` }], {
+        duration: 200,
+        easing: "ease-out",
+        fill: "forwards",
+      }).finished.then((a) => {
+        skipCloseAnim = true;
+        location.hash = href === "#" ? "" : href;
+        setTimeout(() => {
+          a.cancel();
+          done(el);
+          const next = currentView === "home" ? $("homeScreen") : $(VIEW_EL[currentView]);
+          next?.classList.add("screen-enter");
+          next?.addEventListener("animationend", () => next.classList.remove("screen-enter"), { once: true });
+        }, 30);
+      });
+    } else {
+      el.animate([{ transform: `translateX(${dx}px)` }, { transform: "translateX(0)" }], {
+        duration: 220,
+        easing: "cubic-bezier(.2,.8,.2,1)",
+      });
+      done(el);
+    }
+  });
+}
+
+// ── Чтение рассказа на весь экран: строка за строкой ──
+let readerLine = 0;
+let readerTr = false;
+
+function renderReaderLine(smooth = true) {
+  const lines = $("readerText").children;
+  [...lines].forEach((el, k) => el.classList.toggle("on", k === readerLine));
+  lines[readerLine]?.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "center" });
+  $("readerCount").textContent = `Строка ${readerLine + 1} из ${story.length}`;
+  $("readerTrText").hidden = !readerTr || !sentences[readerLine];
+  $("readerTrText").textContent = sentences[readerLine] || "";
+}
+
+function openReader() {
+  if (!story.length) return;
+  closeSheet();
+  toggleSizer(false);
+  $("readerText").innerHTML = story
+    .map((line, k) => {
+      const text = line.map((t) => (showHarakat ? t.arabic : stripHarakat(t.arabic))).join(" ");
+      return `<span class="reader-line" data-l="${k}">${esc(text)}.</span>`;
+    })
+    .join("");
+  readerLine = 0;
+  $("reader").hidden = false;
+  requestAnimationFrame(() => renderReaderLine(false));
+}
+
+function closeReader() {
+  $("reader").hidden = true;
+}
+
+function stepReader(d) {
+  readerLine = Math.max(0, Math.min(story.length - 1, readerLine + d));
+  renderReaderLine();
+}
+
+$("readBtn").onclick = openReader;
+$("readerClose").onclick = closeReader;
+$("readerTr").onclick = () => {
+  readerTr = !readerTr;
+  $("readerTr").setAttribute("aria-pressed", String(readerTr));
+  renderReaderLine();
+};
+$("readerText").addEventListener("click", (e) => {
+  const line = e.target.closest(".reader-line");
+  const k = line ? Number(line.dataset.l) : readerLine;
+  if (k !== readerLine) {
+    readerLine = k;
+    renderReaderLine();
+  } else stepReader(1);
+});
+document.addEventListener("keydown", (e) => {
+  if ($("reader").hidden) return;
+  if (e.key === "Escape") closeReader();
+  else if (e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === " ") stepReader(1);
+  else if (e.key === "ArrowUp" || e.key === "ArrowRight") stepReader(-1);
+});
+
+// ── Нет сети / не удалось загрузить ──
+let netRetryFn = null;
+
+function showNetError(retry, fallback, title, text) {
+  const offline = !navigator.onLine;
+  $("netTitle").textContent = title || (offline ? "Нет подключения" : "Не удалось загрузить");
+  $("netText").textContent =
+    text ||
+    (offline
+      ? "Эта книга ещё не сохранена на устройстве. Подключитесь к интернету и повторите."
+      : "Попробуйте ещё раз через минуту.");
+  netRetryFn = retry;
+  $("netRetry").hidden = !retry;
+  $("netHome").href = fallback || "#";
+  $("netHome").textContent = fallback === "#mabda" ? "К списку уроков" : fallback === "#amil" ? "К книге" : "К библиотеке";
+  $("netLayer").hidden = false;
+}
+
+function hideNetError() {
+  $("netLayer").hidden = true;
+}
+
+$("netRetry").onclick = () => {
+  hideNetError();
+  netRetryFn?.();
+};
+$("netHome").addEventListener("click", hideNetError);
+
+// ── Короткие уведомления сверху ──
+let toastTimer = 0;
+function toast(msg, ms = 2600) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => (t.hidden = true), ms);
+}
+addEventListener("offline", () => toast("Нет сети — работают сохранённые книги"));
+addEventListener("online", () => toast("Снова в сети"));
+
+// Кнопки «назад» в шапках круглые, подпись остаётся для экранного диктора
+document.querySelectorAll(".navbar .back").forEach((a) => {
+  const label = a.textContent.trim();
+  a.setAttribute("aria-label", label ? `Назад: ${label}` : "Назад");
+});
 
 // ── Заставка: убираем после анимации или по нажатию ─────
 const splash = $("splash");

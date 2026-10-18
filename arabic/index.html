@@ -33,15 +33,15 @@
             if (t === '"light"' || t === '"dark"') document.documentElement.dataset.theme = JSON.parse(t);
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="style.css?v=0043">
+    <link rel="stylesheet" href="style.css?v=0044">
 </head>
 
 <body class="view-home">
     <!-- Заставка: только при запуске с экрана «Домой» (или с ?splash для проверки) -->
     <div class="splash" id="splash" aria-hidden="true">
-        <div class="splash-tile"><img class="splash-glyph" src="icons/glyph.png" alt=""></div>
+        <div class="splash-tile"><img class="splash-icon" src="icons/splash.png" alt=""></div>
         <div class="splash-name">Arabic</div>
-        <div class="splash-sub">Уроки арабского языка</div>
+        <div class="splash-sub">Библиотека арабских книг</div>
     </div>
     <script>
         (function () {
@@ -70,7 +70,7 @@
         </header>
 
         <div class="lib-stage">
-            <div class="showcase">
+            <div class="showcase" id="showcase">
             <nav class="carousel" id="carousel" aria-label="Книги">
             <a class="slide" href="#mabda" data-i="0">
                 <span class="book3d book-mabda">
@@ -82,7 +82,7 @@
                 </span>
                     <span class="face spine" aria-hidden="true"><span class="spine-title" lang="ar">مَبْدَأُ الْقِرَاءَةِ</span></span>
                     <span class="face pages" aria-hidden="true"></span>
-                    <span class="face back" aria-hidden="true"></span>
+                    <span class="face rear" aria-hidden="true"></span>
                 </span>
                 <span class="floor" aria-hidden="true"></span>
             </a>
@@ -96,7 +96,7 @@
                 </span>
                     <span class="face spine" aria-hidden="true"><span class="spine-title" lang="ar">مِئَةُ عَامِلٍ</span></span>
                     <span class="face pages" aria-hidden="true"></span>
-                    <span class="face back" aria-hidden="true"></span>
+                    <span class="face rear" aria-hidden="true"></span>
                 </span>
                 <span class="floor" aria-hidden="true"></span>
             </a>
@@ -111,7 +111,7 @@
                 </span>
                     <span class="face spine" aria-hidden="true"><span class="spine-title" lang="ar">شَرْحُ الْأُنْمُوذَجِ</span></span>
                     <span class="face pages" aria-hidden="true"></span>
-                    <span class="face back" aria-hidden="true"></span>
+                    <span class="face rear" aria-hidden="true"></span>
                 </span>
                 <span class="floor" aria-hidden="true"></span>
             </a>
@@ -240,6 +240,9 @@
             </a>
             <span class="eyebrow" id="lessonNumber"></span>
             <div class="navbar-side">
+                <button class="aa-btn read-btn" id="readBtn" type="button" aria-label="Чтение на весь экран">
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
                 <button class="aa-btn" id="sizeBtn" type="button" aria-label="Размер текста" aria-expanded="false">
                     <span class="aa-small">A</span><span class="aa-big">a</span>
                 </button>
@@ -259,6 +262,8 @@
         <section class="screen word-screen active" id="wordsScreen">
             <div class="chips" id="filterChips" role="tablist" aria-label="Какие карточки показывать"></div>
             <div class="word-card" id="wordCard">
+                <span class="stamp yes" aria-hidden="true">Знаю</span>
+                <span class="stamp no" aria-hidden="true">Не знаю</span>
                 <div class="card-top">
                     <div class="card-meta">
                         <span id="topCounter"></span>
@@ -273,7 +278,7 @@
                         <span class="translation-main" id="translationMain"></span>
                         <span class="translation-rest" id="translationRest"></span>
                     </span>
-                    <span class="reveal-hint">Нажмите, чтобы показать перевод</span>
+                    <span class="reveal-hint">Нажмите, чтобы показать перевод<small>Смахните вправо — знаю, влево — не знаю</small></span>
                 </button>
 
                 <div class="grade-nav">
@@ -413,6 +418,36 @@
         </div>
     </div>
 
+    <!-- Чтение рассказа на весь экран: строка за строкой -->
+    <div class="reader" id="reader" role="dialog" aria-modal="true" aria-label="Чтение" hidden>
+        <div class="reader-top">
+            <button class="icon-btn" id="readerClose" type="button" aria-label="Закрыть чтение">
+                <svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <span class="reader-count" id="readerCount"></span>
+            <button class="icon-btn" id="readerTr" type="button" aria-label="Перевод строки" aria-pressed="false">
+                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h9M8.5 3v2M6 5c.5 3 2.5 5.5 5 7M11 5c-.8 3.5-3.3 6.5-7 8M13 21l4-9 4 9M14.4 18h5.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+        </div>
+        <div class="reader-text" id="readerText" lang="ar" dir="rtl"></div>
+        <div class="reader-tr" id="readerTrText" hidden></div>
+        <div class="reader-hint">Коснитесь, чтобы перейти к следующей строке</div>
+    </div>
+
+    <!-- Нет сети или не удалось загрузить -->
+    <div class="net-layer" id="netLayer" hidden>
+        <div class="net-card" role="alertdialog" aria-labelledby="netTitle" aria-describedby="netText">
+            <div class="net-icon" aria-hidden="true">
+                <svg width="34" height="34" viewBox="0 0 24 24"><path d="M2 2l20 20M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 5.2-2.8M19 13a10 10 0 0 0-2.2-1.6M1.5 9a15 15 0 0 1 4.3-2.7M22.5 9A15 15 0 0 0 11 5.1M12 20h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="net-title" id="netTitle"></div>
+            <p class="net-text" id="netText"></p>
+            <button class="net-btn primary" id="netRetry" type="button">Повторить</button>
+            <a class="net-btn" id="netHome" href="#">К библиотеке</a>
+        </div>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
     <!-- Перевод слова из рассказа -->
     <button class="sheet-overlay" id="sheetOverlay" type="button" aria-label="Закрыть перевод" hidden></button>
     <div class="word-sheet" id="wordSheet" role="dialog" aria-label="Перевод слова" aria-hidden="true">
@@ -469,7 +504,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=0043"></script>
+    <script src="app.js?v=0044"></script>
 </body>
 
 </html>
