@@ -413,7 +413,6 @@ body:not(.view-welcome) .welcome {
     text-align: left
 }
 
-.set-link + .set-link::before,
 .set-row + .set-row::before,
 .set-row + .set-preview::before {
     content: "";
@@ -457,48 +456,77 @@ body:not(.view-welcome) .welcome {
 
 /* Разработчик и ссылки */
 .set-dev {
-    justify-content: flex-start
+    justify-content: flex-start;
+    padding-top: 12px;
+    padding-bottom: 12px
 }
 
 .set-dev-avatar {
     flex: none;
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: linear-gradient(145deg, #34c759, #0a84ff);
-    color: #fff;
-    font-size: 18px;
-    font-weight: 700
+    object-fit: cover;
+    background: var(--fill)
 }
 
-.set-link {
-    justify-content: flex-start;
+/* Три компактные кнопки связи в один ряд */
+.set-contacts {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 10px 12px 12px
+}
+
+.set-contacts::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 16px;
+    right: 0;
+    border-top: .5px solid var(--separator)
+}
+
+.set-contact {
+    height: 40px;
+    border-radius: 10px;
+    background: var(--fill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
     text-decoration: none
 }
 
-.set-link:active {
+.set-contact:active {
     background: var(--pressed)
-}
-
-.set-link .set-row-label {
-    flex: 1
 }
 
 .set-icon {
     flex: none;
-    width: 30px;
-    height: 30px;
-    border-radius: 7px;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
     display: grid;
     place-items: center;
     color: #fff
 }
 
+.set-icon svg {
+    width: 14px;
+    height: 14px
+}
+
 .set-icon.tg {
     background: #2aabee
+}
+
+.set-icon.wa {
+    background: #25d366
 }
 
 .set-icon.gh {
@@ -513,11 +541,6 @@ body:not(.view-welcome) .welcome {
 
 :root[data-theme="dark"] .set-icon.gh {
     background: #4a5058
-}
-
-.set-chev {
-    flex: none;
-    color: var(--chevron)
 }
 
 .set-note {
