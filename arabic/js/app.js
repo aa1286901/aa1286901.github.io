@@ -42,9 +42,11 @@ const PARTS = [
   },
 ];
 // Урок задаётся ключом «часть-номер», например "2-4"
-const LESSONS = PARTS.flatMap((p) =>
-  p.lessons.map(([title, ruTitle], i) => ({ key: `${p.id}-${i + 1}`, part: p.id, n: i + 1, title, ruTitle })),
-);
+// Упражнения в конце части — без номера, ключ «часть-ex»
+const LESSONS = PARTS.flatMap((p) => [
+  ...p.lessons.map(([title, ruTitle], i) => ({ key: `${p.id}-${i + 1}`, part: p.id, n: i + 1, title, ruTitle })),
+  ...(p.exercises ? [{ key: `${p.id}-ex`, part: p.id, n: null, title: p.exercises[0], ruTitle: p.exercises[1] }] : []),
+]);
 
 
 // Шаги размера текста рассказа
@@ -132,7 +134,7 @@ const lineText = (line) => (line || []).map((t) => t.arabic).join(" ");
 
 const lessonFile = (key) => {
   const [p, n] = key.split("-");
-  return `data/lessons/part${p}/lesson_${n}.json`;
+  return n === "ex" ? `data/lessons/part${p}/exercises.json` : `data/lessons/part${p}/lesson_${n}.json`;
 };
 
 function loadLesson(id) {
@@ -175,6 +177,7 @@ function setBox(w, box) {
 }
 
 // ── «Мабда»: список частей, а в части — список уроков ──
+const PENCIL = `<svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const CHEVRON_RIGHT = `<svg class="chevron" width="8" height="14" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 let listPart = null; // открытая часть; null — список частей
 
@@ -182,7 +185,7 @@ function renderLessonList() {
   const items = listPart
     ? LESSONS.filter((l) => l.part === listPart).map(
         (l) =>
-          `<button class="lesson-item" type="button" data-lesson="${l.key}"><span class="lesson-num">${l.n}</span><span class="lesson-info"><span class="lesson-ru">${esc(l.ruTitle)}</span><span class="lesson-sub"><span class="lesson-count" id="count-${l.key}"></span><span class="lesson-ar" lang="ar" dir="rtl">${esc(l.title)}</span></span></span>${CHEVRON_RIGHT}</button>`,
+          `<button class="lesson-item" type="button" data-lesson="${l.key}"><span class="lesson-num">${l.n ?? PENCIL}</span><span class="lesson-info"><span class="lesson-ru">${esc(l.ruTitle)}</span><span class="lesson-sub"><span class="lesson-count" id="count-${l.key}"></span><span class="lesson-ar" lang="ar" dir="rtl">${esc(l.title)}</span></span></span>${CHEVRON_RIGHT}</button>`,
       )
     : PARTS.map(
         (p) =>
@@ -228,7 +231,7 @@ function renderCounts() {
 
 // ── Hash-роутер: / книги, #mabda уроки, #lesson-N, #nahw ─
 function parseHash() {
-  const m = location.hash.match(/^#lesson-(\d+-\d+)$/);
+  const m = location.hash.match(/^#lesson-(\d+-(?:\d+|ex))$/);
   return m ? m[1] : null;
 }
 
@@ -366,11 +369,11 @@ function showLesson(id) {
   setView("lesson");
   const lesson = LESSONS.find((l) => l.key === id);
   if (lesson) {
-    $("lessonNumber").textContent = `Часть ${lesson.part} · Урок ${lesson.n}`;
+    $("lessonNumber").textContent = `Часть ${lesson.part} · ${lesson.n ? "Урок " + lesson.n : "Упражнения"}`;
     $("lessonTitle").textContent = lesson.title;
     $("lessonTitleRu").textContent = lesson.ruTitle || "";
     $("backBtn").setAttribute("href", "#mabda-" + lesson.part);
-    document.title = `${lesson.ruTitle} — Урок ${lesson.n}`;
+    document.title = `${lesson.ruTitle} — ${lesson.n ? "Урок " + lesson.n : "Часть " + lesson.part}`;
   }
 }
 

@@ -18,7 +18,7 @@ const PRECACHE = [
   "icons/dev.jpg",
   "data/books/nahw_ism.json",
   "data/books/mia_amil.json",
-  // уроки: часть 1 и 2 — по 5, часть 3 — 9
+  // уроки: часть 1 — 5, часть 2 — 5, часть 3 — 9
   ...[[1, 5], [2, 5], [3, 9]].flatMap(([p, k]) =>
     Array.from({ length: k }, (_, i) => `data/lessons/part${p}/lesson_${i + 1}.json`),
   ),
