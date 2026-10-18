@@ -979,6 +979,19 @@ function applyTheme() {
     b.setAttribute("aria-checked", String(on));
   });
 }
+// ── «Анимации всегда» ───────────────────────────────────
+function applyMotion() {
+  $("setMotion").setAttribute("aria-checked", String(document.documentElement.dataset.motion === "on"));
+}
+$("setMotion").onclick = () => {
+  const on = document.documentElement.dataset.motion !== "on";
+  if (on) document.documentElement.dataset.motion = "on";
+  else delete document.documentElement.dataset.motion;
+  store.set(MOTION_KEY, on);
+  applyMotion();
+};
+applyMotion();
+
 // ── Длительность заставки ───────────────────────────────
 const SPLASH_KEY = "arabic.splashSec";
 function applySplashSetting() {
@@ -1052,7 +1065,10 @@ $("setResetQuiz").onclick = () => {
 };
 
 // ── Открытие книги: обложка распахивается, страница заполняет экран ──
-const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+// Анимации выключены, если в системе «Уменьшение движения» и не включено «Анимации всегда»
+const MOTION_KEY = "arabic.motion";
+const motionOff = () =>
+  matchMedia("(prefers-reduced-motion: reduce)").matches && document.documentElement.dataset.motion !== "on";
 let skipCloseAnim = false;
 let flying = false;
 
@@ -1060,7 +1076,7 @@ let flying = false;
 function makeFly(i) {
   const slide = $("carousel").children[i];
   const front = slide?.querySelector(".front");
-  if (!front || reduceMotion || !Element.prototype.animate) return null;
+  if (!front || motionOff() || !Element.prototype.animate) return null;
   const r = front.getBoundingClientRect();
   const w = front.offsetWidth;
   const h = front.offsetHeight;
@@ -1171,11 +1187,11 @@ $("bpOpen").addEventListener("click", (e) => {
     if (!tilt.raf) tilt.raf = requestAnimationFrame(loop);
   };
   const onOrient = (e) => {
-    if (currentView !== "home" || e.beta == null) return;
+    if (currentView !== "home" || e.beta == null || motionOff()) return;
     if (!tilt.base) tilt.base = { b: e.beta, g: e.gamma };
     aim(clamp(-(e.beta - tilt.base.b) * 0.3, 6), clamp((e.gamma - tilt.base.g) * 0.45, 10));
   };
-  if (!reduceMotion) {
+  {
     const DOE = window.DeviceOrientationEvent;
     if (DOE && typeof DOE.requestPermission === "function") {
       // iPhone спрашивает разрешение — по первому касанию витрины
@@ -1185,7 +1201,7 @@ $("bpOpen").addEventListener("click", (e) => {
       });
     } else if (DOE) addEventListener("deviceorientation", onOrient);
     sc.addEventListener("pointermove", (e) => {
-      if (e.pointerType !== "mouse") return;
+      if (e.pointerType !== "mouse" || motionOff()) return;
       const r = sc.getBoundingClientRect();
       aim(clamp(-((e.clientY - r.top) / r.height - 0.5) * 12, 6), clamp(((e.clientX - r.left) / r.width - 0.5) * 20, 10));
     });
