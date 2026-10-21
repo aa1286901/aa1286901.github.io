@@ -1719,12 +1719,16 @@ function openReader() {
   if (!story.length) return;
   closeSheet();
   toggleSizer(false);
+  // Каждое слово — отдельный элемент: касание слова показывает его перевод
   $("readerText").innerHTML = story
-    .map((line, k) => {
-      const text = showHarakat ? lineText(line) : stripHarakat(lineText(line));
-      return `<span class="reader-line" data-l="${k}">${esc(text + (ends[k] ?? "."))}</span>`;
-    })
+    .map(
+      (line, k) =>
+        `<span class="reader-line" data-l="${k}">${line
+          .map((t, j) => `<span class="rw" data-w="${j}">${esc(showHarakat ? t.arabic : stripHarakat(t.arabic))}</span>`)
+          .join(" ")}${esc(ends[k] ?? ".")}</span>`,
+    )
     .join("");
+  hideReaderWord();
   const saved = lessonPlace().line;
   readerLine = Number.isInteger(saved) && saved < story.length ? saved : 0;
   $("reader").hidden = false;
@@ -1735,6 +1739,29 @@ function closeReader() {
   if (!$("reader").hidden) stopSpeech();
   $("reader").hidden = true;
 }
+
+// Перевод слова в режиме чтения
+function showReaderWord(el, tok) {
+  $("readerText").querySelectorAll(".rw.sel").forEach((x) => x.classList.remove("sel"));
+  el.classList.add("sel");
+  $("readerWordAr").textContent = tok.arabic;
+  $("readerWordTr").textContent = tok.translation;
+  $("readerWordType").textContent = tok.type;
+  $("readerWordSay").dataset.say = tok.arabic;
+  $("readerWordSay").hidden = tok.type === "пропуск";
+  const entry = tok.lemma && dict.get(tok.lemma);
+  $("readerWordDict").hidden = !entry || entry.arabic === tok.arabic;
+  $("readerWordDict").innerHTML = entry
+    ? `<span lang="ar" dir="rtl">${esc(entry.arabic)}</span> — ${esc(entry.translation)}`
+    : "";
+  $("readerWord").hidden = false;
+}
+
+function hideReaderWord() {
+  $("readerText").querySelectorAll(".rw.sel").forEach((x) => x.classList.remove("sel"));
+  $("readerWord").hidden = true;
+}
+$("readerWord").addEventListener("click", hideReaderWord);
 
 // «Слушать»: строка за строкой, подсветка идёт за голосом
 function readerSpeak() {
@@ -1749,6 +1776,7 @@ $("readerPlay").insertAdjacentHTML("afterbegin", SAY_ICON);
 $("readerPlay").onclick = () => (sayBtn === $("readerPlay") ? stopSpeech() : readerSpeak());
 
 function stepReader(d) {
+  hideReaderWord();
   readerLine = Math.max(0, Math.min(story.length - 1, readerLine + d));
   renderReaderLine();
 }
@@ -1763,6 +1791,18 @@ $("readerTr").onclick = () => {
 $("readerText").addEventListener("click", (e) => {
   const line = e.target.closest(".reader-line");
   const k = line ? Number(line.dataset.l) : readerLine;
+  // Слово — показываем перевод, строку не листаем
+  const w = e.target.closest(".rw");
+  if (w && line) {
+    if (k !== readerLine) {
+      readerLine = k;
+      renderReaderLine();
+    }
+    showReaderWord(w, story[k][Number(w.dataset.w)]);
+    return;
+  }
+  // Открыт перевод слова — первое касание его закрывает
+  if (!$("readerWord").hidden) return hideReaderWord();
   const playing = sayBtn === $("readerPlay");
   if (k !== readerLine) {
     readerLine = k;
