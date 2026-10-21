@@ -34,7 +34,7 @@
             if (localStorage.getItem("arabic.motion") === "true") document.documentElement.dataset.motion = "on";
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="css/style.css?v=0057">
+    <link rel="stylesheet" href="css/style.css?v=0058">
 </head>
 
 <body class="view-home">
@@ -502,8 +502,17 @@
             </button>
         </div>
         <div class="reader-text" id="readerText" lang="ar" dir="rtl"></div>
+        <div class="reader-word" id="readerWord" hidden>
+            <div class="reader-word-main">
+                <span class="reader-word-tr" id="readerWordTr"></span>
+                <span class="pill" id="readerWordType"></span>
+            </div>
+            <button class="say" id="readerWordSay" type="button" aria-label="Произнести слово"></button>
+            <span class="reader-word-ar" id="readerWordAr" lang="ar" dir="rtl"></span>
+            <div class="reader-word-dict" id="readerWordDict"></div>
+        </div>
         <div class="reader-tr" id="readerTrText" hidden></div>
-        <div class="reader-hint">Коснитесь, чтобы перейти к следующей строке</div>
+        <div class="reader-hint">Слово — перевод · экран — следующая строка</div>
     </div>
 
     <!-- Нет сети или не удалось загрузить -->
@@ -581,7 +590,7 @@
         </div>
     </div>
 
-    <script src="js/app.js?v=0057"></script>
+    <script src="js/app.js?v=0058"></script>
 </body>
 
 </html>

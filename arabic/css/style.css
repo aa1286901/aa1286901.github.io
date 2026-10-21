@@ -3291,3 +3291,73 @@ html.splash-on .splash {
 .say[hidden] {
     display: none
 }
+
+/* Перевод слова в режиме чтения */
+.rw {
+    border-radius: 8px;
+    transition: background .2s, color .2s
+}
+
+.reader-line.on .rw.sel {
+    background: var(--accent-soft);
+    color: var(--accent)
+}
+
+.reader-word {
+    flex: none;
+    margin: 0 4px 8px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: var(--card);
+    box-shadow: 0 6px 24px var(--shadow);
+    display: grid;
+    grid-template-columns: minmax(42%, 1fr) auto minmax(0, max-content);
+    align-items: center;
+    gap: 4px 12px;
+    animation: level-in .2s ease
+}
+
+.reader-word[hidden] {
+    display: none
+}
+
+.reader-word-main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px
+}
+
+.reader-word-tr {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.3
+}
+
+.reader-word-ar {
+    min-width: 0;
+    text-align: right;
+    font-family: var(--ar);
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.3
+}
+
+.reader-word-dict {
+    grid-column: 1 / -1;
+    padding-top: 8px;
+    border-top: .5px solid var(--separator);
+    font-size: 14px;
+    color: var(--text-2)
+}
+
+.reader-word-dict[hidden] {
+    display: none
+}
+
+.reader-word-dict span {
+    font-family: var(--ar);
+    font-size: 18px;
+    color: var(--text)
+}
