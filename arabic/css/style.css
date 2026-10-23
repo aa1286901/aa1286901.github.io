@@ -3361,3 +3361,655 @@ html.splash-on .splash {
     font-size: 18px;
     color: var(--text)
 }
+
+/* ── Сегодня: что задано и план на день ── */
+body.view-today .app,
+body.view-train .app {
+    display: none
+}
+
+.today {
+    display: none;
+    width: 100%;
+    max-width: 520px;
+    height: 100dvh;
+    margin: auto;
+    padding: calc(env(safe-area-inset-top) + 6px) 16px 0;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden
+}
+
+body.view-today .today {
+    display: flex
+}
+
+.today-scroll {
+    flex: 1;
+    min-height: 0;
+    margin: 0 -16px;
+    padding: 0 16px calc(env(safe-area-inset-bottom) + 28px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scrollbar-width: none
+}
+
+.today-scroll::-webkit-scrollbar {
+    display: none
+}
+
+.today-scroll > * {
+    flex: none
+}
+
+.today-date {
+    font-size: 15px;
+    color: var(--muted)
+}
+
+.today-scroll .welcome-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    margin-bottom: 4px
+}
+
+.today-list,
+.today-card,
+.today-next {
+    background: var(--card);
+    border-radius: 16px
+}
+
+.today-list {
+    overflow: hidden
+}
+
+.today-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 12px 6px 14px
+}
+
+.today-item + .today-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 56px;
+    right: 0;
+    border-top: .5px solid var(--separator)
+}
+
+.today-check {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--faint);
+    background: none;
+    color: transparent;
+    display: grid;
+    place-items: center;
+    padding: 0
+}
+
+.today-item.done .today-check {
+    border-color: #34c759;
+    background: #34c759;
+    color: #fff
+}
+
+.today-go {
+    flex: 1;
+    min-width: 0;
+    min-height: 54px;
+    border: 0;
+    background: none;
+    padding: 6px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2px;
+    color: var(--text);
+    text-align: left
+}
+
+.today-go::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid var(--faint);
+    border-right: 2px solid var(--faint);
+    transform: translateY(-50%) rotate(45deg)
+}
+
+.today-item-title {
+    font-size: 17px;
+    font-weight: 600;
+    padding-right: 24px
+}
+
+.today-item.done .today-item-title {
+    color: var(--muted);
+    text-decoration: line-through
+}
+
+.today-item-sub {
+    font-size: 13px;
+    color: var(--muted);
+    padding-right: 24px
+}
+
+.today-empty {
+    padding: 18px 16px;
+    font-size: 15px;
+    color: var(--muted);
+    text-align: center
+}
+
+.today-next {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--text-2)
+}
+
+.today-next[hidden] {
+    display: none
+}
+
+.today-next ul {
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px
+}
+
+.today-next b {
+    color: var(--text);
+    font-weight: 600
+}
+
+.today-next p {
+    margin: 6px 0 0;
+    color: var(--muted)
+}
+
+.today-card {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+}
+
+.today-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px
+}
+
+.today-book {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--muted)
+}
+
+.today-due {
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap
+}
+
+.today-lesson {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text);
+    text-decoration: none
+}
+
+.today-lesson-num {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--on-accent);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    font-weight: 700
+}
+
+.today-lesson-info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px
+}
+
+.today-lesson-ru {
+    font-size: 17px;
+    font-weight: 600
+}
+
+.today-lesson-ar {
+    font-family: var(--ar);
+    font-size: 19px;
+    color: var(--text-2);
+    text-align: left
+}
+
+.today-meta,
+.today-none {
+    margin: 0;
+    font-size: 14px;
+    color: var(--muted)
+}
+
+.today-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px
+}
+
+.today-actions .pill-btn {
+    flex: 1 1 auto;
+    height: 40px;
+    padding: 0 14px;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none
+}
+
+.today-picker {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 8px
+}
+
+.today-picker select {
+    min-width: 0;
+    height: 42px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--fill);
+    color: var(--text);
+    font: inherit;
+    font-size: 16px
+}
+
+.today-topics {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px
+}
+
+.today-topics li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 6px 6px 12px;
+    border-radius: 12px;
+    background: var(--fill)
+}
+
+.today-topic-ar {
+    font-family: var(--ar);
+    font-size: 20px;
+    font-weight: 700
+}
+
+.today-topic-ru {
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    color: var(--text-2)
+}
+
+.today-x {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--muted);
+    font-size: 22px;
+    line-height: 1
+}
+
+.today-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px
+}
+
+.day-chip {
+    height: 42px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--card);
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 600
+}
+
+.day-chip.on {
+    background: var(--accent);
+    color: var(--on-accent)
+}
+
+/* Кнопка «Сегодня» в шапке библиотеки */
+.lib-actions {
+    display: flex;
+    gap: 10px
+}
+
+#todayBtn {
+    position: relative
+}
+
+.today-dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #ff3b30;
+    box-shadow: 0 0 0 2px var(--card)
+}
+
+.today-dot[hidden] {
+    display: none
+}
+
+/* Тема Унмузаджа, заданная учителем */
+.nb.assigned .nb-box {
+    border-color: var(--accent)
+}
+
+.nb.assigned .nb-box::after {
+    content: "★";
+    position: absolute;
+    top: 6px;
+    right: 9px;
+    font-size: 12px;
+    color: var(--accent)
+}
+
+.nb-box {
+    position: relative
+}
+
+.qawl-assign.on {
+    background: var(--accent-soft);
+    color: var(--accent)
+}
+
+.qawl-assign[hidden] {
+    display: none
+}
+
+/* ── Тренировка тем Унмузаджа ── */
+body.view-train .train {
+    display: flex
+}
+
+.word-card.train-card .grade-nav {
+    display: grid
+}
+
+.word-card.train-card .grade-nav[hidden],
+.train-face[hidden] {
+    display: none
+}
+
+.train-face {
+    flex: 1;
+    min-height: 0;
+    border: 0;
+    background: none;
+    padding: 4px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    color: var(--text);
+    text-align: center;
+    overflow-y: auto
+}
+
+.train-front,
+.train-back {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px
+}
+
+.train-back[hidden] {
+    display: none
+}
+
+.train-back {
+    width: 100%;
+    padding-top: 16px;
+    border-top: .5px solid var(--separator);
+    animation: level-in .2s ease
+}
+
+.train-term {
+    font-family: var(--ar);
+    font-size: clamp(34px, 11vw, 46px);
+    font-weight: 700;
+    line-height: 1.4
+}
+
+.train-ru {
+    font-size: 17px;
+    color: var(--text-2)
+}
+
+.train-def-ar {
+    font-family: var(--ar);
+    font-size: 21px;
+    line-height: 1.8;
+    text-align: right
+}
+
+.train-def-ru {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text-2)
+}
+
+.train-def-ru.big {
+    font-size: 19px;
+    color: var(--text)
+}
+
+/* ── Пересказ ── */
+.retell-side {
+    width: 40px
+}
+
+.retell-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 4px 2px 16px;
+    scrollbar-width: none
+}
+
+.retell-scroll::-webkit-scrollbar {
+    display: none
+}
+
+.retell-intro {
+    margin: 0 4px 12px;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--muted);
+    text-align: center
+}
+
+.retell-steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+}
+
+.retell-step {
+    counter-increment: step;
+    position: relative;
+    padding: 12px 14px 12px 52px;
+    border-radius: 14px;
+    background: var(--card);
+    cursor: pointer
+}
+
+.retell-step::before {
+    content: counter(step);
+    position: absolute;
+    left: 12px;
+    top: 11px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 700
+}
+
+.retell-hint {
+    font-size: 16px;
+    line-height: 1.45;
+    color: var(--text)
+}
+
+.retell-full,
+.retell-ar {
+    display: none
+}
+
+.retell-step[data-stage="1"] .retell-hint,
+.retell-step[data-stage="2"] .retell-hint {
+    display: none
+}
+
+.retell-step[data-stage="1"] .retell-full {
+    display: block;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text-2)
+}
+
+.retell-step[data-stage="2"] .retell-ar {
+    display: block;
+    font-family: var(--ar);
+    font-size: 21px;
+    line-height: 1.9;
+    text-align: right
+}
+
+.retell-rec {
+    flex: none;
+    margin: 0 2px 4px;
+    padding: 10px 12px;
+    border-radius: 18px;
+    background: var(--card);
+    box-shadow: 0 4px 18px var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 12px
+}
+
+.rec-btn {
+    flex: none;
+    width: 54px;
+    height: 54px;
+    border: 3px solid #ff3b30;
+    border-radius: 50%;
+    background: none;
+    padding: 0;
+    display: grid;
+    place-items: center
+}
+
+.rec-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #ff3b30;
+    transition: border-radius .2s, width .2s, height .2s
+}
+
+.rec-btn.recording .rec-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px
+}
+
+.rec-btn.recording {
+    animation: say-pulse 1.4s ease-out infinite
+}
+
+.rec-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px
+}
+
+.rec-status {
+    font-size: 14px;
+    color: var(--text-2)
+}
+
+.rec-audio {
+    width: 100%;
+    height: 36px
+}
+
+.rec-audio[hidden],
+.rec-del[hidden] {
+    display: none
+}
+
+body.view-quiz .train {
+    display: none
+}

@@ -34,7 +34,7 @@
             if (localStorage.getItem("arabic.motion") === "true") document.documentElement.dataset.motion = "on";
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="css/style.css?v=0058">
+    <link rel="stylesheet" href="css/style.css?v=0059">
 </head>
 
 <body class="view-home">
@@ -96,9 +96,15 @@
                 <span class="lib-brand-ar" lang="ar" dir="rtl">الْمَكْتَبَةُ</span>
                 <span class="lib-brand-ru">Библиотека</span>
             </div>
+            <div class="lib-actions">
+            <a class="icon-btn" id="todayBtn" href="#today" aria-label="Сегодня: что задано">
+                <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 10h17M8 3v4M16 3v4M9 15l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="today-dot" id="todayDot" hidden></span>
+            </a>
             <button class="icon-btn" id="settingsBtn" type="button" aria-label="Настройки" aria-haspopup="dialog">
                 <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></svg>
             </button>
+            </div>
         </header>
 
         <div class="lib-stage">
@@ -215,6 +221,80 @@
     </section>
 
     <!-- Тренажёр «Ста управляющих слов»: адрес #amil-quiz -->
+    <!-- Сегодня: что задал учитель и план на день, адрес #today -->
+    <section class="today" id="todayScreen">
+        <div class="navbar">
+            <a class="back" href="#">
+                <svg width="11" height="18" viewBox="0 0 11 18" aria-hidden="true">
+                    <path d="M9 2L2 9l7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Книги
+            </a>
+            <span class="eyebrow eyebrow-ar" lang="ar" dir="rtl">اَلْيَوْمَ</span>
+            <span class="navbar-side" aria-hidden="true"></span>
+        </div>
+        <div class="today-scroll">
+            <header class="welcome-head">
+                <h1 class="welcome-title">Сегодня</h1>
+                <div class="today-date" id="todayDate"></div>
+            </header>
+            <div class="today-list" id="todayPlan"></div>
+            <div class="today-next" id="todayNext"></div>
+            <div class="set-group-label">Задано учителем</div>
+            <div class="today-card" id="todayMabda"></div>
+            <div class="today-card" id="todayUnm"></div>
+            <div class="set-group-label">Дни занятий</div>
+            <div class="today-days" id="todayDays" role="group" aria-label="Дни занятий"></div>
+            <div class="set-note">Задание сдаётся в ближайший день занятий. Шаги урока раскладываются на дни до него; пропущенный день переносится вперёд.</div>
+        </div>
+    </section>
+
+    <!-- Темы Унмузаджа: термин ↔ определение, адрес #unm-train -->
+    <section class="quiz train" id="trainScreen">
+        <div class="navbar">
+            <a class="back" href="#today">
+                <svg width="11" height="18" viewBox="0 0 11 18" aria-hidden="true">
+                    <path d="M9 2L2 9l7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Сегодня
+            </a>
+            <span class="eyebrow eyebrow-ar" lang="ar" dir="rtl">شَرْحُ الْأُنْمُوذَجِ</span>
+            <span class="navbar-side" aria-hidden="true"></span>
+        </div>
+        <div class="set-seg two" id="trainMode" role="radiogroup" aria-label="Режим">
+            <button type="button" role="radio" data-mode="term">Сначала термин</button>
+            <button type="button" role="radio" data-mode="def">Сначала определение</button>
+        </div>
+        <div class="word-card quiz-card train-card" id="trainCard">
+            <div class="card-top">
+                <div class="card-meta">
+                    <span id="trainStep"></span>
+                    <span id="trainLeft"></span>
+                </div>
+                <div class="progress" aria-hidden="true"><div class="progress-bar" id="trainBar"></div></div>
+            </div>
+            <button class="train-face" id="trainFace" type="button">
+                <span class="train-front" id="trainFront"></span>
+                <span class="train-back" id="trainBack" hidden></span>
+                <span class="reveal-hint" id="trainHint">Вспомните ответ и нажмите, чтобы проверить</span>
+            </button>
+            <div class="grade-nav" id="trainGrade" hidden>
+                <button class="grade-btn no" id="trainNo" type="button">Не помню</button>
+                <button class="grade-btn yes" id="trainYes" type="button">Помню</button>
+            </div>
+            <div class="quiz-done" id="trainDone" hidden>
+                <div class="empty-title" id="trainDoneTitle"></div>
+                <div class="empty-text" id="trainDoneText"></div>
+                <div class="empty-actions">
+                    <a class="pill-btn quiz-link" href="#today">К плану</a>
+                    <button class="pill-btn primary" id="trainAgain" type="button">Ещё раз</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="quiz" id="quizScreen">
         <div class="navbar">
             <a class="back" href="#amil">
@@ -275,6 +355,9 @@
             <div class="navbar-side">
                 <button class="aa-btn read-btn" id="readBtn" type="button" aria-label="Чтение на весь экран">
                     <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button class="aa-btn" id="retellBtn" type="button" aria-label="Пересказ">
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                 </button>
                 <button class="aa-btn" id="sizeBtn" type="button" aria-label="Размер текста" aria-expanded="false">
                     <span class="aa-small">A</span><span class="aa-big">a</span>
@@ -515,6 +598,31 @@
         <div class="reader-hint">Слово — перевод · экран — следующая строка</div>
     </div>
 
+    <!-- Подготовка к пересказу: план по шагам и запись голоса -->
+    <div class="reader retell" id="retell" role="dialog" aria-modal="true" aria-label="Пересказ" hidden>
+        <div class="reader-top">
+            <button class="icon-btn" id="retellClose" type="button" aria-label="Закрыть пересказ">
+                <svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <span class="reader-count">Пересказ</span>
+            <span class="retell-side" aria-hidden="true"></span>
+        </div>
+        <div class="retell-scroll">
+            <p class="retell-intro">Расскажите урок по шагам своими словами. Коснитесь шага, чтобы подсмотреть перевод, ещё раз — арабский текст.</p>
+            <ol class="retell-steps" id="retellSteps"></ol>
+        </div>
+        <div class="retell-rec">
+            <button class="rec-btn" id="recBtn" type="button" aria-label="Записать пересказ"><span class="rec-dot"></span></button>
+            <div class="rec-info">
+                <div class="rec-status" id="recStatus">Запишите пересказ и послушайте себя</div>
+                <audio class="rec-audio" id="recAudio" controls hidden></audio>
+            </div>
+            <button class="icon-btn rec-del" id="recDel" type="button" aria-label="Удалить запись" hidden>
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+        </div>
+    </div>
+
     <!-- Нет сети или не удалось загрузить -->
     <div class="net-layer" id="netLayer" hidden>
         <div class="net-card" role="alertdialog" aria-labelledby="netTitle" aria-describedby="netText">
@@ -585,12 +693,13 @@
             </div>
             <div class="qawl-foot">
                 <span class="qawl-page" id="qawlPage"></span>
+                <button class="pill-btn qawl-assign" id="qawlAssign" type="button" aria-pressed="false" hidden></button>
                 <button class="pill-btn primary" id="qawlBranch" type="button"></button>
             </div>
         </div>
     </div>
 
-    <script src="js/app.js?v=0058"></script>
+    <script src="js/app.js?v=0059"></script>
 </body>
 
 </html>

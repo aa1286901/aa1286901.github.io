@@ -363,7 +363,8 @@ function setView(view) {
   hideNetError();
   toggleSizer(false);
   stopSpeech();
-  document.body.classList.remove("view-home", "view-welcome", "view-nahw", "view-quiz");
+  closeRetell();
+  document.body.classList.remove("view-home", "view-welcome", "view-nahw", "view-quiz", "view-today", "view-train");
   if (view !== "lesson") document.body.classList.add("view-" + view);
   if (view !== currentView) {
     prevView = currentView;
@@ -523,6 +524,7 @@ async function openLesson(id) {
     $("mainContent").classList.remove("is-loading");
     // прокрутку ставим, когда текст уже на экране
     $("storyScreen").querySelector(".story-card").scrollTop = saved.scroll || 0;
+    runPendingAction();
   } catch (err) {
     showNetError(() => openLesson(id), "#mabda-" + id.split("-")[0]);
   } finally {
@@ -530,7 +532,15 @@ async function openLesson(id) {
   }
 }
 
+let routedOnce = false;
 async function route() {
+  // При запуске, если что-то задано, сразу «Сегодня»
+  if (!routedOnce) {
+    routedOnce = true;
+    if (!location.hash && (plan.mabda || plan.unm?.topics?.length)) return location.replace("#today");
+  }
+  if (location.hash === "#today") return showToday();
+  if (location.hash === "#unm-train") return showTrain();
   if (location.hash === "#amil-quiz") return showQuiz();
   if (TREE_BOOKS[location.hash]) return showNahw(location.hash);
   if (location.hash === "#mabda") return showWelcome();
@@ -637,6 +647,7 @@ function grade(known) {
   const idx = deck[pos];
   const w = words[idx];
   setBox(w, known ? boxOf(w) + 1 : 0);
+  if (words.every((x) => isLearned(x))) markStep("words");
   // «Не знаю» — слово вернётся через несколько карточек
   if (!known && deck.length > 1) deck.splice(Math.min(pos + 1 + RETRY_GAP, deck.length), 0, idx);
   renderChips();
@@ -955,7 +966,7 @@ function nodeCard(i, level, cls = "") {
   const toggle = k
     ? `<button class="nb-open" type="button" data-open="${i}" data-level="${level}" aria-expanded="${open}" aria-label="Темы: ${k}">${CHEVRON}</button>`
     : "";
-  return `<div class="nb${open ? " open" : ""}${k ? " has-kids" : ""} ${cls}"><button class="nb-box" type="button" data-i="${i}"><span class="nb-ar" lang="ar" dir="rtl">${esc(n.ar)}</span>${n.ru ? `<span class="nb-ru">${esc(n.ru)}</span>` : ""}${k ? `<span class="nb-count">${topicCount(n.total ?? k, n.cw)}</span>` : ""}</button>${toggle}</div>`;
+  return `<div class="nb${open ? " open" : ""}${k ? " has-kids" : ""}${isAssigned(i) ? " assigned" : ""} ${cls}"><button class="nb-box" type="button" data-i="${i}"><span class="nb-ar" lang="ar" dir="rtl">${esc(n.ar)}</span>${n.ru ? `<span class="nb-ru">${esc(n.ru)}</span>` : ""}${k ? `<span class="nb-count">${topicCount(n.total ?? k, n.cw)}</span>` : ""}</button>${toggle}</div>`;
 }
 
 function renderNahw(scrollTo) {
@@ -1081,6 +1092,7 @@ function openQawl(i) {
   $("qawlPage").textContent = n.p ? `${nahwBook.book}, стр. ${n.p}` : "";
   const kids = kidsOf(i).length;
   $("qawlBranch").hidden = !kids || nahwPath.includes(i);
+  applyAssignBtn(i);
   $("qawlBranch").textContent = `Показать: ${topicCount(kids, n.cw)}`;
   $("qawlExTitle").textContent = exs.length > 1 ? "Примеры" : "Пример";
   $("qawlLayer").hidden = false;
@@ -1630,12 +1642,13 @@ $("bpOpen").addEventListener("click", (e) => {
 }
 
 // ── Возврат свайпом от левого края, как в iPhone ──
-const VIEW_EL = { welcome: "welcomeScreen", nahw: "nahwScreen", quiz: "quizScreen", lesson: "mainContent" };
+const VIEW_EL = { welcome: "welcomeScreen", nahw: "nahwScreen", quiz: "quizScreen", lesson: "mainContent", today: "todayScreen", train: "trainScreen" };
 {
   let edge = null;
   const blocked = () =>
     currentView === "home" ||
     !$("reader").hidden ||
+    !$("retell").hidden ||
     !$("setLayer").hidden ||
     !$("qawlLayer").hidden ||
     !$("netLayer").hidden ||
@@ -1709,6 +1722,7 @@ function renderReaderLine(smooth = true) {
   $("readerCount").textContent = `Строка ${readerLine + 1} из ${story.length}`;
   $("readerTrText").hidden = !readerTr || !sentences[readerLine];
   $("readerTrText").textContent = sentences[readerLine] || "";
+  if (readerLine === story.length - 1) markStep(readerPurpose);
   if (lessonId) {
     lessonPlace().line = readerLine;
     savePlace();
@@ -1737,6 +1751,7 @@ function openReader() {
 
 function closeReader() {
   if (!$("reader").hidden) stopSpeech();
+  readerPurpose = "read";
   $("reader").hidden = true;
 }
 
@@ -1879,6 +1894,550 @@ if (splash) {
   // на случай, если анимация не сработала
   setTimeout(hideSplash, (Number(document.documentElement.dataset.splashSec) || 5) * 1000 + 600);
 }
+
+// ── Задано учителем: план на сегодня ────────────────────
+// plan = { days: [дни недели занятий, 0 — Вс], mabda: { key, since, done: { шаг: дата } }, unm: { topics: [узлы], since, trained } }
+const PLAN_KEY = "arabic.plan";
+const WEEK = [["Пн", 1], ["Вт", 2], ["Ср", 3], ["Чт", 4], ["Пт", 5], ["Сб", 6], ["Вс", 0]];
+const DAY_NAMES = ["воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота"];
+const MONTHS = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+const STEPS = [
+  { id: "read", title: "Прочитать текст", sub: "Чтение на весь экран, перевод слова — касанием" },
+  { id: "words", title: "Выучить слова", sub: "Карточки урока: смахивайте «знаю» / «не знаю»" },
+  { id: "translate", title: "Перевод по тексту", sub: "Переводите строку вслух, проверяйте кнопкой перевода" },
+  { id: "retell", title: "Пересказ", sub: "План по шагам и запись своего голоса" },
+];
+const UNM = "#nahw";
+let plan = store.get(PLAN_KEY, {});
+if (typeof plan !== "object" || plan === null) plan = {};
+plan.days = Array.isArray(plan.days) ? plan.days.filter((d) => Number.isInteger(d) && d >= 0 && d < 7) : [];
+if (plan.mabda && !LESSONS.some((l) => l.key === plan.mabda.key)) delete plan.mabda;
+const savePlan = () => store.set(PLAN_KEY, plan);
+
+const ymd = (d = new Date()) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const fromYmd = (s) => {
+  const [y, m, d] = s.split("-").map(Number);
+  return new Date(y, m - 1, d);
+};
+const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+const dayDiff = (a, b) => Math.round((b - a) / 864e5);
+const today0 = () => fromYmd(ymd());
+const dateLabel = (d) => `${DAY_NAMES[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+const relLabel = (n) => (n <= 0 ? "сегодня" : n === 1 ? "завтра" : `через ${n} ${plural(n, "день", "дня", "дней")}`);
+
+// Ближайший день занятий после start (или с него самого)
+function nextClass(start, inclusive) {
+  if (!plan.days.length) return null;
+  for (let k = inclusive ? 0 : 1; k <= 7; k++) {
+    const d = addDays(start, k);
+    if (plan.days.includes(d.getDay())) return d;
+  }
+  return null;
+}
+// Сдать — в ближайшее занятие после того, как задали; прошедшее занятие сдвигается на следующее
+function dueOf(task) {
+  if (!task) return null;
+  const due = nextClass(fromYmd(task.since), false);
+  const t = today0();
+  return due && due < t ? nextClass(t, true) : due;
+}
+
+// Оставшиеся шаги урока раскладываются на дни до занятия (включая его день)
+function mabdaSchedule() {
+  const m = plan.mabda;
+  const due = dueOf(m);
+  const left = STEPS.filter((s) => !m.done?.[s.id]);
+  const n = due ? Math.max(1, dayDiff(today0(), due) + 1) : Math.max(1, left.length);
+  const days = Array.from({ length: n }, () => []);
+  left.forEach((s, k) => days[Math.floor((k * n) / left.length)].push(s));
+  return { due, days };
+}
+
+function markStep(id) {
+  const m = plan.mabda;
+  if (!m || m.key !== lessonId || m.done?.[id]) return;
+  (m.done ||= {})[id] = ymd();
+  savePlan();
+  toast(`В плане отмечено: ${STEPS.find((s) => s.id === id).title}`);
+}
+
+// Что сделать сегодня: шаги на сегодня + уже отмеченные сегодня
+function todayItems() {
+  const items = [];
+  const t = ymd();
+  if (plan.mabda) {
+    const m = plan.mabda;
+    const { days } = mabdaSchedule();
+    STEPS.forEach((s) => {
+      if (m.done?.[s.id] === t) items.push({ step: s.id, title: s.title, sub: s.sub, done: true });
+    });
+    days[0].forEach((s) => items.push({ step: s.id, title: s.title, sub: s.sub, done: false }));
+    if (!items.length && STEPS.some((s) => !m.done?.[s.id]))
+      items.push({ step: "review", title: "Повторить слова", sub: "5 минут карточек — чтобы не забыть", done: m.review === t });
+  }
+  if (plan.unm?.topics?.length)
+    items.push({ step: "unm", title: "Повторить темы Унмузаджа", sub: "Термин ↔ определение", done: plan.unm.trained === t });
+  return items;
+}
+
+function updateTodayDot() {
+  $("todayDot").hidden = !todayItems().some((x) => !x.done);
+}
+
+let unmNodes = null; // узлы Унмузаджа в порядке дерева: индекс = номер темы
+async function loadUnm() {
+  const data = await loadTreeBook(UNM);
+  if (!unmNodes) {
+    unmNodes = [];
+    const walk = (n, parent) => {
+      const i = unmNodes.push({ n, parent }) - 1;
+      (n.children || []).forEach((c) => walk(c, i));
+    };
+    walk(data.tree, null);
+  }
+  return unmNodes;
+}
+
+let pickerOpen = false;
+function renderToday() {
+  const t = today0();
+  $("todayDate").textContent = dateLabel(t);
+  const items = todayItems();
+  const lesson = plan.mabda && LESSONS.find((l) => l.key === plan.mabda.key);
+  const CHECK = `<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  $("todayPlan").innerHTML = items.length
+    ? items
+        .map(
+          (x) =>
+            `<div class="today-item${x.done ? " done" : ""}"><button class="today-check" type="button" data-check="${x.step}" aria-pressed="${x.done}" aria-label="${x.done ? "Снять отметку" : "Отметить сделанным"}">${CHECK}</button><button class="today-go" type="button" data-go="${x.step}"><span class="today-item-title">${esc(x.title)}</span><span class="today-item-sub">${x.step === "unm" ? esc(x.sub) : esc(lesson ? `Урок ${lesson.n} · ${x.sub}` : x.sub)}</span></button></div>`,
+        )
+        .join("")
+    : `<div class="today-empty">${plan.mabda || plan.unm?.topics?.length ? "На сегодня всё сделано" : "Укажите ниже, что задал учитель, — здесь появится план на каждый день"}</div>`;
+
+  // Что дальше по дням
+  let next = "";
+  if (plan.mabda) {
+    const { due, days } = mabdaSchedule();
+    const rows = days
+      .map((list, k) => (k && list.length ? `<li><b>${k === 1 ? "Завтра" : dateLabel(addDays(t, k))}</b> — ${list.map((s) => s.title.toLowerCase()).join(", ")}</li>` : ""))
+      .join("");
+    if (rows) next = `<div class="eyebrow">Дальше</div><ul>${rows}</ul>`;
+    if (!due) next += `<p>Отметьте дни занятий — план разложится до ближайшего урока.</p>`;
+  }
+  $("todayNext").innerHTML = next;
+  $("todayNext").hidden = !next;
+
+  // Мабда: заданный урок
+  const m = plan.mabda;
+  const due = dueOf(m);
+  let mabda = `<div class="today-card-head"><span class="today-book">Мабда аль-Кираа</span>${m && due ? `<span class="today-due">сдать ${relLabel(dayDiff(t, due))}</span>` : ""}</div>`;
+  if (pickerOpen) {
+    const cur = lesson || LESSONS.find((l) => l.key === place.mabda) || LESSONS[0];
+    mabda += `<div class="today-picker"><select id="pickPart" aria-label="Часть">${PARTS.map((p) => `<option value="${p.id}"${p.id === cur.part ? " selected" : ""}>${esc(p.ru)}</option>`).join("")}</select><select id="pickLesson" aria-label="Урок"></select></div><div class="today-actions"><button class="pill-btn" type="button" data-act="cancel">Отмена</button><button class="pill-btn primary" type="button" data-act="save">Сохранить</button></div>`;
+  } else if (lesson) {
+    mabda += `<a class="today-lesson" href="#lesson-${lesson.key}"><span class="today-lesson-num">${lesson.n ?? "✎"}</span><span class="today-lesson-info"><span class="today-lesson-ru">Часть ${lesson.part} · ${esc(lesson.ruTitle)}</span><span class="today-lesson-ar" lang="ar" dir="rtl">${esc(lesson.title)}</span></span></a>${due ? `<div class="today-meta">Сдать: ${dateLabel(due)}</div>` : ""}<div class="today-actions"><button class="pill-btn" type="button" data-act="pick">Изменить</button><button class="pill-btn primary" type="button" data-act="passed">Сдал урок</button></div>`;
+  } else {
+    mabda += `<p class="today-none">Урок не задан</p><div class="today-actions"><button class="pill-btn primary" type="button" data-act="pick">Указать урок</button></div>`;
+  }
+  $("todayMabda").innerHTML = mabda;
+  if (pickerOpen) fillLessonPick(lesson || LESSONS.find((l) => l.key === place.mabda) || LESSONS[0]);
+
+  // Унмузадж: заданные темы
+  const topics = plan.unm?.topics || [];
+  const udue = topics.length ? dueOf(plan.unm) : null;
+  let unm = `<div class="today-card-head"><span class="today-book">Шарх аль-Унмузадж</span>${udue ? `<span class="today-due">сдать ${relLabel(dayDiff(t, udue))}</span>` : ""}</div>`;
+  if (topics.length && unmNodes) {
+    unm += `<ul class="today-topics">${topics
+      .map((i) => unmNodes[i] && `<li><span class="today-topic-ar" lang="ar" dir="rtl">${esc(unmNodes[i].n.ar)}</span><span class="today-topic-ru">${esc(unmNodes[i].n.ru || "")}</span><button class="today-x" type="button" data-untopic="${i}" aria-label="Убрать тему">×</button></li>`)
+      .join("")}</ul><div class="today-actions"><a class="pill-btn" href="#nahw">Темы в дереве</a><a class="pill-btn" href="#unm-train">Тренировка</a><button class="pill-btn primary" type="button" data-act="unmPassed">Сдал</button></div>`;
+  } else {
+    unm += `<p class="today-none">Темы не заданы. Откройте термин в дереве и нажмите «Задано учителем».</p><div class="today-actions"><a class="pill-btn primary" href="#nahw">Выбрать темы</a></div>`;
+  }
+  $("todayUnm").innerHTML = unm;
+
+  $("todayDays").innerHTML = WEEK.map(
+    ([name, d]) => `<button type="button" class="day-chip${plan.days.includes(d) ? " on" : ""}" data-day="${d}" aria-pressed="${plan.days.includes(d)}">${name}</button>`,
+  ).join("");
+  updateTodayDot();
+}
+
+function fillLessonPick(cur) {
+  const part = Number($("pickPart").value);
+  $("pickLesson").innerHTML = LESSONS.filter((l) => l.part === part)
+    .map((l) => `<option value="${l.key}"${l.key === cur.key ? " selected" : ""}>${l.n ? `${l.n}. ` : ""}${esc(l.ruTitle)}</option>`)
+    .join("");
+}
+
+async function showToday() {
+  setView("today");
+  document.title = "Сегодня — Arabic";
+  renderToday();
+  if (plan.unm?.topics?.length && !unmNodes) {
+    try {
+      await loadUnm();
+      renderToday();
+    } catch {}
+  }
+}
+
+// Переход к шагу: урок открывается в нужном режиме
+let pendingAction = null;
+function goStep(step) {
+  if (step === "unm") return (location.hash = "#unm-train");
+  if (!plan.mabda) return;
+  pendingAction = step === "review" ? "words" : step;
+  const hash = "#lesson-" + plan.mabda.key;
+  if (location.hash === hash) route();
+  else location.hash = hash;
+}
+function runPendingAction() {
+  const a = pendingAction;
+  pendingAction = null;
+  if (!a) return;
+  if (a === "words") return setMode("words");
+  setMode("story");
+  if (a === "retell") return openRetell();
+  readerPurpose = a === "translate" ? "translate" : "read";
+  if (a === "translate") {
+    readerTr = false;
+    $("readerTr").setAttribute("aria-pressed", "false");
+  }
+  openReader();
+  if (a === "translate") toast("Переведите строку вслух, затем проверьте кнопкой перевода справа вверху", 4200);
+}
+let readerPurpose = "read";
+
+$("todayPlan").addEventListener("click", (e) => {
+  const c = e.target.closest("[data-check]");
+  if (c) {
+    const step = c.dataset.check;
+    const t = ymd();
+    if (step === "unm") plan.unm.trained = plan.unm.trained === t ? null : t;
+    else if (step === "review") plan.mabda.review = plan.mabda.review === t ? null : t;
+    else {
+      const done = (plan.mabda.done ||= {});
+      if (done[step]) delete done[step];
+      else done[step] = t;
+    }
+    savePlan();
+    return renderToday();
+  }
+  const g = e.target.closest("[data-go]");
+  if (g) goStep(g.dataset.go);
+});
+
+$("todayMabda").addEventListener("change", (e) => {
+  if (e.target.id === "pickPart") fillLessonPick({ key: "" });
+});
+$("todayMabda").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-act]");
+  if (!b) return;
+  const act = b.dataset.act;
+  if (act === "pick") pickerOpen = true;
+  if (act === "cancel") pickerOpen = false;
+  if (act === "save") {
+    const key = $("pickLesson").value;
+    if (plan.mabda?.key !== key) plan.mabda = { key, since: ymd(), done: {} };
+    pickerOpen = false;
+    savePlan();
+  }
+  if (act === "passed") {
+    const i = LESSONS.findIndex((l) => l.key === plan.mabda.key);
+    const next = LESSONS[i + 1];
+    if (!confirm(next ? `Урок сдан? Следующим станет «${next.ruTitle}».` : "Урок сдан? Это последний урок в приложении.")) return;
+    if (next) plan.mabda = { key: next.key, since: ymd(), done: {} };
+    else delete plan.mabda;
+    savePlan();
+    toast("Молодец! Урок сдан");
+  }
+  renderToday();
+});
+$("todayUnm").addEventListener("click", (e) => {
+  const x = e.target.closest("[data-untopic]");
+  if (x) {
+    plan.unm.topics = plan.unm.topics.filter((i) => i !== Number(x.dataset.untopic));
+    savePlan();
+    return renderToday();
+  }
+  if (e.target.closest('[data-act="unmPassed"]')) {
+    if (!confirm("Темы сданы? Список заданных тем очистится.")) return;
+    plan.unm = { topics: [], since: ymd() };
+    savePlan();
+    toast("Молодец! Темы сданы");
+    renderToday();
+  }
+});
+$("todayDays").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-day]");
+  if (!b) return;
+  const d = Number(b.dataset.day);
+  plan.days = plan.days.includes(d) ? plan.days.filter((x) => x !== d) : [...plan.days, d];
+  savePlan();
+  renderToday();
+});
+
+// Унмузадж: «Задано учителем» в окне термина
+const isAssigned = (i) => nahwHash === UNM && !!plan.unm?.topics?.includes(i);
+function applyAssignBtn(i) {
+  const b = $("qawlAssign");
+  b.hidden = nahwHash !== UNM;
+  const on = isAssigned(i);
+  b.textContent = on ? "★ Задано учителем" : "☆ Задано учителем";
+  b.setAttribute("aria-pressed", String(on));
+  b.classList.toggle("on", on);
+}
+$("qawlAssign").onclick = () => {
+  const i = qawlIndex;
+  if (!plan.unm?.topics?.length) plan.unm = { topics: [], since: ymd() };
+  const on = plan.unm.topics.includes(i);
+  plan.unm.topics = on ? plan.unm.topics.filter((x) => x !== i) : [...plan.unm.topics, i];
+  savePlan();
+  applyAssignBtn(i);
+  renderNahw();
+  toast(on ? "Тема убрана из задания" : "Тема добавлена в задание на «Сегодня»");
+};
+
+// ── Пересказ: план по шагам и запись голоса ──
+function openRetell() {
+  if (!story.length) return;
+  closeSheet();
+  toggleSizer(false);
+  const n = story.length;
+  const size = Math.max(1, Math.ceil(n / 7));
+  const steps = [];
+  for (let k = 0; k < n; k += size) steps.push([k, Math.min(n, k + size)]);
+  const words = (s) => s.split(/\s+/);
+  $("retellSteps").innerHTML = steps
+    .map(([a, b]) => {
+      const ru = sentences.slice(a, b).join(" ");
+      const first = words(sentences[a] || "");
+      const hint = first.slice(0, 6).join(" ") + (first.length > 6 || b - a > 1 ? " …" : "");
+      const ar = story
+        .slice(a, b)
+        .map((line, k) => esc(lineText(line) + (ends[a + k] ?? ".")))
+        .join(" ");
+      return `<li class="retell-step" data-stage="0"><span class="retell-hint">${esc(hint)}</span><span class="retell-full">${esc(ru)}</span><span class="retell-ar" lang="ar" dir="rtl">${ar}</span></li>`;
+    })
+    .join("");
+  $("retell").hidden = false;
+  $("retellSteps").parentElement.scrollTop = 0;
+  showSavedRec();
+}
+
+function closeRetell() {
+  if ($("retell").hidden) return;
+  stopRec();
+  stopSpeech();
+  $("retell").hidden = true;
+}
+
+$("retellBtn").onclick = openRetell;
+$("retellClose").onclick = closeRetell;
+// Касание шага: подсказка → перевод → арабский текст → снова подсказка
+$("retellSteps").addEventListener("click", (e) => {
+  const li = e.target.closest(".retell-step");
+  if (li) li.dataset.stage = String((Number(li.dataset.stage) + 1) % 3);
+});
+
+// Записи хранятся в IndexedDB этого телефона, по одной на урок
+const recDb = () =>
+  new Promise((res, rej) => {
+    const r = indexedDB.open("arabic-rec", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("rec");
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+async function recStore(mode, key, value) {
+  try {
+    const db = await recDb();
+    return await new Promise((res) => {
+      const st = db.transaction("rec", mode === "get" ? "readonly" : "readwrite").objectStore("rec");
+      const q = mode === "get" ? st.get(key) : mode === "put" ? st.put(value, key) : st.delete(key);
+      q.onsuccess = () => res(q.result ?? null);
+      q.onerror = () => res(null);
+    });
+  } catch {
+    return null;
+  }
+}
+
+let recorder = null;
+let recTimer = 0;
+let recUrl = null;
+const recKey = () => "lesson-" + lessonId;
+const fmtTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+function showRec(blob) {
+  if (recUrl) URL.revokeObjectURL(recUrl);
+  recUrl = blob ? URL.createObjectURL(blob) : null;
+  $("recAudio").hidden = !blob;
+  $("recDel").hidden = !blob;
+  if (blob) $("recAudio").src = recUrl;
+  else $("recAudio").removeAttribute("src");
+  $("recStatus").textContent = blob ? "Ваш пересказ — послушайте себя" : "Запишите пересказ и послушайте себя";
+}
+async function showSavedRec() {
+  showRec(null);
+  const key = recKey();
+  const blob = await recStore("get", key);
+  if (blob && key === recKey() && !$("retell").hidden) showRec(blob);
+}
+
+async function startRec() {
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return toast("Запись голоса здесь не поддерживается");
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch {
+    return toast("Нет доступа к микрофону — разрешите его в настройках iPhone", 3600);
+  }
+  const type = ["audio/mp4", "audio/webm"].find((t) => MediaRecorder.isTypeSupported?.(t));
+  const chunks = [];
+  const key = recKey();
+  recorder = new MediaRecorder(stream, type ? { mimeType: type } : undefined);
+  recorder.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+  recorder.onstop = async () => {
+    stream.getTracks().forEach((t) => t.stop());
+    const blob = new Blob(chunks, { type: recorder?.mimeType || type || "audio/mp4" });
+    recorder = null;
+    $("recBtn").classList.remove("recording");
+    if (!blob.size) return showRec(null);
+    await recStore("put", key, blob);
+    if (key === recKey()) {
+      showRec(blob);
+      markStep("retell");
+    }
+  };
+  recorder.start();
+  const t0 = Date.now();
+  $("recBtn").classList.add("recording");
+  $("recAudio").hidden = true;
+  $("recDel").hidden = true;
+  const tick = () => ($("recStatus").textContent = `Идёт запись ${fmtTime((Date.now() - t0) / 1000)} — нажмите, чтобы остановить`);
+  tick();
+  recTimer = setInterval(tick, 500);
+}
+function stopRec() {
+  clearInterval(recTimer);
+  if (recorder && recorder.state !== "inactive") recorder.stop();
+}
+$("recBtn").onclick = () => (recorder ? stopRec() : startRec());
+$("recDel").onclick = async () => {
+  if (!confirm("Удалить запись пересказа?")) return;
+  await recStore("del", recKey());
+  showRec(null);
+};
+
+// ── Унмузадж: тренировка «термин ↔ определение» ──
+const TRAIN_MODE_KEY = "arabic.unmMode";
+let trainMode = store.get(TRAIN_MODE_KEY, "term") === "def" ? "def" : "term";
+let trainDeck = [];
+let trainPos = 0;
+let trainTotal = 0;
+
+const defOf = (n) => ({ ar: n.qawl || "", ru: n.qawlRu || n.def || "" });
+function trainTopics() {
+  // заданные темы вместе с подтемами
+  const set = new Set();
+  const add = (i) => {
+    set.add(i);
+    unmNodes.forEach((x, k) => x.parent === i && add(k));
+  };
+  (plan.unm?.topics || []).forEach(add);
+  return [...set].filter((i) => {
+    const d = defOf(unmNodes[i].n);
+    return d.ar || d.ru;
+  });
+}
+
+function startTrain() {
+  trainDeck = shuffle(trainTopics());
+  trainTotal = trainDeck.length;
+  trainPos = 0;
+  $("trainDone").hidden = true;
+  renderTrain();
+}
+
+function renderTrain() {
+  $("trainMode").querySelectorAll("button").forEach((b) => {
+    const on = b.dataset.mode === trainMode;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-checked", String(on));
+  });
+  const empty = !trainTotal;
+  const done = !empty && trainPos >= trainDeck.length;
+  ["trainFace", "trainGrade"].forEach((id) => ($(id).hidden = empty || done));
+  $("trainDone").hidden = !(empty || done);
+  if (empty) {
+    $("trainDoneTitle").textContent = "Темы не заданы";
+    $("trainDoneText").textContent = "Откройте термин в дереве Унмузаджа и нажмите «Задано учителем».";
+    $("trainAgain").hidden = true;
+    $("trainStep").textContent = "";
+    $("trainLeft").textContent = "";
+    return;
+  }
+  $("trainAgain").hidden = false;
+  if (done) {
+    $("trainDoneTitle").textContent = "Все темы повторены";
+    $("trainDoneText").textContent = `Повторено тем: ${trainTotal}. Перед занятием пройдите ещё раз в обратную сторону.`;
+    $("trainBar").style.width = "100%";
+    $("trainStep").textContent = "Готово";
+    plan.unm.trained = ymd();
+    savePlan();
+    return;
+  }
+  const n = unmNodes[trainDeck[trainPos]].n;
+  const d = defOf(n);
+  const term = `<span class="train-term" lang="ar" dir="rtl">${esc(n.ar)}</span>${n.ru ? `<span class="train-ru">${esc(n.ru)}</span>` : ""}`;
+  const def = `${d.ar ? `<span class="train-def-ar" lang="ar" dir="rtl">${esc(d.ar)}</span>` : ""}${d.ru ? `<span class="train-def-ru">${esc(d.ru)}</span>` : ""}`;
+  // в обратную сторону показываем только перевод: в арабском определении часто есть сам термин
+  $("trainFront").innerHTML = trainMode === "term" ? term : `<span class="train-def-ru big">${esc(d.ru || d.ar)}</span>`;
+  $("trainBack").innerHTML = trainMode === "term" ? def : term;
+  $("trainBack").hidden = true;
+  $("trainHint").hidden = false;
+  $("trainGrade").hidden = true;
+  $("trainStep").textContent = `Тема ${Math.min(trainPos + 1, trainDeck.length)} из ${trainDeck.length}`;
+  $("trainLeft").textContent = `${trainTotal} ${plural(trainTotal, "тема", "темы", "тем")}`;
+  $("trainBar").style.width = `${(trainPos / trainDeck.length) * 100}%`;
+  $("trainFace").scrollTop = 0;
+}
+
+$("trainFace").onclick = () => {
+  if (!$("trainBack").hidden) return;
+  $("trainBack").hidden = false;
+  $("trainHint").hidden = true;
+  $("trainGrade").hidden = false;
+};
+function gradeTrain(ok) {
+  // «Не помню» — тема вернётся через несколько карточек
+  if (!ok) trainDeck.splice(Math.min(trainPos + 1 + RETRY_GAP, trainDeck.length), 0, trainDeck[trainPos]);
+  trainPos++;
+  renderTrain();
+}
+$("trainNo").onclick = () => gradeTrain(false);
+$("trainYes").onclick = () => gradeTrain(true);
+$("trainAgain").onclick = startTrain;
+$("trainMode").onclick = (e) => {
+  const b = e.target.closest("button[data-mode]");
+  if (!b || b.dataset.mode === trainMode) return;
+  trainMode = b.dataset.mode;
+  store.set(TRAIN_MODE_KEY, trainMode);
+  startTrain();
+};
+
+async function showTrain() {
+  setView("train");
+  document.title = "Темы Унмузаджа — Arabic";
+  try {
+    await loadUnm();
+    startTrain();
+  } catch {
+    showNetError(showTrain, "#today");
+  }
+}
+
+updateTodayDot();
 
 // ── Инициализация ───────────────────────────────────────
 route();
