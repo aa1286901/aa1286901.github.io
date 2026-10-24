@@ -4686,12 +4686,13 @@ body.view-main .main {
 }
 
 body.view-main .tabbar,
-body.view-home .tabbar {
+body.view-home .tabbar,
+body.view-settings .tabbar {
     display: flex
 }
 
 .tab {
-    min-width: 96px;
+    min-width: 92px;
     padding: 6px 14px 5px;
     border-radius: 999px;
     color: var(--muted);
@@ -4705,7 +4706,8 @@ body.view-home .tabbar {
 }
 
 body.view-main .tab[data-tab="main"],
-body.view-home .tab[data-tab="library"] {
+body.view-home .tab[data-tab="library"],
+body.view-settings .tab[data-tab="settings"] {
     background: var(--fill);
     color: var(--accent)
 }
@@ -4718,4 +4720,47 @@ body.view-home .home {
 .gauge-fill.zero,
 .goal-ring .ts-fill.zero {
     opacity: 0
+}
+
+/* ── Вкладка «Настройки»: лист на весь экран под панелью вкладок ── */
+body.view-settings .app {
+    display: none
+}
+
+.set-layer.page {
+    z-index: 30;
+    background: var(--bg)
+}
+
+.set-layer.page .set-overlay,
+.set-layer.page .set-done,
+.set-layer.page .set-bar-side {
+    display: none
+}
+
+.set-layer.page .set-sheet {
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
+    transform: none;
+    transition: none
+}
+
+.set-layer.page .set-bar {
+    display: block;
+    height: auto;
+    padding: calc(env(safe-area-inset-top) + 14px) 20px 0
+}
+
+.set-layer.page .set-title {
+    font-family: "New York", "Iowan Old Style", Georgia, serif;
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    text-align: left
+}
+
+.set-layer.page .set-scroll {
+    flex: 1;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 110px)
 }
