@@ -1,0 +1,67 @@
+:root {
+  /* === Цвета === */
+  --color-bg: #f7f4ef;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f9f6f1;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #6b6b6b;
+  --color-text-muted: #999999;
+  --color-accent: #c9a86a;
+  --color-accent-dark: #b8944f;
+  --color-accent-light: #f0e6d0;
+  --color-border: #e8e2d8;
+  --color-border-light: #f0ece6;
+  --color-success: #4caf50;
+  --color-error: #e53935;
+  --color-warning: #ff9800;
+  --color-overlay: rgba(0, 0, 0, 0.4);
+
+  /* === Скругления === */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* === Тени === */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.1);
+
+  /* === Типографика === */
+  --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.375rem;
+  --font-size-2xl: 1.75rem;
+  --font-size-3xl: 2.25rem;
+  --font-size-hero: 3rem;
+
+  /* === Отступы === */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* === Переходы === */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+
+  /* === Размеры === */
+  --bottom-nav-height: 64px;
+  --header-height: 56px;
+  --page-max-width: 650px;
+  --page-padding: 16px;
+  
+  /* === Safe Areas (iPhone Dynamic Island) === */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}

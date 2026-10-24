@@ -1,0 +1,74 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Магомед",
+      "email": "magomed@fasad.ai",
+      "password_hash": "$2y$10$fnBUQcZvgR23bjU7soccC.x0GitPQGH3VXAVntzKMTnY9PIgMftMS",
+      "avatar": "",
+      "created_at": "2026-01-01 12:00:00",
+      "updated_at": "2026-01-01 12:00:00"
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "name": "Облицовка дома в Дербенте",
+      "original_image": "/assets/demo/demo-house-before.jpg",
+      "generated_image": "/assets/demo/demo-house-after.jpg",
+      "status": "completed",
+      "progress": 100,
+      "created_at": "2026-01-15 14:30:00",
+      "updated_at": "2026-01-15 14:30:00"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "name": "Фасад частного дома",
+      "original_image": "/assets/demo/demo-house-before.jpg",
+      "generated_image": "/assets/demo/demo-house-after.jpg",
+      "status": "completed",
+      "progress": 100,
+      "created_at": "2026-02-20 10:15:00",
+      "updated_at": "2026-02-20 10:15:00"
+    },
+    {
+      "id": 3,
+      "user_id": 1,
+      "name": "Реконструкция фасада",
+      "original_image": "/assets/demo/demo-house-before.jpg",
+      "generated_image": "/assets/demo/demo-house-after.jpg",
+      "status": "completed",
+      "progress": 100,
+      "created_at": "2026-03-10 16:45:00",
+      "updated_at": "2026-03-10 16:45:00"
+    }
+  ],
+  "project_materials": [
+    { "id": 1, "project_id": 1, "material_id": "derbent", "category": "base", "selected_variant": null },
+    { "id": 2, "project_id": 1, "material_id": "khunzah", "category": "facade", "selected_variant": null },
+    { "id": 3, "project_id": 2, "material_id": "megugin", "category": "base", "selected_variant": null },
+    { "id": 4, "project_id": 2, "material_id": "akushi", "category": "facade", "selected_variant": null },
+    { "id": 5, "project_id": 3, "material_id": "akushi", "category": "base", "selected_variant": null },
+    { "id": 6, "project_id": 3, "material_id": "rukkel", "category": "facade", "selected_variant": null }
+  ],
+  "project_cornices": [
+    { "id": 1, "project_id": 1, "cornice_id": "cornice-mejsetazh-1", "position": "mezh-etazh", "variant": "type-1" },
+    { "id": 2, "project_id": 1, "cornice_id": "cornice-okonny-1", "position": "okno", "variant": "type-1" },
+    { "id": 3, "project_id": 1, "cornice_id": "cornice-verhny-1", "position": "verh", "variant": "type-1" },
+    { "id": 4, "project_id": 2, "cornice_id": "cornice-mejsetazh-2", "position": "mezh-etazh", "variant": "type-2" },
+    { "id": 5, "project_id": 2, "cornice_id": "cornice-bokovy-1", "position": "bok", "variant": "type-1" },
+    { "id": 6, "project_id": 2, "cornice_id": "cornice-okonny-2", "position": "okno", "variant": "type-2" },
+    { "id": 7, "project_id": 2, "cornice_id": "cornice-dverny-1", "position": "dver", "variant": "type-1" },
+    { "id": 8, "project_id": 3, "cornice_id": "cornice-mejsetazh-3", "position": "mezh-etazh", "variant": "type-3" },
+    { "id": 9, "project_id": 3, "cornice_id": "cornice-okonny-1", "position": "okno", "variant": "type-1" },
+    { "id": 10, "project_id": 3, "cornice_id": "cornice-verhny-1", "position": "verh", "variant": "type-1" }
+  ],
+  "user_favorites": [],
+  "meta": {
+    "version": "1.0",
+    "created_at": "2026-01-01 12:00:00",
+    "description": "База данных Fasad AI (JSON-хранилище)"
+  }
+}

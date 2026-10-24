@@ -1,0 +1,112 @@
+/* === Mobile-first: 320px–375px === */
+.main-content {
+  --page-padding: 16px;
+}
+
+.hero__title {
+  font-size: 2rem;
+}
+
+.hero__subtitle {
+  font-size: var(--font-size-base);
+}
+
+.btn-primary {
+  padding: 14px 24px;
+  font-size: var(--font-size-base);
+}
+
+.material-card {
+  width: 100px;
+}
+
+.material-card__image {
+  width: 100px;
+  height: 100px;
+}
+
+/* === Tablet: 768px+ === */
+@media (min-width: 768px) {
+  .main-content {
+    --page-padding: 24px;
+  }
+
+  .hero__title {
+    font-size: 2.5rem;
+  }
+
+  .catalog-grid {
+    gap: var(--spacing-lg);
+  }
+
+  .profile-stats {
+    gap: var(--spacing-lg);
+  }
+}
+
+/* === Desktop: 1024px+ === */
+@media (min-width: 1024px) {
+  body {
+    background: #e8e4de;
+  }
+
+  .main-content {
+    --page-padding: 32px;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-xl);
+    margin-top: 24px;
+    margin-bottom: 24px;
+    min-height: calc(100dvh - 48px);
+  }
+
+  .bottom-nav {
+    max-width: var(--page-max-width);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+  }
+
+  .generate-bar {
+    max-width: calc(var(--page-max-width) - 40px);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    padding: 12px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--color-border-light);
+  }
+}
+
+/* === Reduced motion === */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .carousel {
+    scroll-snap-type: none;
+  }
+
+  .catalog-section__scroll {
+    scroll-snap-type: none;
+  }
+}
+
+/* === Landscape mobile === */
+@media (max-height: 500px) and (orientation: landscape) {
+  .bottom-nav {
+    height: 56px;
+  }
+
+  .main-content {
+    padding-bottom: 68px;
+  }
+
+  .hero {
+    padding: var(--spacing-md) 0;
+  }
+
+  .camera-area {
+    aspect-ratio: 16/9;
+  }
+}

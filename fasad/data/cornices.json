@@ -1,0 +1,74 @@
+[
+  {
+    "id": "cornice-mejsetazh-1",
+    "name": "Межэтажный карниз Тип 1",
+    "category": "cornice",
+    "type": "cornice",
+    "image": "/assets/cornices/mejsetazh-1.jpg",
+    "description": "Классический межэтажный карниз с простым профилем.",
+    "active": true
+  },
+  {
+    "id": "cornice-mejsetazh-2",
+    "name": "Межэтажный карниз Тип 2",
+    "category": "cornice",
+    "type": "cornice",
+    "image": "/assets/cornices/mejsetazh-2.jpg",
+    "description": "Межэтажный карниз с декоративной волной.",
+    "active": true
+  },
+  {
+    "id": "cornice-mejsetazh-3",
+    "name": "Межэтажный карниз Тип 3",
+    "category": "cornice",
+    "type": "cornice",
+    "image": "/assets/cornices/mejsetazh-3.jpg",
+    "description": "Массивный межэтажный карниз с усиленным профилем.",
+    "active": true
+  },
+  {
+    "id": "cornice-bokovy-1",
+    "name": "Боковой флястер Тип 1",
+    "category": "cornice",
+    "type": "cornice",
+    "image": "/assets/cornices/bokovy-1.jpg",
+    "description": "Боковой флястер для обрамления углов здания.",
+    "active": true
+  },
+  {
+    "id": "cornice-okonny-1",
+    "name": "Оконный карниз Тип 1",
+    "category": "cornice",
+    "type": "cornice",
+    "image": "/assets/cornices/okonny-1.jpg",
+    "description": "Декоративный карниз над окнами.",
+    "active": true
+  },
+  {
+    "id": "cornice-okonny-2",
+    "name": "Оконный карниз Тип 2",
+    "category": "cornice",
+    "type": "cornice",
+    "image": "/assets/cornices/okonny-2.jpg",
+    "description": "Оконный карниз с капельником.",
+    "active": true
+  },
+  {
+    "id": "cornice-dverny-1",
+    "name": "Дверной козырёк",
+    "category": "cornice",
+    "type": "cornice",
+    "image": "/assets/cornices/dverny-1.jpg",
+    "description": "Декоративный козырёк над входной дверью.",
+    "active": true
+  },
+  {
+    "id": "cornice-verhny-1",
+    "name": "Верхний карниз Тип 1",
+    "category": "cornice",
+    "type": "cornice",
+    "image": "/assets/cornices/verhny-1.jpg",
+    "description": "Финишный карниз крыши с декоративным профилем.",
+    "active": true
+  }
+]
