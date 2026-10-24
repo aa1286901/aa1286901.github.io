@@ -2,88 +2,49 @@
 
 // === Экран: Главная ===
 function onScreenHome() {
-  // Главная страница — ничего дополнительно не нужно
+  Works.render();
 }
 
 // === Экран: Фото ===
 function onScreenPhoto() {
-  const cameraArea = document.getElementById('camera-area');
-  const continueBtn = document.getElementById('photo-continue');
-  const backBtn = document.getElementById('photo-back');
-  const tipsBtn = document.getElementById('photo-tips');
+  showPhotoPreview();
 
-  // Запускаем камеру
-  if (cameraArea && !cameraArea.querySelector('video') && !cameraArea.querySelector('img')) {
-    Camera.startCamera(cameraArea);
-  }
-
-  // Проверка наличия фото для кнопки "Продолжить"
-  checkPhotoForContinue();
-
-  // Продолжить — сразу к разметке, фото загружается на сервер только при сохранении проекта
-  if (continueBtn && !continueBtn.dataset.bound) {
-    continueBtn.dataset.bound = '1';
-    continueBtn.addEventListener('click', () => {
-      if (!ProjectFlow.getState('originalPhoto')) {
-        showToast('Сначала сфотографируйте дом');
-        return;
-      }
-      ProjectFlow.setState('design', null);
-      Router.navigateTo('editor');
-    });
-  }
-
-  if (backBtn && !backBtn.dataset.bound) {
-    backBtn.dataset.bound = '1';
-    backBtn.addEventListener('click', () => Router.navigateTo('home'));
-  }
-
-  if (tipsBtn && !tipsBtn.dataset.bound) {
-    tipsBtn.dataset.bound = '1';
-    tipsBtn.addEventListener('click', () => Router.navigateTo('tips'));
-  }
-
-  // Слушаем изменения фото
-  const checkInterval = setInterval(() => {
-    if (ProjectFlow.getState('originalPhoto')) {
-      checkPhotoForContinue();
-      clearInterval(checkInterval);
+  // Кнопки привязываем один раз: экран открывается много раз
+  const bindOnce = (id, handler) => {
+    const el = document.getElementById(id);
+    if (el && !el.dataset.bound) {
+      el.dataset.bound = '1';
+      el.addEventListener('click', handler);
     }
-  }, 500);
+  };
+  bindOnce('photo-camera', () => Camera.pick(true));
+  bindOnce('photo-album', () => Camera.pick(false));
+  bindOnce('camera-area', () => { if (!ProjectFlow.getState('originalPhoto')) Camera.pick(false); });
+  bindOnce('photo-back', () => Router.navigateTo('home'));
+  bindOnce('photo-tips', () => Router.navigateTo('tips'));
+  // Продолжить — сразу к разметке, фото загружается на сервер только при сохранении проекта
+  bindOnce('photo-continue', () => {
+    if (!ProjectFlow.getState('originalPhoto')) {
+      showToast('Сначала сфотографируйте дом или выберите фото');
+      return;
+    }
+    Router.navigateTo('editor');
+  });
 }
 
-function checkPhotoForContinue() {
-  const continueBtn = document.getElementById('photo-continue');
+// Превью выбранного фото и доступность кнопки «Продолжить»
+function showPhotoPreview() {
   const photo = ProjectFlow.getState('originalPhoto');
-  
+  const area = document.getElementById('camera-area');
+  const continueBtn = document.getElementById('photo-continue');
+  if (!area || !continueBtn) return;
+  continueBtn.disabled = !photo;
+  continueBtn.style.opacity = photo ? '1' : '0.5';
   if (photo) {
-    continueBtn.disabled = false;
-    continueBtn.style.opacity = '1';
-    
-    // Показываем превью
-    const cameraArea = document.getElementById('camera-area');
-    if (cameraArea && !cameraArea.querySelector('img.preview')) {
-      Camera.stopCamera();
-      cameraArea.innerHTML = `<img class="preview" src="${photo}" alt="Превью" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-xl);">`;
-      
-      // Добавляем кнопки поверх превью
-      const overlay = document.createElement('div');
-      overlay.style.cssText = 'position:absolute;inset:0;display:flex;justify-content:center;align-items:flex-end;padding:20px;gap:12px;';
-      overlay.innerHTML = `
-        <button class="btn btn-secondary" id="rephoto-btn" style="background:rgba(255,255,255,0.9);font-size:var(--font-size-sm);padding:10px 20px;min-height:44px;">📷 Переснять</button>
-      `;
-      cameraArea.style.position = 'relative';
-      cameraArea.appendChild(overlay);
-      
-      document.getElementById('rephoto-btn')?.addEventListener('click', () => {
-        overlay.remove();
-        Camera.startCamera(cameraArea);
-        ProjectFlow.setState('originalPhoto', null);
-        const cb = document.getElementById('photo-continue');
-        cb.disabled = true;
-        cb.style.opacity = '0.5';
-      });
-    }
+    area.innerHTML = `<img class="preview" src="${photo}" alt="Фото фасада">`;
+    area.classList.add('has-photo');
+  } else {
+    area.classList.remove('has-photo');
   }
 }
 
@@ -117,7 +78,7 @@ async function loadProjectPage(projectId) {
     if (projectDetails) {
       const all = await Materials.getAll();
       const materials = Object.fromEntries(all.map(m => [m.id, m]));
-      let rows = summarizeDesign(data.design, materials);
+      let rows = summarizeDesign(data.design, materials, await Elements.load());
       if (!rows) {
         // Старые проекты без разметки: просто список материалов
         const zoneNames = { base: 'Цоколь', facade: 'Стена' };
@@ -234,10 +195,6 @@ function onScreenCatalog() {
   });
 }
 
-// === Экран: Главная ===
-function onScreenHome() {
-  // Главная — ничего дополнительно не нужно
-}
 
 // === Экран: Профиль ===
 function onScreenProfile() {

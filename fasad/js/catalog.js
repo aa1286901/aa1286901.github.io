@@ -1,64 +1,15 @@
-// === Структура каталога: секции по породам камня ===
-const CATALOG_STRUCTURE = [
-  {
-    title: 'Известняк',
-    subtitle: 'Дагестанский',
-    filter: (m) => m.name.toLowerCase().includes('известняк')
-  },
-  {
-    title: 'Песчаник',
-    subtitle: 'Дагестанский',
-    filter: (m) => m.name.toLowerCase().includes('песчаник')
-  },
-  {
-    title: 'Ракушечник',
-    subtitle: 'Дагестанский',
-    filter: (m) => m.name.toLowerCase().includes('ракушечник')
-  },
-  {
-    title: 'Доломит',
-    subtitle: 'Дагестанский',
-    filter: (m) => m.name.toLowerCase().includes('доломит')
-  },
-  {
-    title: 'Иранский камень',
-    subtitle: 'Гохаре',
-    filter: (m) => m.name.toLowerCase().includes('гохар') || m.name.toLowerCase().includes('иранский')
-  },
-  {
-    title: 'Гранит',
-    subtitle: 'Натуральный',
-    filter: (m) => m.name.toLowerCase().includes('гранит') || m.name.toLowerCase().includes('габбр') || m.name.toLowerCase().includes('лабродар')
-  },
-  {
-    title: 'Сланец',
-    subtitle: 'Натуральный',
-    filter: (m) => m.name.toLowerCase().includes('сланец')
-  }
-];
+// === Структура каталога: камень по породам (каталог «Камень Юг») ===
+const CATALOG_STRUCTURE = ['Песчаник', 'Известняк', 'Ракушечник', 'Доломит', 'Сланец', 'Камень'].map(type => ({
+  title: type === 'Камень' ? 'Натуральный камень' : type,
+  subtitle: 'Дагестанский камень',
+  filter: (m) => m.category === 'stone' && m.active !== false && (m.type || 'Камень') === type,
+}));
 
-// fallback: материалы которые не попали ни в одну секцию
-const CATALOG_EXTRA_SECTIONS = [
-  {
-    title: 'Натуральный камень',
-    subtitle: 'Дагестанский',
-    filter: (m) => m.category === 'stone' && !m.name.toLowerCase().includes('известняк') && !m.name.toLowerCase().includes('песчаник') && !m.name.toLowerCase().includes('ракушечник') && !m.name.toLowerCase().includes('доломит') && !m.name.toLowerCase().includes('гранит') && !m.name.toLowerCase().includes('сланец')
-  },
-  {
-    title: 'Цокольная плитка',
-    subtitle: 'Синтетическая',
-    filter: (m) => m.category === 'base'
-  },
-  {
-    title: 'Плитка и клинкер',
-    subtitle: 'Синтетическая',
-    filter: (m) => m.category === 'tile' && !m.name.toLowerCase().includes('известняк') && !m.name.toLowerCase().includes('гранит')
-  },
-  {
-    title: 'Декоративные элементы',
-    subtitle: 'Металл',
-    filter: (m) => m.category === 'element'
-  }
+// Изделия из камня: группы из data/elements.json
+const CATALOG_PRODUCT_GROUPS = [
+  ['rust', 'Русты'], ['pilaster', 'Пилястры'], ['column', 'Колонны'], ['baluster', 'Балясины'], ['post', 'Тумбы'],
+  ['finial', 'Навершия'], ['keystone', 'Замки'], ['console', 'Консоли'], ['capital', 'Капители'],
+  ['rosette', 'Розетки'], ['barelief', 'Барельефы'], ['panel', 'Панно'],
 ];
 
 async function renderCatalog(filter = 'all', searchQuery = '') {
@@ -67,16 +18,19 @@ async function renderCatalog(filter = 'all', searchQuery = '') {
 
   container.innerHTML = '<div class="skeleton" style="height: 300px;"></div>'.repeat(3);
 
-  let materials = await Materials.getAll();
-  
+  let materials = (await Materials.getAll()).filter(m => m.active !== false);
+  const elements = await Elements.load();
+  let products = elements.spriteList;
+
   // Поиск
   if (searchQuery) {
+    products = products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
     materials = materials.filter(m => 
       m.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }
 
-  if (materials.length === 0) {
+  if (materials.length === 0 && products.length === 0) {
     container.innerHTML = `
       <div class="empty-state" style="grid-column: 1 / -1;">
         <div class="empty-state__icon">🏗️</div>
@@ -98,13 +52,11 @@ async function renderCatalog(filter = 'all', searchQuery = '') {
     container.appendChild(sectionEl);
   }
 
-  // Рендерим дополнительные секции (не-камень)
-  for (const section of CATALOG_EXTRA_SECTIONS) {
-    const sectionMaterials = materials.filter(section.filter);
-    if (sectionMaterials.length === 0) continue;
-
-    const sectionEl = createCatalogSection(section, sectionMaterials);
-    container.appendChild(sectionEl);
+  // Изделия из камня
+  for (const [group, title] of CATALOG_PRODUCT_GROUPS) {
+    const items = products.filter(p => p.group === group);
+    if (items.length === 0) continue;
+    container.appendChild(createCatalogSection({ title, subtitle: 'Изделия из натурального камня' }, items, true));
   }
 
   // Если ни одна секция не подошла
@@ -119,7 +71,7 @@ async function renderCatalog(filter = 'all', searchQuery = '') {
   }
 }
 
-function createCatalogSection(section, materials) {
+function createCatalogSection(section, materials, isProduct = false) {
   const sectionEl = document.createElement('div');
   sectionEl.className = 'catalog-section';
 
@@ -143,7 +95,7 @@ function createCatalogSection(section, materials) {
   listEl.className = 'catalog-section__list';
 
   materials.forEach(material => {
-    const card = createCatalogSectionCard(material);
+    const card = createCatalogSectionCard(material, isProduct);
     listEl.appendChild(card);
   });
 
@@ -153,9 +105,9 @@ function createCatalogSection(section, materials) {
   return sectionEl;
 }
 
-function createCatalogSectionCard(material) {
+function createCatalogSectionCard(material, isProduct) {
   const card = document.createElement('div');
-  card.className = 'catalog-section__card';
+  card.className = 'catalog-section__card' + (isProduct ? ' catalog-section__card--product' : '');
   card.innerHTML = `
     <div class="catalog-section__card-image">
       <img src="${material.image}" alt="${material.name}" loading="lazy">
@@ -164,87 +116,48 @@ function createCatalogSectionCard(material) {
   `;
 
   card.addEventListener('click', () => {
-    Router.navigateTo(`material-${material.id}`);
+    if (isProduct) showProductDetail(material);
+    else showMaterialDetail(material);
   });
 
   return card;
 }
 
-// === Старая функция (для совместимости) ===
-async function renderCatalogOld(filter = 'all', searchQuery = '') {
-  const grid = document.getElementById('catalog-grid');
-  if (!grid) return;
-
-  grid.innerHTML = '<div class="skeleton" style="height: 200px;"></div>'.repeat(4);
-
-  let materials = await Materials.getAll();
-  
-  if (filter !== 'all') {
-    materials = materials.filter(m => m.category === filter);
-  }
-
-  if (searchQuery) {
-    materials = materials.filter(m => 
-      m.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }
-
-  if (materials.length === 0) {
-    grid.innerHTML = `
-      <div class="empty-state" style="grid-column: 1 / -1;">
-        <div class="empty-state__icon">🏗️</div>
-        <div class="empty-state__title">Материалы не найдены</div>
-        <div class="empty-state__text">Попробуйте изменить фильтр или поисковый запрос</div>
-      </div>
-    `;
-    return;
-  }
-
-  grid.innerHTML = '';
-  materials.forEach(material => {
-    const card = renderCatalogCard(material, (m) => {
-      Router.navigateTo(`material-${m.id}`);
-    });
-    grid.appendChild(card);
+// Карточка камня: фактура, порода, описание, характеристики и размеры плитки
+function showMaterialDetail(m) {
+  const specs = m.specs || {};
+  const rows = [
+    ['Плотность', specs.density], ['Пористость', specs.porosity], ['Водопоглощение', specs.absorption],
+    ['Огнеупорность', specs.fire], ['Предел прочности', specs.strength], ['Морозостойкость', specs.frost],
+  ].filter(([, v]) => v);
+  showModal(`
+    <div class="material-detail">
+      <div class="material-detail__image"><img src="${m.texture || m.image}" alt="${m.name}"></div>
+      <div class="material-detail__name">${m.name}</div>
+      <div class="material-detail__type">${m.type || ''}</div>
+      <div class="material-detail__description">${m.description || ''}</div>
+      ${rows.length ? `<div class="material-detail__specs">${rows.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('')}</div>` : ''}
+      ${m.sizes?.length ? `<div class="material-detail__sizes"><span>Размеры плитки, мм</span>${m.sizes.map(x => `<i>${x.replace(/\*/g, '×')}</i>`).join('')}</div>` : ''}
+      <button class="btn btn-primary btn-full" id="material-fav-btn">В избранное</button>
+    </div>
+  `);
+  document.getElementById('material-fav-btn')?.addEventListener('click', async () => {
+    try {
+      await Api.addFavorite(m.id);
+      showToast('Добавлено в избранное');
+    } catch (e) {
+      showToast(e.message || 'Войдите, чтобы добавлять в избранное');
+    }
   });
 }
 
-function renderMaterialDetail(material) {
-  const container = document.getElementById('material-detail-content');
-  if (!container || !material) return;
-
-  container.innerHTML = `
+function showProductDetail(p) {
+  showModal(`
     <div class="material-detail">
-      <div class="material-detail__image">
-        <img src="${material.image}" alt="${material.name}">
-      </div>
-      <div class="material-detail__name">${material.name}</div>
-      <div class="material-detail__type">${material.type || material.category || ''}</div>
-      <div class="material-detail__description">${material.description || 'Натуральный камень высокого качества.'}</div>
-      <button class="btn btn-primary btn-full" id="material-fav-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-        <span id="fav-btn-text">В избранное</span>
-      </button>
+      <div class="material-detail__image material-detail__image--product"><img src="${p.image}" alt="${p.name}"></div>
+      <div class="material-detail__name">${p.name}</div>
+      <div class="material-detail__type">${p.widthMm}×${p.heightMm} мм · любой камень из каталога</div>
+      <div class="material-detail__description">Добавляется на фасад в разметке: «Добавить» → «Изделия».</div>
     </div>
-  `;
-
-  // Избранное
-  const favBtn = document.getElementById('material-fav-btn');
-  const favText = document.getElementById('fav-btn-text');
-  
-  favBtn.addEventListener('click', async () => {
-    try {
-      if (favText.textContent === 'В избранном') {
-        await Api.removeFavorite(material.id);
-        favText.textContent = 'В избранное';
-        showToast('Удалено из избранного');
-      } else {
-        await Api.addFavorite(material.id);
-        favText.textContent = 'В избранном';
-        showToast('Добавлено в избранное');
-      }
-    } catch (e) {
-      showToast(e.message || 'Ошибка');
-    }
-  });
+  `);
 }
