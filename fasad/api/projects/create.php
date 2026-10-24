@@ -8,7 +8,23 @@ $body = getJsonBody();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
     // Создание проекта
     $name = sanitize($body['name'] ?? 'Проект');
-    $originalImage = $body['original_image'] ?? '';
+    $originalImage = (string)($body['original_image'] ?? '');
+    $generatedImage = isset($body['generated_image']) ? (string)$body['generated_image'] : null;
+    $design = $body['design'] ?? null;
+
+    // Картинки — только файлы, загруженные через upload/original.php (или демо из assets)
+    $imagePattern = '#^(uploads/(originals|generated)/img_[A-Za-z0-9_.]+|assets/[A-Za-z0-9_./-]+)$#';
+    if (!preg_match($imagePattern, $originalImage) || strpos($originalImage, '..') !== false) {
+        respondError('Неверное фото проекта');
+    }
+    if ($generatedImage !== null && !preg_match('#^uploads/generated/img_[A-Za-z0-9_.]+$#', $generatedImage)) {
+        respondError('Неверный набросок');
+    }
+    // Разметка фасада хранится как есть, но с ограничением размера
+    if ($design !== null && (!is_array($design) || strlen(json_encode($design)) > 100000)) {
+        respondError('Неверная разметка');
+    }
+
     $baseMaterialId = $body['base_material_id'] ?? null;
     $facadeMaterialId = $body['facade_material_id'] ?? null;
     $cornices = $body['cornices'] ?? [];
@@ -18,9 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
         'user_id' => $userId,
         'name' => $name,
         'original_image' => $originalImage,
-        'generated_image' => null,
-        'status' => 'draft',
-        'progress' => 0,
+        'generated_image' => $generatedImage,
+        'design' => $design,
+        'status' => $generatedImage ? 'completed' : 'draft',
+        'progress' => $generatedImage ? 100 : 0,
         'created_at' => date('Y-m-d H:i:s'),
         'updated_at' => date('Y-m-d H:i:s')
     ];
@@ -48,6 +65,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
         ];
     }
 
+    // Камни из разметки: по одной записи на зону
+    foreach (($design['zones'] ?? []) as $zone) {
+        if (!empty($zone['materialId']) && ($zone['type'] ?? '') !== 'opening') {
+            $db['project_materials'][] = [
+                'id' => getNextId($db['project_materials']),
+                'project_id' => $projectId,
+                'material_id' => (string)$zone['materialId'],
+                'category' => (string)($zone['type'] ?? 'wall'),
+                'selected_variant' => (string)($zone['pattern'] ?? '')
+            ];
+        }
+    }
+
     // Сохраняем карнизы
     if (!empty($cornices)) {
         foreach ($cornices as $corniceId) {
@@ -62,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
     }
 
     saveDB($db);
-    respondSuccess(['id' => $projectId, 'name' => $name, 'status' => 'draft']);
+    respondSuccess(['id' => $projectId, 'name' => $name, 'status' => $newProject['status']]);
 
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($body['projectId'])) {
     // Обновление статуса генерации

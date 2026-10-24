@@ -4,7 +4,7 @@ const Auth = {
   async init() {
     try {
       const data = await Api.me();
-      this._user = data.data;
+      this._user = data.data || null;
     } catch {
       this._user = null;
     }
@@ -21,13 +21,13 @@ const Auth = {
 
   async register(name, email, password) {
     const data = await Api.register(name, email, password);
-    this._user = data.data;
+    this._user = data.data || null;
     return data;
   },
 
   async login(email, password) {
     const data = await Api.login(email, password);
-    this._user = data.data;
+    this._user = data.data || null;
     return data;
   },
 

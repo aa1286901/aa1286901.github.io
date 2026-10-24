@@ -1,14 +1,11 @@
 // Project creation flow state
 const ProjectFlow = {
   state: {
-    originalPhoto: null,      // base64 or URL
+    originalPhoto: null,      // base64 or URL (уменьшенное фото для редактора)
     originalImageFile: null,  // File object for upload
-    selectedBaseMaterial: null,
-    selectedFacadeMaterial: null,
-    selectedCornices: [],
+    design: null,             // { zones: [], bands: [] } — разметка фасада
+    sketch: null,             // dataURL готового наброска
     projectName: '',
-    generationStatus: null,
-    generatedImage: null,
     projectId: null,
   },
 
@@ -25,9 +22,7 @@ const ProjectFlow = {
   saveDraft() {
     const draftable = {
       originalPhoto: this.state.originalPhoto,
-      selectedBaseMaterial: this.state.selectedBaseMaterial,
-      selectedFacadeMaterial: this.state.selectedFacadeMaterial,
-      selectedCornices: this.state.selectedCornices,
+      design: this.state.design,
     };
     Storage.save('project-draft', draftable);
   },
@@ -41,12 +36,9 @@ const ProjectFlow = {
     this.state = {
       originalPhoto: null,
       originalImageFile: null,
-      selectedBaseMaterial: null,
-      selectedFacadeMaterial: null,
-      selectedCornices: [],
+      design: null,
+      sketch: null,
       projectName: '',
-      generationStatus: null,
-      generatedImage: null,
       projectId: null,
     };
   },
@@ -55,10 +47,4 @@ const ProjectFlow = {
     const draft = this.loadDraft();
     return draft && draft.originalPhoto;
   },
-
-  isValid() {
-    return this.state.originalPhoto &&
-           this.state.selectedBaseMaterial &&
-           this.state.selectedFacadeMaterial;
-  }
 };

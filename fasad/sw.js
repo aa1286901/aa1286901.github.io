@@ -1,6 +1,6 @@
 // Пути относительные: они считаются от папки, где лежит sw.js,
 // поэтому приложение работает и в корне домена, и в подпапке /fasad/
-const CACHE_NAME = 'fasad-v3';
+const CACHE_NAME = 'fasad-v4';
 const STATIC_ASSETS = [
   './',
   'index.html',
@@ -15,6 +15,7 @@ const STATIC_ASSETS = [
   'css/responsive.css',
   'css/mobile-pwa.css',
   'css/ios-fixes.css',
+  'css/editor.css',
 
   // JS
   'js/api.js',
@@ -24,7 +25,8 @@ const STATIC_ASSETS = [
   'js/projects.js',
   'js/materials.js',
   'js/camera.js',
-  'js/generation.js',
+  'js/facade-render.js',
+  'js/editor.js',
   'js/catalog.js',
   'js/profile.js',
   'js/screens.js',
