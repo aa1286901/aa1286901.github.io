@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../../config.php';
 
 $userId = requireAuth();
 $db = getDB();
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         return !($f['user_id'] === $userId && $f['material_id'] === $materialId);
     });
     $db['user_favorites'] = array_values($db['user_favorites']);
-    saveDB();
+    saveDB($db);
 
     respondSuccess(null, 'Удалено из избранного');
 }

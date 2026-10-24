@@ -1,11 +1,10 @@
-// Автоматически определяем путь к API
-// Если файлы в корне домена — API_BASE = ''
-// Если в подпапке — раскомментируйте и укажите путь, например: API_BASE = '/fasad'
-const API_BASE = '';
+// API лежит рядом с index.html, поэтому путь относительный:
+// приложение работает и в корне домена, и в подпапке (например /fasad/)
+const API_BASE = 'api';
 
 const Api = {
   async request(endpoint, options = {}) {
-    const url = `./${API_BASE}/api/${endpoint.replace(/^\.\//, '')}`;
+    const url = `${API_BASE}/${endpoint.replace(/^\.?\/+/, '')}`;
     const config = {
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -77,7 +76,7 @@ const Api = {
     const formData = new FormData();
     formData.append('image', file);
     
-    const response = await fetch(`${API_BASE}/api/upload/original.php`, {
+    const response = await fetch(`${API_BASE}/upload/original.php`, {
       method: 'POST',
       body: formData,
       credentials: 'include',

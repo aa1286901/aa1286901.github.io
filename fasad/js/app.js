@@ -7,7 +7,7 @@ const App = {
     // Регистрируем Service Worker для кэширования
     if ('serviceWorker' in navigator) {
       try {
-        await navigator.serviceWorker.register('/sw.js');
+        await navigator.serviceWorker.register('sw.js');
         console.log('[App] Service Worker зарегистрирован');
         
         // Проверяем обновления SW

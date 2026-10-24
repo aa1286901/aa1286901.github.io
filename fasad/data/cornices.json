@@ -4,7 +4,7 @@
     "name": "Межэтажный карниз Тип 1",
     "category": "cornice",
     "type": "cornice",
-    "image": "/assets/cornices/mejsetazh-1.jpg",
+    "image": "assets/cornices/cornice-mejsetazh-1.jpg",
     "description": "Классический межэтажный карниз с простым профилем.",
     "active": true
   },
@@ -13,7 +13,7 @@
     "name": "Межэтажный карниз Тип 2",
     "category": "cornice",
     "type": "cornice",
-    "image": "/assets/cornices/mejsetazh-2.jpg",
+    "image": "assets/cornices/cornice-mejsetazh-2.jpg",
     "description": "Межэтажный карниз с декоративной волной.",
     "active": true
   },
@@ -22,7 +22,7 @@
     "name": "Межэтажный карниз Тип 3",
     "category": "cornice",
     "type": "cornice",
-    "image": "/assets/cornices/mejsetazh-3.jpg",
+    "image": "assets/cornices/cornice-mejsetazh-3.jpg",
     "description": "Массивный межэтажный карниз с усиленным профилем.",
     "active": true
   },
@@ -31,7 +31,7 @@
     "name": "Боковой флястер Тип 1",
     "category": "cornice",
     "type": "cornice",
-    "image": "/assets/cornices/bokovy-1.jpg",
+    "image": "assets/cornices/cornice-bokovy-1.jpg",
     "description": "Боковой флястер для обрамления углов здания.",
     "active": true
   },
@@ -40,7 +40,7 @@
     "name": "Оконный карниз Тип 1",
     "category": "cornice",
     "type": "cornice",
-    "image": "/assets/cornices/okonny-1.jpg",
+    "image": "assets/cornices/cornice-okonny-1.jpg",
     "description": "Декоративный карниз над окнами.",
     "active": true
   },
@@ -49,7 +49,7 @@
     "name": "Оконный карниз Тип 2",
     "category": "cornice",
     "type": "cornice",
-    "image": "/assets/cornices/okonny-2.jpg",
+    "image": "assets/cornices/cornice-okonny-2.jpg",
     "description": "Оконный карниз с капельником.",
     "active": true
   },
@@ -58,7 +58,7 @@
     "name": "Дверной козырёк",
     "category": "cornice",
     "type": "cornice",
-    "image": "/assets/cornices/dverny-1.jpg",
+    "image": "assets/cornices/cornice-dverny-1.jpg",
     "description": "Декоративный козырёк над входной дверью.",
     "active": true
   },
@@ -67,7 +67,7 @@
     "name": "Верхний карниз Тип 1",
     "category": "cornice",
     "type": "cornice",
-    "image": "/assets/cornices/verhny-1.jpg",
+    "image": "assets/cornices/cornice-verhny-1.jpg",
     "description": "Финишный карниз крыши с декоративным профилем.",
     "active": true
   }

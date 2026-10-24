@@ -30,7 +30,7 @@ foreach ($db['users'] as $user) {
 // Создаём пользователя
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 $newUser = [
-    'id' => getNextId('users'),
+    'id' => getNextId($db['users']),
     'name' => $name,
     'email' => $email,
     'password_hash' => $passwordHash,
@@ -40,7 +40,7 @@ $newUser = [
 ];
 
 $db['users'][] = $newUser;
-saveDB();
+saveDB($db);
 
 $_SESSION['user_id'] = $newUser['id'];
 

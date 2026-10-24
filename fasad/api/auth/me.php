@@ -21,8 +21,14 @@ foreach ($db['users'] as $u) {
 }
 
 if ($user) {
-    $user['avatar'] = $user['avatar'] ?? '';
-    respondSuccess($user);
+    // Хеш пароля наружу не отдаём
+    respondSuccess([
+        'id' => $user['id'],
+        'name' => $user['name'],
+        'email' => $user['email'],
+        'avatar' => $user['avatar'] ?? '',
+        'created_at' => $user['created_at'] ?? null,
+    ]);
 } else {
     respondSuccess(null);
 }

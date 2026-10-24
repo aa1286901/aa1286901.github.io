@@ -28,4 +28,8 @@ jobs:
           exclude: |
             **/.git*
             data/database.json
-            uploads/**
+            data/db.php
+            data/db.php.tmp
+            data/db.lock
+            uploads/originals/**
+            uploads/generated/**
