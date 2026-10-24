@@ -34,7 +34,7 @@
             if (localStorage.getItem("arabic.motion") === "true") document.documentElement.dataset.motion = "on";
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="css/style.css?v=0061">
+    <link rel="stylesheet" href="css/style.css?v=0062">
 </head>
 
 <body class="view-home">
@@ -100,7 +100,6 @@
                         <svg viewBox="0 0 36 36" aria-hidden="true"><circle class="ts-track" cx="18" cy="18" r="15.5"/><circle class="ts-fill" id="goalFill" cx="18" cy="18" r="15.5"/></svg>
                         <span class="goal-num" id="goalNum">0</span>
                     </button>
-                    <button class="icon-btn" id="mainSettings" type="button" aria-label="Настройки"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></svg></button>
                 </div>
             </header>
 
@@ -143,7 +142,7 @@
         </div>
     </section>
 
-    <!-- Вкладки внизу: Главная и Библиотека -->
+    <!-- Вкладки внизу: Главная, Библиотека, Настройки -->
     <nav class="tabbar" id="tabbar" aria-label="Разделы">
         <a class="tab" href="#" data-tab="main">
             <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5L12 3.8l8.5 6.7V20a1 1 0 0 1-1 1h-4.6v-6.2H9.1V21H4.5a1 1 0 0 1-1-1z" fill="currentColor"/></svg>
@@ -153,6 +152,10 @@
             <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3.5h3.2v17H4zM8.6 3.5h3.2v17H8.6zM13.4 5.2l3.1-.8 4.2 15.7-3.1.8z" fill="currentColor"/></svg>
             <span>Библиотека</span>
         </a>
+        <a class="tab" href="#settings" data-tab="settings">
+            <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1ZM12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z"/></svg>
+            <span>Настройки</span>
+        </a>
     </nav>
 
     <section class="home" id="homeScreen">
@@ -161,9 +164,6 @@
                 <span class="lib-brand-ar" lang="ar" dir="rtl">الْمَكْتَبَةُ</span>
                 <span class="lib-brand-ru">Библиотека</span>
             </div>
-            <button class="icon-btn" id="settingsBtn" type="button" aria-label="Настройки" aria-haspopup="dialog">
-                <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></svg>
-            </button>
         </header>
 
         <div class="lib-stage">
@@ -755,7 +755,7 @@
         </div>
     </div>
 
-    <script src="js/app.js?v=0061"></script>
+    <script src="js/app.js?v=0062"></script>
 </body>
 
 </html>

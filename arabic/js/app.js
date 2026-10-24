@@ -366,7 +366,7 @@ function setView(view) {
   stopSpeech();
   closeRetell();
   closeToday();
-  document.body.classList.remove("view-main", "view-home", "view-welcome", "view-nahw", "view-quiz", "view-today", "view-train");
+  document.body.classList.remove("view-main", "view-home", "view-welcome", "view-nahw", "view-quiz", "view-today", "view-train", "view-settings");
   if (view !== "lesson") document.body.classList.add("view-" + view);
   if (view !== currentView) {
     prevView = currentView;
@@ -546,6 +546,7 @@ async function route() {
     return openToday();
   }
   if (location.hash === "#library") return showHome();
+  if (location.hash === "#settings") return showSettingsTab();
   if (location.hash === "#unm-train") return showTrain();
   if (location.hash === "#amil-quiz") return showQuiz();
   if (TREE_BOOKS[location.hash]) return showNahw(location.hash);
@@ -1456,25 +1457,36 @@ function openSettings() {
   renderSettings();
   $("setLayer").hidden = false;
   requestAnimationFrame(() => $("setLayer").classList.add("show"));
-  $("settingsBtn").setAttribute("aria-expanded", "true");
+}
+
+// Вкладка «Настройки»: тот же лист, но на весь экран над вкладками
+function showSettingsTab() {
+  setView("settings");
+  document.title = "Настройки";
+  renderSettings();
+  $("setLayer").classList.add("page", "show");
+  $("setLayer").hidden = false;
 }
 
 function closeSettings() {
   const layer = $("setLayer");
+  if (layer.classList.contains("page")) {
+    layer.classList.remove("page", "show");
+    layer.hidden = true;
+    return;
+  }
   if (layer.hidden || !layer.classList.contains("show")) return;
   layer.classList.remove("show");
-  $("settingsBtn").setAttribute("aria-expanded", "false");
   setTimeout(() => {
     if (!layer.classList.contains("show")) layer.hidden = true;
   }, 300);
 }
 
-$("settingsBtn").onclick = openSettings;
 document.addEventListener("keydown", (e) => e.key === "Escape" && closeToday());
 $("setDone").onclick = closeSettings;
 $("setOverlay").onclick = closeSettings;
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeSettings();
+  if (e.key === "Escape" && !$("setLayer").classList.contains("page")) closeSettings();
 });
 $("setResetWords").onclick = () => {
   if (!confirm("Сбросить прогресс всех слов уроков? Отметки «Знаю» будут удалены.")) return;
@@ -2612,7 +2624,6 @@ function showMain() {
   renderMain();
 }
 
-$("mainSettings").onclick = openSettings;
 $("goalRing").onclick = openToday;
 $("gaugeLink").onclick = openToday;
 $("mAssignedHead").onclick = openToday;
