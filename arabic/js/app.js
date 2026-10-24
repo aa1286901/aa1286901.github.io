@@ -366,7 +366,7 @@ function setView(view) {
   stopSpeech();
   closeRetell();
   closeToday();
-  document.body.classList.remove("view-home", "view-welcome", "view-nahw", "view-quiz", "view-today", "view-train");
+  document.body.classList.remove("view-main", "view-home", "view-welcome", "view-nahw", "view-quiz", "view-today", "view-train");
   if (view !== "lesson") document.body.classList.add("view-" + view);
   if (view !== currentView) {
     prevView = currentView;
@@ -438,6 +438,7 @@ function scrollToBook(i, smooth = true) {
 
 function showHome() {
   setView("home");
+  lastTab = "library";
   document.title = "Arabic";
   const fromBook = ["welcome", "nahw", "quiz"].includes(prevView) && !skipCloseAnim;
   skipCloseAnim = false;
@@ -479,8 +480,8 @@ function showWelcome(part = null) {
   listPart = p ? part : null;
   $("welcomeTitle").textContent = p ? p.ru : "Части книги";
   $("welcomeAr").textContent = p ? p.ar : "الْأَجْزَاءُ";
-  $("welcomeBack").setAttribute("href", p ? "#mabda" : "#");
-  $("welcomeBack").setAttribute("aria-label", p ? "Назад: Части" : "Назад: Книги");
+  $("welcomeBack").setAttribute("href", p ? "#mabda" : tabHref());
+  $("welcomeBack").setAttribute("aria-label", p ? "Назад: Части" : "Назад");
   document.title = (p ? p.ru : "Мабда аль-Кираа") + " — Arabic";
   renderLessonList();
 }
@@ -538,12 +539,13 @@ async function openLesson(id) {
 let routedOnce = false;
 async function route() {
   routedOnce = true;
-  // «Сегодня» — панель поверх библиотеки
+  // «Сегодня» — панель поверх «Главной»
   if (location.hash === "#today") {
     history.replaceState(null, "", location.pathname + location.search);
-    showHome();
+    showMain();
     return openToday();
   }
+  if (location.hash === "#library") return showHome();
   if (location.hash === "#unm-train") return showTrain();
   if (location.hash === "#amil-quiz") return showQuiz();
   if (TREE_BOOKS[location.hash]) return showNahw(location.hash);
@@ -555,7 +557,7 @@ async function route() {
   if (legacy) return location.replace("#lesson-3-" + legacy[1]);
   const id = parseHash();
   if (id === null) {
-    showHome();
+    showMain();
   } else {
     const lessonExists = LESSONS.some((lesson) => lesson.key === id);
     if (lessonExists) await openLesson(id);
@@ -651,6 +653,7 @@ function grade(known) {
   const idx = deck[pos];
   const w = words[idx];
   setBox(w, known ? boxOf(w) + 1 : 0);
+  logActivity();
   if (words.every((x) => isLearned(x))) markStep("words");
   // «Не знаю» — слово вернётся через несколько карточек
   if (!known && deck.length > 1) deck.splice(Math.min(pos + 1 + RETRY_GAP, deck.length), 0, idx);
@@ -1014,6 +1017,7 @@ async function loadTreeBook(hash) {
 
 async function showNahw(hash) {
   setView("nahw");
+  $("nahwScreen").querySelector(".navbar .back").setAttribute("href", tabHref());
   const book = TREE_BOOKS[hash];
   $("nahwEyebrow").textContent = book.eyebrow;
   $("quizEntry").hidden = !book.quiz;
@@ -1222,6 +1226,7 @@ function answerQuiz(i) {
   if (q.answered) return;
   q.answered = true;
   const ok = q.rightLabels.has(q.opts[i]);
+  logActivity();
   if (ok) quizRight++;
   quizStore[q.it.key] = ok ? (quizStore[q.it.key] || 0) + 1 : 0;
   store.set(QUIZ_KEY, quizStore);
@@ -1652,6 +1657,7 @@ const VIEW_EL = { welcome: "welcomeScreen", nahw: "nahwScreen", quiz: "quizScree
   let edge = null;
   const blocked = () =>
     currentView === "home" ||
+    currentView === "main" ||
     !$("reader").hidden ||
     !$("retell").hidden ||
     !$("todayLayer").hidden ||
@@ -1797,6 +1803,7 @@ $("readerPlay").insertAdjacentHTML("afterbegin", SAY_ICON);
 $("readerPlay").onclick = () => (sayBtn === $("readerPlay") ? stopSpeech() : readerSpeak());
 
 function stepReader(d) {
+  logActivity();
   hideReaderWord();
   readerLine = Math.max(0, Math.min(story.length - 1, readerLine + d));
   renderReaderLine();
@@ -1967,6 +1974,7 @@ function markStep(id) {
   if (!m || m.key !== lessonId || m.done?.[id]) return;
   (m.done ||= {})[id] = ymd();
   savePlan();
+  logActivity();
   toast(`В плане отмечено: ${STEPS.find((s) => s.id === id).title}`);
 }
 
@@ -1988,20 +1996,7 @@ function todayItems() {
 
 // Главный экран: полоска «Сегодня» и задание книги в её карточке
 function renderHomeToday() {
-  const items = todayItems();
-  const done = items.filter((x) => x.done).length;
-  const assigned = !!(plan.mabda || plan.unm?.topics?.length);
-  const next = items.find((x) => !x.done);
-  $("tsNum").textContent = assigned ? `${done}/${items.length}` : "+";
-  $("tsFill").style.strokeDasharray = `${items.length ? (done / items.length) * 97.4 : 0} 97.4`;
-  $("todayStrip").classList.toggle("all-done", assigned && !next);
-  $("todayStrip").classList.toggle("empty", !assigned);
-  $("tsTitle").textContent = assigned ? (next ? "Сегодня" : "На сегодня всё") : "Что задал учитель?";
-  $("tsSub").textContent = !assigned
-    ? "Укажите урок — составлю план по дням"
-    : next
-      ? `Дальше: ${next.title.toLowerCase()}${items.length - done > 1 ? ` · ещё ${items.length - done - 1}` : ""}`
-      : "Можно повторить слова или отдохнуть";
+  if (currentView === "main") renderMain();
   renderBookTask();
 }
 
@@ -2030,7 +2025,6 @@ function openToday() {
   renderToday();
   $("todayLayer").hidden = false;
   requestAnimationFrame(() => $("todayLayer").classList.add("show"));
-  $("todayStrip").setAttribute("aria-expanded", "true");
   if (plan.unm?.topics?.length && !unmNodes)
     loadUnm()
       .then(renderToday)
@@ -2040,13 +2034,11 @@ function closeToday() {
   const layer = $("todayLayer");
   if (layer.hidden || !layer.classList.contains("show")) return;
   layer.classList.remove("show");
-  $("todayStrip").setAttribute("aria-expanded", "false");
   pickerOpen = false;
   setTimeout(() => {
     if (!layer.classList.contains("show")) layer.hidden = true;
   }, 300);
 }
-$("todayStrip").onclick = openToday;
 $("todayDone").onclick = closeToday;
 $("todayOverlay").onclick = closeToday;
 
@@ -2172,6 +2164,7 @@ $("todayPlan").addEventListener("click", (e) => {
       const done = (plan.mabda.done ||= {});
       if (done[step]) delete done[step];
       else done[step] = t;
+      logActivity();
     }
     savePlan();
     return renderToday();
@@ -2199,6 +2192,7 @@ $("todayMabda").addEventListener("click", (e) => {
     const i = LESSONS.findIndex((l) => l.key === plan.mabda.key);
     const next = LESSONS[i + 1];
     if (!confirm(next ? `Урок сдан? Следующим станет «${next.ruTitle}».` : "Урок сдан? Это последний урок в приложении.")) return;
+    plan.passed = (plan.passed || 0) + 1;
     if (next) plan.mabda = { key: next.key, since: ymd(), done: {} };
     else delete plan.mabda;
     savePlan();
@@ -2463,6 +2457,7 @@ $("trainFace").onclick = () => {
   $("trainGrade").hidden = false;
 };
 function gradeTrain(ok) {
+  logActivity();
   // «Не помню» — тема вернётся через несколько карточек
   if (!ok) trainDeck.splice(Math.min(trainPos + 1 + RETRY_GAP, trainDeck.length), 0, trainDeck[trainPos]);
   trainPos++;
@@ -2489,6 +2484,144 @@ async function showTrain() {
     showNetError(showTrain, "#today");
   }
 }
+
+// ── Главная: продолжить, задание, план на сегодня, книги, итоги ──
+// Дни, когда занимались: для недели и серии дней подряд
+const ACT_KEY = "arabic.activity";
+let activity = store.get(ACT_KEY, []);
+if (!Array.isArray(activity)) activity = [];
+function logActivity() {
+  const t = ymd();
+  if (activity[activity.length - 1] === t) return;
+  activity = [...activity.filter((d) => d !== t), t].slice(-400);
+  store.set(ACT_KEY, activity);
+}
+function streakDays() {
+  const set = new Set(activity);
+  let d = today0();
+  if (!set.has(ymd(d))) d = addDays(d, -1);
+  let n = 0;
+  while (set.has(ymd(d))) {
+    n++;
+    d = addDays(d, -1);
+  }
+  return n;
+}
+
+const BOOK_RU = ["Мабда аль-Кираа", "Миату Амиль", "Шарх аль-Унмузадж"];
+const coverHTML = (i) => document.querySelector(`#carousel .slide[data-i="${i}"] .cover`)?.outerHTML || "";
+const learnedWords = () => Object.values(progress).reduce((a, m) => a + Object.values(m || {}).filter((b) => b >= LEARNED).length, 0);
+const learnedAmil = () => Object.values(quizStore).filter((v) => v >= LEARNED).length;
+const GAUGE_LEN = 276.5; // длина дуги радиусом 88
+
+let lastTab = "main";
+const tabHref = () => (lastTab === "library" ? "#library" : "#");
+
+function renderMain() {
+  const t = today0();
+  const items = todayItems();
+  const done = items.filter((x) => x.done).length;
+  const next = items.find((x) => !x.done);
+  const assigned = !!(plan.mabda || plan.unm?.topics?.length);
+
+  // Кольцо в шапке
+  $("goalNum").textContent = String(done);
+  $("goalFill").style.strokeDasharray = `${items.length ? (done / items.length) * 97.4 : 0} 97.4`;
+  $("goalRing").classList.toggle("all-done", assigned && !next);
+
+  // Продолжить
+  const mkey = plan.mabda?.key || place.mabda || "1-1";
+  const ml = LESSONS.find((l) => l.key === mkey) || LESSONS[0];
+  const topics = plan.unm?.topics?.length || 0;
+  const cards = [
+    { href: "#lesson-" + ml.key, cover: 0, title: `${ml.n ? "Урок " + ml.n : "Упражнения"} · ${ml.ruTitle}`, sub: `${BOOK_RU[0]} · часть ${ml.part}`, meta: "", id: "cmMabda" },
+    { href: "#nahw", cover: 2, title: topics ? `Задано: ${topics} ${plural(topics, "тема", "темы", "тем")}` : "Глава об имени", sub: BOOK_RU[2], meta: "Дерево терминов" },
+    { href: "#amil", cover: 1, title: "Сто управляющих слов", sub: BOOK_RU[1], meta: `Тренажёр · выучено ${learnedAmil()}` },
+  ];
+  $("mContinue").innerHTML = cards
+    .map(
+      (c) =>
+        `<a class="c-card" href="${c.href}"><span class="mini-cover">${coverHTML(c.cover)}</span><span class="c-info"><span class="c-title">${esc(c.title)}</span><span class="c-sub">${esc(c.sub)}</span><span class="c-meta"${c.id ? ` id="${c.id}"` : ""}>${esc(c.meta)}</span></span></a>`,
+    )
+    .join("");
+  loadLesson(ml.key)
+    .then((d) => {
+      const n = d.words.length;
+      const k = d.words.filter((w) => isLearned(w, ml.key)).length;
+      if ($("cmMabda")) $("cmMabda").textContent = n ? `Слова · ${Math.round((k / n) * 100)} %` : `${d.story.length} предложений`;
+    })
+    .catch(() => {});
+
+  // Задано учителем
+  let a = "";
+  if (plan.mabda) {
+    const l = LESSONS.find((x) => x.key === plan.mabda.key);
+    const due = dueOf(plan.mabda);
+    const dots = STEPS.map((s) => `<i class="${plan.mabda.done?.[s.id] ? "on" : ""}" title="${s.title}"></i>`).join("");
+    a += `<button class="a-card" type="button" data-open-today><span class="mini-cover big">${coverHTML(0)}</span><span class="a-info"><span class="a-kicker">${BOOK_RU[0]}</span><span class="a-title">${l.n ? "Урок " + l.n : "Упражнения"} · ${esc(l.ruTitle)}</span><span class="a-ar" lang="ar" dir="rtl">${esc(l.title)}</span>${due ? `<span class="a-due">сдать ${relLabel(dayDiff(t, due))}</span>` : ""}<span class="a-steps">${dots}</span></span></button>`;
+  }
+  if (topics && unmNodes) {
+    const due = dueOf(plan.unm);
+    const names = plan.unm.topics.map((i) => unmNodes[i]?.n.ar).filter(Boolean).slice(0, 3);
+    a += `<button class="a-card" type="button" data-open-today><span class="mini-cover big">${coverHTML(2)}</span><span class="a-info"><span class="a-kicker">${BOOK_RU[2]}</span><span class="a-title">${topics} ${plural(topics, "тема", "темы", "тем")}</span><span class="a-ar" lang="ar" dir="rtl">${names.map(esc).join(" · ")}</span>${due ? `<span class="a-due">сдать ${relLabel(dayDiff(t, due))}</span>` : ""}</span></button>`;
+  } else if (topics) loadUnm().then(renderMain).catch(() => {});
+  if (!assigned) a = `<button class="a-card a-empty" type="button" data-open-today><span class="a-plus">+</span><span class="a-info"><span class="a-title">Что задал учитель?</span><span class="c-sub">Укажите урок и дни занятий — план разложится по дням</span></span></button>`;
+  $("mAssigned").innerHTML = a;
+
+  // План на сегодня: полукруг, следующий шаг, неделя
+  $("gaugeFill").style.strokeDasharray = `${items.length ? (done / items.length) * GAUGE_LEN : 0} ${GAUGE_LEN}`;
+  $("gaugeFill").classList.toggle("zero", !done);
+  $("goalFill").classList.toggle("zero", !done);
+  $("gaugeNum").textContent = items.length ? `${done} из ${items.length}` : "—";
+  $("gaugeLink").innerHTML = (assigned ? "из плана на сегодня" : "укажите задание") + ` <span aria-hidden="true">›</span>`;
+  $("mNextTitle").textContent = !assigned ? "Указать задание" : next ? "Продолжить" : "На сегодня всё";
+  $("mNextSub").textContent = !assigned ? "Что задал учитель" : next ? next.title : "Можно повторить слова";
+  $("mNext").dataset.step = next?.step || (assigned && plan.mabda ? "review" : "");
+  const monday = addDays(t, -((t.getDay() + 6) % 7));
+  const act = new Set(activity);
+  $("mWeek").innerHTML = WEEK.map(([name, wd], k) => {
+    const d = addDays(monday, k);
+    const cls = [act.has(ymd(d)) ? "act" : "", ymd(d) === ymd(t) ? "is-today" : "", plan.days.includes(wd) ? "class" : ""].join(" ");
+    return `<span class="wk ${cls}" title="${dateLabel(d)}">${name}</span>`;
+  }).join("");
+  const st = streakDays();
+  $("mStreak").textContent = st
+    ? `${st} ${plural(st, "день", "дня", "дней")} подряд — не прерывайте серию`
+    : "Занимайтесь каждый день — точкой отмечены дни занятий";
+
+  // Мои книги
+  $("mBooks").innerHTML = BOOKS.map(
+    (b, i) => `<a class="b-tile" href="${b.href}"><span class="tile-cover">${coverHTML(i)}</span><span class="b-name">${BOOK_RU[i]}</span></a>`,
+  ).join("");
+
+  // Итоги
+  const passed = plan.passed || 0;
+  const lw = learnedWords();
+  const stats = [
+    [passed, plural(passed, "урок сдан", "урока сдано", "уроков сдано")],
+    [lw, plural(lw, "слово выучено", "слова выучено", "слов выучено")],
+    [st, plural(st, "день подряд", "дня подряд", "дней подряд")],
+  ];
+  $("mStats").innerHTML = stats.map(([n, l]) => `<div class="m-stat"><span class="m-stat-num">${n}</span><span class="m-stat-label">${l}</span></div>`).join("");
+}
+
+function showMain() {
+  setView("main");
+  lastTab = "main";
+  document.title = "Arabic";
+  renderMain();
+}
+
+$("mainSettings").onclick = openSettings;
+$("goalRing").onclick = openToday;
+$("gaugeLink").onclick = openToday;
+$("mAssignedHead").onclick = openToday;
+$("mAssigned").addEventListener("click", (e) => e.target.closest("[data-open-today]") && openToday());
+$("mNext").onclick = () => {
+  const step = $("mNext").dataset.step;
+  if (!step) return openToday();
+  goStep(step);
+};
 
 renderHomeToday();
 
