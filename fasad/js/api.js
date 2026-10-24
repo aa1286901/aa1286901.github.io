@@ -72,9 +72,10 @@ const Api = {
   },
 
   // === Upload ===
-  async uploadImage(file) {
+  async uploadImage(file, kind = 'original') {
     const formData = new FormData();
     formData.append('image', file);
+    formData.append('kind', kind);
     
     const response = await fetch(`${API_BASE}/upload/original.php`, {
       method: 'POST',

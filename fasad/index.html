@@ -25,6 +25,7 @@
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/mobile-pwa.css">
   <link rel="stylesheet" href="css/ios-fixes.css">
+  <link rel="stylesheet" href="css/editor.css">
 </head>
 <body>
   <main class="main-content">
@@ -98,75 +99,67 @@
       </button>
     </div>
 
-    <!-- Дизайн фасада -->
-    <div class="screen" data-screen="design">
+    <!-- Разметка фасада -->
+    <div class="screen screen--editor" data-screen="editor">
       <div class="page-header">
-        <button class="btn-icon" id="design-back" aria-label="Назад">
+        <button class="btn-icon" id="editor-back" aria-label="Назад">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <h2 class="page-header__title">Дизайн фасада</h2>
+        <h2 class="page-header__title">Разметка</h2>
+        <button class="btn btn-primary editor-done" id="editor-done">Готово</button>
       </div>
 
-      <!-- Цоколь -->
-      <div class="section-header">
-        <h3 class="section-title">Цоколь</h3>
-        <p class="section-subtitle">Выберите материал для цоколя</p>
+      <div class="editor-tools">
+        <button class="editor-tool" data-add="wall"><span class="editor-tool__dot" style="background:#c9a86a"></span>Стена</button>
+        <button class="editor-tool" data-add="base"><span class="editor-tool__dot" style="background:#8d6e4a"></span>Цоколь</button>
+        <button class="editor-tool" data-add="opening"><span class="editor-tool__dot" style="background:#e53935"></span>Проём</button>
+        <button class="editor-tool" data-add="reveal"><span class="editor-tool__dot" style="background:#5b8fb9"></span>Откос</button>
+        <button class="editor-tool" data-add="band"><span class="editor-tool__dot" style="background:#fff;border:1px solid #bbb"></span>Карниз</button>
       </div>
-      <div class="carousel" id="base-material-carousel"></div>
 
-      <!-- Основная плитка -->
-      <div class="section-header" style="margin-top: var(--spacing-xl);">
-        <h3 class="section-title">Основная плитка</h3>
-        <p class="section-subtitle">Выберите основной материал фасада</p>
+      <div class="editor-stage" id="editor-stage">
+        <canvas id="editor-canvas"></canvas>
+        <svg id="editor-overlay" xmlns="http://www.w3.org/2000/svg"></svg>
+        <canvas id="editor-loupe" class="editor-loupe" hidden></canvas>
+        <button class="editor-before" id="editor-before">До</button>
       </div>
-      <div class="carousel" id="facade-material-carousel"></div>
 
-      <!-- Карнизы -->
-      <div class="section-header" style="margin-top: var(--spacing-xl);">
-        <h3 class="section-title">Карнизы и элементы</h3>
-        <p class="section-subtitle">Выберите декоративные элементы фасада</p>
-      </div>
-      <div class="carousel" id="cornices-carousel"></div>
-
-      <!-- Ваш выбор -->
-      <div class="selection-summary" id="selection-summary">
-        <div class="selection-summary__item">
-          <span class="selection-summary__label">Цоколь</span>
-          <span class="selection-summary__value" id="sel-base">Не выбран</span>
-        </div>
-        <div class="selection-summary__item">
-          <span class="selection-summary__label">Плитка</span>
-          <span class="selection-summary__value" id="sel-facade">Не выбрана</span>
-        </div>
-        <div class="selection-summary__item">
-          <span class="selection-summary__label">Карнизы</span>
-          <span class="selection-summary__value" id="sel-cornices">0 элементов</span>
-        </div>
-      </div>
+      <div class="editor-panel" id="editor-panel"></div>
     </div>
 
-    <!-- Генерация -->
-    <div class="screen" data-screen="generating">
+    <!-- Набросок (результат) -->
+    <div class="screen" data-screen="sketch">
       <div class="page-header">
-        <h2 class="page-header__title">Генерация дизайна</h2>
+        <button class="btn-icon" id="sketch-back" aria-label="Назад">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <h2 class="page-header__title">Набросок</h2>
+        <button class="btn-icon" id="sketch-share" aria-label="Поделиться">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </button>
       </div>
 
-      <p class="body-text-large" style="margin-bottom: var(--spacing-lg);">Создаём реалистичный дизайн фасада</p>
-
-      <div class="generating-preview">
-        <img class="generating-preview__image" id="gen-preview-img" src="" alt="Исходное фото">
+      <div class="compare">
+        <img id="sketch-after" alt="После">
+        <div class="compare__before" id="sketch-before-wrap"><img id="sketch-before" alt="До"></div>
+        <div class="compare__divider" id="sketch-divider"></div>
+        <span class="compare__label compare__label--before">До</span>
+        <span class="compare__label compare__label--after">После</span>
+        <input class="compare__slider" id="sketch-slider" type="range" min="0" max="100" value="50" aria-label="Сравнить до и после">
       </div>
 
-      <div class="generating-info" id="gen-info"></div>
-
-      <div style="text-align: center; margin-bottom: var(--spacing-lg);">
-        <div class="progress-text" id="gen-percent">0%</div>
-        <div class="progress-bar" style="margin-top: var(--spacing-md);">
-          <div class="progress-bar__fill" id="gen-progress" style="width: 0%;"></div>
-        </div>
+      <div class="result-actions">
+        <button class="btn btn-primary btn-full" id="sketch-save">Сохранить в проекты</button>
+        <button class="btn btn-secondary" id="sketch-download" aria-label="Скачать">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
       </div>
+      <button class="btn btn-ghost btn-full" id="sketch-edit">Изменить разметку</button>
 
-      <div class="spinner" id="gen-spinner"></div>
+      <div class="section-header">
+        <h3 class="section-title">Материалы</h3>
+      </div>
+      <div class="project-details" id="sketch-summary"></div>
     </div>
 
     <!-- Готовый проект -->
@@ -332,7 +325,8 @@
   <script src="js/projects.js"></script>
   <script src="js/materials.js"></script>
   <script src="js/camera.js"></script>
-  <script src="js/generation.js"></script>
+  <script src="js/facade-render.js"></script>
+  <script src="js/editor.js"></script>
   <script src="js/catalog.js"></script>
   <script src="js/profile.js"></script>
   <script src="js/screens.js"></script>

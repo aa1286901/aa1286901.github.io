@@ -40,13 +40,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Генерируем уникальное имя
     $filename = uniqid('img_', true) . '.' . $ext;
-    $destination = UPLOAD_ORIGINALS . $filename;
+    // kind=generated — готовый набросок, иначе исходное фото
+    $folder = ($_POST['kind'] ?? '') === 'generated' ? 'generated' : 'originals';
+    $destination = ($folder === 'generated' ? UPLOAD_GENERATED : UPLOAD_ORIGINALS) . $filename;
 
     // Перемещаем файл
     if (!move_uploaded_file($file['tmp_name'], $destination)) {
         respondError('Не удалось сохранить файл');
     }
 
-    $url = 'uploads/originals/' . $filename; // относительный путь: приложение живёт в подпапке
+    $url = 'uploads/' . $folder . '/' . $filename; // относительный путь: приложение живёт в подпапке
     respondSuccess(['url' => $url, 'filename' => $filename]);
 }

@@ -21,12 +21,11 @@ const App = {
     }
     
     Router.init();
-    GenerationService.init();
     
     const user = await Auth.init();
     
     // Если есть черновик проекта - предложить продолжить
-    if (ProjectFlow.hasDraft() && !user) {
+    if (ProjectFlow.hasDraft()) {
       this.showDraftPrompt();
     }
 
@@ -45,7 +44,7 @@ const App = {
         <div style="font-size: 48px; margin-bottom: 16px;">📐</div>
         <h3 style="margin-bottom: 8px;">Есть незавершённый проект</h3>
         <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-bottom: 24px;">
-          Вы выбирали материалы для фасада. Продолжить?
+          Вы размечали фасад. Продолжить?
         </p>
         <div style="display: flex; gap: 12px;">
           <button class="btn btn-secondary btn-full" id="draft-skip">Начать заново</button>
@@ -59,10 +58,8 @@ const App = {
       const draft = ProjectFlow.loadDraft();
       if (draft.originalPhoto) {
         ProjectFlow.setState('originalPhoto', draft.originalPhoto);
-        ProjectFlow.setState('selectedBaseMaterial', draft.selectedBaseMaterial);
-        ProjectFlow.setState('selectedFacadeMaterial', draft.selectedFacadeMaterial);
-        ProjectFlow.setState('selectedCornices', draft.selectedCornices || []);
-        Router.navigateTo('photo');
+        ProjectFlow.setState('design', draft.design || null);
+        Router.navigateTo('editor');
       }
     });
 
