@@ -20,9 +20,10 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
+          protocol: ftp
+          port: 21
           local-dir: fasad/
-          server-dir: /public_html/fasad/
+          server-dir: /ahmedov.online/fasad/
           # Живые данные на хостинге не перезаписываем: база пользователей и загруженные фото
           exclude: |
             **/.git*
