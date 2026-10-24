@@ -241,6 +241,7 @@ const lessonPlace = (id = lessonId) => (place["lesson-" + id] ||= {});
 // иначе на последней открытой части
 function bookHref(i) {
   if (BOOKS[i].href !== "#mabda") return BOOKS[i].href;
+  if (plan.mabda) return "#lesson-" + plan.mabda.key;
   if (place.mabda) return "#lesson-" + place.mabda;
   return place.mabdaPart ? "#mabda-" + place.mabdaPart : "#mabda";
 }
@@ -364,6 +365,7 @@ function setView(view) {
   toggleSizer(false);
   stopSpeech();
   closeRetell();
+  closeToday();
   document.body.classList.remove("view-home", "view-welcome", "view-nahw", "view-quiz", "view-today", "view-train");
   if (view !== "lesson") document.body.classList.add("view-" + view);
   if (view !== currentView) {
@@ -427,6 +429,7 @@ function setHomeBook(i) {
   $("bpAuthor").textContent = b.author;
   $("bpDesc").textContent = b.desc;
   $("bpOpen").href = b.href;
+  if (typeof renderBookTask === "function" && $("bpTask")) renderBookTask();
 }
 
 function scrollToBook(i, smooth = true) {
@@ -534,12 +537,13 @@ async function openLesson(id) {
 
 let routedOnce = false;
 async function route() {
-  // При запуске, если что-то задано, сразу «Сегодня»
-  if (!routedOnce) {
-    routedOnce = true;
-    if (!location.hash && (plan.mabda || plan.unm?.topics?.length)) return location.replace("#today");
+  routedOnce = true;
+  // «Сегодня» — панель поверх библиотеки
+  if (location.hash === "#today") {
+    history.replaceState(null, "", location.pathname + location.search);
+    showHome();
+    return openToday();
   }
-  if (location.hash === "#today") return showToday();
   if (location.hash === "#unm-train") return showTrain();
   if (location.hash === "#amil-quiz") return showQuiz();
   if (TREE_BOOKS[location.hash]) return showNahw(location.hash);
@@ -1461,6 +1465,7 @@ function closeSettings() {
 }
 
 $("settingsBtn").onclick = openSettings;
+document.addEventListener("keydown", (e) => e.key === "Escape" && closeToday());
 $("setDone").onclick = closeSettings;
 $("setOverlay").onclick = closeSettings;
 document.addEventListener("keydown", (e) => {
@@ -1642,13 +1647,14 @@ $("bpOpen").addEventListener("click", (e) => {
 }
 
 // ── Возврат свайпом от левого края, как в iPhone ──
-const VIEW_EL = { welcome: "welcomeScreen", nahw: "nahwScreen", quiz: "quizScreen", lesson: "mainContent", today: "todayScreen", train: "trainScreen" };
+const VIEW_EL = { welcome: "welcomeScreen", nahw: "nahwScreen", quiz: "quizScreen", lesson: "mainContent", train: "trainScreen" };
 {
   let edge = null;
   const blocked = () =>
     currentView === "home" ||
     !$("reader").hidden ||
     !$("retell").hidden ||
+    !$("todayLayer").hidden ||
     !$("setLayer").hidden ||
     !$("qawlLayer").hidden ||
     !$("netLayer").hidden ||
@@ -1947,7 +1953,9 @@ function dueOf(task) {
 function mabdaSchedule() {
   const m = plan.mabda;
   const due = dueOf(m);
-  const left = STEPS.filter((s) => !m.done?.[s.id]);
+  // сделанное сегодня остаётся в сегодняшнем плане — день не «растёт» после каждой галочки
+  const t = ymd();
+  const left = STEPS.filter((s) => !m.done?.[s.id] || m.done[s.id] === t);
   const n = due ? Math.max(1, dayDiff(today0(), due) + 1) : Math.max(1, left.length);
   const days = Array.from({ length: n }, () => []);
   left.forEach((s, k) => days[Math.floor((k * n) / left.length)].push(s));
@@ -1969,10 +1977,7 @@ function todayItems() {
   if (plan.mabda) {
     const m = plan.mabda;
     const { days } = mabdaSchedule();
-    STEPS.forEach((s) => {
-      if (m.done?.[s.id] === t) items.push({ step: s.id, title: s.title, sub: s.sub, done: true });
-    });
-    days[0].forEach((s) => items.push({ step: s.id, title: s.title, sub: s.sub, done: false }));
+    days[0].forEach((s) => items.push({ step: s.id, title: s.title, sub: s.sub, done: m.done?.[s.id] === t }));
     if (!items.length && STEPS.some((s) => !m.done?.[s.id]))
       items.push({ step: "review", title: "Повторить слова", sub: "5 минут карточек — чтобы не забыть", done: m.review === t });
   }
@@ -1981,9 +1986,69 @@ function todayItems() {
   return items;
 }
 
-function updateTodayDot() {
-  $("todayDot").hidden = !todayItems().some((x) => !x.done);
+// Главный экран: полоска «Сегодня» и задание книги в её карточке
+function renderHomeToday() {
+  const items = todayItems();
+  const done = items.filter((x) => x.done).length;
+  const assigned = !!(plan.mabda || plan.unm?.topics?.length);
+  const next = items.find((x) => !x.done);
+  $("tsNum").textContent = assigned ? `${done}/${items.length}` : "+";
+  $("tsFill").style.strokeDasharray = `${items.length ? (done / items.length) * 97.4 : 0} 97.4`;
+  $("todayStrip").classList.toggle("all-done", assigned && !next);
+  $("todayStrip").classList.toggle("empty", !assigned);
+  $("tsTitle").textContent = assigned ? (next ? "Сегодня" : "На сегодня всё") : "Что задал учитель?";
+  $("tsSub").textContent = !assigned
+    ? "Укажите урок — составлю план по дням"
+    : next
+      ? `Дальше: ${next.title.toLowerCase()}${items.length - done > 1 ? ` · ещё ${items.length - done - 1}` : ""}`
+      : "Можно повторить слова или отдохнуть";
+  renderBookTask();
 }
+
+function renderBookTask() {
+  const href = BOOKS[homeBook]?.href;
+  const t = today0();
+  let text = "";
+  let open = "Открыть";
+  if (href === "#mabda" && plan.mabda) {
+    const l = LESSONS.find((x) => x.key === plan.mabda.key);
+    const due = dueOf(plan.mabda);
+    text = `${l.n ? "Урок " + l.n : "Упражнения"}${due ? ` · сдать ${relLabel(dayDiff(t, due))}` : " · задано учителем"}`;
+    open = l.n ? `Продолжить урок ${l.n}` : "Продолжить упражнения";
+  } else if (href === UNM && plan.unm?.topics?.length) {
+    const n = plan.unm.topics.length;
+    const due = dueOf(plan.unm);
+    text = `${n} ${plural(n, "тема", "темы", "тем")}${due ? ` · сдать ${relLabel(dayDiff(t, due))}` : " · задано учителем"}`;
+  }
+  $("bpTask").hidden = !text;
+  $("bpTask").textContent = text;
+  $("bpDesc").hidden = !!text;
+  $("bpOpen").textContent = open;
+}
+
+function openToday() {
+  renderToday();
+  $("todayLayer").hidden = false;
+  requestAnimationFrame(() => $("todayLayer").classList.add("show"));
+  $("todayStrip").setAttribute("aria-expanded", "true");
+  if (plan.unm?.topics?.length && !unmNodes)
+    loadUnm()
+      .then(renderToday)
+      .catch(() => {});
+}
+function closeToday() {
+  const layer = $("todayLayer");
+  if (layer.hidden || !layer.classList.contains("show")) return;
+  layer.classList.remove("show");
+  $("todayStrip").setAttribute("aria-expanded", "false");
+  pickerOpen = false;
+  setTimeout(() => {
+    if (!layer.classList.contains("show")) layer.hidden = true;
+  }, 300);
+}
+$("todayStrip").onclick = openToday;
+$("todayDone").onclick = closeToday;
+$("todayOverlay").onclick = closeToday;
 
 let unmNodes = null; // узлы Унмузаджа в порядке дерева: индекс = номер темы
 async function loadUnm() {
@@ -2059,7 +2124,7 @@ function renderToday() {
   $("todayDays").innerHTML = WEEK.map(
     ([name, d]) => `<button type="button" class="day-chip${plan.days.includes(d) ? " on" : ""}" data-day="${d}" aria-pressed="${plan.days.includes(d)}">${name}</button>`,
   ).join("");
-  updateTodayDot();
+  renderHomeToday();
 }
 
 function fillLessonPick(cur) {
@@ -2067,18 +2132,6 @@ function fillLessonPick(cur) {
   $("pickLesson").innerHTML = LESSONS.filter((l) => l.part === part)
     .map((l) => `<option value="${l.key}"${l.key === cur.key ? " selected" : ""}>${l.n ? `${l.n}. ` : ""}${esc(l.ruTitle)}</option>`)
     .join("");
-}
-
-async function showToday() {
-  setView("today");
-  document.title = "Сегодня — Arabic";
-  renderToday();
-  if (plan.unm?.topics?.length && !unmNodes) {
-    try {
-      await loadUnm();
-      renderToday();
-    } catch {}
-  }
 }
 
 // Переход к шагу: урок открывается в нужном режиме
@@ -2437,7 +2490,7 @@ async function showTrain() {
   }
 }
 
-updateTodayDot();
+renderHomeToday();
 
 // ── Инициализация ───────────────────────────────────────
 route();
