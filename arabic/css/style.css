@@ -3368,21 +3368,6 @@ body.view-train .app {
     display: none
 }
 
-.today {
-    display: none;
-    width: 100%;
-    max-width: 520px;
-    height: 100dvh;
-    margin: auto;
-    padding: calc(env(safe-area-inset-top) + 6px) 16px 0;
-    flex-direction: column;
-    gap: 6px;
-    overflow: hidden
-}
-
-body.view-today .today {
-    display: flex
-}
 
 .today-scroll {
     flex: 1;
@@ -4172,4 +4157,565 @@ body.view-quiz .train {
     .bp-desc {
         display: none
     }
+}
+
+/* ── Главная (в стиле Apple Books) ── */
+body.view-main .app {
+    display: none
+}
+
+.main {
+    display: none;
+    width: 100%;
+    max-width: 560px;
+    height: 100dvh;
+    margin: auto
+}
+
+body.view-main .main {
+    display: block
+}
+
+.main-scroll {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(env(safe-area-inset-top) + 10px) 0 calc(env(safe-area-inset-bottom) + 110px);
+    scrollbar-width: none
+}
+
+.main-scroll::-webkit-scrollbar {
+    display: none
+}
+
+.main-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 20px 6px
+}
+
+.main-title {
+    margin: 0;
+    font-family: "New York", "Iowan Old Style", Georgia, serif;
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -.01em
+}
+
+.main-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px
+}
+
+.goal-ring {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    padding: 0;
+    background: var(--card);
+    box-shadow: 0 1px 3px var(--shadow);
+    display: grid;
+    place-items: center
+}
+
+.goal-ring svg {
+    position: absolute;
+    inset: 3px;
+    width: calc(100% - 6px);
+    height: calc(100% - 6px);
+    transform: rotate(-90deg)
+}
+
+.goal-ring circle {
+    fill: none;
+    stroke-width: 3.5
+}
+
+.goal-ring.all-done .ts-fill {
+    stroke: #34c759
+}
+
+.goal-num {
+    position: relative;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent)
+}
+
+/* Разделы */
+.m-sec {
+    padding: 22px 0 6px;
+    border-top: .5px solid var(--separator);
+    margin-top: 14px
+}
+
+.main-top + .m-sec {
+    border-top: 0;
+    margin-top: 0;
+    padding-top: 12px
+}
+
+.m-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 0 20px;
+    border: 0;
+    background: none;
+    color: var(--text);
+    font-family: "New York", "Iowan Old Style", Georgia, serif;
+    font-size: 23px;
+    font-weight: 700;
+    text-decoration: none;
+    text-align: left
+}
+
+.m-link .m-chev {
+    color: var(--muted);
+    margin-top: 2px
+}
+
+.m-center {
+    justify-content: center;
+    text-align: center
+}
+
+.m-sub {
+    margin: 4px 0 0;
+    padding: 0 20px;
+    font-size: 14px;
+    color: var(--muted)
+}
+
+.m-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+    padding: 0 20px 6px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 20px;
+    scrollbar-width: none
+}
+
+.m-row::-webkit-scrollbar {
+    display: none
+}
+
+.m-row > * {
+    scroll-snap-align: start;
+    flex: none
+}
+
+/* Маленькая обложка: та же, что на витрине, в уменьшенном виде */
+.mini-cover {
+    flex: none;
+    width: 48px;
+    height: 68px;
+    border-radius: 3px 5px 5px 3px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px var(--shadow)
+}
+
+.mini-cover .cover {
+    zoom: .5;
+    box-shadow: none
+}
+
+.mini-cover.big {
+    width: 72px;
+    height: 102px
+}
+
+.mini-cover.big .cover {
+    zoom: .75
+}
+
+/* «Продолжить» */
+.c-card {
+    width: min(74vw, 300px);
+    min-height: 92px;
+    padding: 12px;
+    border-radius: 16px;
+    background: var(--card);
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px
+}
+
+.c-card:active,
+.a-card:active,
+.b-tile:active {
+    transform: scale(.98)
+}
+
+.c-info,
+.a-info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left
+}
+
+.c-title {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden
+}
+
+.c-sub {
+    font-size: 13px;
+    color: var(--muted)
+}
+
+.c-meta {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600
+}
+
+/* «Задано учителем» */
+.a-card {
+    width: min(82vw, 340px);
+    padding: 14px;
+    border: 0;
+    border-radius: 18px;
+    background: var(--card);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left
+}
+
+.a-kicker {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--muted)
+}
+
+.a-title {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.3
+}
+
+.a-ar {
+    font-family: var(--ar);
+    font-size: 18px;
+    color: var(--text-2);
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.a-due {
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600
+}
+
+.a-steps {
+    display: flex;
+    gap: 5px;
+    margin-top: 6px
+}
+
+.a-steps i {
+    width: 22px;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--fill)
+}
+
+.a-steps i.on {
+    background: #34c759
+}
+
+.a-empty {
+    width: calc(100vw - 40px);
+    max-width: 520px
+}
+
+.a-plus {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: grid;
+    place-items: center;
+    font-size: 28px
+}
+
+/* «План на сегодня» — как «Цели по чтению» */
+.m-goal {
+    padding-bottom: 18px
+}
+
+.gauge {
+    position: relative;
+    width: min(78vw, 320px);
+    margin: 16px auto 0
+}
+
+.gauge svg {
+    display: block;
+    width: 100%;
+    overflow: visible
+}
+
+.gauge path {
+    fill: none;
+    stroke-width: 13;
+    stroke-linecap: round
+}
+
+.gauge-track {
+    stroke: var(--fill)
+}
+
+.gauge-fill {
+    stroke: var(--accent);
+    opacity: 1;
+    stroke-dasharray: 0 276.5;
+    transition: stroke-dasharray .6s ease
+}
+
+.gauge-text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.gauge-label {
+    font-size: 15px;
+    font-weight: 600
+}
+
+.gauge-num {
+    font-size: 46px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums
+}
+
+.gauge-link {
+    border: 0;
+    background: none;
+    padding: 2px 6px;
+    color: var(--muted);
+    font-size: 14px
+}
+
+.m-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(100% - 40px);
+    margin: 18px 20px 0;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 600
+}
+
+.m-pill small {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted)
+}
+
+.m-week {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    margin: 20px 20px 0
+}
+
+.wk {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1.5px solid var(--separator);
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted)
+}
+
+.wk.act {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--on-accent)
+}
+
+.wk.is-today:not(.act) {
+    border-color: var(--text);
+    color: var(--text)
+}
+
+.wk.class::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent)
+}
+
+.m-goal #mStreak {
+    margin-top: 16px
+}
+
+/* «Мои книги» — крупные обложки */
+.m-books {
+    gap: 16px
+}
+
+.b-tile {
+    width: 144px;
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+}
+
+.tile-cover {
+    display: block;
+    width: 144px;
+    height: 204px;
+    border-radius: 4px 8px 8px 4px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px var(--shadow)
+}
+
+.tile-cover .cover {
+    zoom: 1.5;
+    box-shadow: none
+}
+
+.b-name {
+    font-size: 14px;
+    font-weight: 600
+}
+
+/* «Мои итоги» */
+.m-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+    padding: 0 20px
+}
+
+.m-stat {
+    aspect-ratio: 3 / 4;
+    border-radius: 12px;
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px;
+    text-align: center
+}
+
+.m-stat-num {
+    font-family: "New York", "Iowan Old Style", Georgia, serif;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text)
+}
+
+.m-stat-label {
+    font-size: 12px;
+    color: var(--muted)
+}
+
+/* ── Вкладки внизу ── */
+.tabbar {
+    position: fixed;
+    z-index: 40;
+    left: 50%;
+    bottom: calc(env(safe-area-inset-bottom) + 10px);
+    transform: translateX(-50%);
+    display: none;
+    gap: 4px;
+    padding: 6px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--card) 78%, transparent);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    backdrop-filter: blur(20px) saturate(1.6);
+    box-shadow: 0 8px 28px var(--shadow), inset 0 0 0 .5px var(--separator)
+}
+
+body.view-main .tabbar,
+body.view-home .tabbar {
+    display: flex
+}
+
+.tab {
+    min-width: 96px;
+    padding: 6px 14px 5px;
+    border-radius: 999px;
+    color: var(--muted);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    font-size: 11px;
+    font-weight: 600
+}
+
+body.view-main .tab[data-tab="main"],
+body.view-home .tab[data-tab="library"] {
+    background: var(--fill);
+    color: var(--accent)
+}
+
+/* Библиотеке нужно место под вкладками */
+body.view-home .home {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 84px)
+}
+
+.gauge-fill.zero,
+.goal-ring .ts-fill.zero {
+    opacity: 0
 }

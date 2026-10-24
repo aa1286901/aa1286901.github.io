@@ -34,7 +34,7 @@
             if (localStorage.getItem("arabic.motion") === "true") document.documentElement.dataset.motion = "on";
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="css/style.css?v=0060">
+    <link rel="stylesheet" href="css/style.css?v=0061">
 </head>
 
 <body class="view-home">
@@ -90,6 +90,71 @@
         })();
     </script>
     <!-- Главный экран — библиотека: обложки листаются вбок, под ними описание книги -->
+    <!-- Главная: продолжить, задание учителя, план на сегодня, книги, итоги -->
+    <section class="main" id="mainScreen">
+        <div class="main-scroll" id="mainScroll">
+            <header class="main-top">
+                <h1 class="main-title">Главная</h1>
+                <div class="main-actions">
+                    <button class="goal-ring" id="goalRing" type="button" aria-label="План на сегодня">
+                        <svg viewBox="0 0 36 36" aria-hidden="true"><circle class="ts-track" cx="18" cy="18" r="15.5"/><circle class="ts-fill" id="goalFill" cx="18" cy="18" r="15.5"/></svg>
+                        <span class="goal-num" id="goalNum">0</span>
+                    </button>
+                    <button class="icon-btn" id="mainSettings" type="button" aria-label="Настройки"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></svg></button>
+                </div>
+            </header>
+
+            <section class="m-sec">
+                <h2 class="m-head">Продолжить</h2>
+                <div class="m-row" id="mContinue"></div>
+            </section>
+
+            <section class="m-sec">
+                <button class="m-head m-link" id="mAssignedHead" type="button">Задано учителем <svg class="m-chev" width="8" height="14" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <p class="m-sub" id="mAssignedSub">Урок к ближайшему занятию и план по дням</p>
+                <div class="m-row" id="mAssigned"></div>
+            </section>
+
+            <section class="m-sec m-goal">
+                <h2 class="m-head m-center">План на сегодня</h2>
+                <p class="m-sub m-center">Понемногу каждый день — и к занятию всё готово</p>
+                <div class="gauge">
+                    <svg viewBox="0 0 200 108" aria-hidden="true"><path class="gauge-track" d="M12 100 A88 88 0 0 1 188 100"/><path class="gauge-fill" id="gaugeFill" d="M12 100 A88 88 0 0 1 188 100"/></svg>
+                    <div class="gauge-text">
+                        <span class="gauge-label">Сделано сегодня</span>
+                        <span class="gauge-num" id="gaugeNum">0</span>
+                        <button class="gauge-link" id="gaugeLink" type="button"></button>
+                    </div>
+                </div>
+                <button class="m-pill" id="mNext" type="button"><span id="mNextTitle">Продолжить</span><small id="mNextSub"></small></button>
+                <div class="m-week" id="mWeek"></div>
+                <p class="m-sub m-center" id="mStreak"></p>
+            </section>
+
+            <section class="m-sec">
+                <a class="m-head m-link" href="#library">Мои книги <svg class="m-chev" width="8" height="14" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                <div class="m-row m-books" id="mBooks"></div>
+            </section>
+
+            <section class="m-sec">
+                <h2 class="m-head m-center">Мои итоги</h2>
+                <div class="m-stats" id="mStats"></div>
+            </section>
+        </div>
+    </section>
+
+    <!-- Вкладки внизу: Главная и Библиотека -->
+    <nav class="tabbar" id="tabbar" aria-label="Разделы">
+        <a class="tab" href="#" data-tab="main">
+            <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5L12 3.8l8.5 6.7V20a1 1 0 0 1-1 1h-4.6v-6.2H9.1V21H4.5a1 1 0 0 1-1-1z" fill="currentColor"/></svg>
+            <span>Главная</span>
+        </a>
+        <a class="tab" href="#library" data-tab="library">
+            <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3.5h3.2v17H4zM8.6 3.5h3.2v17H8.6zM13.4 5.2l3.1-.8 4.2 15.7-3.1.8z" fill="currentColor"/></svg>
+            <span>Библиотека</span>
+        </a>
+    </nav>
+
     <section class="home" id="homeScreen">
         <header class="lib-top">
             <div class="lib-brand">
@@ -100,15 +165,6 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></svg>
             </button>
         </header>
-
-        <button class="today-strip" id="todayStrip" type="button" aria-haspopup="dialog">
-            <span class="ts-ring" id="tsRing" aria-hidden="true"><svg viewBox="0 0 36 36"><circle class="ts-track" cx="18" cy="18" r="15.5"/><circle class="ts-fill" id="tsFill" cx="18" cy="18" r="15.5"/></svg><span class="ts-num" id="tsNum"></span></span>
-            <span class="ts-text">
-                <span class="ts-title" id="tsTitle">Сегодня</span>
-                <span class="ts-sub" id="tsSub"></span>
-            </span>
-            <svg class="ts-chev" width="8" height="14" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
 
         <div class="lib-stage">
             <div class="showcase" id="showcase">
@@ -699,7 +755,7 @@
         </div>
     </div>
 
-    <script src="js/app.js?v=0060"></script>
+    <script src="js/app.js?v=0061"></script>
 </body>
 
 </html>
