@@ -47,6 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         respondError('Не удалось сохранить файл');
     }
 
-    $url = '/uploads/originals/' . $filename;
+    $url = 'uploads/originals/' . $filename; // относительный путь: приложение живёт в подпапке
     respondSuccess(['url' => $url, 'filename' => $filename]);
 }

@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
     $cornices = $body['cornices'] ?? [];
 
     $newProject = [
-        'id' => getNextId('projects'),
+        'id' => getNextId($db['projects']),
         'user_id' => $userId,
         'name' => $name,
         'original_image' => $originalImage,
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
     // Сохраняем материалы
     if ($baseMaterialId) {
         $db['project_materials'][] = [
-            'id' => getNextId('project_materials'),
+            'id' => getNextId($db['project_materials']),
             'project_id' => $projectId,
             'material_id' => $baseMaterialId,
             'category' => 'base',
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
     }
     if ($facadeMaterialId) {
         $db['project_materials'][] = [
-            'id' => getNextId('project_materials'),
+            'id' => getNextId($db['project_materials']),
             'project_id' => $projectId,
             'material_id' => $facadeMaterialId,
             'category' => 'facade',
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
     if (!empty($cornices)) {
         foreach ($cornices as $corniceId) {
             $db['project_cornices'][] = [
-                'id' => getNextId('project_cornices'),
+                'id' => getNextId($db['project_cornices']),
                 'project_id' => $projectId,
                 'cornice_id' => $corniceId,
                 'position' => null,
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
         }
     }
 
-    saveDB();
+    saveDB($db);
     respondSuccess(['id' => $projectId, 'name' => $name, 'status' => 'draft']);
 
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($body['projectId'])) {
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
     }
     $db['projects'][$projectIndex]['updated_at'] = date('Y-m-d H:i:s');
 
-    saveDB();
+    saveDB($db);
     respondSuccess(['project_id' => $projectId]);
 
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {

@@ -2,7 +2,11 @@
 // Конфигурация приложения — JSON-хранилище (без MySQL)
 
 define('DATA_DIR', __DIR__ . '/../data/');
-define('DATABASE', DATA_DIR . 'database.json');
+define('DATABASE', DATA_DIR . 'db.php');
+define('DB_LOCK', DATA_DIR . 'db.lock');
+define('DB_GUARD', "<?php http_response_code(404); exit; ?>\n");
+define('LEGACY_DATABASE', DATA_DIR . 'database.json'); // старая публичная база, переносится автоматически
+define('SEED_DATABASE', DATA_DIR . 'seed.json');        // демо-данные для новой установки
 define('UPLOAD_DIR', __DIR__ . '/../uploads/');
 define('UPLOAD_ORIGINALS', UPLOAD_DIR . 'originals/');
 define('UPLOAD_GENERATED', UPLOAD_DIR . 'generated/');
@@ -51,40 +55,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // === JSON-хранилище (замена MySQL) ===
-function getDB() {
-    static $db = null;
-    if ($db === null) {
-        if (!file_exists(DATABASE)) {
-            // Создаём пустую базу
-            $db = [
-                'users' => [],
-                'projects' => [],
-                'project_materials' => [],
-                'project_cornices' => [],
-                'user_favorites' => [],
-                'meta' => ['version' => '1.0', 'created_at' => date('Y-m-d H:i:s')]
-            ];
-            saveDB();
-        } else {
-            $content = file_get_contents(DATABASE);
-            $db = json_decode($content, true) ?? [];
+// База лежит в data/db.php: первая строка — PHP-заглушка, поэтому при прямом
+// запросе файла сервер выполняет её и ничего не отдаёт. .htaccess не нужен (сервер — nginx).
+// Весь запрос держит эксклюзивную блокировку, чтобы параллельные запросы не затирали друг друга.
+
+function emptyDB() {
+    return [
+        'users' => [],
+        'projects' => [],
+        'project_materials' => [],
+        'project_cornices' => [],
+        'user_favorites' => [],
+        'meta' => ['version' => '1.0', 'created_at' => date('Y-m-d H:i:s')]
+    ];
+}
+
+function lockDB() {
+    static $lock = null;
+    if ($lock === null) {
+        $lock = fopen(DB_LOCK, 'c');
+        if (!$lock || !flock($lock, LOCK_EX)) {
+            respondError('База данных недоступна', 500);
         }
+    }
+}
+
+function readJsonDB($path) {
+    $content = file_get_contents($path);
+    if (str_starts_with($content, '<?php')) {
+        $content = substr($content, strpos($content, "\n") + 1);
+    }
+    $data = json_decode($content, true);
+    if ($data === null && trim($content) !== 'null' && trim($content) !== '') {
+        // Файл повреждён — не перезаписываем его, чтобы не потерять данные
+        respondError('База данных повреждена', 500);
+    }
+    return is_array($data) ? array_merge(emptyDB(), $data) : emptyDB();
+}
+
+function getDB() {
+    lockDB();
+    if (file_exists(DATABASE)) {
+        return readJsonDB(DATABASE);
+    }
+    // Первый запуск: переносим старую публичную database.json или берём демо-данные
+    if (file_exists(LEGACY_DATABASE)) {
+        $db = readJsonDB(LEGACY_DATABASE);
+        saveDB($db);
+        unlink(LEGACY_DATABASE);
+    } elseif (file_exists(SEED_DATABASE)) {
+        $db = readJsonDB(SEED_DATABASE);
+        saveDB($db);
+    } else {
+        $db = emptyDB();
+        saveDB($db);
     }
     return $db;
 }
 
-function saveDB() {
-    global $db;
-    file_put_contents(DATABASE, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+function saveDB($db) {
+    lockDB();
+    $json = json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    $tmp = DATABASE . '.tmp';
+    if ($json === false || file_put_contents($tmp, DB_GUARD . $json) === false || !rename($tmp, DATABASE)) {
+        respondError('Не удалось сохранить данные', 500);
+    }
 }
 
-function getNextId($table, $key = 'id') {
-    $db = getDB();
-    if (empty($db[$table])) return 1;
+function getNextId($rows) {
     $max = 0;
-    foreach ($db[$table] as $item) {
-        if (isset($item[$key]) && $item[$key] > $max) {
-            $max = $item[$key];
+    foreach ($rows as $item) {
+        if (isset($item['id']) && $item['id'] > $max) {
+            $max = $item['id'];
         }
     }
     return $max + 1;
@@ -121,6 +163,11 @@ function sanitize($input) {
 
 // Создаём директории
 ensureUploadDirs();
+
+// Старая публичная database.json переносится при первом же запросе к API
+if (file_exists(LEGACY_DATABASE) && !file_exists(DATABASE)) {
+    getDB();
+}
 
 function ensureUploadDirs() {
     foreach ([UPLOAD_ORIGINALS, UPLOAD_GENERATED] as $dir) {

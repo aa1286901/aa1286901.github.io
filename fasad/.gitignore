@@ -1,0 +1,8 @@
+# Живая база и служебные файлы создаются на сервере
+data/db.php
+data/db.php.tmp
+data/db.lock
+data/database.json
+uploads/originals/*
+uploads/generated/*
+!uploads/*/.gitkeep

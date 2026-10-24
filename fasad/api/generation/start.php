@@ -6,34 +6,47 @@ $userId = requireAuth();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $body = getJsonBody();
     $projectId = (int)($body['projectId'] ?? 0);
-    $materials = $body['materials'] ?? [];
-    $cornices = $body['cornices'] ?? [];
+    $db = getDB();
 
     // Проверяем принадлежность проекта
-    $pdo = getDB();
-    $stmt = $pdo->prepare('SELECT user_id FROM projects WHERE id = ?');
-    $stmt->execute([$projectId]);
-    $project = $stmt->fetch();
+    $projectIndex = null;
+    foreach ($db['projects'] as $i => $p) {
+        if ($p['id'] === $projectId && $p['user_id'] === $userId) {
+            $projectIndex = $i;
+            break;
+        }
+    }
 
-    if (!$project || $project['user_id'] !== $userId) {
+    if ($projectIndex === null) {
         respondError('Проект не найден', 404);
     }
 
-    // Обновляем статус проекта
-    $stmt = $pdo->prepare('UPDATE projects SET status = ? WHERE id = ?');
-    $stmt->execute(['processing', $projectId]);
+    $project = &$db['projects'][$projectIndex];
 
-    // Сохраняем материалы
-    foreach ($materials as $mat) {
-        $stmt = $pdo->prepare('INSERT IGNORE INTO project_materials (project_id, material_id, category) VALUES (?, ?, ?)');
-        $stmt->execute([$projectId, $mat['material_id'], $mat['category']]);
+    if (isset($body['progress'])) {
+        // Обновление прогресса (mock-генерация)
+        $project['progress'] = max(0, min(100, (int)$body['progress']));
+    } elseif (isset($body['status'])) {
+        if (!in_array($body['status'], ['processing', 'completed', 'failed'], true)) {
+            respondError('Неверный статус');
+        }
+        $project['status'] = $body['status'];
+        if ($body['status'] === 'completed') {
+            $project['progress'] = 100;
+        }
+    } else {
+        // Старт генерации. Материалы и карнизы уже сохранены при создании проекта
+        $project['status'] = 'processing';
+        $project['progress'] = 0;
     }
 
-    // Сохраняем карнизы
-    foreach ($cornices as $corniceId) {
-        $stmt = $pdo->prepare('INSERT IGNORE INTO project_cornices (project_id, cornice_id) VALUES (?, ?)');
-        $stmt->execute([$projectId, $corniceId]);
-    }
+    $project['updated_at'] = date('Y-m-d H:i:s');
+    unset($project);
+    saveDB($db);
 
-    respondSuccess(['project_id' => $projectId, 'status' => 'processing']);
+    respondSuccess([
+        'project_id' => $projectId,
+        'status' => $db['projects'][$projectIndex]['status'],
+        'progress' => $db['projects'][$projectIndex]['progress'],
+    ]);
 }

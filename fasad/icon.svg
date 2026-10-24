@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#C9A86A"/>
+  <!-- Крыша -->
+  <path d="M96 236 256 112l160 124" fill="none" stroke="#F7F4EF" stroke-width="28" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- Фасад из каменных блоков -->
+  <g fill="#F7F4EF">
+    <rect x="136" y="250" width="112" height="44" rx="6"/>
+    <rect x="264" y="250" width="112" height="44" rx="6"/>
+    <rect x="136" y="308" width="56" height="44" rx="6"/>
+    <rect x="208" y="308" width="112" height="44" rx="6"/>
+    <rect x="336" y="308" width="40" height="44" rx="6"/>
+    <rect x="136" y="366" width="112" height="44" rx="6"/>
+    <rect x="264" y="366" width="112" height="44" rx="6"/>
+  </g>
+</svg>
