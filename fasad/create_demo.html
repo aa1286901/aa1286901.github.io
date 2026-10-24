@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Создать демо-пользователя — Fasad AI</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: #f7f4ef;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    
+    h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: #151515;
+    }
+    
+    .subtitle {
+      color: #777;
+      margin-bottom: 24px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #333;
+    }
+    
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e8e4df;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #f9f7f4;
+      transition: border-color 0.2s;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #c9a86a;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 52px;
+    }
+    
+    .btn-primary {
+      background: #c9a86a;
+      color: white;
+    }
+    
+    .btn-primary:hover { background: #b8944f; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .btn-success {
+      background: #4CAF50;
+      color: white;
+      display: none;
+    }
+    
+    .result {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #e8f5e9;
+      display: none;
+    }
+    
+    .result h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: #2e7d32;
+    }
+    
+    .result p {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    .result code {
+      background: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    
+    .error {
+      background: #ffebee;
+    }
+    
+    .error h3 { color: #c62828; }
+    
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e8e4df;
+      border-top-color: #c9a86a;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 16px;
+      color: #c9a86a;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Создать демо-пользователя</h1>
+    <p class="subtitle">Эта страница создаст тестового пользователя через API Fasad AI</p>
+    
+    <form id="demo-form">
+      <div class="form-group">
+        <label for="name">Имя</label>
+        <input type="text" id="name" value="Магомед">
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" value="magomed@fasad.ai">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" value="demo123">
+      </div>
+      
+      <button type="submit" class="btn btn-primary" id="submit-btn">Создать пользователя</button>
+    </form>
+    
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Создаю пользователя...</p>
+    </div>
+    
+    <div class="result" id="result">
+      <h3 id="result-title">✅ Готово!</h3>
+      <p id="result-text"></p>
+    </div>
+    
+    <a href="index.html" class="back-link">← Вернуться на сайт</a>
+  </div>
+  
+  <script>
+    const API_BASE = '.';
+    
+    document.getElementById('demo-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      
+      if (!name || !email || !password) {
+        showResult(false, 'Заполните все поля');
+        return;
+      }
+      
+      // Показываем загрузку
+      document.getElementById('submit-btn').style.display = 'none';
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('result').style.display = 'none';
+      
+      try {
+        const response = await fetch(`${API_BASE}/api/auth/register.php`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showResult(true, `
+            <p><strong>Пользователь создан!</strong></p>
+            <p>Имя: <code>${name}</code></p>
+            <p>Email: <code>${email}</code></p>
+            <p>Пароль: <code>${password}</code></p>
+            <p style="margin-top: 12px; color: #555;">Теперь можете авторизоваться на <a href="index.html" style="color: #c9a86a;">главной странице</a></p>
+          `);
+          
+          // Автоматический вход
+          const loginResp = await fetch(`${API_BASE}/api/auth/login.php`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          const loginData = await loginResp.json();
+          
+          if (loginData.success) {
+            localStorage.setItem('fasad_user', JSON.stringify(loginData.data));
+          }
+        } else {
+          showResult(false, `Ошибка: ${data.error || 'Неизвестная ошибка'}`);
+        }
+      } catch (err) {
+        showResult(false, `Ошибка подключения к API: ${err.message}. Убедитесь что PHP-сервер запущен.`);
+      }
+      
+      document.getElementById('submit-btn').style.display = 'block';
+      document.getElementById('loading').style.display = 'none';
+    });
+    
+    function showResult(success, html) {
+      const result = document.getElementById('result');
+      const title = document.getElementById('result-title');
+      const text = document.getElementById('result-text');
+      
+      result.style.display = 'block';
+      result.className = success ? 'result' : 'result error';
+      title.textContent = success ? '✅ Готово!' : '❌ Ошибка';
+      text.innerHTML = html;
+    }
+  </script>
+</body>
+</html>

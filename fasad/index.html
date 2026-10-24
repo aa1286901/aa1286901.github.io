@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fasad AI">
+  <meta name="theme-color" content="#C9A86A">
+  <meta name="color-scheme" content="light">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- iOS Touch Icons -->
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon.svg">
+  
+  <title>Fasad AI — Создавайте идеальные фасады</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/mobile-pwa.css">
+  <link rel="stylesheet" href="css/ios-fixes.css">
+</head>
+<body>
+  <main class="main-content">
+    <!-- Главная -->
+    <div class="screen active" data-screen="home">
+      <div class="hero">
+        <h1 class="hero__title">Создавайте<br>идеальные фасады</h1>
+        <p class="hero__subtitle">Сфотографируйте дом и получите реалистичный дизайн с детализацией камней</p>
+        <button class="hero__cta" id="hero-create">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          Создать проект
+        </button>
+      </div>
+
+      <div class="quick-history">
+        <div class="quick-history__card" id="quick-history">
+          <div class="quick-history__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 4 1 10 7 10"/>
+              <path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+            </svg>
+          </div>
+          <div class="quick-history__text">
+            <div class="quick-history__title">История проектов</div>
+            <div class="quick-history__subtitle">Посмотрите ваши сохранённые проекты</div>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-muted); flex-shrink: 0;">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Фото здания -->
+    <div class="screen" data-screen="photo">
+      <div class="page-header">
+        <button class="btn-icon" id="photo-back" aria-label="Назад">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <h2 class="page-header__title">Фото здания</h2>
+      </div>
+
+      <p class="body-text-large" style="margin-bottom: var(--spacing-lg);">Сфотографируйте фасад здания</p>
+
+      <div class="camera-area" id="camera-area">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: rgba(255,255,255,0.7); padding: var(--spacing-lg);">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: var(--spacing-md); opacity: 0.6;">
+            <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          <p style="font-size: var(--font-size-sm); text-align: center;">Нажмите для съёмки<br>или выбора из галереи</p>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <svg class="tip-box__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <div class="tip-box__text">Снимайте дом при хорошем освещении и прямо на фасад</div>
+      </div>
+
+      <button class="btn btn-ghost" id="photo-tips">
+        Советы по фото →
+      </button>
+
+      <button class="btn btn-primary btn-full" id="photo-continue" disabled style="opacity: 0.5;">
+        Продолжить
+      </button>
+    </div>
+
+    <!-- Дизайн фасада -->
+    <div class="screen" data-screen="design">
+      <div class="page-header">
+        <button class="btn-icon" id="design-back" aria-label="Назад">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <h2 class="page-header__title">Дизайн фасада</h2>
+      </div>
+
+      <!-- Цоколь -->
+      <div class="section-header">
+        <h3 class="section-title">Цоколь</h3>
+        <p class="section-subtitle">Выберите материал для цоколя</p>
+      </div>
+      <div class="carousel" id="base-material-carousel"></div>
+
+      <!-- Основная плитка -->
+      <div class="section-header" style="margin-top: var(--spacing-xl);">
+        <h3 class="section-title">Основная плитка</h3>
+        <p class="section-subtitle">Выберите основной материал фасада</p>
+      </div>
+      <div class="carousel" id="facade-material-carousel"></div>
+
+      <!-- Карнизы -->
+      <div class="section-header" style="margin-top: var(--spacing-xl);">
+        <h3 class="section-title">Карнизы и элементы</h3>
+        <p class="section-subtitle">Выберите декоративные элементы фасада</p>
+      </div>
+      <div class="carousel" id="cornices-carousel"></div>
+
+      <!-- Ваш выбор -->
+      <div class="selection-summary" id="selection-summary">
+        <div class="selection-summary__item">
+          <span class="selection-summary__label">Цоколь</span>
+          <span class="selection-summary__value" id="sel-base">Не выбран</span>
+        </div>
+        <div class="selection-summary__item">
+          <span class="selection-summary__label">Плитка</span>
+          <span class="selection-summary__value" id="sel-facade">Не выбрана</span>
+        </div>
+        <div class="selection-summary__item">
+          <span class="selection-summary__label">Карнизы</span>
+          <span class="selection-summary__value" id="sel-cornices">0 элементов</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Генерация -->
+    <div class="screen" data-screen="generating">
+      <div class="page-header">
+        <h2 class="page-header__title">Генерация дизайна</h2>
+      </div>
+
+      <p class="body-text-large" style="margin-bottom: var(--spacing-lg);">Создаём реалистичный дизайн фасада</p>
+
+      <div class="generating-preview">
+        <img class="generating-preview__image" id="gen-preview-img" src="" alt="Исходное фото">
+      </div>
+
+      <div class="generating-info" id="gen-info"></div>
+
+      <div style="text-align: center; margin-bottom: var(--spacing-lg);">
+        <div class="progress-text" id="gen-percent">0%</div>
+        <div class="progress-bar" style="margin-top: var(--spacing-md);">
+          <div class="progress-bar__fill" id="gen-progress" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <div class="spinner" id="gen-spinner"></div>
+    </div>
+
+    <!-- Готовый проект -->
+    <div class="screen" data-screen="project">
+      <div class="page-header">
+        <button class="btn-icon" id="project-back" aria-label="Назад">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <h2 class="page-header__title">Готовый проект</h2>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-icon" id="project-fav" aria-label="В избранное">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </button>
+          <button class="btn-icon" id="project-share" aria-label="Поделиться">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="result-image-container">
+        <img id="project-image" src="" alt="Результат">
+      </div>
+
+      <div class="result-actions">
+        <button class="btn btn-primary btn-full" id="project-save">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Сохранить
+        </button>
+        <button class="btn btn-secondary" id="project-download">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+      </div>
+
+      <div class="section-header">
+        <h3 class="section-title">Детали проекта</h3>
+      </div>
+      <div class="project-details" id="project-details"></div>
+    </div>
+
+    <!-- История проектов -->
+    <div class="screen" data-screen="projects">
+      <div class="page-header">
+        <h2 class="page-header__title">История проектов</h2>
+      </div>
+
+      <div class="projects-grid" id="projects-list"></div>
+    </div>
+
+    <!-- Каталог -->
+    <div class="screen" data-screen="catalog">
+      <div class="page-header">
+        <h2 class="page-header__title">Каталог материалов</h2>
+      </div>
+
+      <div class="catalog-search">
+        <svg class="catalog-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="catalog-search-input" placeholder="Поиск материала…">
+      </div>
+
+      <div id="catalog-sections"></div>
+    </div>
+
+    <!-- Профиль -->
+    <div class="screen" data-screen="profile">
+      <div id="profile-content"></div>
+    </div>
+
+    <!-- Избранные материалы -->
+    <div class="screen" data-screen="favorites">
+      <div class="page-header">
+        <button class="btn-icon" id="fav-back" aria-label="Назад">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <h2 class="page-header__title">Избранные материалы</h2>
+      </div>
+      <div class="catalog-grid" id="favorites-content" style="grid-template-columns: repeat(2, 1fr); gap: var(--spacing-md);"></div>
+    </div>
+
+    <!-- Авторизация -->
+    <div class="screen" data-screen="auth">
+      <div class="auth-screen">
+        <h1 class="auth-screen__title">Вход</h1>
+        <p class="auth-screen__subtitle">Войдите в свой аккаунт</p>
+        <form class="auth-screen__form" id="auth-form">
+          <input class="input" type="email" id="auth-email" placeholder="Email" required>
+          <input class="input" type="password" id="auth-password" placeholder="Пароль" required>
+          <button class="btn btn-primary btn-full" type="submit">Войти</button>
+        </form>
+        <div class="auth-screen__divider">или</div>
+        <button class="btn btn-secondary btn-full" id="auth-register">Зарегистрироваться</button>
+        <button class="btn btn-ghost btn-full" id="auth-demo">Попробовать без регистрации</button>
+      </div>
+    </div>
+
+    <!-- Советы -->
+    <div class="screen" data-screen="tips">
+      <div class="page-header">
+        <button class="btn-icon" id="tips-back" aria-label="Назад">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <h2 class="page-header__title">Советы по фото</h2>
+      </div>
+      <div class="card" style="margin-bottom: var(--spacing-lg);">
+        <h4 style="margin-bottom: var(--spacing-md);">💡 Советы для лучшего результата</h4>
+        <ul style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+          <li style="display: flex; gap: var(--spacing-sm); align-items: flex-start;">
+            <span style="color: var(--color-accent); font-weight: 700;">1.</span>
+            <span style="font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: 1.5;">Снимайте при хорошем освещении — днём и без теней на фасаде</span>
+          </li>
+          <li style="display: flex; gap: var(--spacing-sm); align-items: flex-start;">
+            <span style="color: var(--color-accent); font-weight: 700;">2.</span>
+            <span style="font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: 1.5;">Камера должна быть направлена прямо на фасад, без сильных углов</span>
+          </li>
+          <li style="display: flex; gap: var(--spacing-sm); align-items: flex-start;">
+            <span style="color: var(--color-accent); font-weight: 700;">3.</span>
+            <span style="font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: 1.5;">Уберите лишние объекты из кадра — машины, деревья</span>
+          </li>
+          <li style="display: flex; gap: var(--spacing-sm); align-items: flex-start;">
+            <span style="color: var(--color-accent); font-weight: 700;">4.</span>
+            <span style="font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: 1.5;">Протрите камеру перед съёмкой для чёткого изображения</span>
+          </li>
+          <li style="display: flex; gap: var(--spacing-sm); align-items: flex-start;">
+            <span style="color: var(--color-accent); font-weight: 700;">5.</span>
+            <span style="font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: 1.5;">Снимайте с уровня глаз для наиболее точного результата</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <!-- Нижняя навигация -->
+  <nav class="bottom-nav">
+    <a href="#home" class="bottom-nav__item active" data-screen="home">
+      <div class="bottom-nav__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span class="bottom-nav__label">Главная</span>
+    </a>
+    <a href="#projects" class="bottom-nav__item" data-screen="projects">
+      <div class="bottom-nav__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <span class="bottom-nav__label">Проекты</span>
+    </a>
+    <a href="#catalog" class="bottom-nav__item" data-screen="catalog">
+      <div class="bottom-nav__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      </div>
+      <span class="bottom-nav__label">Каталог</span>
+    </a>
+    <a href="#profile" class="bottom-nav__item" data-screen="profile">
+      <div class="bottom-nav__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span class="bottom-nav__label">Профиль</span>
+    </a>
+  </nav>
+
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/projects.js"></script>
+  <script src="js/materials.js"></script>
+  <script src="js/camera.js"></script>
+  <script src="js/generation.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/screens.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

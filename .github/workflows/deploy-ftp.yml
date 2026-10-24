@@ -1,0 +1,31 @@
+name: Deploy Fasad to hosting
+
+# Каждый push в master (в том числе после слияния PR) загружает папку fasad/
+# на хостинг по FTP. Нужны секреты репозитория: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD.
+
+on:
+  push:
+    branches: [master]
+    paths: ["fasad/**", ".github/workflows/deploy-ftp.yml"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload fasad/ via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          local-dir: fasad/
+          server-dir: /ahmedov.online/fasad/
+          # Живые данные на хостинге не перезаписываем: база пользователей и загруженные фото
+          exclude: |
+            **/.git*
+            data/database.json
+            uploads/**

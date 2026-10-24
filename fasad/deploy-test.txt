@@ -1,0 +1,2 @@
+Тестовый файл деплоя Fasad через GitHub Actions + FTP.
+Версия: 1
