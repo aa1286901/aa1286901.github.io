@@ -141,7 +141,7 @@ async function renderFavorites() {
       const material = await Materials.getById(fav.material_id);
       if (material) {
         const card = renderCatalogCard(material, (m) => {
-          Router.navigateTo(`material-${m.id}`);
+          showMaterialDetail(m);
         });
         container.appendChild(card);
       }

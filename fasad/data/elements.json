@@ -1,0 +1,1109 @@
+{
+ "sprites": [
+  {
+   "id": "rust-standart",
+   "name": "Русты стандартные",
+   "group": "rust",
+   "widthMm": 360,
+   "heightMm": 1640,
+   "image": "assets/decor/rust-standart.webp",
+   "w": 162,
+   "h": 738,
+   "lumRef": 206.0
+  },
+  {
+   "id": "rust-raschyoska",
+   "name": "Русты «расчёска»",
+   "group": "rust",
+   "widthMm": 360,
+   "heightMm": 1698,
+   "image": "assets/decor/rust-raschyoska.webp",
+   "w": 155,
+   "h": 731,
+   "lumRef": 207.2
+  },
+  {
+   "id": "rust-sparennye",
+   "name": "Русты спаренные",
+   "group": "rust",
+   "widthMm": 360,
+   "heightMm": 1706,
+   "image": "assets/decor/rust-sparennye.webp",
+   "w": 154,
+   "h": 730,
+   "lumRef": 206.2
+  },
+  {
+   "id": "rust-krupnye",
+   "name": "Русты из крупной рустовой плиты",
+   "group": "rust",
+   "widthMm": 750,
+   "heightMm": 3407,
+   "image": "assets/decor/rust-krupnye.webp",
+   "w": 162,
+   "h": 736,
+   "lumRef": 206.3
+  },
+  {
+   "id": "rust-sparennaya-plita",
+   "name": "Русты из спаренной рустовой плиты",
+   "group": "rust",
+   "widthMm": 360,
+   "heightMm": 1706,
+   "image": "assets/decor/rust-sparennaya-plita.webp",
+   "w": 154,
+   "h": 730,
+   "lumRef": 206.3
+  },
+  {
+   "id": "pilastra-gladkaya",
+   "name": "Пилястра гладкая",
+   "group": "pilaster",
+   "widthMm": 360,
+   "heightMm": 2034,
+   "image": "assets/decor/pilastra-gladkaya.webp",
+   "w": 126,
+   "h": 712,
+   "lumRef": 220.1
+  },
+  {
+   "id": "pilastra-kannelyury",
+   "name": "Пилястра с каннелюрами",
+   "group": "pilaster",
+   "widthMm": 360,
+   "heightMm": 1636,
+   "image": "assets/decor/pilastra-kannelyury.webp",
+   "w": 158,
+   "h": 718,
+   "lumRef": 220.0
+  },
+  {
+   "id": "pilastra-slozhnaya",
+   "name": "Пилястра сложная",
+   "group": "pilaster",
+   "widthMm": 500,
+   "heightMm": 2372,
+   "image": "assets/decor/pilastra-slozhnaya.webp",
+   "w": 152,
+   "h": 721,
+   "lumRef": 220.0
+  },
+  {
+   "id": "kolonna-kruglaya",
+   "name": "Колонна круглая гладкая",
+   "group": "column",
+   "widthMm": 430,
+   "heightMm": 1649,
+   "image": "assets/decor/kolonna-kruglaya.webp",
+   "w": 188,
+   "h": 721,
+   "lumRef": 206.7
+  },
+  {
+   "id": "kolonna-kruglaya-kannelyury",
+   "name": "Колонна круглая с каннелюрами",
+   "group": "column",
+   "widthMm": 430,
+   "heightMm": 1420,
+   "image": "assets/decor/kolonna-kruglaya-kannelyury.webp",
+   "w": 218,
+   "h": 720,
+   "lumRef": 208.1
+  },
+  {
+   "id": "kolonna-konusnaya",
+   "name": "Колонна конусная гладкая",
+   "group": "column",
+   "widthMm": 430,
+   "heightMm": 1586,
+   "image": "assets/decor/kolonna-konusnaya.webp",
+   "w": 196,
+   "h": 723,
+   "lumRef": 207.0
+  },
+  {
+   "id": "kolonna-konusnaya-kannelyury",
+   "name": "Колонна конусная с каннелюрами",
+   "group": "column",
+   "widthMm": 430,
+   "heightMm": 1586,
+   "image": "assets/decor/kolonna-konusnaya-kannelyury.webp",
+   "w": 196,
+   "h": 723,
+   "lumRef": 208.0
+  },
+  {
+   "id": "kolonna-kv-gladkaya",
+   "name": "Колонна квадратная гладкая",
+   "group": "column",
+   "widthMm": 400,
+   "heightMm": 1620,
+   "image": "assets/decor/kolonna-kv-gladkaya.webp",
+   "w": 179,
+   "h": 725,
+   "lumRef": 208.3
+  },
+  {
+   "id": "kolonna-kv-kannelyury",
+   "name": "Колонна квадратная с каннелюрами",
+   "group": "column",
+   "widthMm": 400,
+   "heightMm": 1371,
+   "image": "assets/decor/kolonna-kv-kannelyury.webp",
+   "w": 211,
+   "h": 723,
+   "lumRef": 203.9
+  },
+  {
+   "id": "kolonna-kv-slozhnaya",
+   "name": "Колонна квадратная сложная",
+   "group": "column",
+   "widthMm": 400,
+   "heightMm": 1439,
+   "image": "assets/decor/kolonna-kv-slozhnaya.webp",
+   "w": 201,
+   "h": 723,
+   "lumRef": 202.2
+  },
+  {
+   "id": "kolonna-kv-rusty",
+   "name": "Колонна квадратная с рустами",
+   "group": "column",
+   "widthMm": 400,
+   "heightMm": 1696,
+   "image": "assets/decor/kolonna-kv-rusty.webp",
+   "w": 171,
+   "h": 725,
+   "lumRef": 202.2
+  },
+  {
+   "id": "kolonna-kv-rust-plitka",
+   "name": "Колонна квадратная с рустовой плиткой",
+   "group": "column",
+   "widthMm": 400,
+   "heightMm": 1779,
+   "image": "assets/decor/kolonna-kv-rust-plitka.webp",
+   "w": 163,
+   "h": 725,
+   "lumRef": 202.0
+  },
+  {
+   "id": "zamok-prostoy",
+   "name": "Замок простой",
+   "group": "keystone",
+   "widthMm": 165,
+   "heightMm": 215,
+   "image": "assets/decor/zamok-prostoy.webp",
+   "w": 260,
+   "h": 362,
+   "lumRef": 202.0
+  },
+  {
+   "id": "zamok-figurnyy",
+   "name": "Замок фигурный",
+   "group": "keystone",
+   "widthMm": 170,
+   "heightMm": 240,
+   "image": "assets/decor/zamok-figurnyy.webp",
+   "w": 78,
+   "h": 116,
+   "lumRef": 195.8
+  },
+  {
+   "id": "zamok-stupenchatyy",
+   "name": "Замок ступенчатый",
+   "group": "keystone",
+   "widthMm": 240,
+   "heightMm": 300,
+   "image": "assets/decor/zamok-stupenchatyy.webp",
+   "w": 101,
+   "h": 122,
+   "lumRef": 196.0
+  },
+  {
+   "id": "zamok-reznoy",
+   "name": "Замок резной",
+   "group": "keystone",
+   "widthMm": 180,
+   "heightMm": 240,
+   "image": "assets/decor/zamok-reznoy.webp",
+   "w": 95,
+   "h": 123,
+   "lumRef": 192.0
+  },
+  {
+   "id": "zamok-reznoy-2",
+   "name": "Замок резной большой",
+   "group": "keystone",
+   "widthMm": 200,
+   "heightMm": 240,
+   "image": "assets/decor/zamok-reznoy-2.webp",
+   "w": 102,
+   "h": 122,
+   "lumRef": 185.0
+  },
+  {
+   "id": "kartush",
+   "name": "Картуш резной",
+   "group": "keystone",
+   "widthMm": 350,
+   "heightMm": 470,
+   "image": "assets/decor/kartush.webp",
+   "w": 91,
+   "h": 122,
+   "lumRef": 186.8
+  },
+  {
+   "id": "konsol-k1",
+   "name": "Консоль простая К-1",
+   "group": "console",
+   "widthMm": 210,
+   "heightMm": 160,
+   "image": "assets/decor/konsol-k1.webp",
+   "w": 121,
+   "h": 105,
+   "lumRef": 201.9
+  },
+  {
+   "id": "konsol-k5",
+   "name": "Консоль простая К-5",
+   "group": "console",
+   "widthMm": 210,
+   "heightMm": 160,
+   "image": "assets/decor/konsol-k5.webp",
+   "w": 137,
+   "h": 101,
+   "lumRef": 197.0
+  },
+  {
+   "id": "konsol-k6",
+   "name": "Консоль простая К-6",
+   "group": "console",
+   "widthMm": 210,
+   "heightMm": 160,
+   "image": "assets/decor/konsol-k6.webp",
+   "w": 127,
+   "h": 104,
+   "lumRef": 199.1
+  },
+  {
+   "id": "konsol-k22",
+   "name": "Консоль простая К-22",
+   "group": "console",
+   "widthMm": 210,
+   "heightMm": 160,
+   "image": "assets/decor/konsol-k22.webp",
+   "w": 134,
+   "h": 105,
+   "lumRef": 200.0
+  },
+  {
+   "id": "konsol-k53",
+   "name": "Консоль простая К-53.1",
+   "group": "console",
+   "widthMm": 210,
+   "heightMm": 160,
+   "image": "assets/decor/konsol-k53.webp",
+   "w": 141,
+   "h": 101,
+   "lumRef": 198.8
+  },
+  {
+   "id": "konsol-reznaya",
+   "name": "Консоль резная",
+   "group": "console",
+   "widthMm": 160,
+   "heightMm": 240,
+   "image": "assets/decor/konsol-reznaya.webp",
+   "w": 69,
+   "h": 125,
+   "lumRef": 199.1
+  },
+  {
+   "id": "konsol-reznaya-2",
+   "name": "Консоль резная с листом",
+   "group": "console",
+   "widthMm": 160,
+   "heightMm": 240,
+   "image": "assets/decor/konsol-reznaya-2.webp",
+   "w": 86,
+   "h": 128,
+   "lumRef": 196.9
+  },
+  {
+   "id": "balyasina-b1",
+   "name": "Балясина Б-1",
+   "group": "baluster",
+   "widthMm": 160,
+   "heightMm": 750,
+   "image": "assets/decor/balyasina-b1.webp",
+   "w": 37,
+   "h": 131,
+   "lumRef": 211.2
+  },
+  {
+   "id": "balyasina-b2",
+   "name": "Балясина Б-2",
+   "group": "baluster",
+   "widthMm": 160,
+   "heightMm": 750,
+   "image": "assets/decor/balyasina-b2.webp",
+   "w": 40,
+   "h": 133,
+   "lumRef": 212.9
+  },
+  {
+   "id": "balyasina-b3",
+   "name": "Балясина Б-3",
+   "group": "baluster",
+   "widthMm": 210,
+   "heightMm": 750,
+   "image": "assets/decor/balyasina-b3.webp",
+   "w": 37,
+   "h": 129,
+   "lumRef": 196.8
+  },
+  {
+   "id": "balyasina-b4",
+   "name": "Балясина Б-4",
+   "group": "baluster",
+   "widthMm": 210,
+   "heightMm": 750,
+   "image": "assets/decor/balyasina-b4.webp",
+   "w": 37,
+   "h": 129,
+   "lumRef": 195.9
+  },
+  {
+   "id": "tumba-kruglaya",
+   "name": "Тумба круглая гладкая",
+   "group": "post",
+   "widthMm": 210,
+   "heightMm": 910,
+   "image": "assets/decor/tumba-kruglaya.webp",
+   "w": 39,
+   "h": 121,
+   "lumRef": 201.8
+  },
+  {
+   "id": "tumba-kruglaya-k",
+   "name": "Тумба круглая с каннелюрами",
+   "group": "post",
+   "widthMm": 210,
+   "heightMm": 910,
+   "image": "assets/decor/tumba-kruglaya-k.webp",
+   "w": 39,
+   "h": 121,
+   "lumRef": 200.9
+  },
+  {
+   "id": "tumba-kv",
+   "name": "Тумба квадратная гладкая",
+   "group": "post",
+   "widthMm": 210,
+   "heightMm": 910,
+   "image": "assets/decor/tumba-kv.webp",
+   "w": 39,
+   "h": 124,
+   "lumRef": 205.9
+  },
+  {
+   "id": "tumba-kv-k",
+   "name": "Тумба квадратная с каннелюрами",
+   "group": "post",
+   "widthMm": 210,
+   "heightMm": 910,
+   "image": "assets/decor/tumba-kv-k.webp",
+   "w": 39,
+   "h": 124,
+   "lumRef": 202.0
+  },
+  {
+   "id": "navershie-konus",
+   "name": "Навершие «Конус»",
+   "group": "finial",
+   "widthMm": 150,
+   "heightMm": 260,
+   "image": "assets/decor/navershie-konus.webp",
+   "w": 65,
+   "h": 123,
+   "lumRef": 207.9
+  },
+  {
+   "id": "navershie-shar-reznoy",
+   "name": "Навершие резное «Шар»",
+   "group": "finial",
+   "widthMm": 250,
+   "heightMm": 330,
+   "image": "assets/decor/navershie-shar-reznoy.webp",
+   "w": 83,
+   "h": 125,
+   "lumRef": 206.8
+  },
+  {
+   "id": "navershie-shar",
+   "name": "Навершие «Шар»",
+   "group": "finial",
+   "widthMm": 250,
+   "heightMm": 250,
+   "image": "assets/decor/navershie-shar.webp",
+   "w": 149,
+   "h": 123,
+   "lumRef": 207.2
+  },
+  {
+   "id": "navershie-shishka",
+   "name": "Навершие резное «Шишка»",
+   "group": "finial",
+   "widthMm": 250,
+   "heightMm": 380,
+   "image": "assets/decor/navershie-shishka.webp",
+   "w": 63,
+   "h": 125,
+   "lumRef": 206.8
+  },
+  {
+   "id": "kapitel-ionicheskaya",
+   "name": "Капитель ионическая",
+   "group": "capital",
+   "widthMm": 500,
+   "heightMm": 180,
+   "image": "assets/decor/kapitel-ionicheskaya.webp",
+   "w": 184,
+   "h": 89,
+   "lumRef": 199.0
+  },
+  {
+   "id": "kapitel-korinfskaya",
+   "name": "Капитель коринфская",
+   "group": "capital",
+   "widthMm": 350,
+   "heightMm": 650,
+   "image": "assets/decor/kapitel-korinfskaya.webp",
+   "w": 147,
+   "h": 128,
+   "lumRef": 194.9
+  },
+  {
+   "id": "rozetka-lev",
+   "name": "Розетка резная «Лев»",
+   "group": "rosette",
+   "widthMm": 600,
+   "heightMm": 600,
+   "image": "assets/decor/rozetka-lev.webp",
+   "w": 103,
+   "h": 116,
+   "lumRef": 214.2
+  },
+  {
+   "id": "rozetka-tsvetok",
+   "name": "Розетка резная «Цветок»",
+   "group": "rosette",
+   "widthMm": 500,
+   "heightMm": 500,
+   "image": "assets/decor/rozetka-tsvetok.webp",
+   "w": 97,
+   "h": 111,
+   "lumRef": 205.8
+  },
+  {
+   "id": "rozetka-koltso",
+   "name": "Розетка резная «Кольцо»",
+   "group": "rosette",
+   "widthMm": 800,
+   "heightMm": 800,
+   "image": "assets/decor/rozetka-koltso.webp",
+   "w": 107,
+   "h": 120,
+   "lumRef": 213.3
+  },
+  {
+   "id": "rozetka-uzor",
+   "name": "Розетка резная «Узор»",
+   "group": "rosette",
+   "widthMm": 800,
+   "heightMm": 800,
+   "image": "assets/decor/rozetka-uzor.webp",
+   "w": 106,
+   "h": 123,
+   "lumRef": 215.8
+  },
+  {
+   "id": "rozetka-rakovina",
+   "name": "Розетка резная «Раковина»",
+   "group": "rosette",
+   "widthMm": 500,
+   "heightMm": 500,
+   "image": "assets/decor/rozetka-rakovina.webp",
+   "w": 107,
+   "h": 116,
+   "lumRef": 194.1
+  },
+  {
+   "id": "barelef",
+   "name": "Барельеф",
+   "group": "barelief",
+   "widthMm": 1250,
+   "heightMm": 600,
+   "image": "assets/decor/barelef.webp",
+   "w": 538,
+   "h": 309,
+   "lumRef": 203.9
+  },
+  {
+   "id": "barelef-1",
+   "name": "Барельеф резной 450×1600",
+   "group": "barelief",
+   "widthMm": 1600,
+   "heightMm": 450,
+   "image": "assets/decor/barelef-1.webp",
+   "w": 201,
+   "h": 69,
+   "lumRef": 207.1
+  },
+  {
+   "id": "barelef-2",
+   "name": "Барельеф резной 400×1400",
+   "group": "barelief",
+   "widthMm": 1400,
+   "heightMm": 400,
+   "image": "assets/decor/barelef-2.webp",
+   "w": 174,
+   "h": 77,
+   "lumRef": 203.8
+  },
+  {
+   "id": "barelef-3",
+   "name": "Барельеф резной 500×1700",
+   "group": "barelief",
+   "widthMm": 1700,
+   "heightMm": 500,
+   "image": "assets/decor/barelef-3.webp",
+   "w": 199,
+   "h": 87,
+   "lumRef": 210.9
+  },
+  {
+   "id": "barelef-4",
+   "name": "Барельеф резной 600×1800",
+   "group": "barelief",
+   "widthMm": 1800,
+   "heightMm": 600,
+   "image": "assets/decor/barelef-4.webp",
+   "w": 189,
+   "h": 78,
+   "lumRef": 206.8
+  },
+  {
+   "id": "barelef-5",
+   "name": "Барельеф резной 700×1800",
+   "group": "barelief",
+   "widthMm": 1800,
+   "heightMm": 700,
+   "image": "assets/decor/barelef-5.webp",
+   "w": 201,
+   "h": 74,
+   "lumRef": 207.8
+  },
+  {
+   "id": "barelef-fronton",
+   "name": "Барельеф резной на фронтон",
+   "group": "barelief",
+   "widthMm": 2700,
+   "heightMm": 900,
+   "image": "assets/decor/barelef-fronton.webp",
+   "w": 174,
+   "h": 62,
+   "lumRef": 225.1
+  },
+  {
+   "id": "panno-1",
+   "name": "Панно резное в рамке 500×1600",
+   "group": "panel",
+   "widthMm": 1600,
+   "heightMm": 500,
+   "image": "assets/decor/panno-1.webp",
+   "w": 158,
+   "h": 116,
+   "lumRef": 205.8
+  },
+  {
+   "id": "panno-2",
+   "name": "Панно резное 600×1600",
+   "group": "panel",
+   "widthMm": 1600,
+   "heightMm": 600,
+   "image": "assets/decor/panno-2.webp",
+   "w": 190,
+   "h": 83,
+   "lumRef": 207.0
+  },
+  {
+   "id": "panno-3",
+   "name": "Панно резное 600×1200",
+   "group": "panel",
+   "widthMm": 1200,
+   "heightMm": 600,
+   "image": "assets/decor/panno-3.webp",
+   "w": 191,
+   "h": 104,
+   "lumRef": 204.7
+  },
+  {
+   "id": "panno-4",
+   "name": "Панно резное 600×1400",
+   "group": "panel",
+   "widthMm": 1400,
+   "heightMm": 600,
+   "image": "assets/decor/panno-4.webp",
+   "w": 158,
+   "h": 113,
+   "lumRef": 209.3
+  },
+  {
+   "id": "panno-5",
+   "name": "Панно резное в рамке 600×1200",
+   "group": "panel",
+   "widthMm": 1200,
+   "heightMm": 600,
+   "image": "assets/decor/panno-5.webp",
+   "w": 155,
+   "h": 116,
+   "lumRef": 205.9
+  }
+ ],
+ "bands": [
+  {
+   "id": "k1",
+   "name": "Карниз К-1",
+   "kind": "cornice",
+   "heightMm": 160,
+   "depthMm": 35,
+   "profile": [
+    [
+     0.08,
+     "top"
+    ],
+    [
+     0.12,
+     "flat"
+    ],
+    [
+     0.3,
+     "concave"
+    ],
+    [
+     0.08,
+     "flat"
+    ],
+    [
+     0.3,
+     "concave"
+    ],
+    [
+     0.12,
+     "under"
+    ]
+   ]
+  },
+  {
+   "id": "k2",
+   "name": "Карниз К-2",
+   "kind": "cornice",
+   "heightMm": 160,
+   "depthMm": 160,
+   "profile": [
+    [
+     0.1,
+     "top"
+    ],
+    [
+     0.15,
+     "flat"
+    ],
+    [
+     0.45,
+     "concave"
+    ],
+    [
+     0.1,
+     "flat"
+    ],
+    [
+     0.2,
+     "under"
+    ]
+   ]
+  },
+  {
+   "id": "k5",
+   "name": "Карниз К-5",
+   "kind": "cornice",
+   "heightMm": 160,
+   "depthMm": 80,
+   "profile": [
+    [
+     0.08,
+     "top"
+    ],
+    [
+     0.2,
+     "flat"
+    ],
+    [
+     0.3,
+     "convex"
+    ],
+    [
+     0.25,
+     "concave"
+    ],
+    [
+     0.17,
+     "under"
+    ]
+   ]
+  },
+  {
+   "id": "k6",
+   "name": "Карниз К-6",
+   "kind": "cornice",
+   "heightMm": 160,
+   "depthMm": 50,
+   "profile": [
+    [
+     0.1,
+     "top"
+    ],
+    [
+     0.55,
+     "flat"
+    ],
+    [
+     0.1,
+     "under"
+    ],
+    [
+     0.25,
+     "flat"
+    ]
+   ]
+  },
+  {
+   "id": "k11",
+   "name": "Карниз венчающий К-11",
+   "kind": "cornice",
+   "heightMm": 360,
+   "depthMm": 160,
+   "profile": [
+    [
+     0.06,
+     "top"
+    ],
+    [
+     0.18,
+     "flat"
+    ],
+    [
+     0.08,
+     "under"
+    ],
+    [
+     0.3,
+     "concave"
+    ],
+    [
+     0.08,
+     "flat"
+    ],
+    [
+     0.2,
+     "convex"
+    ],
+    [
+     0.1,
+     "under"
+    ]
+   ]
+  },
+  {
+   "id": "k12",
+   "name": "Карниз К-12",
+   "kind": "cornice",
+   "heightMm": 160,
+   "depthMm": 35,
+   "profile": [
+    [
+     0.06,
+     "top"
+    ],
+    [
+     0.2,
+     "convex"
+    ],
+    [
+     0.08,
+     "under"
+    ],
+    [
+     0.2,
+     "convex"
+    ],
+    [
+     0.08,
+     "under"
+    ],
+    [
+     0.2,
+     "convex"
+    ],
+    [
+     0.18,
+     "under"
+    ]
+   ]
+  },
+  {
+   "id": "k19",
+   "name": "Карниз К-19",
+   "kind": "cornice",
+   "heightMm": 160,
+   "depthMm": 80,
+   "profile": [
+    [
+     0.08,
+     "top"
+    ],
+    [
+     0.22,
+     "flat"
+    ],
+    [
+     0.35,
+     "concave"
+    ],
+    [
+     0.1,
+     "flat"
+    ],
+    [
+     0.1,
+     "convex"
+    ],
+    [
+     0.15,
+     "under"
+    ]
+   ]
+  },
+  {
+   "id": "k22",
+   "name": "Карниз К-22",
+   "kind": "cornice",
+   "heightMm": 160,
+   "depthMm": 50,
+   "profile": [
+    [
+     0.1,
+     "top"
+    ],
+    [
+     0.3,
+     "flat"
+    ],
+    [
+     0.45,
+     "concave"
+    ],
+    [
+     0.15,
+     "under"
+    ]
+   ]
+  },
+  {
+   "id": "k26",
+   "name": "Карниз межэтажный К-26",
+   "kind": "cornice",
+   "heightMm": 160,
+   "depthMm": 80,
+   "profile": [
+    [
+     0.1,
+     "top"
+    ],
+    [
+     0.25,
+     "flat"
+    ],
+    [
+     0.25,
+     "convex"
+    ],
+    [
+     0.25,
+     "concave"
+    ],
+    [
+     0.15,
+     "under"
+    ]
+   ]
+  },
+  {
+   "id": "p15",
+   "name": "Плинтус П-15",
+   "kind": "plinth",
+   "heightMm": 80,
+   "depthMm": 50,
+   "profile": [
+    [
+     0.15,
+     "top"
+    ],
+    [
+     0.35,
+     "flat"
+    ],
+    [
+     0.3,
+     "concave"
+    ],
+    [
+     0.2,
+     "flat"
+    ]
+   ]
+  },
+  {
+   "id": "p2",
+   "name": "Плинтус П-2",
+   "kind": "plinth",
+   "heightMm": 80,
+   "depthMm": 35,
+   "profile": [
+    [
+     0.25,
+     "convex"
+    ],
+    [
+     0.75,
+     "flat"
+    ]
+   ]
+  },
+  {
+   "id": "p32",
+   "name": "Плинтус П-32",
+   "kind": "plinth",
+   "heightMm": 80,
+   "depthMm": 80,
+   "profile": [
+    [
+     0.12,
+     "top"
+    ],
+    [
+     0.28,
+     "convex"
+    ],
+    [
+     0.2,
+     "concave"
+    ],
+    [
+     0.4,
+     "flat"
+    ]
+   ]
+  },
+  {
+   "id": "k37",
+   "name": "Подоконник К-37",
+   "kind": "sill",
+   "heightMm": 80,
+   "depthMm": 160,
+   "profile": [
+    [
+     0.35,
+     "top"
+    ],
+    [
+     0.35,
+     "flat"
+    ],
+    [
+     0.3,
+     "under"
+    ]
+   ]
+  },
+  {
+   "id": "k12n",
+   "name": "Наличник оконный К-12",
+   "kind": "surround",
+   "heightMm": 160,
+   "depthMm": 50,
+   "profile": [
+    [
+     0.15,
+     "convex"
+    ],
+    [
+     0.1,
+     "under"
+    ],
+    [
+     0.5,
+     "flat"
+    ],
+    [
+     0.25,
+     "concave"
+    ]
+   ]
+  },
+  {
+   "id": "nal-gladkiy",
+   "name": "Наличник гладкий",
+   "kind": "surround",
+   "heightMm": 120,
+   "depthMm": 35,
+   "profile": [
+    [
+     0.12,
+     "top"
+    ],
+    [
+     0.76,
+     "flat"
+    ],
+    [
+     0.12,
+     "under"
+    ]
+   ]
+  },
+  {
+   "id": "perila-p2",
+   "name": "Перила П-2",
+   "kind": "rail",
+   "heightMm": 160,
+   "depthMm": 750,
+   "profile": [
+    [
+     0.45,
+     "convex"
+    ],
+    [
+     0.4,
+     "flat"
+    ],
+    [
+     0.15,
+     "under"
+    ]
+   ]
+  }
+ ]
+}
