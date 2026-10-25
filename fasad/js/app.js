@@ -7,14 +7,9 @@ const App = {
     // Регистрируем Service Worker для кэширования
     if ('serviceWorker' in navigator) {
       try {
+        // Без автоматической перезагрузки при обновлении: страница, скрипты и стили
+        // всегда берутся из сети, а перезагрузка могла оборвать выбор фото или разметку
         await navigator.serviceWorker.register('sw.js');
-        console.log('[App] Service Worker зарегистрирован');
-        
-        // Проверяем обновления SW
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          console.log('[App] Service Worker обновлён, перезагрузка...');
-          window.location.reload();
-        });
       } catch (err) {
         console.warn('[App] Ошибка регистрации SW:', err);
       }
