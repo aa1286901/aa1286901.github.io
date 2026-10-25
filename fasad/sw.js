@@ -1,6 +1,6 @@
 // Пути относительные: они считаются от папки, где лежит sw.js,
 // поэтому приложение работает и в корне домена, и в подпапке /fasad/
-const CACHE_NAME = 'fasad-v6';
+const CACHE_NAME = 'fasad-007'; // при деплое заменяется на номер коммита
 const STATIC_ASSETS = [
   './',
   'index.html',
@@ -78,7 +78,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// === Fetch: сначала кэш, потом сеть ===
+// === Fetch ===
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
@@ -102,40 +102,36 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // Для статических файлов — кэш → сеть
-  event.respondWith(
-    caches.match(event.request)
-      .then((cached) => {
-        if (cached) {
-          // Есть в кэше — отдаём мгновенно
-          const networkFetch = fetch(event.request).then((networkResponse) => {
-            // Обновляем кэш в фоне (stale-while-revalidate)
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, networkResponse);
-            });
-            return networkResponse;
-          }).catch(() => {});
-          return cached;
-        }
-        
-        // Нет в кэше — загружаем из сети
-        return fetch(event.request).then((response) => {
-          // Кладём в кэш для будущих запросов
+  // Страница, скрипты, стили и данные — сначала сеть, чтобы после обновления сайта
+  // не смешивались новая страница и старые скрипты. Кэш — только когда нет интернета
+  const fresh = event.request.mode === 'navigate' || /\.(html|js|css|json)$/.test(url.pathname) || url.pathname.endsWith('/');
+  if (fresh) {
+    event.respondWith(
+      fetch(event.request, { cache: 'no-cache' })
+        .then((response) => {
           if (response.ok) {
             const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, clone);
-            });
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
           }
           return response;
-        }).catch(() => {
-          // Оффлайн — для HTML пытаемся отдать главную
-          if (event.request.destination === 'document') {
-            return caches.match('offline.html');
-          }
-          return new Response('Нет подключения к интернету');
-        });
-      })
+        })
+        .catch(() => caches.match(event.request, { ignoreSearch: true })
+          .then((cached) => cached || (event.request.mode === 'navigate'
+            ? caches.match('offline.html')
+            : new Response('Нет подключения к интернету', { status: 503 }))))
+    );
+    return;
+  }
+
+  // Картинки (текстуры камня, изделия, иконки) — из кэша, они не меняются
+  event.respondWith(
+    caches.match(event.request).then((cached) => cached || fetch(event.request).then((response) => {
+      if (response.ok) {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+      }
+      return response;
+    }))
   );
 });
 
