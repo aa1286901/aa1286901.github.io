@@ -1,9 +1,9 @@
-"""Собирает каталог Fasad из PDF «Камень Юг» и фото работ.
-Аргументы: <папка pdf-выгрузки> <папка фото работ> <папка приложения fasad>"""
+"""Собирает каталог Fasad из PDF «Камень Юг».
+Аргументы: <папка pdf-выгрузки> <папка приложения fasad>"""
 import json, os, re, sys
 from PIL import Image, ImageStat
 
-PDF, WORKS, APP = sys.argv[1:4]
+PDF, APP = sys.argv[1:3]
 tr = dict(zip('абвгдеёжзийклмнопрстуфхцчшщъыьэюя',
               'a b v g d e e zh z i y k l m n o p r s t u f h ts ch sh sch  y  e yu ya'.split(' ')))
 def slug(s):
@@ -166,20 +166,4 @@ bands = [
 json.dump({'sprites': sprites, 'bands': bands},
           open(f'{APP}/data/elements.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
-# === Наши работы: облицованные дома ===
-os.makedirs(f'{APP}/assets/works', exist_ok=True)
-picks = ['ky_1', 'ky_12', 'ky_14', 'ky_16', 'ky_18', 'ky_19', 'ky_22', 'ky_24', 'ky_29', 'ky_32', 'ky_34', 'ky_38',
-         'ky_43', 'ky_47', 'ky_53', 'ky_9', 'dk_13', 'dk_26', 'dk_29', 'dk_30', 'dk_3', 'dk_7', 'dk_9', 'dk_23']
-works = []
-for k, p in enumerate(picks):
-    im = Image.open(f'{WORKS}/{p}.jpg').convert('RGB')
-    im.thumbnail((1280, 1280))
-    path = f'assets/works/work-{k + 1:02d}.jpg'
-    im.save(f'{APP}/{path}', quality=80, optimize=True, progressive=True)
-    th = im.copy(); th.thumbnail((360, 360))
-    tpath = f'assets/works/work-{k + 1:02d}-thumb.jpg'
-    th.save(f'{APP}/{tpath}', quality=78, optimize=True)
-    works.append({'image': path, 'thumb': tpath,
-                  'source': 'kamenyug.ru' if p.startswith('ky') else 'dagkamni.ru'})
-json.dump(works, open(f'{APP}/data/works.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-print(len(materials), 'materials;', len(sprites), 'sprites;', len(bands), 'bands;', len(works), 'works')
+print(len(materials), 'materials;', len(sprites), 'sprites;', len(bands), 'bands')

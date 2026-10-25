@@ -98,14 +98,6 @@
           </svg>
         </div>
       </div>
-
-      <div class="works">
-        <div class="section-header">
-          <h3 class="section-title">Наши работы</h3>
-          <p class="section-subtitle">Дома, облицованные дагестанским камнем — покажите заказчику</p>
-        </div>
-        <div class="works__list" id="works-list"></div>
-      </div>
     </div>
 
     <!-- Фото здания -->
@@ -126,9 +118,16 @@
         </div>
       </div>
 
+      <!-- Настоящие поля выбора файла внутри кнопок: так выбор фото надёжно работает на iPhone и Android -->
       <div class="photo-pick">
-        <button class="btn btn-primary" id="photo-camera"><svg class="i" aria-hidden="true"><use href="#i-camera"/></svg>Сфотографировать</button>
-        <button class="btn btn-secondary" id="photo-album"><svg class="i" aria-hidden="true"><use href="#i-gallery"/></svg>Из фотоальбома</button>
+        <label class="btn btn-primary">
+          <svg class="i" aria-hidden="true"><use href="#i-camera"/></svg>Сфотографировать
+          <input type="file" id="photo-camera-input" accept="image/*" capture="environment" class="photo-pick__input">
+        </label>
+        <label class="btn btn-secondary">
+          <svg class="i" aria-hidden="true"><use href="#i-gallery"/></svg>Из фотоальбома
+          <input type="file" id="photo-album-input" accept="image/*" class="photo-pick__input">
+        </label>
       </div>
 
       <div class="tip-box">
@@ -393,7 +392,6 @@
   <script src="js/camera.js"></script>
   <script src="js/facade-render.js"></script>
   <script src="js/editor.js"></script>
-  <script src="js/works.js"></script>
   <script src="js/catalog.js"></script>
   <script src="js/profile.js"></script>
   <script src="js/screens.js"></script>
