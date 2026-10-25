@@ -27,7 +27,7 @@ function onScreenPhoto() {
       showToast('Сначала сфотографируйте дом или выберите фото');
       return;
     }
-    Router.navigateTo('editor');
+    Router.navigateTo('configure');
   });
 }
 
@@ -77,7 +77,7 @@ async function loadProjectPage(projectId) {
     if (projectDetails) {
       const all = await Materials.getAll();
       const materials = Object.fromEntries(all.map(m => [m.id, m]));
-      let rows = summarizeDesign(data.design, materials, await Elements.load());
+      let rows = summarizeDesign(data.design, await Materials.getStones(), await Materials.getCatalog());
       if (!rows) {
         // Старые проекты без разметки: просто список материалов
         const zoneNames = { base: 'Цоколь', facade: 'Стена' };
@@ -180,20 +180,8 @@ async function loadProjectsList() {
 
 // === Экран: Каталог ===
 function onScreenCatalog() {
-  const searchInput = document.getElementById('catalog-search-input');
-  
-  renderCatalog();
-
-  // Поиск с debounce
-  let searchTimeout;
-  searchInput?.addEventListener('input', (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      renderCatalog('all', e.target.value);
-    }, 300);
-  });
+  Catalog.render();
 }
-
 
 // === Экран: Профиль ===
 function onScreenProfile() {

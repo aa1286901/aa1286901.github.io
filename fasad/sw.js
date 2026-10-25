@@ -16,6 +16,7 @@ const STATIC_ASSETS = [
   'css/mobile-pwa.css',
   'css/ios-fixes.css',
   'css/editor.css',
+  'css/catalog.css',
 
   // JS
   'js/api.js',
@@ -25,8 +26,8 @@ const STATIC_ASSETS = [
   'js/projects.js',
   'js/materials.js',
   'js/camera.js',
-  'js/facade-render.js',
-  'js/editor.js',
+  'js/stone-preview.js',
+  'js/configurator.js',
   'js/catalog.js',
   'js/profile.js',
   'js/screens.js',
@@ -34,8 +35,7 @@ const STATIC_ASSETS = [
 
   // Data (только каталог — база пользователей в кэш не попадает)
   'data/materials.json',
-  'data/cornices.json',
-  'data/elements.json',
+  'data/catalog.json',
 
   // PWA
   'manifest.json',

@@ -6,7 +6,8 @@
     "type": "Песчаник",
     "image": "assets/textures/stones/akushinskiy-kremovyy.jpg",
     "texture": "assets/textures/stones/akushinskiy-kremovyy.jpg",
-    "color": "#dfd8c4",
+    "slab": "assets/catalog/slabs/akushinskiy-kremovyy.jpg",
+    "color": "#e0d9c5",
     "description": "Кремовый песчаник - натуральный камень, осадочной породы, состоящий из обломочных зёрен и минеральных соединений, молочно - кремового оттенка.",
     "specs": {
       "density": "2250 - 2670 кг/м³",
@@ -28,6 +29,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -37,6 +51,7 @@
     "type": "Известняк",
     "image": "assets/textures/stones/akushinskiy-belyy.jpg",
     "texture": "assets/textures/stones/akushinskiy-belyy.jpg",
+    "slab": "assets/catalog/slabs/akushinskiy-belyy.jpg",
     "color": "#e1dcd6",
     "description": "Белый известняк - натуральный камень, осадочной, обломочной горной породы, состоящий преимущественно из карбоната кальция, мягкого белого оттенка.",
     "specs": {
@@ -59,6 +74,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -68,7 +96,8 @@
     "type": "Песчаник",
     "image": "assets/textures/stones/altinskiy-zheltyy.jpg",
     "texture": "assets/textures/stones/altinskiy-zheltyy.jpg",
-    "color": "#decbad",
+    "slab": "assets/catalog/slabs/altinskiy-zheltyy.jpg",
+    "color": "#deccae",
     "description": "Жёлтый песчаник - натуральный камень, осадочной породы, состоящий из обломочных зёрен и минеральных соединений, тёплого жёлтого оттенка.",
     "specs": {
       "density": "2250 - 2670 кг/м³",
@@ -90,6 +119,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -99,7 +141,8 @@
     "type": "Ракушечник",
     "image": "assets/textures/stones/derbentskiy-kremovyy.jpg",
     "texture": "assets/textures/stones/derbentskiy-kremovyy.jpg",
-    "color": "#ccc1af",
+    "slab": "assets/catalog/slabs/derbentskiy-kremovyy.jpg",
+    "color": "#cdc2b0",
     "description": "Кремовый ракушечник - натуральный камень, органического происхождения, состоящий из раковин и их отдельных частиц, кремового оттенка.",
     "specs": {
       "density": "1990 - 2140 кг/м³",
@@ -121,6 +164,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -130,7 +186,8 @@
     "type": "Ракушечник",
     "image": "assets/textures/stones/derbentskiy-zheltyy.jpg",
     "texture": "assets/textures/stones/derbentskiy-zheltyy.jpg",
-    "color": "#cfbb94",
+    "slab": "assets/catalog/slabs/derbentskiy-zheltyy.jpg",
+    "color": "#d0bc95",
     "description": "Песчаный ракушечник - натуральный камень, органического происхождения, состоящий из раковин и их отдельных частиц, жёлтого оттенка.",
     "specs": {
       "density": "1990 - 2140 кг/м³",
@@ -152,6 +209,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -161,7 +231,8 @@
     "type": "Известняк",
     "image": "assets/textures/stones/karalapko-belyy-v-krapinku.jpg",
     "texture": "assets/textures/stones/karalapko-belyy-v-krapinku.jpg",
-    "color": "#cec9bd",
+    "slab": "assets/catalog/slabs/karalapko-belyy-v-krapinku.jpg",
+    "color": "#cfcabe",
     "description": "Известняк в крапинку - натуральный камень, осадочной горной породы, состоящий из карбоната кальция, белого цвета с мелкими зёрнами тёмного кальцита.",
     "specs": {
       "density": "2450 кг/м³",
@@ -183,6 +254,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -192,7 +276,8 @@
     "type": "Ракушечник",
     "image": "assets/textures/stones/gelenbatanovskiy.jpg",
     "texture": "assets/textures/stones/gelenbatanovskiy.jpg",
-    "color": "#c4aa84",
+    "slab": "assets/catalog/slabs/gelenbatanovskiy.jpg",
+    "color": "#c4aa85",
     "description": "Жёлтый ракушечник - натуральный камень, органического происхождения, состоящий из раковин и их отдельных частиц, жёлтого оттенка.",
     "specs": {
       "density": "1990 - 2140 кг/м³",
@@ -214,6 +299,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -223,7 +321,8 @@
     "type": "Песчаник",
     "image": "assets/textures/stones/chirinskiy-rozovyy.jpg",
     "texture": "assets/textures/stones/chirinskiy-rozovyy.jpg",
-    "color": "#dbcdbf",
+    "slab": "assets/catalog/slabs/chirinskiy-rozovyy.jpg",
+    "color": "#dccec0",
     "description": "Розовый песчаник - натуральный камень, осадочной породы, состоящий из обломочных зёрен и минеральных соединений, лёгкого розового оттенка.",
     "specs": {
       "density": "2250 - 2670 кг/м³",
@@ -245,6 +344,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -254,7 +366,8 @@
     "type": "Известняк",
     "image": "assets/textures/stones/nichirahskiy.jpg",
     "texture": "assets/textures/stones/nichirahskiy.jpg",
-    "color": "#d7bfa1",
+    "slab": "assets/catalog/slabs/nichirahskiy.jpg",
+    "color": "#d8c0a2",
     "description": "Ничирахский известняк - похож на мрамор, очень сложный в добыче. Плотный и крайне устойчивый вид камня, выдерживает большой вес.",
     "specs": {
       "density": "2250 - 2670 кг/м³",
@@ -276,6 +389,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -285,7 +411,8 @@
     "type": "Известняк",
     "image": "assets/textures/stones/tenginskiy.jpg",
     "texture": "assets/textures/stones/tenginskiy.jpg",
-    "color": "#dccdba",
+    "slab": "assets/catalog/slabs/tenginskiy.jpg",
+    "color": "#ddcdbb",
     "description": "Тенгинский известняк - камень колотой фактуры, обладает приятным глазу, золотисто-бежевым оттенком, добыча материала осуществляется на территории России.",
     "specs": {
       "density": "2400 кг/м³",
@@ -307,6 +434,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -316,7 +456,8 @@
     "type": "Ракушечник",
     "image": "assets/textures/stones/frigskiy.jpg",
     "texture": "assets/textures/stones/frigskiy.jpg",
-    "color": "#ccb083",
+    "slab": "assets/catalog/slabs/frigskiy.jpg",
+    "color": "#d0bc95",
     "description": "Фригский ракушечник - природный материал уникальной шоколадной расцветки с золотыми и серебристыми вкраплениями. Широко применяется для облицовки фасадов зданий и беседок.",
     "specs": {
       "density": "1990 - 2140 кг/м³",
@@ -338,6 +479,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -347,7 +501,8 @@
     "type": "Ракушечник",
     "image": "assets/textures/stones/frigskiy-s-galkoy.jpg",
     "texture": "assets/textures/stones/frigskiy-s-galkoy.jpg",
-    "color": "#a38e6c",
+    "slab": "assets/catalog/slabs/frigskiy-s-galkoy.jpg",
+    "color": "#cdb284",
     "description": "Фригский ракушечник с галькой - природный материал уникальной шоколадной расцветки с вкраплениями гальки. Широко применяется для облицовки фасадов зданий и беседок.",
     "specs": {
       "density": "2450 кг/м³",
@@ -369,6 +524,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -378,7 +546,8 @@
     "type": "Ракушечник",
     "image": "assets/textures/stones/morskoy-chernyy.jpg",
     "texture": "assets/textures/stones/morskoy-chernyy.jpg",
-    "color": "#504841",
+    "slab": "assets/catalog/slabs/morskoy-chernyy.jpg",
+    "color": "#514a42",
     "description": "Морской чёрный ракушечник - натуральный камень, осадочной породы, состоящий из обломочных зёрен и минеральных соединений, темно-серого оттенка.",
     "specs": {
       "density": "1990 - 2140 кг/м³",
@@ -400,6 +569,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -409,7 +591,8 @@
     "type": "Ракушечник",
     "image": "assets/textures/stones/morskoy-seryy.jpg",
     "texture": "assets/textures/stones/morskoy-seryy.jpg",
-    "color": "#817861",
+    "slab": "assets/catalog/slabs/morskoy-seryy.jpg",
+    "color": "#827962",
     "description": "Морской серый ракушечник - натуральный камень, осадочной породы, состоящий из обломочных зёрен и минеральных соединений, серого оттенка.",
     "specs": {
       "density": "2250 - 2670 кг/м³",
@@ -431,6 +614,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -440,7 +636,8 @@
     "type": "Доломит",
     "image": "assets/textures/stones/mekeginskiy.jpg",
     "texture": "assets/textures/stones/mekeginskiy.jpg",
-    "color": "#b4a588",
+    "slab": "assets/catalog/slabs/mekeginskiy.jpg",
+    "color": "#b6a789",
     "description": "Мекегинский доломит - одна из редчайших горных пород. На территории Дагестана он залегает только в одном месте. Да, и по всей планете его запасы составляют незначительный процент.",
     "specs": {
       "density": "2250 - 2670 кг/м³",
@@ -462,6 +659,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -471,6 +681,7 @@
     "type": "Доломит",
     "image": "assets/textures/stones/zulemahinskiy.jpg",
     "texture": "assets/textures/stones/zulemahinskiy.jpg",
+    "slab": "assets/catalog/slabs/zulemahinskiy.jpg",
     "color": "#c8bfb5",
     "description": "Зулемахинский доломит - прочный камень, но легко поддается обработке. Это делает его идеальным строительным материалом и сырьем для производства.",
     "specs": {
@@ -493,6 +704,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -502,7 +726,8 @@
     "type": "Ракушечник",
     "image": "assets/textures/stones/kayakentskiy-zheltyy.jpg",
     "texture": "assets/textures/stones/kayakentskiy-zheltyy.jpg",
-    "color": "#d8c084",
+    "slab": "assets/catalog/slabs/kayakentskiy-zheltyy.jpg",
+    "color": "#d9c085",
     "description": "Жёлтый ракушечник - натуральный камень, органического происхождения, состоящий из раковин и их отдельных частиц, серого древесного оттенка.",
     "specs": {
       "density": "1990 - 2140 кг/м³",
@@ -524,6 +749,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -533,7 +771,8 @@
     "type": "Ракушечник",
     "image": "assets/textures/stones/kayakentskiy-seryy.jpg",
     "texture": "assets/textures/stones/kayakentskiy-seryy.jpg",
-    "color": "#b7aa9c",
+    "slab": "assets/catalog/slabs/kayakentskiy-seryy.jpg",
+    "color": "#b7ab9d",
     "description": "Серый ракушечник - натуральный камень, органического происхождения, состоящий из раковин и их отдельных частиц, серого древесного оттенка.",
     "specs": {
       "density": "1990 - 2140 кг/м³",
@@ -555,6 +794,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -564,7 +816,8 @@
     "type": "Ракушечник",
     "image": "assets/textures/stones/dzhanginskiy.jpg",
     "texture": "assets/textures/stones/dzhanginskiy.jpg",
-    "color": "#605646",
+    "slab": "assets/catalog/slabs/dzhanginskiy.jpg",
+    "color": "#615747",
     "description": "Джангинский ракушечник - натуральный камень, осадочной породы, состоящий из обломочных зёрен и минеральных соединений, темно-серого оттенка.",
     "specs": {
       "density": "1990 - 2140 кг/м³",
@@ -586,6 +839,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -595,7 +861,8 @@
     "type": "Сланец",
     "image": "assets/textures/stones/chernyy-slanets.jpg",
     "texture": "assets/textures/stones/chernyy-slanets.jpg",
-    "color": "#15191d",
+    "slab": "assets/catalog/slabs/chernyy-slanets.jpg",
+    "color": "#161a1e",
     "description": "Чёрный сланец - пиленая плитка из натурального природного камня угольных и графитовых тонов с приятной на ощупь поверхностью и черным цветом.",
     "specs": {
       "density": "2450 кг/м³",
@@ -617,6 +884,19 @@
       "350*750*20",
       "350*750*25"
     ],
+    "formats": [
+      "50x160",
+      "80x360",
+      "160x360",
+      "300x600",
+      "350x750"
+    ],
+    "thickness": [
+      10,
+      15,
+      20,
+      25
+    ],
     "active": true
   },
   {
@@ -624,10 +904,9 @@
     "name": "Альминский известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-6-300x300.png",
+    "image": null,
     "description": "Натуральный дагестанский камень. Высококачественный материал для облицовки фасадов и цоколей.",
     "active": false,
-    "texture": "assets/textures/alminskiy-izvestnyak.jpg",
     "color": "#cfcbbf"
   },
   {
@@ -635,10 +914,9 @@
     "name": "Акушинский Белый известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-2-300x300.png",
+    "image": null,
     "description": "Светлый известняк с чистым белым оттенком. Идеален для элегантной облицовки фасадов.",
     "active": false,
-    "texture": "assets/textures/akushinskiy-belyy-izvestnyak.jpg",
     "color": "#e8e3dd"
   },
   {
@@ -646,10 +924,9 @@
     "name": "Известняк Каралапко Белый в крапинку",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-6-300x300.png",
+    "image": null,
     "description": "Светлый известняк с чистым белым оттенком. Идеален для элегантной облицовки фасадов.",
     "active": false,
-    "texture": "assets/textures/alminskiy-izvestnyak.jpg",
     "color": "#cfcbbf"
   },
   {
@@ -657,10 +934,9 @@
     "name": "Чиринский белый известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2024/07/tenginskij-profil1-300x300.jpg",
+    "image": null,
     "description": "Светлый известняк с чистым белым оттенком. Идеален для элегантной облицовки фасадов.",
     "active": false,
-    "texture": "assets/textures/chirinskiy-belyy-izvestnyak.jpg",
     "color": "#ddcebc"
   },
   {
@@ -668,10 +944,9 @@
     "name": "Ничирахский известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2024/07/nichirahskij-profil1-300x300.jpg",
+    "image": null,
     "description": "Японский известняк Ничирах. Высококачественный камень с равномерной текстурой.",
     "active": false,
-    "texture": "assets/textures/nichirahskiy-izvestnyak.jpg",
     "color": "#dac2a4"
   },
   {
@@ -679,10 +954,9 @@
     "name": "Владимирский известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-2-300x300.png",
+    "image": null,
     "description": "Натуральный дагестанский камень. Высококачественный материал для облицовки фасадов и цоколей.",
     "active": false,
-    "texture": "assets/textures/akushinskiy-belyy-izvestnyak.jpg",
     "color": "#e8e3dd"
   },
   {
@@ -690,10 +964,9 @@
     "name": "Каякенский желтый известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/5226622565693381432-e1722427889770-300x300.jpg",
+    "image": null,
     "description": "Жёлтый известняк тёплого оттенка. Создаёт уютный и природный облик здания.",
     "active": false,
-    "texture": "assets/textures/kayakenskiy-zheltyy-izvestnyak.jpg",
     "color": "#b4a684"
   },
   {
@@ -701,10 +974,9 @@
     "name": "Морской серый известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2024/07/tenginskij-profil1-300x300.jpg",
+    "image": null,
     "description": "Серый известняк с благородным оттенком. Отличается высокой прочностью.",
     "active": false,
-    "texture": "assets/textures/chirinskiy-belyy-izvestnyak.jpg",
     "color": "#ddcebc"
   },
   {
@@ -712,10 +984,9 @@
     "name": "Тенгинский мраморированный известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-1-300x300.png",
+    "image": null,
     "description": "Мраморированный известняк с уникальным рисунком. Премиальный материал для фасадов.",
     "active": false,
-    "texture": "assets/textures/tenginskiy-mramorirovannyy-izvestnyak.jpg",
     "color": "#e1dcc8"
   },
   {
@@ -723,10 +994,9 @@
     "name": "Огнинский желтый известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2024/07/nichirahskij-profil1-300x300.jpg",
+    "image": null,
     "description": "Жёлтый известняк тёплого оттенка. Создаёт уютный и природный облик здания.",
     "active": false,
-    "texture": "assets/textures/nichirahskiy-izvestnyak.jpg",
     "color": "#dac2a4"
   },
   {
@@ -734,10 +1004,9 @@
     "name": "Известняк белый в крапинку",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2024/07/tenginskij-profil1-300x300.jpg",
+    "image": null,
     "description": "Светлый известняк с чистым белым оттенком. Идеален для элегантной облицовки фасадов.",
     "active": false,
-    "texture": "assets/textures/chirinskiy-belyy-izvestnyak.jpg",
     "color": "#ddcebc"
   },
   {
@@ -745,10 +1014,9 @@
     "name": "Мраморированный известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-6-300x300.png",
+    "image": null,
     "description": "Мраморированный известняк с уникальным рисунком. Премиальный материал для фасадов.",
     "active": false,
-    "texture": "assets/textures/alminskiy-izvestnyak.jpg",
     "color": "#cfcbbf"
   },
   {
@@ -756,10 +1024,9 @@
     "name": "Португальский известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-7-300x300.png",
+    "image": null,
     "description": "Натуральный дагестанский камень. Высококачественный материал для облицовки фасадов и цоколей.",
     "active": false,
-    "texture": "assets/textures/portugalskiy-izvestnyak.jpg",
     "color": "#bcab8d"
   },
   {
@@ -767,10 +1034,9 @@
     "name": "Фрикский известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2024/07/frikskij-profil1-300x300.jpg",
+    "image": null,
     "description": "Натуральный дагестанский камень. Высококачественный материал для облицовки фасадов и цоколей.",
     "active": false,
-    "texture": "assets/textures/frikskiy-izvestnyak.jpg",
     "color": "#dbb892"
   },
   {
@@ -778,10 +1044,9 @@
     "name": "Юрский известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/5226622565693381432-e1722427889770-300x300.jpg",
+    "image": null,
     "description": "Юрский известняк. Древний камень с уникальной текстурой.",
     "active": false,
-    "texture": "assets/textures/kayakenskiy-zheltyy-izvestnyak.jpg",
     "color": "#b4a684"
   },
   {
@@ -789,10 +1054,9 @@
     "name": "Инкерманский известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/05/k5vuue9z91pjgaz9ratze38ggw35chrb-300x300.jpg",
+    "image": null,
     "description": "Инкерманский известняк. Плотный камень светлого оттенка.",
     "active": false,
-    "texture": "assets/textures/inkermanskiy-izvestnyak.jpg",
     "color": "#d2c3ae"
   },
   {
@@ -800,10 +1064,9 @@
     "name": "Мячковский известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-3-300x300.png",
+    "image": null,
     "description": "Натуральный дагестанский камень. Высококачественный материал для облицовки фасадов и цоколей.",
     "active": false,
-    "texture": "assets/textures/myachkovskiy-izvestnyak.jpg",
     "color": "#e0ccae"
   },
   {
@@ -811,10 +1074,9 @@
     "name": "Рукельский известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-6-300x300.png",
+    "image": null,
     "description": "Натуральный дагестанский камень. Высококачественный материал для облицовки фасадов и цоколей.",
     "active": false,
-    "texture": "assets/textures/alminskiy-izvestnyak.jpg",
     "color": "#cfcbbf"
   },
   {
@@ -822,10 +1084,9 @@
     "name": "Фрикский известняк с галькой",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2024/07/frikskij-s-galkoj1-300x300.jpg",
+    "image": null,
     "description": "Известняк с включением гальки. Создаёт уникальную фактуру поверхности.",
     "active": false,
-    "texture": "assets/textures/frikskiy-izvestnyak-s-galkoy.jpg",
     "color": "#907d6d"
   },
   {
@@ -833,10 +1094,9 @@
     "name": "Чилинский Розовый известняк",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-8-300x300.png",
+    "image": null,
     "description": "Розовый известняк с нежным оттенком. Придаёт фасаду изысканный вид.",
     "active": false,
-    "texture": "assets/textures/chilinskiy-rozovyy-izvestnyak.jpg",
     "color": "#dbd2cd"
   },
   {
@@ -844,10 +1104,9 @@
     "name": "Алтинский Жёлтый песчаник",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-3-300x300.png",
+    "image": null,
     "description": "Алтинский песчаник. Жёлтый камень с тёплым оттенком.",
     "active": false,
-    "texture": "assets/textures/myachkovskiy-izvestnyak.jpg",
     "color": "#e0ccae"
   },
   {
@@ -855,10 +1114,9 @@
     "name": "Акушинский Кремовый песчаник",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-1-300x300.png",
+    "image": null,
     "description": "Кремовый камень с тёплым оттенком. Универсальный материал для облицовки.",
     "active": false,
-    "texture": "assets/textures/tenginskiy-mramorirovannyy-izvestnyak.jpg",
     "color": "#e1dcc8"
   },
   {
@@ -866,10 +1124,9 @@
     "name": "Геленбатановский Жёлтый ракушечник",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-7-300x300.png",
+    "image": null,
     "description": "Геленбатановский ракушечник. Жёлтый камень с пористой структурой.",
     "active": false,
-    "texture": "assets/textures/portugalskiy-izvestnyak.jpg",
     "color": "#bcab8d"
   },
   {
@@ -877,10 +1134,9 @@
     "name": "Каякентский Серый ракушечник",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-9-300x300.png",
+    "image": null,
     "description": "Серый известняк с благородным оттенком. Отличается высокой прочностью.",
     "active": false,
-    "texture": "assets/textures/kayakentskiy-seryy-rakushechnik.jpg",
     "color": "#a5917b"
   },
   {
@@ -888,10 +1144,9 @@
     "name": "Дербентский Жёлтый ракушечник",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-5-300x300.png",
+    "image": null,
     "description": "Дербентский ракушечник. Классический дагестанский камень.",
     "active": false,
-    "texture": "assets/textures/derbentskiy-zheltyy-rakushechnik.jpg",
     "color": "#d1be97"
   },
   {
@@ -899,10 +1154,9 @@
     "name": "Морской черный ракушечник",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/5226622565693381433-e1722427780295-300x300.jpg",
+    "image": null,
     "description": "Морской известняк. Камень с отложениями морских организмов.",
     "active": false,
-    "texture": "assets/textures/morskoy-chernyy-rakushechnik.jpg",
     "color": "#8a8a87"
   },
   {
@@ -910,10 +1164,9 @@
     "name": "Дербентский Кремовый ракушечник",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-4-300x300.png",
+    "image": null,
     "description": "Кремовый камень с тёплым оттенком. Универсальный материал для облицовки.",
     "active": false,
-    "texture": "assets/textures/derbentskiy-kremovyy-rakushechnik.jpg",
     "color": "#cdc0ae"
   },
   {
@@ -921,10 +1174,9 @@
     "name": "Джангинский ракушечник",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2024/07/dzhanginskij1-300x300.jpg",
+    "image": null,
     "description": "Джангинский ракушечник. Светлый камень с пористой структурой.",
     "active": false,
-    "texture": "assets/textures/dzhanginskiy-rakushechnik.jpg",
     "color": "#584d41"
   },
   {
@@ -932,10 +1184,9 @@
     "name": "Доломит сколотый Зулемахинский",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-11-300x300.png",
+    "image": null,
     "description": "Сколотый доломит с фактурной поверхностью. Природная текстура для цоколей.",
     "active": false,
-    "texture": "assets/textures/dolomit-skolotyy-zulemahinskiy.jpg",
     "color": "#a7a097"
   },
   {
@@ -943,10 +1194,9 @@
     "name": "Доломит колотый Мекегинский",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-10-300x300.png",
+    "image": null,
     "description": "Колотый доломит с естественной текстурой. Прочный материал для фасадов.",
     "active": false,
-    "texture": "assets/textures/dolomit-kolotyy-mekeginskiy.jpg",
     "color": "#a59070"
   },
   {
@@ -954,10 +1204,9 @@
     "name": "Доломит Мекегинский с сердцевиной",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-12-300x300.png",
+    "image": null,
     "description": "Серый известняк с благородным оттенком. Отличается высокой прочностью.",
     "active": false,
-    "texture": "assets/textures/dolomit-mekeginskiy-s-serdtsevinoy.jpg",
     "color": "#aba292"
   },
   {
@@ -965,10 +1214,9 @@
     "name": "Доломит Зулемахинский с экраном",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-15-300x300.png",
+    "image": null,
     "description": "Доломит с экраном. Двухслойный камень для надёжной облицовки.",
     "active": false,
-    "texture": "assets/textures/dolomit-zulemahinskiy-s-ekranom.jpg",
     "color": "#cccac7"
   },
   {
@@ -976,10 +1224,9 @@
     "name": "Доломит Мекегинский с экраном",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-14-300x300.png",
+    "image": null,
     "description": "Доломит с экраном. Двухслойный камень для надёжной облицовки.",
     "active": false,
-    "texture": "assets/textures/dolomit-mekeginskiy-s-ekranom.jpg",
     "color": "#cdc7bd"
   },
   {
@@ -987,10 +1234,9 @@
     "name": "Доломит Геналдон",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-12-300x300.png",
+    "image": null,
     "description": "Геналдонский доломит. Камень с уникальной текстурой.",
     "active": false,
-    "texture": "assets/textures/dolomit-mekeginskiy-s-serdtsevinoy.jpg",
     "color": "#aba292"
   },
   {
@@ -998,10 +1244,9 @@
     "name": "Доломит Зулемахинский с сердцевиной",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-12-300x300.png",
+    "image": null,
     "description": "Серый известняк с благородным оттенком. Отличается высокой прочностью.",
     "active": false,
-    "texture": "assets/textures/dolomit-mekeginskiy-s-serdtsevinoy.jpg",
     "color": "#aba292"
   },
   {
@@ -1009,10 +1254,9 @@
     "name": "Доломит зулимахинский",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/2023/04/Месторождение-14-300x300.png",
+    "image": null,
     "description": "Натуральный дагестанский камень. Высококачественный материал для облицовки фасадов и цоколей.",
     "active": false,
-    "texture": "assets/textures/dolomit-mekeginskiy-s-ekranom.jpg",
     "color": "#cdc7bd"
   },
   {
@@ -1020,10 +1264,9 @@
     "name": "Иранский известняк Гохаре светло серый",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/elementor/thumbs/izvestnyak-gohara-seryj-r2u9czq4biratcohmjkb2thssa9vmkmuyzhca0fov4.jpg",
+    "image": null,
     "description": "Серый известняк с благородным оттенком. Отличается высокой прочностью.",
     "active": false,
-    "texture": "assets/textures/iranskii-izvestnyak-gohare-svetlo-seryy.jpg",
     "color": "#a19f98"
   },
   {
@@ -1031,10 +1274,9 @@
     "name": "Иранский известняк Гохаре бежевый",
     "category": "stone",
     "type": "stone",
-    "image": "https://kamenyug.ru/wp-content/uploads/elementor/thumbs/izvestnyak-gohare-r2u9cwwlr0nfuisl30cfdc7f04nrzhbnylivu6jvds.jpg",
+    "image": null,
     "description": "Натуральный дагестанский камень. Высококачественный материал для облицовки фасадов и цоколей.",
     "active": false,
-    "texture": "assets/textures/iranskii-izvestnyak-gohare-bezhevyy.jpg",
     "color": "#c6b59c"
   }
 ]
