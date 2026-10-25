@@ -14,6 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Версия в ссылках на css/js и в кэше приложения = номер коммита:
+      # после каждого деплоя телефон скачивает новые файлы, а не берёт старые из кэша
+      - name: Stamp asset version
+        run: |
+          V="${GITHUB_SHA::8}"
+          sed -i -E "s/\?v=[A-Za-z0-9]+\"/?v=$V\"/g" fasad/index.html
+          sed -i -E "s/const CACHE_NAME = '[^']*'/const CACHE_NAME = 'fasad-$V'/" fasad/sw.js
+          grep -c "?v=$V" fasad/index.html
+          grep "CACHE_NAME =" fasad/sw.js
       - name: Upload fasad/ via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
