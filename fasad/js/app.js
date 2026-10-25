@@ -39,7 +39,7 @@ const App = {
         <div style="font-size: 48px; margin-bottom: 16px;">📐</div>
         <h3 style="margin-bottom: 8px;">Есть незавершённый проект</h3>
         <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-bottom: 24px;">
-          Вы размечали фасад. Продолжить?
+          Вы подбирали материалы для фасада. Продолжить?
         </p>
         <div style="display: flex; gap: 12px;">
           <button class="btn btn-secondary btn-full" id="draft-skip">Начать заново</button>
@@ -54,7 +54,7 @@ const App = {
       if (draft.originalPhoto) {
         ProjectFlow.setState('originalPhoto', draft.originalPhoto);
         ProjectFlow.setState('design', draft.design || null);
-        Router.navigateTo('editor');
+        Router.navigateTo('configure');
       }
     });
 

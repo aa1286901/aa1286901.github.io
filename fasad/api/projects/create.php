@@ -65,6 +65,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
         ];
     }
 
+    // Камни из подбора фасада: по одной записи на включённую часть
+    foreach (($design['parts'] ?? []) as $partKey => $part) {
+        if (is_array($part) && !empty($part['on']) && !empty($part['stone'])) {
+            $db['project_materials'][] = [
+                'id' => getNextId($db['project_materials']),
+                'project_id' => $projectId,
+                'material_id' => (string)$part['stone'],
+                'category' => (string)$partKey,
+                'selected_variant' => isset($part['item']) ? (string)$part['item'] : null
+            ];
+        }
+    }
+
     // Камни из разметки: по одной записи на зону
     foreach (($design['zones'] ?? []) as $zone) {
         if (!empty($zone['materialId']) && ($zone['type'] ?? '') !== 'opening') {

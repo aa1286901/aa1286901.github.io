@@ -26,6 +26,7 @@
   <link rel="stylesheet" href="css/mobile-pwa.css?v=007">
   <link rel="stylesheet" href="css/ios-fixes.css?v=007">
   <link rel="stylesheet" href="css/editor.css?v=007">
+  <link rel="stylesheet" href="css/catalog.css?v=007">
 </head>
 <body>
   <!-- Значки редактора: каждый тип зоны и изделия — свой символ -->
@@ -45,6 +46,7 @@
       <symbol id="i-balustrade" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2 5h20v2.5H2zM2 19h20v2H2z"/><path d="M6 7.5c-1.5 2 1.5 3-.5 5.5s1 4 .5 6M12 7.5c-1.5 2 1.5 3-.5 5.5s1 4 .5 6M18 7.5c-1.5 2 1.5 3-.5 5.5s1 4 .5 6"/></g></symbol>
       <symbol id="i-keystone" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h12l-3 15H9z"/><path d="M2 21c3-4 6-5 10-5s7 1 10 5"/></g></symbol>
       <symbol id="i-console" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v3H5z"/><path d="M8 6c0 4 6 3 6 8 0 3-2 5-4 5"/><path d="M16 6v6"/><circle cx="10" cy="19" r="2"/></g></symbol>
+      <symbol id="i-dentil" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2 5h20v3H2z"/><path d="M3 8h3v5H3zM8.5 8h3v5h-3zM14 8h3v5h-3zM19.5 8H21v5h-1.5"/><path d="M2 17h20" stroke-dasharray="2 2"/></g></symbol>
       <symbol id="i-rosette" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 3.5c2 3 2 4.5 0 6M12 20.5c-2-3-2-4.5 0-6M3.5 12c3-2 4.5-2 6 0M20.5 12c-3 2-4.5 2-6 0"/></g></symbol>
       <symbol id="i-barelief" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 8c-1-3 1-5 2-4"/><path d="M12 8c-3-2-6 0-6 3 0 2 2 3 3 2M12 8c3-2 6 0 6 3 0 2-2 3-3 2"/><path d="M3 16c2-3 4-3 6-1M21 16c-2-3-4-3-6-1M8 18h8"/></g></symbol>
       <symbol id="i-panel" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="1"/><rect x="5" y="9" width="14" height="6"/><path d="M9 12c1-2 2-2 3 0s2 2 3 0"/></g></symbol>
@@ -146,85 +148,35 @@
       </button>
     </div>
 
-    <!-- Разметка фасада -->
-    <div class="screen screen--editor" data-screen="editor">
+    <!-- Подбор фасада -->
+    <div class="screen screen--configure" data-screen="configure">
       <div class="page-header">
-        <button class="btn-icon" id="editor-back" aria-label="Назад">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <h2 class="page-header__title">Разметка</h2>
-        <button class="btn btn-primary editor-done" id="editor-done">Готово</button>
+        <button class="btn-icon" id="configure-back" aria-label="Назад"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <h2 class="page-header__title">Подбор фасада</h2>
       </div>
-
-      <div class="editor-bar">
-        <button class="editor-add" id="editor-add"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>Добавить</button>
-        <div class="editor-bar__tools">
-          <button class="editor-tool-btn" id="editor-undo" aria-label="Отменить" title="Отменить"><svg class="i" aria-hidden="true"><use href="#i-undo"/></svg></button>
-          <button class="editor-tool-btn" id="editor-redo" aria-label="Повторить" title="Повторить"><svg class="i" aria-hidden="true"><use href="#i-redo"/></svg></button>
-          <button class="editor-tool-btn" id="editor-copy" aria-label="Копировать выбранное" title="Копировать"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg></button>
-          <button class="editor-tool-btn" id="editor-hide" aria-label="Скрыть разметку" title="Скрыть разметку"><svg class="i" aria-hidden="true"><use href="#i-eye"/></svg></button>
-        </div>
-      </div>
-
-      <div class="editor-stage" id="editor-stage">
-        <div class="editor-zoom" id="editor-zoom">
-          <canvas id="editor-canvas"></canvas>
-          <svg id="editor-overlay" xmlns="http://www.w3.org/2000/svg"></svg>
-        </div>
-        <canvas id="editor-loupe" class="editor-loupe" hidden></canvas>
-        <div class="editor-zoom-ctrl">
-          <button id="editor-zoom-out" aria-label="Уменьшить"><svg class="i" aria-hidden="true"><use href="#i-zoom-out"/></svg></button>
-          <button id="editor-zoom-fit" aria-label="Показать целиком"><svg class="i" aria-hidden="true"><use href="#i-fit"/></svg></button>
-          <button id="editor-zoom-in" aria-label="Увеличить"><svg class="i" aria-hidden="true"><use href="#i-zoom-in"/></svg></button>
-        </div>
-        <button class="editor-before" id="editor-before">До</button>
-      </div>
-
-      <div class="editor-panel" id="editor-panel"></div>
-
-      <div class="editor-sheet" id="editor-sheet" hidden>
-        <div class="editor-sheet__backdrop" data-close></div>
-        <div class="editor-sheet__body" role="dialog" aria-label="Добавить на фасад">
-          <div class="editor-sheet__handle"></div>
-          <div class="editor-sheet__title">Добавить на фасад</div>
-          <div id="editor-sheet-content"></div>
-        </div>
+      <img class="configure-photo" id="configure-photo" alt="Фото фасада">
+      <p class="configure-hint">Выберите, что из какого камня будет на фасаде. Части, которые не меняются, выключите.</p>
+      <div id="configure-parts"></div>
+      <div class="configure-bar">
+        <button class="btn btn-primary btn-full" id="configure-done">Готово — спецификация</button>
       </div>
     </div>
 
-    <!-- Набросок (результат) -->
-    <div class="screen" data-screen="sketch">
+    <!-- Спецификация -->
+    <div class="screen" data-screen="spec">
       <div class="page-header">
-        <button class="btn-icon" id="sketch-back" aria-label="Назад">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <h2 class="page-header__title">Набросок</h2>
-        <button class="btn-icon" id="sketch-share" aria-label="Поделиться">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        </button>
+        <button class="btn-icon" id="spec-back" aria-label="Назад"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <h2 class="page-header__title">Спецификация</h2>
       </div>
-
-      <div class="compare">
-        <img id="sketch-after" alt="После">
-        <div class="compare__before" id="sketch-before-wrap"><img id="sketch-before" alt="До"></div>
-        <div class="compare__divider" id="sketch-divider"></div>
-        <span class="compare__label compare__label--before">До</span>
-        <span class="compare__label compare__label--after">После</span>
-        <input class="compare__slider" id="sketch-slider" type="range" min="0" max="100" value="50" aria-label="Сравнить до и после">
+      <img class="configure-photo" id="spec-photo" alt="Фото фасада">
+      <div class="spec-list" id="spec-list"></div>
+      <button class="btn btn-primary btn-full" id="spec-generate">Сгенерировать фасад</button>
+      <p class="configure-hint">Генерация изображения ИИ подключается на следующем этапе.</p>
+      <div class="spec-actions">
+        <button class="btn btn-secondary" id="spec-share">Отправить заказчику</button>
+        <button class="btn btn-secondary" id="spec-save">Сохранить в проекты</button>
       </div>
-
-      <div class="result-actions">
-        <button class="btn btn-primary btn-full" id="sketch-save">Сохранить в проекты</button>
-        <button class="btn btn-secondary" id="sketch-download" aria-label="Скачать">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        </button>
-      </div>
-      <button class="btn btn-ghost btn-full" id="sketch-edit">Изменить разметку</button>
-
-      <div class="section-header">
-        <h3 class="section-title">Материалы</h3>
-      </div>
-      <div class="project-details" id="sketch-summary"></div>
+      <button class="btn btn-ghost btn-full" id="spec-edit">Изменить подбор</button>
     </div>
 
     <!-- Готовый проект -->
@@ -276,15 +228,38 @@
     <!-- Каталог -->
     <div class="screen" data-screen="catalog">
       <div class="page-header">
-        <h2 class="page-header__title">Каталог материалов</h2>
+        <h2 class="page-header__title">Каталог</h2>
+      </div>
+
+      <div class="catalog-tabs">
+        <button data-tab="stones" class="active">Камень</button>
+        <button data-tab="products">Изделия</button>
       </div>
 
       <div class="catalog-search">
         <svg class="catalog-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="catalog-search-input" placeholder="Поиск материала…">
+        <input type="search" id="catalog-search-input" placeholder="Поиск: камень, модель (К-11, П-15)…">
       </div>
 
       <div id="catalog-sections"></div>
+    </div>
+
+    <!-- Камень -->
+    <div class="screen" data-screen="stone">
+      <div class="page-header">
+        <button class="btn-icon" id="stone-back" aria-label="Назад"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <h2 class="page-header__title">Камень</h2>
+      </div>
+      <div id="stone-content"></div>
+    </div>
+
+    <!-- Раздел изделий -->
+    <div class="screen" data-screen="section">
+      <div class="page-header">
+        <button class="btn-icon" id="section-back" aria-label="Назад"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <h2 class="page-header__title" id="section-title">Изделия</h2>
+      </div>
+      <div id="section-content"></div>
     </div>
 
     <!-- Профиль -->
@@ -390,8 +365,8 @@
   <script src="js/projects.js?v=007"></script>
   <script src="js/materials.js?v=007"></script>
   <script src="js/camera.js?v=007"></script>
-  <script src="js/facade-render.js?v=007"></script>
-  <script src="js/editor.js?v=007"></script>
+  <script src="js/stone-preview.js?v=007"></script>
+  <script src="js/configurator.js?v=007"></script>
   <script src="js/catalog.js?v=007"></script>
   <script src="js/profile.js?v=007"></script>
   <script src="js/screens.js?v=007"></script>

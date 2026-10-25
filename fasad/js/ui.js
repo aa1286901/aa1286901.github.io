@@ -19,6 +19,10 @@ function createToastContainer() {
   return container;
 }
 
+// Значок из набора в index.html и экранирование текста для вставки в разметку
+const icon = (name, cls = 'i') => `<svg class="${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+const esc = (s) => String(s ?? '').replace(/[&"<>]/g, c => `&#${c.charCodeAt(0)};`);
+
 // === Modal ===
 function showModal(content) {
   const overlay = document.createElement('div');

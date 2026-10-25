@@ -1,169 +1,275 @@
-"""Собирает каталог Fasad из PDF «Камень Юг».
-Аргументы: <папка pdf-выгрузки> <папка приложения fasad>"""
-import json, os, re, sys
+"""Собирает каталог Fasad из PDF «Камень Юг — каталог 2024».
+
+Каждая картинка изделия связывается с подписью под ней по положению на странице,
+поэтому названия, модели и размеры берутся из PDF как есть.
+
+Запуск: python3 scripts/fasad_build_catalog.py <каталог.pdf> <папка приложения fasad>
+Нужны: poppler-utils (pdfimages), pdfplumber, Pillow.
+"""
+import json
+import os
+import re
+import subprocess
+import sys
+import tempfile
+
+import pdfplumber
 from PIL import Image, ImageStat
 
 PDF, APP = sys.argv[1:3]
-tr = dict(zip('абвгдеёжзийклмнопрстуфхцчшщъыьэюя',
+
+TR = dict(zip('абвгдеёжзийклмнопрстуфхцчшщъыьэюя',
               'a b v g d e e zh z i y k l m n o p r s t u f h ts ch sh sch  y  e yu ya'.split(' ')))
+
+
 def slug(s):
-    return re.sub(r'[^a-z0-9]+', '-', ''.join(tr.get(c, c) for c in s.lower())).strip('-')
+    return re.sub(r'[^a-z0-9]+', '-', ''.join(TR.get(c, c) for c in s.lower())).strip('-')
 
-# === Камень: 20 видов из каталога ===
-stones = json.load(open(f'{PDF}/stones.json', encoding='utf-8'))
-order = ['Акушинский кремовый', 'Акушинский белый', 'Алтинский жёлтый', 'Дербентский кремовый', 'Дербентский жёлтый',
-         'Каралапко белый в крапинку', 'Геленбатановский', 'Чиринский розовый', 'Ничирахский', 'Тенгинский', 'Фригский',
-         'Фригский с галькой', 'Морской чёрный', 'Морской серый', 'Мекегинский', 'Зулемахинский', 'Каякентский жёлтый',
-         'Каякентский серый', 'Джангинский', 'Чёрный сланец']
-by_name = {s['name'].lower(): s for s in stones}
-os.makedirs(f'{APP}/assets/textures/stones', exist_ok=True)
-kinds = [('песчаник', 'Песчаник'), ('ракушечник', 'Ракушечник'), ('известняк', 'Известняк'), ('доломит', 'Доломит'), ('сланец', 'Сланец')]
-materials = []
-for i, name in enumerate(order):
-    s = by_name[name.lower()]
-    im = Image.open(f'{PDF}/sw/{i:02d}.png').convert('RGB')
-    sid = slug(name)
-    path = f'assets/textures/stones/{sid}.jpg'
-    im.save(f'{APP}/{path}', quality=90, optimize=True)
-    r, g, b = [int(v) for v in ImageStat.Stat(im).mean]
-    desc = s['description'] or ''
-    kind = next((k for key, k in kinds if key in desc.lower()), 'Камень')
-    materials.append({
-        'id': sid, 'name': name, 'category': 'stone', 'type': kind,
-        'image': path, 'texture': path, 'color': '#%02x%02x%02x' % (r, g, b),
-        'description': desc,
-        'specs': {k: s[k] for k in ('density', 'porosity', 'absorption', 'fire', 'strength', 'frost')},
-        'sizes': [x.strip() for x in (s['sizes'] or '').split(',') if x.strip()],
-        'active': True,
-    })
 
-# Старые камни остаются в файле неактивными: на них ссылаются уже сохранённые проекты
-old = json.load(open(f'{APP}/data/materials.json', encoding='utf-8'))
-for m in old:
-    if m.get('category') == 'stone' and m['id'] not in {x['id'] for x in materials} and not m['id'].isascii():
-        m['active'] = False
-        materials.append(m)
-json.dump(materials, open(f'{APP}/data/materials.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+# === Картинки из PDF: номер картинки → файл, маска прозрачности склеивается с картинкой ===
+tmp = tempfile.mkdtemp()
+subprocess.run(['pdfimages', '-png', '-p', PDF, f'{tmp}/i'], check=True)
+listing = subprocess.run(['pdfimages', '-list', PDF], check=True, capture_output=True, text=True).stdout
+objects = {}
+for line in listing.splitlines()[2:]:
+    f = line.split()
+    objects.setdefault((int(f[0]), int(f[10])), {})[f[2]] = int(f[1])
 
-# === Изделия: картинки с прозрачным фоном, обрезанные по содержимому ===
-os.makedirs(f'{APP}/assets/decor', exist_ok=True)
-def sprite(src, sid):
-    im = Image.open(f'{PDF}/pages/{src}.png').convert('RGBA')
-    im = im.crop(im.getchannel('A').point(lambda a: 255 if a > 20 else 0).getbbox())
-    im.save(f'{APP}/assets/decor/{sid}.webp', 'WEBP', quality=82, method=6)
-    # Опорная яркость лицевой (освещённой) стороны камня — для перекраски в выбранный камень
-    px = [0.299 * r + 0.587 * g + 0.114 * b for r, g, b, a in im.get_flattened_data() if a > 200]
-    px.sort()
-    ref = px[int(len(px) * 0.75)] if px else 200
-    return {'image': f'assets/decor/{sid}.webp', 'w': im.size[0], 'h': im.size[1], 'lumRef': round(ref, 1)}
 
-S = []  # (id, src, name, group, widthMm, heightMm)
-S += [('rust-standart', 'p14_23', 'Русты стандартные', 'rust', 360, 0),
-      ('rust-raschyoska', 'p14_24', 'Русты «расчёска»', 'rust', 360, 0),
-      ('rust-sparennye', 'p14_25', 'Русты спаренные', 'rust', 360, 0),
-      ('rust-krupnye', 'p14_22', 'Русты из крупной рустовой плиты', 'rust', 750, 0),
-      ('rust-sparennaya-plita', 'p14_21', 'Русты из спаренной рустовой плиты', 'rust', 360, 0),
-      ('pilastra-gladkaya', 'p15_24', 'Пилястра гладкая', 'pilaster', 360, 0),
-      ('pilastra-kannelyury', 'p16_24', 'Пилястра с каннелюрами', 'pilaster', 360, 0),
-      ('pilastra-slozhnaya', 'p17_24', 'Пилястра сложная', 'pilaster', 500, 0),
-      ('kolonna-kruglaya', 'p18_21', 'Колонна круглая гладкая', 'column', 430, 0),
-      ('kolonna-kruglaya-kannelyury', 'p19_20', 'Колонна круглая с каннелюрами', 'column', 430, 0),
-      ('kolonna-konusnaya', 'p20_28', 'Колонна конусная гладкая', 'column', 430, 0),
-      ('kolonna-konusnaya-kannelyury', 'p21_20', 'Колонна конусная с каннелюрами', 'column', 430, 0),
-      ('kolonna-kv-gladkaya', 'p23_21', 'Колонна квадратная гладкая', 'column', 400, 0),
-      ('kolonna-kv-kannelyury', 'p24_29', 'Колонна квадратная с каннелюрами', 'column', 400, 0),
-      ('kolonna-kv-slozhnaya', 'p25_28', 'Колонна квадратная сложная', 'column', 400, 0),
-      ('kolonna-kv-rusty', 'p22_21', 'Колонна квадратная с рустами', 'column', 400, 0),
-      ('kolonna-kv-rust-plitka', 'p22_23', 'Колонна квадратная с рустовой плиткой', 'column', 400, 0),
-      ('zamok-prostoy', 'p11_00', 'Замок простой', 'keystone', 165, 215),
-      ('zamok-figurnyy', 'p11_25', 'Замок фигурный', 'keystone', 170, 240),
-      ('zamok-stupenchatyy', 'p11_23', 'Замок ступенчатый', 'keystone', 240, 300),
-      ('zamok-reznoy', 'p11_21', 'Замок резной', 'keystone', 180, 240),
-      ('zamok-reznoy-2', 'p11_22', 'Замок резной большой', 'keystone', 200, 240),
-      ('kartush', 'p11_24', 'Картуш резной', 'keystone', 350, 470),
-      ('konsol-k1', 'p11_26', 'Консоль простая К-1', 'console', 210, 160),
-      ('konsol-k5', 'p11_27', 'Консоль простая К-5', 'console', 210, 160),
-      ('konsol-k6', 'p11_28', 'Консоль простая К-6', 'console', 210, 160),
-      ('konsol-k22', 'p11_32', 'Консоль простая К-22', 'console', 210, 160),
-      ('konsol-k53', 'p11_37', 'Консоль простая К-53.1', 'console', 210, 160),
-      ('konsol-reznaya', 'p11_31', 'Консоль резная', 'console', 160, 240),
-      ('konsol-reznaya-2', 'p11_29', 'Консоль резная с листом', 'console', 160, 240),
-      ('balyasina-b1', 'p12_20', 'Балясина Б-1', 'baluster', 160, 750),
-      ('balyasina-b2', 'p12_21', 'Балясина Б-2', 'baluster', 160, 750),
-      ('balyasina-b3', 'p12_22', 'Балясина Б-3', 'baluster', 210, 750),
-      ('balyasina-b4', 'p12_23', 'Балясина Б-4', 'baluster', 210, 750),
-      ('tumba-kruglaya', 'p12_24', 'Тумба круглая гладкая', 'post', 210, 910),
-      ('tumba-kruglaya-k', 'p12_25', 'Тумба круглая с каннелюрами', 'post', 210, 910),
-      ('tumba-kv', 'p12_26', 'Тумба квадратная гладкая', 'post', 210, 910),
-      ('tumba-kv-k', 'p12_27', 'Тумба квадратная с каннелюрами', 'post', 210, 910),
-      ('navershie-konus', 'p12_31', 'Навершие «Конус»', 'finial', 150, 260),
-      ('navershie-shar-reznoy', 'p12_32', 'Навершие резное «Шар»', 'finial', 250, 330),
-      ('navershie-shar', 'p12_33', 'Навершие «Шар»', 'finial', 250, 250),
-      ('navershie-shishka', 'p12_34', 'Навершие резное «Шишка»', 'finial', 250, 380),
-      ('kapitel-ionicheskaya', 'p15_23', 'Капитель ионическая', 'capital', 500, 180),
-      ('kapitel-korinfskaya', 'p15_25', 'Капитель коринфская', 'capital', 350, 650),
-      ('rozetka-lev', 'p13_31', 'Розетка резная «Лев»', 'rosette', 600, 600),
-      ('rozetka-tsvetok', 'p13_32', 'Розетка резная «Цветок»', 'rosette', 500, 500),
-      ('rozetka-koltso', 'p13_33', 'Розетка резная «Кольцо»', 'rosette', 800, 800),
-      ('rozetka-uzor', 'p13_34', 'Розетка резная «Узор»', 'rosette', 800, 800),
-      ('rozetka-rakovina', 'p13_35', 'Розетка резная «Раковина»', 'rosette', 500, 500),
-      ('barelef', 'p13_30', 'Барельеф', 'barelief', 1250, 600),
-      ('barelef-1', 'p13_24', 'Барельеф резной 450×1600', 'barelief', 1600, 450),
-      ('barelef-2', 'p13_25', 'Барельеф резной 400×1400', 'barelief', 1400, 400),
-      ('barelef-3', 'p13_26', 'Барельеф резной 500×1700', 'barelief', 1700, 500),
-      ('barelef-4', 'p13_27', 'Барельеф резной 600×1800', 'barelief', 1800, 600),
-      ('barelef-5', 'p13_28', 'Барельеф резной 700×1800', 'barelief', 1800, 700),
-      ('barelef-fronton', 'p02_10', 'Барельеф резной на фронтон', 'barelief', 2700, 900),
-      ('panno-1', 'p13_00', 'Панно резное в рамке 500×1600', 'panel', 1600, 500),
-      ('panno-2', 'p13_21', 'Панно резное 600×1600', 'panel', 1600, 600),
-      ('panno-3', 'p13_22', 'Панно резное 600×1200', 'panel', 1200, 600),
-      ('panno-4', 'p13_23', 'Панно резное 600×1400', 'panel', 1400, 600),
-      ('panno-5', 'p13_29', 'Панно резное в рамке 600×1200', 'panel', 1200, 600)]
-sprites = []
-for sid, src, name, group, wmm, hmm in S:
-    info = sprite(src, sid)
-    if not hmm:  # вертикальные элементы: высота по пропорции картинки
-        hmm = round(wmm * info['h'] / info['w'])
-    sprites.append({'id': sid, 'name': name, 'group': group, 'widthMm': wmm, 'heightMm': hmm, **info})
+def load_image(page, num, smask=None):
+    im = Image.open(f'{tmp}/i-{page:03d}-{num:03d}.png').convert('RGB')
+    if smask is not None:
+        im.putalpha(Image.open(f'{tmp}/i-{page:03d}-{smask:03d}.png').convert('L'))
+    return im
 
-# Профили карнизов, плинтусов и подоконников: участки лицевой стороны сверху вниз
-# доля высоты + тип поверхности (top — полка сверху, flat — вертикаль, convex/concave — вал/выкружка, under — низ в тени)
-P = lambda *seg: [list(s) for s in seg]
-bands = [
-    {'id': 'k1', 'name': 'Карниз К-1', 'kind': 'cornice', 'heightMm': 160, 'depthMm': 35,
-     'profile': P((0.08, 'top'), (0.12, 'flat'), (0.3, 'concave'), (0.08, 'flat'), (0.3, 'concave'), (0.12, 'under'))},
-    {'id': 'k2', 'name': 'Карниз К-2', 'kind': 'cornice', 'heightMm': 160, 'depthMm': 160,
-     'profile': P((0.1, 'top'), (0.15, 'flat'), (0.45, 'concave'), (0.1, 'flat'), (0.2, 'under'))},
-    {'id': 'k5', 'name': 'Карниз К-5', 'kind': 'cornice', 'heightMm': 160, 'depthMm': 80,
-     'profile': P((0.08, 'top'), (0.2, 'flat'), (0.3, 'convex'), (0.25, 'concave'), (0.17, 'under'))},
-    {'id': 'k6', 'name': 'Карниз К-6', 'kind': 'cornice', 'heightMm': 160, 'depthMm': 50,
-     'profile': P((0.1, 'top'), (0.55, 'flat'), (0.1, 'under'), (0.25, 'flat'))},
-    {'id': 'k11', 'name': 'Карниз венчающий К-11', 'kind': 'cornice', 'heightMm': 360, 'depthMm': 160,
-     'profile': P((0.06, 'top'), (0.18, 'flat'), (0.08, 'under'), (0.3, 'concave'), (0.08, 'flat'), (0.2, 'convex'), (0.1, 'under'))},
-    {'id': 'k12', 'name': 'Карниз К-12', 'kind': 'cornice', 'heightMm': 160, 'depthMm': 35,
-     'profile': P((0.06, 'top'), (0.2, 'convex'), (0.08, 'under'), (0.2, 'convex'), (0.08, 'under'), (0.2, 'convex'), (0.18, 'under'))},
-    {'id': 'k19', 'name': 'Карниз К-19', 'kind': 'cornice', 'heightMm': 160, 'depthMm': 80,
-     'profile': P((0.08, 'top'), (0.22, 'flat'), (0.35, 'concave'), (0.1, 'flat'), (0.1, 'convex'), (0.15, 'under'))},
-    {'id': 'k22', 'name': 'Карниз К-22', 'kind': 'cornice', 'heightMm': 160, 'depthMm': 50,
-     'profile': P((0.1, 'top'), (0.3, 'flat'), (0.45, 'concave'), (0.15, 'under'))},
-    {'id': 'k26', 'name': 'Карниз межэтажный К-26', 'kind': 'cornice', 'heightMm': 160, 'depthMm': 80,
-     'profile': P((0.1, 'top'), (0.25, 'flat'), (0.25, 'convex'), (0.25, 'concave'), (0.15, 'under'))},
-    {'id': 'p15', 'name': 'Плинтус П-15', 'kind': 'plinth', 'heightMm': 80, 'depthMm': 50,
-     'profile': P((0.15, 'top'), (0.35, 'flat'), (0.3, 'concave'), (0.2, 'flat'))},
-    {'id': 'p2', 'name': 'Плинтус П-2', 'kind': 'plinth', 'heightMm': 80, 'depthMm': 35,
-     'profile': P((0.25, 'convex'), (0.75, 'flat'))},
-    {'id': 'p32', 'name': 'Плинтус П-32', 'kind': 'plinth', 'heightMm': 80, 'depthMm': 80,
-     'profile': P((0.12, 'top'), (0.28, 'convex'), (0.2, 'concave'), (0.4, 'flat'))},
-    {'id': 'k37', 'name': 'Подоконник К-37', 'kind': 'sill', 'heightMm': 80, 'depthMm': 160,
-     'profile': P((0.35, 'top'), (0.35, 'flat'), (0.3, 'under'))},
-    {'id': 'k12n', 'name': 'Наличник оконный К-12', 'kind': 'surround', 'heightMm': 160, 'depthMm': 50,
-     'profile': P((0.15, 'convex'), (0.1, 'under'), (0.5, 'flat'), (0.25, 'concave'))},
-    {'id': 'nal-gladkiy', 'name': 'Наличник гладкий', 'kind': 'surround', 'heightMm': 120, 'depthMm': 35,
-     'profile': P((0.12, 'top'), (0.76, 'flat'), (0.12, 'under'))},
-    {'id': 'perila-p2', 'name': 'Перила П-2', 'kind': 'rail', 'heightMm': 160, 'depthMm': 750,
-     'profile': P((0.45, 'convex'), (0.4, 'flat'), (0.15, 'under'))},
+
+# === Разметка страниц: картинки с координатами и подписи под ними ===
+pdf = pdfplumber.open(PDF)
+
+
+def page_items(pno):
+    page = pdf.pages[pno - 1]
+    words = page.extract_words(keep_blank_chars=True, x_tolerance=1.5)
+    items = []
+    for im in page.images:
+        if im['width'] < 30 or im['height'] < 30:
+            continue
+        info = objects.get((pno, im['stream'].objid), {})
+        x0, x1, top, bottom = im['x0'], im['x1'], im['top'], im['bottom']
+        cap = [w for w in words if bottom - 14 <= w['top'] <= bottom + 80 and x0 - 40 <= w['x0'] <= x1]
+        lines = {}
+        for w in sorted(cap, key=lambda w: (round(w['top']), w['x0'])):
+            lines.setdefault(round(w['top']), []).append(w['text'].strip())
+        caption = []
+        for _, parts in sorted(lines.items()):
+            text = ' '.join(p for p in parts if p)
+            if re.match(r'^(ВИДЫ|ЭЛЕМЕНТЫ|Большой|архитектурному|Описание)', text):
+                break
+            caption.append(text)
+        items.append({'num': info.get('image'), 'smask': info.get('smask'), 'w': im['width'], 'h': im['height'],
+                      'x': x0, 'y': top, 'caption': caption})
+    return items
+
+
+def parse_caption(lines):
+    """Строки подписи → название, размер, камень образца."""
+    name, size, stone = [], None, None
+    for t in lines:
+        if re.search(r'\d+\s*\*|D-\d|мм|Под заказ', t) and not size:
+            size = t.replace(' мм', '').strip()
+        elif re.match(r'^[А-ЯЁ][а-яё]+ [а-яё]+$', t):
+            stone = t
+        elif t.isupper() or re.search(r'[КПБ]-\d', t) or t.startswith('«'):
+            name.append(t)
+    title = ' '.join(name).strip()
+    title = title[:1] + title[1:].lower()
+    # Модели и названия в кавычках возвращаем в исходный регистр
+    title = re.sub(r'([кпб])-(\d)', lambda m: m.group(1).upper() + '-' + m.group(2), title)
+    title = re.sub(r'«([а-яё])', lambda m: '«' + m.group(1).upper(), title)
+    title = title.replace('рус. пл.', 'руст. пл.')
+    model = (re.search(r'[КПБ]-\d+(\.\d+)?', title) or [None])[0]
+    return title, size, model
+
+
+def size_text(size):
+    if not size:
+        return ''
+    return size.replace('*', '×').replace('х', '×')
+
+
+# === Камень: 20 видов, образец фактуры и фото плитки ===
+STONE_ORDER = [
+    ['Акушинский кремовый', 'Акушинский белый', 'Алтинский жёлтый', 'Дербентский кремовый', 'Дербентский жёлтый', 'Каралапко белый в крапинку'],
+    ['Геленбатановский', 'Чиринский розовый', 'Ничирахский', 'Тенгинский', 'Фригский', 'Фригский с галькой'],
+    ['Морской чёрный', 'Морской серый', 'Мекегинский', 'Зулемахинский', 'Каякентский жёлтый', 'Каякентский серый'],
+    ['Джангинский', 'Чёрный сланец'],
 ]
-json.dump({'sprites': sprites, 'bands': bands},
-          open(f'{APP}/data/elements.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+KINDS = [('песчаник', 'Песчаник'), ('ракушечник', 'Ракушечник'), ('известняк', 'Известняк'), ('доломит', 'Доломит'), ('сланец', 'Сланец')]
 
-print(len(materials), 'materials;', len(sprites), 'sprites;', len(bands), 'bands')
+
+def stone_texts(pno):
+    """Описание и характеристики камня из двух колонок страницы."""
+    text = subprocess.run(['pdftotext', '-f', str(pno), '-l', str(pno), '-layout', PDF, '-'],
+                          check=True, capture_output=True, text=True).stdout
+    cols = ['\n'.join(l[:69] for l in text.split('\n')), '\n'.join(l[69:] for l in text.split('\n'))]
+    out = {}
+    for col in cols:
+        parts = re.split(r'\n\s*([А-ЯЁ][А-ЯЁ ]{3,})\s*\n(?=\s*\n\s*ТЕХНИЧЕСКИЕ)', col)
+        for i in range(1, len(parts), 2):
+            b = ' '.join(parts[i + 1].split())
+            g = lambda pat: (re.search(pat, b) or [None, None])[1]
+            out[parts[i].strip().lower()] = {
+                'specs': {
+                    'density': g(r'Плотность: (.+?кг/м³)'), 'porosity': g(r'Пористость: ([\d,\- ]+%)'),
+                    'absorption': g(r'Водопоглощение: ([\d,\- ]+%)'), 'fire': g(r'Огнеупорность: ([\d\- ]+°C)'),
+                    'strength': g(r'Предел прочности: ([\d ]+Мпа)'), 'frost': g(r'Морозостойкость: (F\d+)'),
+                },
+                'description': g(r'Описание: (.+?) Размеры:'),
+                'sizes': [x.strip() for x in (g(r'Размеры: (.+?) Фаска') or '').split(',') if x.strip()],
+            }
+    return out
+
+
+os.makedirs(f'{APP}/assets/textures/stones', exist_ok=True)
+os.makedirs(f'{APP}/assets/catalog/slabs', exist_ok=True)
+stones = []
+for pno, names in zip([3, 4, 5, 6], STONE_ORDER):
+    texts = stone_texts(pno)
+    items = page_items(pno)
+    swatches = sorted([i for i in items if abs(i['w'] - i['h']) < 5], key=lambda i: (round(i['y'] / 100), i['x']))
+    slabs = sorted([i for i in items if i['h'] > i['w'] * 1.2], key=lambda i: (round(i['y'] / 100), i['x']))
+    for name, sw, sl in zip(names, swatches, slabs):
+        sid = slug(name)
+        tex = load_image(pno, sw['num'])
+        tex.save(f'{APP}/assets/textures/stones/{sid}.jpg', quality=92, optimize=True)
+        slab = load_image(pno, sl['num'])
+        slab.save(f'{APP}/assets/catalog/slabs/{sid}.jpg', quality=88, optimize=True)
+        r, g, b = [int(v) for v in ImageStat.Stat(tex).mean]
+        t = texts[name.lower()]
+        kind = next((k for key, k in KINDS if key in (t['description'] or '').lower()), 'Камень')
+        thickness = sorted({int(s.split('*')[2]) for s in t['sizes']})
+        formats = []
+        for s in t['sizes']:
+            h, w, _ = s.split('*')
+            if f'{h}x{w}' not in formats:
+                formats.append(f'{h}x{w}')
+        stones.append({
+            'id': sid, 'name': name, 'category': 'stone', 'type': kind,
+            'image': f'assets/textures/stones/{sid}.jpg', 'texture': f'assets/textures/stones/{sid}.jpg',
+            'slab': f'assets/catalog/slabs/{sid}.jpg', 'color': '#%02x%02x%02x' % (r, g, b),
+            'description': t['description'], 'specs': t['specs'], 'sizes': t['sizes'],
+            'formats': formats, 'thickness': thickness, 'active': True,
+        })
+
+# Старые камни остаются неактивными: на них ссылаются ранее сохранённые проекты
+mpath = f'{APP}/data/materials.json'
+old = json.load(open(mpath, encoding='utf-8')) if os.path.exists(mpath) else []
+ids = {s['id'] for s in stones}
+for m in old:
+    if m.get('category') == 'stone' and m['id'] not in ids and not m.get('active', True):
+        stones.append(m)
+json.dump(stones, open(mpath, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+
+# === Элементы фасада по разделам каталога ===
+# раздел: (название, значок, страницы, фильтр по названию изделия)
+SECTIONS = [
+    ('cornice', 'Карнизы', 'cornice', [8, 2], r'^Карниз'),
+    ('plinth', 'Плинтусы', 'plinth', [9], r'^Плинтус'),
+    ('dentil', 'Зубцы', 'dentil', [10], r'^Зубец'),
+    ('window', 'Наличники и подоконники', 'opening', [2], r'^(Наличник|Подоконник)'),
+    ('keystone', 'Замки и клинья', 'keystone', [11], r'^(Замок|Картуш)'),
+    ('console', 'Консоли', 'console', [11, 2], r'^Консоль'),
+    ('rust', 'Русты', 'rust', [14], r'^Русты'),
+    ('pilaster', 'Пилястры', 'pilaster', [15, 16, 17, 2], r'^Пилястра(?! на колонну)'),
+    ('column', 'Колонны', 'column', [18, 19, 20, 21, 22, 23, 24, 25, 2], r'^Колонна'),
+    ('capital', 'Капители и базы', 'capital', [15, 18, 23, 2], r'^(Капитель|База)'),
+    ('balustrade', 'Балюстрада', 'balustrade', [12, 2], r'^(Балюстрада|Балясина|Тумба|Перила|Навершие)'),
+    ('carved', 'Розетки, барельефы, панно', 'rosette', [13, 2], r'^(Розетка|Барельеф|Панно)'),
+    ('tile', 'Плитка', 'wall', [2, 23], r'^Плитка'),
+    ('paving', 'Брусчатка', 'paving', [26], r'^Брусчатка'),
+]
+# Главная картинка раздела стоит над заголовком «Виды…»: её подпись читается отдельно
+MAIN_CAPTIONS = {8: 'КАРНИЗ К-1|160*360*35 мм', 9: 'ПЛИНТУС П-15|80*360*50 мм', 10: 'ЗУБЕЦ К-1|160*160*35 мм',
+                 11: 'ЗАМОК ПРОСТОЙ|215*165*80 мм', 12: 'БАЛЮСТРАДА|910*210*210 мм',
+                 13: 'БАРЕЛЬЕФ|600*1250*50 мм', 14: 'РУСТЫ КРУПНЫЕ|350*750*50 мм',
+                 15: 'ПИЛЯСТРА КРУПНАЯ ГЛАДКАЯ|350*750*50 мм', 16: 'ПИЛЯСТРА КРУПНАЯ С КАННЕЛЮРАМИ|350*750*50 мм',
+                 17: 'ПИЛЯСТРА СЛОЖНАЯ С КАРНИЗОМ К-22|160*500*50 мм', 26: 'БРУСЧАТКА 80Х80|80*80*50 мм'}
+
+os.makedirs(f'{APP}/assets/catalog', exist_ok=True)
+page_cache = {}
+sections = []
+seen_images = set()
+
+
+def fingerprint(im):
+    """Одинаковые картинки повторяются на разных страницах — узнаём их по уменьшенной копии."""
+    small = im.convert('LA').resize((12, 12))
+    return tuple(v // 16 for px in small.get_flattened_data() for v in px)
+
+
+for sid, title, icon, pages, pattern in SECTIONS:
+    groups = {}  # одно изделие — одна карточка, варианты размеров и рисунков внутри
+    for pno in pages:
+        if pno not in page_cache:
+            page_cache[pno] = page_items(pno)
+        items = page_cache[pno]
+        biggest = max((i for i in items if i['smask'] is not None), key=lambda i: i['w'] * i['h'], default=None)
+        for it in items:
+            if it['num'] is None or it['smask'] is None or it['w'] < 40:
+                continue
+            if pno == 2 and it['w'] > 300:
+                continue  # фото дома на обложке раздела
+            caption = it['caption']
+            if it is biggest and pno in MAIN_CAPTIONS:
+                caption = MAIN_CAPTIONS[pno].split('|')
+            name, size, model = parse_caption(caption)
+            if not name or not re.match(pattern, name):
+                continue
+            im = load_image(pno, it['num'], it['smask'])
+            box = im.getchannel('A').point(lambda a: 255 if a > 20 else 0).getbbox()
+            if not box:
+                continue
+            im = im.crop(box)
+            fp = (fingerprint(im), size)
+            if fp in seen_images:
+                continue
+            seen_images.add(fp)
+            group = groups.setdefault(name, {'name': name, 'model': model, 'variants': []})
+            same_size = sum(1 for v in group['variants'] if v['size'] == size_text(size))
+            vid = slug(f'{sid} {name} {size or ""} {same_size + 1 if same_size else ""}')[:70]
+            path = f'assets/catalog/{vid}.webp'
+            im.save(f'{APP}/{path}', 'WEBP', quality=84, method=4)
+            px = sorted(0.299 * r + 0.587 * g + 0.114 * b for r, g, b, a in im.get_flattened_data() if a > 200)
+            group['variants'].append({
+                'id': vid, 'size': size_text(size), 'look': same_size + 1 if same_size else None,
+                'image': path, 'w': im.size[0], 'h': im.size[1],
+                'lumRef': round(px[int(len(px) * 0.75)], 1) if px else 200,
+            })
+    out = []
+    for g in groups.values():
+        g['id'] = g['variants'][0]['id']
+        out.append(g)
+    sections.append({'id': sid, 'title': title, 'icon': icon, 'items': out})
+
+# Отделка плитки: форматы и толщины из размеров камня, фаски как на значках каталога
+catalog = {
+    'sections': sections,
+    'tile': {
+        'formats': stones[0]['formats'],
+        'thickness': stones[0]['thickness'],
+        'edges': [
+            {'id': 'none', 'name': 'Без фаски'},
+            {'id': 'chamfer', 'name': 'Скос'},
+            {'id': 'convex', 'name': 'Скруглённая'},
+            {'id': 'concave', 'name': 'Вогнутая'},
+            {'id': 'rabbet', 'name': 'Четверть'},
+        ],
+        'surfaces': [
+            {'id': 'sawn', 'name': 'Пиленая'},
+            {'id': 'split', 'name': 'Отбитая'},
+        ],
+    },
+}
+json.dump(catalog, open(f'{APP}/data/catalog.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+print(len([s for s in stones if s.get('active', True)]), 'stones;',
+      ', '.join(f"{s['title']}: {len(s['items'])}/{sum(len(i['variants']) for i in s['items'])}" for s in sections))

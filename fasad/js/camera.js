@@ -39,7 +39,7 @@ const Camera = {
       canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
       URL.revokeObjectURL(url);
       ProjectFlow.setState('originalPhoto', canvas.toDataURL('image/jpeg', 0.9));
-      ProjectFlow.setState('design', null);
+      // Подбор материалов сохраняется: можно сменить фото, не выбирая всё заново
       showPhotoPreview();
     };
     img.onerror = () => {
