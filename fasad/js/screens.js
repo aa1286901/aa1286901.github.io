@@ -2,7 +2,7 @@
 
 // === Экран: Главная ===
 function onScreenHome() {
-  Works.render();
+  // Главная — ничего дополнительно не нужно
 }
 
 // === Экран: Фото ===
@@ -17,9 +17,8 @@ function onScreenPhoto() {
       el.addEventListener('click', handler);
     }
   };
-  bindOnce('photo-camera', () => Camera.pick(true));
-  bindOnce('photo-album', () => Camera.pick(false));
-  bindOnce('camera-area', () => { if (!ProjectFlow.getState('originalPhoto')) Camera.pick(false); });
+  Camera.bind();
+  bindOnce('camera-area', () => { if (!ProjectFlow.getState('originalPhoto')) Camera.openAlbum(); });
   bindOnce('photo-back', () => Router.navigateTo('home'));
   bindOnce('photo-tips', () => Router.navigateTo('tips'));
   // Продолжить — сразу к разметке, фото загружается на сервер только при сохранении проекта

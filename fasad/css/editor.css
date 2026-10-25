@@ -700,85 +700,6 @@ line.editor-shape {
   font-size: var(--font-size-base);
 }
 
-/* === Наши работы === */
-.works {
-  margin-top: var(--spacing-xl);
-}
-
-.works__list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-}
-
-.works__item {
-  aspect-ratio: 1;
-  overflow: hidden;
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-alt);
-}
-
-.works__item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.works-viewer {
-  position: fixed;
-  inset: 0;
-  z-index: 3000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.92);
-}
-
-.works-viewer[hidden] {
-  display: none;
-}
-
-.works-viewer__img {
-  max-width: 100%;
-  max-height: calc(100vh - 140px);
-  object-fit: contain;
-}
-
-.works-viewer__close,
-.works-viewer__nav {
-  position: absolute;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-  font-size: 28px;
-  line-height: 1;
-}
-
-.works-viewer__close {
-  top: calc(12px + var(--safe-top));
-  right: 12px;
-  font-size: 20px;
-}
-
-.works-viewer__nav--prev { left: 8px; }
-.works-viewer__nav--next { right: 8px; }
-
-.works-viewer__bar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-md) calc(var(--spacing-md) + var(--safe-bottom));
-  color: rgba(255, 255, 255, 0.7);
-  font-size: var(--font-size-sm);
-}
-
 /* === Каталог: изделия и характеристики камня === */
 .catalog-section__card--product .catalog-section__card-image img {
   object-fit: contain;
@@ -829,4 +750,18 @@ line.editor-shape {
   padding: 4px 8px;
   border-radius: var(--radius-full);
   background: var(--color-surface-alt);
+}
+
+/* Поле выбора файла внутри кнопки: невидимое, но не display:none — так его открывает любой телефон */
+.photo-pick label {
+  position: relative;
+  cursor: pointer;
+}
+
+.photo-pick__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
