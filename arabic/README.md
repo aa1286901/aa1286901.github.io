@@ -16,7 +16,7 @@ arabic/
 │   │   ├── part1/        lesson_1.json … lesson_52.json, exercises.json
 │   │   ├── part2/        lesson_1.json … lesson_60.json
 │   │   └── part3/        lesson_1.json … lesson_20.json
-│   └── books/            деревья книг: mia_amil.json, nahw_ism.json
+│   └── books/            деревья книг: mia_amil.json, unmuzaj.json
 ├── icons/                иконки приложения и фото разработчика
 └── pdf/                  исходные книги в PDF
 ```

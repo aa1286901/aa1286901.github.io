@@ -395,7 +395,7 @@ const BOOKS = [
     kind: "النَّحْوُ",
     title: "شَرْحُ الْأُنْمُوذَجِ",
     author: "جَمَالُ الدِّينِ الْأَرْدَبِيلِيُّ",
-    desc: "Глава об имени деревом терминов: определения из книги с переводом.",
+    desc: "Главы об имени и о глаголе деревом терминов: слова автора и комментарий с переводом.",
   },
 ];
 const HOME_BOOK_KEY = "arabic.homeBook";
@@ -936,11 +936,11 @@ document.addEventListener("click", (e) => {
 });
 applySize();
 
-// ── Грамматика: дерево главы об имени ───────────────────
+// ── Грамматика: дерево книги по главам ──────────────────
 // Уровни идут сверху вниз: корень, под ним сетка его тем, под выбранной темой — сетка её тем…
 // Книги-деревья: адрес → файл и подписи
 const TREE_BOOKS = {
-  "#nahw": { file: "data/books/nahw_ism.json", book: "Шарх аль-Унмузадж", eyebrow: "النَّحْوُ", said: "قَالَ:" },
+  "#nahw": { file: "data/books/unmuzaj.json", book: "Шарх аль-Унмузадж", eyebrow: "النَّحْوُ", sub: "Глава об имени · глава о глаголе", said: "قَالَ:" },
   "#amil": { file: "data/books/mia_amil.json", book: "Сто управляющих слов", eyebrow: "مِئَةُ عَامِلٍ", sub: "", quiz: true },
 };
 const treeCache = new Map(); // адрес → JSON книги
@@ -1088,6 +1088,12 @@ function openQawl(i) {
   fill("qawlQuoteBlock", "qawlQuote", n.qawl);
   fill("qawlTrBlock", "qawlTr", n.qawlRu);
   fill("qawlDefBlock", "qawlDef", n.qawl ? "" : n.def);
+  // Комментарий шарха («أَقُولُ») — отдельно от слов автора
+  fill("qawlSharhBlock", "qawlSharh", n.sharh);
+  $("qawlSharhRu").textContent = n.sharhRu || "";
+  $("qawlSharhRu").hidden = !n.sharhRu;
+  if (n.sharhRu) $("qawlSharhBlock").hidden = false;
+  $("qawlSharhQuote").hidden = !n.sharh;
   // Примеры: одной строкой (ex) или списком с переводом из книги (exs)
   const exs = n.exs || [];
   fill("qawlExBlock", "qawlEx", n.ex);
@@ -1937,6 +1943,12 @@ let plan = store.get(PLAN_KEY, {});
 if (typeof plan !== "object" || plan === null) plan = {};
 plan.days = Array.isArray(plan.days) ? plan.days.filter((d) => Number.isInteger(d) && d >= 0 && d < 7) : [];
 if (plan.mabda && !LESSONS.some((l) => l.key === plan.mabda.key)) delete plan.mabda;
+// v2: над главой об имени появился корень книги, номера тем сдвинулись на 1
+if (plan.unm && plan.unm.v !== 2) {
+  plan.unm.topics = (plan.unm.topics || []).map((i) => i + 1);
+  plan.unm.v = 2;
+  store.set(PLAN_KEY, plan);
+}
 const savePlan = () => store.set(PLAN_KEY, plan);
 
 const ymd = (d = new Date()) =>
@@ -2221,7 +2233,7 @@ $("todayUnm").addEventListener("click", (e) => {
   }
   if (e.target.closest('[data-act="unmPassed"]')) {
     if (!confirm("Темы сданы? Список заданных тем очистится.")) return;
-    plan.unm = { topics: [], since: ymd() };
+    plan.unm = { topics: [], since: ymd(), v: 2 };
     savePlan();
     toast("Молодец! Темы сданы");
     renderToday();
@@ -2248,7 +2260,7 @@ function applyAssignBtn(i) {
 }
 $("qawlAssign").onclick = () => {
   const i = qawlIndex;
-  if (!plan.unm?.topics?.length) plan.unm = { topics: [], since: ymd() };
+  if (!plan.unm?.topics?.length) plan.unm = { topics: [], since: ymd(), v: 2 };
   const on = plan.unm.topics.includes(i);
   plan.unm.topics = on ? plan.unm.topics.filter((x) => x !== i) : [...plan.unm.topics, i];
   savePlan();
@@ -2547,7 +2559,7 @@ function renderMain() {
   const topics = plan.unm?.topics?.length || 0;
   const cards = [
     { href: "#lesson-" + ml.key, cover: 0, title: `${ml.n ? "Урок " + ml.n : "Упражнения"} · ${ml.ruTitle}`, sub: `${BOOK_RU[0]} · часть ${ml.part}`, meta: "", id: "cmMabda" },
-    { href: "#nahw", cover: 2, title: topics ? `Задано: ${topics} ${plural(topics, "тема", "темы", "тем")}` : "Глава об имени", sub: BOOK_RU[2], meta: "Дерево терминов" },
+    { href: "#nahw", cover: 2, title: topics ? `Задано: ${topics} ${plural(topics, "тема", "темы", "тем")}` : "Имя и глагол", sub: BOOK_RU[2], meta: "Дерево терминов" },
     { href: "#amil", cover: 1, title: "Сто управляющих слов", sub: BOOK_RU[1], meta: `Тренажёр · выучено ${learnedAmil()}` },
   ];
   $("mContinue").innerHTML = cards

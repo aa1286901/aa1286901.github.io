@@ -4764,3 +4764,14 @@ body.view-settings .app {
     flex: 1;
     padding-bottom: calc(env(safe-area-inset-bottom) + 110px)
 }
+
+/* Комментарий шарха: спокойнее, чем слова автора */
+.qawl-sharh {
+    margin-top: 6px;
+    border-right-color: var(--muted);
+    font-size: 19px
+}
+
+.qawl-sharh + .qawl-text {
+    margin-top: 10px
+}

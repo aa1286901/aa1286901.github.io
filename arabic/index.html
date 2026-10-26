@@ -34,7 +34,7 @@
             if (localStorage.getItem("arabic.motion") === "true") document.documentElement.dataset.motion = "on";
         } catch (e) {}
     </script>
-    <link rel="stylesheet" href="css/style.css?v=0062">
+    <link rel="stylesheet" href="css/style.css?v=0063">
 </head>
 
 <body class="view-home">
@@ -247,7 +247,7 @@
         <nav class="lesson-list" id="lessonList" aria-label="Список уроков"></nav>
     </section>
 
-    <!-- Грамматика: дерево главы об имени, адрес #nahw -->
+    <!-- Грамматика: дерево книги (главы об имени и о глаголе), адрес #nahw -->
     <section class="nahw" id="nahwScreen">
         <div class="navbar">
             <a class="back" href="#">
@@ -738,6 +738,14 @@
                 <div class="eyebrow">Перевод</div>
                 <p class="qawl-text" id="qawlTr"></p>
             </div>
+            <div class="qawl-section" id="qawlSharhBlock">
+                <div class="eyebrow">Комментарий</div>
+                <div class="qawl-quote qawl-sharh" id="qawlSharhQuote" lang="ar" dir="rtl">
+                    <button class="say say-float" type="button" data-say-from="qawlSharh" aria-label="Прочитать комментарий"></button>
+                    <span class="qawl-said">أَقُولُ:</span> <span id="qawlSharh"></span>
+                </div>
+                <p class="qawl-text" id="qawlSharhRu"></p>
+            </div>
             <div class="qawl-section" id="qawlDefBlock">
                 <div class="eyebrow">Пояснение</div>
                 <p class="qawl-text" id="qawlDef"></p>
@@ -755,7 +763,7 @@
         </div>
     </div>
 
-    <script src="js/app.js?v=0062"></script>
+    <script src="js/app.js?v=0063"></script>
 </body>
 
 </html>
