@@ -14,7 +14,7 @@ import sys
 import tempfile
 
 import pdfplumber
-from PIL import Image, ImageStat
+from PIL import Image, ImageFilter, ImageStat
 
 PDF, APP = sys.argv[1:3]
 
@@ -178,15 +178,13 @@ SECTIONS = [
     ('dentil', 'Зубцы', 'dentil', [10], r'^Зубец'),
     ('window', 'Наличники и подоконники', 'opening', [2], r'^(Наличник|Подоконник)'),
     ('keystone', 'Замки и клинья', 'keystone', [11], r'^(Замок|Картуш)'),
-    ('console', 'Консоли', 'console', [11, 2], r'^Консоль'),
+    ('console', 'Консоли', 'console', [11], r'^Консоль'),
     ('rust', 'Русты', 'rust', [14], r'^Русты'),
     ('pilaster', 'Пилястры', 'pilaster', [15, 16, 17, 2], r'^Пилястра(?! на колонну)'),
     ('column', 'Колонны', 'column', [18, 19, 20, 21, 22, 23, 24, 25, 2], r'^Колонна'),
     ('capital', 'Капители и базы', 'capital', [15, 18, 23, 2], r'^(Капитель|База)'),
-    ('balustrade', 'Балюстрада', 'balustrade', [12, 2], r'^(Балюстрада|Балясина|Тумба|Перила|Навершие)'),
-    ('carved', 'Розетки, барельефы, панно', 'rosette', [13, 2], r'^(Розетка|Барельеф|Панно)'),
-    ('tile', 'Плитка', 'wall', [2, 23], r'^Плитка'),
-    ('paving', 'Брусчатка', 'paving', [26], r'^Брусчатка'),
+    ('balustrade', 'Балюстрада', 'balustrade', [12], r'^(Балюстрада|Балясина|Тумба|Перила|Навершие)'),
+    ('carved', 'Розетки, барельефы, панно', 'rosette', [13], r'^(Розетка|Барельеф|Панно)'),
 ]
 # Главная картинка раздела стоит над заголовком «Виды…»: её подпись читается отдельно
 MAIN_CAPTIONS = {8: 'КАРНИЗ К-1|160*360*35 мм', 9: 'ПЛИНТУС П-15|80*360*50 мм', 10: 'ЗУБЕЦ К-1|160*160*35 мм',
@@ -230,6 +228,11 @@ for sid, title, icon, pages, pattern in SECTIONS:
             if not box:
                 continue
             im = im.crop(box)
+            # Длинные собранные пилястры и колонны — в подборе фасада, но не в каталоге изделий
+            tall = im.size[1] > im.size[0] * 2
+            if sid == 'rust' and tall:
+                # Русты: показываем верхнюю часть колонки — несколько камней, чтобы было видно рисунок
+                im = im.crop((0, 0, im.size[0], int(im.size[1] * 0.42)))
             fp = (fingerprint(im), size)
             if fp in seen_images:
                 continue
@@ -238,10 +241,17 @@ for sid, title, icon, pages, pattern in SECTIONS:
             same_size = sum(1 for v in group['variants'] if v['size'] == size_text(size))
             vid = slug(f'{sid} {name} {size or ""} {same_size + 1 if same_size else ""}')[:70]
             path = f'assets/catalog/{vid}.webp'
-            im.save(f'{APP}/{path}', 'WEBP', quality=84, method=4)
+            # Картинки в PDF маленькие (~180 px): увеличиваем вдвое с повышением резкости
+            if max(im.size) < 420:
+                im = im.resize((im.size[0] * 2, im.size[1] * 2), Image.LANCZOS)
+                rgb = im.convert('RGB').filter(ImageFilter.UnsharpMask(radius=1.6, percent=70, threshold=2))
+                rgb.putalpha(im.getchannel('A'))
+                im = rgb
+            im.save(f'{APP}/{path}', 'WEBP', quality=86, method=4)
             px = sorted(0.299 * r + 0.587 * g + 0.114 * b for r, g, b, a in im.get_flattened_data() if a > 200)
             group['variants'].append({
                 'id': vid, 'size': size_text(size), 'look': same_size + 1 if same_size else None,
+                'page': pno, 'tall': tall,
                 'image': path, 'w': im.size[0], 'h': im.size[1],
                 'lumRef': round(px[int(len(px) * 0.75)], 1) if px else 200,
             })
