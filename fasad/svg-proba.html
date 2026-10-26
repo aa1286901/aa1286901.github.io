@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#C9A86A">
+  <title>Карнизы в SVG — проба</title>
+  <link rel="icon" href="icon.svg">
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --muted: #8a8378;
+      --line: #e8e2d8;
+      --accent: #c9a86a;
+      --brown: #6b5636;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 16px 16px 40px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
+    }
+    main { max-width: 900px; margin: 0 auto; }
+    h1 { font-size: 24px; margin: 0 0 6px; }
+    .lead { color: var(--muted); font-size: 14px; line-height: 1.5; margin: 0 0 16px; }
+    .label { font-size: 13px; font-weight: 600; color: var(--muted); margin: 12px 0 8px; }
+    .stones { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+    .stones::-webkit-scrollbar { display: none; }
+    .stone { flex-shrink: 0; width: 64px; border: 0; background: none; padding: 0; font: inherit; font-size: 11px; line-height: 1.2; color: var(--text); text-align: center; cursor: pointer; }
+    .stone img { display: block; width: 64px; height: 64px; object-fit: cover; border-radius: 10px; border: 3px solid transparent; margin-bottom: 4px; }
+    .stone.active img { border-color: var(--accent); }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 14px; margin-top: 14px; }
+    .card__name { font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; }
+    .card__size { color: var(--muted); font-size: 13px; border-top: 1px solid var(--brown); padding-top: 3px; margin-top: 2px; display: inline-block; }
+    .views { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+    .view { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .view__box { width: 100%; aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center; background: #fbfaf7; border-radius: 12px; border: 1px solid var(--line); overflow: hidden; }
+    .view__box img, .view__box svg { max-width: 94%; max-height: 92%; }
+    .view__cap { font-size: 12px; font-weight: 600; color: var(--muted); }
+    @media (max-width: 560px) {
+      .views { grid-template-columns: 1fr 1fr; }
+      .view--photo { grid-column: 1 / -1; }
+      .view--photo .view__box { aspect-ratio: 16 / 7; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Карнизы в SVG — проба</h1>
+    <p class="lead">Слева — фото из PDF-каталога. В середине — объёмный карниз, справа — сечение с размерами. Оба нарисованы векторно (SVG) по профилю, поэтому чёткие на любом экране и в любом увеличении. Камень меняется сверху. Профили сняты с фото каталога на глаз — по чертежам «Камень Юг» будут точными.</p>
+    <div class="label">Камень</div>
+    <div class="stones" id="stones"></div>
+    <div id="list"></div>
+  </main>
+
+  <script>
+    // Профиль карниза — сечение: d — вынос от стены, h — высота сверху вниз, мм.
+    // ['L', d, h] — прямая до точки; ['Q', d, h, 'in'|'out'] — четверть дуги до точки,
+    // выгнутая к стене (in — выкружка) или наружу (out — вал).
+    const CORNICES = [
+      { model: 'К-1', name: 'Карниз К-1', size: '160×360×35', photo: 'assets/catalog/cornice-karniz-k-1-160-360-35.webp', H: 160, D: 35,
+        profile: [['L', 0, 0], ['L', 30, 0], ['L', 30, 14], ['Q', 22, 40, 'in'], ['Q', 33, 62, 'out'], ['L', 33, 70], ['Q', 24, 100, 'in'], ['Q', 35, 126, 'out'], ['L', 35, 160], ['L', 0, 160]] },
+      { model: 'К-2', name: 'Карниз К-2', size: '160×360×160', photo: 'assets/catalog/cornice-karniz-k-2-160-360-160.webp', H: 160, D: 160,
+        profile: [['L', 0, 0], ['L', 160, 0], ['L', 160, 42], ['L', 152, 42], ['L', 152, 50], ['L', 158, 50], ['L', 158, 56], ['L', 148, 56], ['Q', 42, 136, 'in'], ['L', 48, 136], ['L', 48, 144], ['L', 40, 144], ['L', 40, 151], ['L', 34, 151], ['L', 34, 160], ['L', 0, 160]] },
+      { model: 'К-11', name: 'Карниз венчающий К-11', size: '160×360×160', photo: 'assets/catalog/cornice-karniz-venchayuschiy-k-11-160-360-160.webp', H: 160, D: 160,
+        profile: [['L', 0, 0], ['L', 160, 0], ['L', 160, 30], ['L', 152, 30], ['L', 152, 36], ['Q', 140, 58, 'out'], ['L', 140, 62], ['Q', 36, 138, 'in'], ['L', 44, 138], ['L', 44, 148], ['L', 32, 148], ['L', 32, 160], ['L', 0, 160]] },
+      { model: 'К-26', name: 'Карниз межэтажный К-26', size: '160×360×80', photo: 'assets/catalog/cornice-karniz-mezhetazhnyy-k-26-160-360-80.webp', H: 160, D: 80,
+        profile: [['L', 0, 0], ['L', 80, 0], ['L', 80, 70], ['L', 74, 70], ['Q', 14, 148, 'in'], ['L', 20, 148], ['L', 20, 160], ['L', 0, 160]] },
+    ];
+
+    // Профиль в ломаную: дуги разбиваются на короткие отрезки
+    function points(profile) {
+      const pts = [];
+      profile.forEach(([cmd, d, h, bulge]) => {
+        if (cmd === 'L' || !pts.length) { pts.push([d, h]); return; }
+        const [ad, ah] = pts[pts.length - 1];
+        // Центр дуги — угол, противоположный выгибу
+        const c1 = [ad, h], c2 = [d, ah];
+        const inner = c1[0] < c2[0] ? c1 : c2, outer = inner === c1 ? c2 : c1;
+        const center = bulge === 'in' ? outer : inner;
+        for (let i = 1; i <= 12; i++) {
+          const t = (i / 12) * Math.PI / 2;
+          pts.push([
+            center[0] + (ad - center[0]) * Math.cos(t) + (d - center[0]) * Math.sin(t),
+            center[1] + (ah - center[1]) * Math.cos(t) + (h - center[1]) * Math.sin(t),
+          ]);
+        }
+      });
+      return pts;
+    }
+
+    const fmt = n => Math.round(n * 10) / 10;
+    const poly = (pts, attrs) => `<polygon points="${pts.map(p => p.map(fmt).join(',')).join(' ')}" ${attrs}/>`;
+
+    // Заливка: фактура камня + полупрозрачный слой светотени
+    function shaded(pts, k, id) {
+      const shade = k < 1 ? `fill="#000" fill-opacity="${fmt(1 - k)}"` : `fill="#fff" fill-opacity="${fmt((k - 1) * 0.9)}"`;
+      return poly(pts, `fill="url(#${id})"`) + poly(pts, `${shade} stroke="#2d241a" stroke-opacity="0.18" stroke-width="0.6" stroke-linejoin="round"`);
+    }
+
+    function pattern(id, texture) {
+      return `<defs><pattern id="${id}" patternUnits="userSpaceOnUse" width="220" height="220">
+        <image href="${texture}" width="220" height="220" preserveAspectRatio="xMidYMid slice"/></pattern></defs>`;
+    }
+
+    // Объёмный вид: профиль вытянут на длину L, смотрим слева и чуть снизу — как на фото каталога
+    function svg3d(c, texture) {
+      const L = 320, kx = 0.62, ky = 0.2;
+      const P = (l, d, h) => [l + d * kx, h - d * ky];
+      const pts = points(c.profile);
+      const id = 'p3' + c.model.replace(/\W/g, '');
+      let body = '';
+      const light = [0.55, -0.83]; // свет спереди-сверху
+      for (let i = 0; i < pts.length - 1; i++) {
+        const [ad, ah] = pts[i], [bd, bh] = pts[i + 1];
+        const td = bd - ad, th = bh - ah, len = Math.hypot(td, th) || 1;
+        const n = [th / len, -td / len];              // нормаль наружу
+        if (n[0] + 0.35 * n[1] <= 0.01) continue;     // верхняя грань — снизу её не видно
+        const k = 0.5 + 0.72 * Math.max(0, n[0] * light[0] + n[1] * light[1]);
+        body += shaded([P(0, ad, ah), P(L, ad, ah), P(L, bd, bh), P(0, bd, bh)], k, id);
+      }
+      // Торец со стороны зрителя — срез камня в тени, серо-голубой, как на фото каталога
+      const end = pts.map(([d, h]) => P(0, d, h));
+      body += poly(end, `fill="url(#${id})"`) + poly(end, `fill="#5f6b78" fill-opacity="0.62" stroke="#2d241a" stroke-opacity="0.35" stroke-width="0.8" stroke-linejoin="round"`);
+      const xs = [], ys = [];
+      pts.forEach(([d, h]) => [P(0, d, h), P(L, d, h)].forEach(([x, y]) => { xs.push(x); ys.push(y); }));
+      const pad = 6, minX = Math.min(...xs) - pad, minY = Math.min(...ys) - pad;
+      const w = Math.max(...xs) - minX + pad, h = Math.max(...ys) - minY + pad;
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${fmt(minX)} ${fmt(minY)} ${fmt(w)} ${fmt(h)}" role="img" aria-label="${c.name}, объёмный вид">${pattern(id, texture)}${body}</svg>`;
+    }
+
+    // Сечение: профиль, стена с штриховкой и размеры
+    function svgSection(c, texture) {
+      const pts = points(c.profile);
+      const id = 'ps' + c.model.replace(/\W/g, '');
+      const ink = '#3d3226';
+      const dim = (x1, y1, x2, y2, text, vertical) => {
+        const tick = (x, y) => vertical
+          ? `<line x1="${x - 4}" y1="${y}" x2="${x + 4}" y2="${y}" stroke="${ink}" stroke-width="1"/>`
+          : `<line x1="${x}" y1="${y - 4}" x2="${x}" y2="${y + 4}" stroke="${ink}" stroke-width="1"/>`;
+        const tx = vertical ? x1 - 7 : (x1 + x2) / 2, ty = vertical ? (y1 + y2) / 2 : y1 - 6;
+        return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${ink}" stroke-width="0.9"/>${tick(x1, y1)}${tick(x2, y2)}
+          <text x="${tx}" y="${ty}" font-size="12" font-family="system-ui, sans-serif" fill="${ink}" text-anchor="middle" ${vertical ? `transform="rotate(-90 ${tx} ${ty})"` : ''}>${text}</text>`;
+      };
+      let hatch = '';
+      for (let y = -6; y < c.H + 6; y += 9) hatch += `<line x1="-14" y1="${y + 10}" x2="-4" y2="${y}" stroke="${ink}" stroke-opacity="0.5" stroke-width="0.8"/>`;
+      const body = `
+        ${hatch}
+        <line x1="0" y1="-8" x2="0" y2="${c.H + 8}" stroke="${ink}" stroke-width="1.6"/>
+        ${poly(pts, `fill="url(#${id})"`)}
+        ${poly(pts, `fill="#fff" fill-opacity="0.25" stroke="${ink}" stroke-width="1.4" stroke-linejoin="round"`)}
+        ${dim(-26, 0, -26, c.H, c.H, true)}
+        ${dim(0, -16, c.D, -16, c.D, false)}`;
+      const minX = -44, minY = -34, w = c.D + 60, h = c.H + 50;
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${minX} ${minY} ${w} ${h}" role="img" aria-label="${c.name}, сечение">${pattern(id, texture)}${body}</svg>`;
+    }
+
+    let stones = [], current = null;
+
+    function render() {
+      document.getElementById('stones').innerHTML = stones.map(s => `
+        <button class="stone${s.id === current.id ? ' active' : ''}" data-id="${s.id}"><img src="${s.texture}" alt=""><span>${s.name}</span></button>`).join('');
+      document.getElementById('list').innerHTML = CORNICES.map(c => `
+        <section class="card">
+          <div class="card__name">${c.name}</div>
+          <div class="card__size">${c.size} мм</div>
+          <div class="views">
+            <div class="view view--photo"><div class="view__box"><img src="${c.photo}" alt=""></div><div class="view__cap">Фото из PDF</div></div>
+            <div class="view"><div class="view__box">${svg3d(c, current.texture)}</div><div class="view__cap">SVG объёмный</div></div>
+            <div class="view"><div class="view__box">${svgSection(c, current.texture)}</div><div class="view__cap">SVG сечение</div></div>
+          </div>
+        </section>`).join('');
+    }
+
+    fetch('data/materials.json').then(r => r.json()).then(all => {
+      stones = all.filter(s => s.category === 'stone' && s.active !== false);
+      current = stones.find(s => s.id === 'akushinskiy-kremovyy') || stones[0];
+      render();
+    });
+
+    document.getElementById('stones').addEventListener('click', e => {
+      const b = e.target.closest('[data-id]');
+      if (!b) return;
+      current = stones.find(s => s.id === b.dataset.id);
+      render();
+    });
+  </script>
+</body>
+</html>
