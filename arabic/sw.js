@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим приложения Arabic.
 // Свои файлы — «сначала сеть»: обновления видны сразу, без интернета берётся кэш.
 // Шрифты Google — «сначала кэш»: они не меняются.
-const VERSION = "0062";
+const VERSION = "0063";
 const CACHE = "arabic-" + VERSION;
 const FONT_CACHE = "arabic-fonts";
 
@@ -16,7 +16,7 @@ const PRECACHE = [
   "icons/apple-touch-icon.png",
   "icons/favicon-32.png",
   "icons/dev.jpg",
-  "data/books/nahw_ism.json",
+  "data/books/unmuzaj.json",
   "data/books/mia_amil.json",
   // уроки: часть 1 — 52, часть 2 — 60, часть 3 — 20
   ...[[1, 52], [2, 60], [3, 20]].flatMap(([p, k]) =>
