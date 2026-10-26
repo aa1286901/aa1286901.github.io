@@ -1,21 +1,44 @@
 // === Каталог «Камень Юг» ===
-// Прораб показывает заказчику: оттенок камня, плитку с фаской и без, отбитую и пиленую,
-// толщину, карнизы, замки, наличники и другие изделия — сразу в выбранном камне.
+// Прораб показывает заказчику оттенок камня, характеристики и плитку с фаской и без,
+// отбитую и пиленую, разной толщины; во вкладке «Изделия» — изделия как в PDF-каталоге.
 
 const STONE_KINDS = ['Все', 'Песчаник', 'Известняк', 'Ракушечник', 'Доломит', 'Сланец'];
 
-// Изделия, которые показываются на странице камня «из этого камня»
-const STONE_PAGE_SECTIONS = ['cornice', 'window', 'keystone', 'dentil', 'plinth', 'rust', 'console'];
+// Разделы вкладки «Изделия» — как в PDF. sections — разделы data/catalog.json;
+// skipTall — не показывать длинные собранные пилястры и колонны
+const CATALOG_GROUPS = [
+  { id: 'cornice', title: 'Карнизы', sections: ['cornice'] },
+  { id: 'plinth', title: 'Плинтусы', sections: ['plinth'] },
+  { id: 'dentil', title: 'Зубцы', sections: ['dentil'] },
+  { id: 'keystone', title: 'Замки и консоли', sections: ['keystone', 'console'] },
+  { id: 'balustrade', title: 'Балюстрада', sections: ['balustrade'] },
+  { id: 'carved', title: 'Розетки, барельефы, панно', sections: ['carved'] },
+  { id: 'capital', title: 'Капители и базы', sections: ['capital'] },
+  { id: 'column', title: 'Пилястры и колонны', sections: ['pilaster', 'column'], skipTall: true },
+  { id: 'rust', title: 'Русты', sections: ['rust'] },
+];
 
 const Catalog = {
   tab: 'stones',
   kind: 'Все',
   query: '',
   stone: null,          // камень на странице камня
-  section: null,        // раздел изделий
+  group: null,          // раздел изделий
   sectionStone: null,   // в каком камне показывать изделия раздела
   tile: { edge: 'chamfer', surface: 'sawn', format: '160x360', thickness: 20, layout: 'running', joint: 'light' },
   bound: false,
+
+  // Все изделия раздела по одному — каждая картинка PDF отдельной карточкой
+  groupEntries(group, catalog) {
+    const out = [];
+    group.sections.forEach(sid => {
+      const sec = catalog.sections.find(s => s.id === sid);
+      sec?.items.forEach(item => item.variants.forEach(v => {
+        if (!(group.skipTall && v.tall)) out.push({ sid, item, v });
+      }));
+    });
+    return out;
+  },
 
   async render() {
     this.bind();
@@ -42,38 +65,47 @@ const Catalog = {
       return;
     }
 
-    // Изделия: разделы плитками, при поиске — сразу найденные изделия
+    // Изделия: при поиске — сразу найденные изделия, иначе разделы
     if (q) {
-      const found = [];
-      catalog.sections.forEach(s => s.items.forEach(item => {
-        if (item.name.toLowerCase().includes(q) || (item.model || '').toLowerCase().includes(q)) found.push([s, item]);
-      }));
-      box.innerHTML = `<div class="product-grid">${found.map(([s, item]) => this.productCard(s, item)).join('') || '<p class="catalog-empty">Ничего не найдено</p>'}</div>`;
+      const found = CATALOG_GROUPS.flatMap(g => this.groupEntries(g, catalog))
+        .filter(e => e.item.name.toLowerCase().includes(q) || (e.item.model || '').toLowerCase().includes(q));
+      box.innerHTML = `<div class="product-grid">${found.map(e => this.productCard(e)).join('') || '<p class="catalog-empty">Ничего не найдено</p>'}</div>`;
       return;
     }
-    box.innerHTML = `<div class="section-grid">${catalog.sections.map(s => `
-      <button class="section-tile" data-section="${s.id}">
-        <img src="${s.items[0]?.variants[0]?.image || ''}" alt="" loading="lazy">
-        <span class="section-tile__title">${esc(s.title)}</span>
-        <span class="section-tile__count">${s.items.length} ${plural(s.items.length, 'вид', 'вида', 'видов')}</span>
-      </button>`).join('')}
+    box.innerHTML = `<div class="section-grid">${CATALOG_GROUPS.map(g => {
+      const entries = this.groupEntries(g, catalog);
+      return `
+        <button class="section-tile" data-group="${g.id}">
+          <img src="${entries[0]?.v.image || ''}" alt="" loading="lazy">
+          <span class="section-tile__title">${esc(g.title)}</span>
+          <span class="section-tile__count">${entries.length} ${plural(entries.length, 'изделие', 'изделия', 'изделий')}</span>
+        </button>`;
+    }).join('')}
     </div>`;
   },
 
-  productCard(section, item, recolor) {
-    const v = item.variants[0];
-    const sizes = [...new Set(item.variants.map(x => x.size))];
+  // Подпись как в PDF: название в две строки заглавными, ниже размер
+  caption(item) {
+    const name = item.name;
+    if (item.model && name.endsWith(item.model)) {
+      return [name.slice(0, -item.model.length).trim(), item.model];
+    }
+    const [first, ...rest] = name.split(' ');
+    return [first, rest.join(' ')];
+  },
+
+  productCard({ sid, item, v }, recolor) {
+    const [line1, line2] = this.caption(item);
     return `
-      <button class="product-card" data-product="${section.id}:${item.id}">
+      <button class="product-card" data-product="${sid}:${item.id}:${v.id}">
         <span class="product-card__img"><img src="${v.image}" ${recolor ? `data-recolor="${v.id}"` : ''} alt="" loading="lazy"></span>
-        <span class="product-card__name">${esc(item.name)}</span>
-        <span class="product-card__size">${sizes.length > 1 ? `${sizes.length} ${plural(sizes.length, 'размер', 'размера', 'размеров')}` : esc(v.size)}${item.variants.length > sizes.length ? ' · несколько видов' : ''}</span>
+        <span class="product-card__name">${esc(line1)}${line2 ? `<br>${esc(line2)}` : ''}</span>
+        <span class="product-card__size">${esc(v.size)}${/^\d|^D/.test(v.size) && v.size !== 'Под заказ' ? ' мм' : ''}</span>
       </button>`;
   },
 
   // === Страница камня ===
   async openStone(id) {
-    await Materials.getCatalog();
     this.stone = (await Materials.getStones()).find(s => s.id === id);
     if (!this.stone) return;
     if (!this.stone.formats.includes(this.tile.format)) this.tile.format = this.stone.formats.includes('160x360') ? '160x360' : this.stone.formats[0];
@@ -85,7 +117,6 @@ const Catalog = {
     const s = this.stone;
     if (!s) return Router.navigateTo('catalog');
     const catalog = await Materials.getCatalog();
-    this.catalog = catalog;
     const box = document.getElementById('stone-content');
     const specs = s.specs || {};
     const specRows = [['Плотность', specs.density], ['Пористость', specs.porosity], ['Водопоглощение', specs.absorption],
@@ -98,12 +129,18 @@ const Catalog = {
         <img class="stone-hero__slab" src="${s.slab}" alt="Плитка ${esc(s.name)}">
       </div>
       <h1 class="stone-title">${esc(s.name)}</h1>
-      <p class="stone-sub">${esc(s.type)} · морозостойкость ${esc(specs.frost || '—')}</p>
+      <p class="stone-sub">${esc(s.type)}</p>
+
+      <div class="stone-block stone-specs">
+        <div class="stone-block__title">Характеристики</div>
+        <p>${esc(s.description || '')}</p>
+        <div class="spec-grid">${specRows.map(([k, v]) => `<div><span>${k}</span><b>${esc(v)}</b></div>`).join('')}</div>
+        <div class="spec-sizes"><span>Размеры плитки, мм</span>${s.sizes.map(x => `<i>${x.replace(/\*/g, '×')}</i>`).join('')}</div>
+      </div>
 
       <div class="stone-block">
         <div class="stone-block__title">Плитка</div>
         <canvas class="tile-wall" id="tile-wall"></canvas>
-        <canvas class="tile-slab" id="tile-slab"></canvas>
         <div class="stone-opts">
           <div class="opt-label">Фаска</div>
           <div class="catalog-chips">${t.edges.map(e => `
@@ -121,6 +158,7 @@ const Catalog = {
           <div class="catalog-chips">${s.thickness.map(f => `
             <button class="catalog-chip${f === this.tile.thickness ? ' active' : ''}" data-tile="thickness" data-value="${f}">${f}</button>`).join('')}
           </div>
+          <canvas class="tile-slab" id="tile-slab"></canvas>
           <div class="opt-label">Раскладка и шов</div>
           <div class="catalog-chips">${Object.entries(LAYOUTS).map(([k, l]) => `
             <button class="catalog-chip${k === this.tile.layout ? ' active' : ''}" data-tile="layout" data-value="${k}">${l.name}</button>`).join('')}
@@ -131,27 +169,9 @@ const Catalog = {
         </div>
       </div>
 
-      ${STONE_PAGE_SECTIONS.map(id => {
-        const sec = catalog.sections.find(x => x.id === id);
-        if (!sec) return '';
-        return `
-          <div class="stone-block">
-            <div class="stone-block__title">${esc(sec.title)} <small>из этого камня</small></div>
-            <div class="product-strip">${sec.items.map(item => this.productCard(sec, item, true)).join('')}</div>
-          </div>`;
-      }).join('')}
-
-      <details class="stone-specs">
-        <summary>Характеристики</summary>
-        <p>${esc(s.description || '')}</p>
-        <div class="spec-grid">${specRows.map(([k, v]) => `<div><span>${k}</span><b>${esc(v)}</b></div>`).join('')}</div>
-        <div class="spec-sizes"><span>Размеры, мм</span>${s.sizes.map(x => `<i>${x.replace(/\*/g, '×')}</i>`).join('')}</div>
-      </details>
-
-      <button class="btn btn-primary btn-full stone-cta" data-action="configure">Подобрать фасад с этим камнем</button>`;
+      <button class="btn btn-primary btn-full stone-cta" data-action="configure">Подобрать дизайн с этим камнем</button>`;
 
     this.renderTile();
-    StonePreview.recolorAll(box, s, catalog.variants);
   },
 
   async renderTile() {
@@ -172,18 +192,20 @@ const Catalog = {
   },
 
   // === Раздел изделий ===
-  async openSection(id) {
-    this.section = id;
+  openGroup(id) {
+    this.group = id;
     Router.navigateTo('section');
   },
 
   async renderSection() {
     const catalog = await Materials.getCatalog();
-    const sec = catalog.sections.find(s => s.id === this.section);
-    if (!sec) return Router.navigateTo('catalog');
+    const group = CATALOG_GROUPS.find(g => g.id === this.group);
+    if (!group) return Router.navigateTo('catalog');
     const stones = await Materials.getStones();
-    document.getElementById('section-title').textContent = sec.title;
+    this.stones = stones;
+    document.getElementById('section-title').textContent = group.title;
     const box = document.getElementById('section-content');
+    const entries = this.groupEntries(group, catalog);
     box.innerHTML = `
       <div class="opt-label">Показать в камне</div>
       <div class="stone-strip">
@@ -195,45 +217,41 @@ const Catalog = {
             <img src="${s.texture}" alt=""><span>${esc(s.name)}</span>
           </button>`).join('')}
       </div>
-      <div class="product-grid">${sec.items.map(item => this.productCard(sec, item, !!this.sectionStone)).join('')}</div>`;
+      <div class="product-grid">${entries.map(e => this.productCard(e, !!this.sectionStone)).join('')}</div>`;
     if (this.sectionStone) StonePreview.recolorAll(box, this.sectionStone, catalog.variants);
   },
 
-  // === Карточка изделия: варианты размеров и камень ===
+  // === Карточка изделия крупно, в любом камне ===
   async openProduct(key, stone) {
-    const [sid, itemId] = key.split(':');
+    const [sid, itemId, variantId] = key.split(':');
     const catalog = await Materials.getCatalog();
     const item = catalog.sections.find(s => s.id === sid)?.items.find(i => i.id === itemId);
-    if (!item) return;
+    const variant = item?.variants.find(v => v.id === variantId) || item?.variants[0];
+    if (!variant) return;
     const stones = await Materials.getStones();
-    let variant = item.variants[0];
     let current = stone || null;
+    const [line1, line2] = this.caption(item);
 
     showModal(`<div class="product-detail" id="product-detail"></div>`);
     const box = document.getElementById('product-detail');
     const draw = async () => {
       box.innerHTML = `
         <div class="product-detail__img"><img id="product-img" src="${variant.image}" alt=""></div>
-        <div class="product-detail__name">${esc(item.name)}</div>
+        <div class="product-detail__name">${esc(line1)} ${esc(line2)}</div>
         <div class="product-detail__size">${esc(variant.size)} мм${current ? ` · ${esc(current.name)}` : ''}</div>
-        ${item.variants.length > 1 ? `<div class="catalog-chips product-detail__variants">${item.variants.map(v => `
-          <button class="catalog-chip${v.id === variant.id ? ' active' : ''}" data-variant="${v.id}">${esc(v.size)}${v.look ? ` · вид ${v.look}` : ''}</button>`).join('')}</div>` : ''}
         <div class="opt-label">Камень</div>
         <div class="stone-strip">
           <button class="stone-dot${!current ? ' active' : ''}" data-stone-pick=""><span class="stone-dot__none">Как в каталоге</span></button>
           ${stones.map(s => `
             <button class="stone-dot${current?.id === s.id ? ' active' : ''}" data-stone-pick="${s.id}"><img src="${s.texture}" alt=""><span>${esc(s.name)}</span></button>`).join('')}
         </div>`;
-      box.querySelector('.stone-dot.active')?.scrollIntoView({ block: 'nearest', inline: 'center' });
       if (current) {
-        const c = await StonePreview.recolor(variant, current, 520);
+        const c = await StonePreview.recolor(variant, current, 640);
         const img = document.getElementById('product-img');
         if (img) img.src = c.toDataURL('image/webp', 0.92);
       }
     };
     box.addEventListener('click', e => {
-      const v = e.target.closest('[data-variant]');
-      if (v) { variant = item.variants.find(x => x.id === v.dataset.variant); draw(); }
       const st = e.target.closest('[data-stone-pick]');
       if (st) { current = stones.find(x => x.id === st.dataset.stonePick) || null; draw(); }
     });
@@ -258,8 +276,8 @@ const Catalog = {
       if (kind) { this.kind = kind.dataset.kind; return this.render(); }
       const stone = e.target.closest('[data-stone]');
       if (stone) return this.openStone(stone.dataset.stone);
-      const sec = e.target.closest('[data-section]');
-      if (sec) return this.openSection(sec.dataset.section);
+      const group = e.target.closest('[data-group]');
+      if (group) return this.openGroup(group.dataset.group);
       const prod = e.target.closest('[data-product]');
       if (prod) return this.openProduct(prod.dataset.product);
     });
@@ -271,8 +289,6 @@ const Catalog = {
         t.parentElement.querySelectorAll('.catalog-chip').forEach(c => c.classList.toggle('active', c === t));
         return this.renderTile();
       }
-      const prod = e.target.closest('[data-product]');
-      if (prod) return this.openProduct(prod.dataset.product, this.stone);
       if (e.target.closest('[data-action="configure"]')) return Configurator.startWithStone(this.stone.id);
     });
     document.getElementById('section-content')?.addEventListener('click', e => {
@@ -284,7 +300,7 @@ const Catalog = {
       const prod = e.target.closest('[data-product]');
       if (prod) return this.openProduct(prod.dataset.product, this.sectionStone);
     });
-    document.getElementById('stone-back')?.addEventListener('click', () => history.length > 1 ? history.back() : Router.navigateTo('catalog'));
+    document.getElementById('stone-back')?.addEventListener('click', () => Router.navigateTo('catalog'));
     document.getElementById('section-back')?.addEventListener('click', () => Router.navigateTo('catalog'));
   },
 };
@@ -296,7 +312,7 @@ function plural(n, one, few, many) {
   return many;
 }
 
-// Совместимость: избранное в профиле открывает карточку камня
+// Избранное в профиле открывает страницу камня
 function showMaterialDetail(m) {
   Catalog.openStone(m.id);
 }

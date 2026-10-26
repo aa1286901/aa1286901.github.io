@@ -13,10 +13,12 @@
        "id": "cornice-karniz-k-3-160-360-160",
        "size": "160×360×160",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-3-160-360-160.webp",
-       "w": 172,
-       "h": 93,
-       "lumRef": 182.1
+       "w": 344,
+       "h": 186,
+       "lumRef": 183.0
       }
      ],
      "id": "cornice-karniz-k-3-160-360-160"
@@ -29,10 +31,12 @@
        "id": "cornice-karniz-k-5-160-360-80",
        "size": "160×360×80",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-5-160-360-80.webp",
-       "w": 167,
-       "h": 96,
-       "lumRef": 201.9
+       "w": 334,
+       "h": 192,
+       "lumRef": 202.3
       }
      ],
      "id": "cornice-karniz-k-5-160-360-80"
@@ -45,10 +49,12 @@
        "id": "cornice-karniz-k-6-160-360-50",
        "size": "160×360×50",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-6-160-360-50.webp",
-       "w": 166,
-       "h": 97,
-       "lumRef": 202.0
+       "w": 332,
+       "h": 194,
+       "lumRef": 202.7
       }
      ],
      "id": "cornice-karniz-k-6-160-360-50"
@@ -61,10 +67,12 @@
        "id": "cornice-karniz-k-12-160-360-35",
        "size": "160×360×35",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-12-160-360-35.webp",
-       "w": 169,
-       "h": 103,
-       "lumRef": 205.2
+       "w": 338,
+       "h": 206,
+       "lumRef": 206.8
       }
      ],
      "id": "cornice-karniz-k-12-160-360-35"
@@ -77,10 +85,12 @@
        "id": "cornice-karniz-k-19-160-360-80",
        "size": "160×360×80",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-19-160-360-80.webp",
-       "w": 166,
-       "h": 95,
-       "lumRef": 195.0
+       "w": 332,
+       "h": 190,
+       "lumRef": 196.4
       }
      ],
      "id": "cornice-karniz-k-19-160-360-80"
@@ -93,10 +103,12 @@
        "id": "cornice-karniz-k-22-160-360-50",
        "size": "160×360×50",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-22-160-360-50.webp",
-       "w": 169,
-       "h": 101,
-       "lumRef": 199.1
+       "w": 338,
+       "h": 202,
+       "lumRef": 200.6
       }
      ],
      "id": "cornice-karniz-k-22-160-360-50"
@@ -109,10 +121,12 @@
        "id": "cornice-karniz-k-28-160-360-160",
        "size": "160×360×160",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-28-160-360-160.webp",
-       "w": 169,
-       "h": 92,
-       "lumRef": 186.1
+       "w": 338,
+       "h": 184,
+       "lumRef": 187.7
       }
      ],
      "id": "cornice-karniz-k-28-160-360-160"
@@ -125,10 +139,12 @@
        "id": "cornice-karniz-k-33-160-360-160",
        "size": "160×360×160",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-33-160-360-160.webp",
-       "w": 171,
-       "h": 93,
-       "lumRef": 186.8
+       "w": 342,
+       "h": 186,
+       "lumRef": 187.2
       }
      ],
      "id": "cornice-karniz-k-33-160-360-160"
@@ -141,10 +157,12 @@
        "id": "cornice-karniz-k-34-160-360-160",
        "size": "160×360×160",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-34-160-360-160.webp",
-       "w": 171,
-       "h": 93,
-       "lumRef": 188.1
+       "w": 342,
+       "h": 186,
+       "lumRef": 188.6
       }
      ],
      "id": "cornice-karniz-k-34-160-360-160"
@@ -157,10 +175,12 @@
        "id": "cornice-karniz-k-37-160-360-80",
        "size": "160×360×80",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-37-160-360-80.webp",
-       "w": 163,
-       "h": 93,
-       "lumRef": 195.0
+       "w": 326,
+       "h": 186,
+       "lumRef": 195.7
       }
      ],
      "id": "cornice-karniz-k-37-160-360-80"
@@ -173,10 +193,12 @@
        "id": "cornice-karniz-k-38-160-360-80",
        "size": "160×360×80",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-38-160-360-80.webp",
-       "w": 168,
-       "h": 96,
-       "lumRef": 200.1
+       "w": 336,
+       "h": 192,
+       "lumRef": 201.2
       }
      ],
      "id": "cornice-karniz-k-38-160-360-80"
@@ -189,10 +211,12 @@
        "id": "cornice-karniz-k-42-160-360-50",
        "size": "160×360×50",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-42-160-360-50.webp",
-       "w": 165,
-       "h": 96,
-       "lumRef": 200.4
+       "w": 330,
+       "h": 192,
+       "lumRef": 201.5
       }
      ],
      "id": "cornice-karniz-k-42-160-360-50"
@@ -205,10 +229,12 @@
        "id": "cornice-karniz-k-45-160-360-50",
        "size": "160×360×50",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-45-160-360-50.webp",
-       "w": 167,
-       "h": 97,
-       "lumRef": 196.9
+       "w": 334,
+       "h": 194,
+       "lumRef": 198.0
       }
      ],
      "id": "cornice-karniz-k-45-160-360-50"
@@ -221,10 +247,12 @@
        "id": "cornice-karniz-k-47-160-360-160",
        "size": "160×360×160",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-47-160-360-160.webp",
-       "w": 169,
-       "h": 92,
-       "lumRef": 191.1
+       "w": 338,
+       "h": 184,
+       "lumRef": 191.9
       }
      ],
      "id": "cornice-karniz-k-47-160-360-160"
@@ -237,6 +265,8 @@
        "id": "cornice-karniz-k-1-160-360-35",
        "size": "160×360×35",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-1-160-360-35.webp",
        "w": 502,
        "h": 297,
@@ -253,10 +283,12 @@
        "id": "cornice-karniz-k-2-160-360-160",
        "size": "160×360×160",
        "look": null,
+       "page": 8,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-k-2-160-360-160.webp",
-       "w": 169,
-       "h": 92,
-       "lumRef": 190.8
+       "w": 338,
+       "h": 184,
+       "lumRef": 194.1
       }
      ],
      "id": "cornice-karniz-k-2-160-360-160"
@@ -269,10 +301,12 @@
        "id": "cornice-karniz-venchayuschiy-k-11-160-360-160",
        "size": "160×360×160",
        "look": null,
+       "page": 2,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-venchayuschiy-k-11-160-360-160.webp",
-       "w": 171,
-       "h": 93,
-       "lumRef": 208.2
+       "w": 342,
+       "h": 186,
+       "lumRef": 209.3
       }
      ],
      "id": "cornice-karniz-venchayuschiy-k-11-160-360-160"
@@ -285,10 +319,12 @@
        "id": "cornice-karniz-mezhetazhnyy-k-26-160-360-80",
        "size": "160×360×80",
        "look": null,
+       "page": 2,
+       "tall": false,
        "image": "assets/catalog/cornice-karniz-mezhetazhnyy-k-26-160-360-80.webp",
-       "w": 169,
-       "h": 96,
-       "lumRef": 216.2
+       "w": 338,
+       "h": 192,
+       "lumRef": 216.6
       }
      ],
      "id": "cornice-karniz-mezhetazhnyy-k-26-160-360-80"
@@ -308,6 +344,8 @@
        "id": "plinth-plintus-p-15-80-360-50",
        "size": "80×360×50",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-15-80-360-50.webp",
        "w": 489,
        "h": 175,
@@ -317,37 +355,45 @@
        "id": "plinth-plintus-p-15-80-360-35",
        "size": "80×360×35",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-15-80-360-35.webp",
-       "w": 166,
-       "h": 60,
-       "lumRef": 207.9
+       "w": 332,
+       "h": 120,
+       "lumRef": 208.9
       },
       {
        "id": "plinth-plintus-p-15-80-360-50-2",
        "size": "80×360×50",
        "look": 2,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-15-80-360-50-2.webp",
-       "w": 165,
-       "h": 60,
-       "lumRef": 200.8
+       "w": 330,
+       "h": 120,
+       "lumRef": 201.9
       },
       {
        "id": "plinth-plintus-p-15-80-360-80",
        "size": "80×360×80",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-15-80-360-80.webp",
-       "w": 172,
-       "h": 62,
-       "lumRef": 199.8
+       "w": 344,
+       "h": 124,
+       "lumRef": 200.8
       },
       {
        "id": "plinth-plintus-p-15-80-360-160",
        "size": "80×360×160",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-15-80-360-160.webp",
-       "w": 175,
-       "h": 61,
-       "lumRef": 194.0
+       "w": 350,
+       "h": 122,
+       "lumRef": 195.0
       }
      ],
      "id": "plinth-plintus-p-15-80-360-50"
@@ -360,10 +406,12 @@
        "id": "plinth-plintus-zhelob-80-360-35",
        "size": "80×360×35",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-zhelob-80-360-35.webp",
-       "w": 161,
-       "h": 59,
-       "lumRef": 188.1
+       "w": 322,
+       "h": 118,
+       "lumRef": 189.7
       }
      ],
      "id": "plinth-plintus-zhelob-80-360-35"
@@ -376,28 +424,34 @@
        "id": "plinth-plintus-p-2-80-360-25",
        "size": "80×360×25",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-2-80-360-25.webp",
-       "w": 162,
-       "h": 58,
-       "lumRef": 208.2
+       "w": 324,
+       "h": 116,
+       "lumRef": 208.9
       },
       {
        "id": "plinth-plintus-p-2-80-360-35",
        "size": "80×360×35",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-2-80-360-35.webp",
-       "w": 163,
-       "h": 58,
-       "lumRef": 208.2
+       "w": 326,
+       "h": 116,
+       "lumRef": 208.8
       },
       {
        "id": "plinth-plintus-p-2-80-360-50",
        "size": "80×360×50",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-2-80-360-50.webp",
-       "w": 169,
-       "h": 61,
-       "lumRef": 212.2
+       "w": 338,
+       "h": 122,
+       "lumRef": 212.3
       }
      ],
      "id": "plinth-plintus-p-2-80-360-25"
@@ -410,10 +464,12 @@
        "id": "plinth-plintus-p-7-80-360-50",
        "size": "80×360×50",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-7-80-360-50.webp",
-       "w": 166,
-       "h": 54,
-       "lumRef": 206.0
+       "w": 332,
+       "h": 108,
+       "lumRef": 207.0
       }
      ],
      "id": "plinth-plintus-p-7-80-360-50"
@@ -426,19 +482,23 @@
        "id": "plinth-plintus-p-32-80-360-160",
        "size": "80×360×160",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-32-80-360-160.webp",
-       "w": 168,
-       "h": 58,
-       "lumRef": 182.7
+       "w": 336,
+       "h": 116,
+       "lumRef": 184.0
       },
       {
        "id": "plinth-plintus-p-32-80-360-80",
        "size": "80×360×80",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-32-80-360-80.webp",
-       "w": 173,
-       "h": 60,
-       "lumRef": 189.0
+       "w": 346,
+       "h": 120,
+       "lumRef": 190.8
       }
      ],
      "id": "plinth-plintus-p-32-80-360-160"
@@ -451,19 +511,23 @@
        "id": "plinth-plintus-p-50-80-360-80",
        "size": "80×360×80",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-50-80-360-80.webp",
-       "w": 174,
-       "h": 63,
-       "lumRef": 176.1
+       "w": 348,
+       "h": 126,
+       "lumRef": 178.4
       },
       {
        "id": "plinth-plintus-p-50-80-360-160",
        "size": "80×360×160",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-50-80-360-160.webp",
-       "w": 171,
-       "h": 59,
-       "lumRef": 169.1
+       "w": 342,
+       "h": 118,
+       "lumRef": 171.8
       }
      ],
      "id": "plinth-plintus-p-50-80-360-80"
@@ -476,10 +540,12 @@
        "id": "plinth-plintus-g-80-360-80",
        "size": "80×360×80",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-g-80-360-80.webp",
-       "w": 167,
-       "h": 60,
-       "lumRef": 194.2
+       "w": 334,
+       "h": 120,
+       "lumRef": 194.7
       }
      ],
      "id": "plinth-plintus-g-80-360-80"
@@ -492,10 +558,12 @@
        "id": "plinth-plintus-p-1-80-360-35",
        "size": "80×360×35",
        "look": null,
+       "page": 9,
+       "tall": false,
        "image": "assets/catalog/plinth-plintus-p-1-80-360-35.webp",
-       "w": 166,
-       "h": 60,
-       "lumRef": 206.0
+       "w": 332,
+       "h": 120,
+       "lumRef": 207.3
       }
      ],
      "id": "plinth-plintus-p-1-80-360-35"
@@ -515,10 +583,12 @@
        "id": "dentil-zubets-k-1-160-160-35",
        "size": "160×160×35",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-1-160-160-35.webp",
-       "w": 297,
-       "h": 340,
-       "lumRef": 203.0
+       "w": 594,
+       "h": 680,
+       "lumRef": 204.3
       }
      ],
      "id": "dentil-zubets-k-1-160-160-35"
@@ -531,10 +601,12 @@
        "id": "dentil-zubets-k-2-160-160-160",
        "size": "160×160×160",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-2-160-160-160.webp",
-       "w": 142,
-       "h": 118,
-       "lumRef": 179.0
+       "w": 284,
+       "h": 236,
+       "lumRef": 181.3
       }
      ],
      "id": "dentil-zubets-k-2-160-160-160"
@@ -547,10 +619,12 @@
        "id": "dentil-zubets-k-3-160-160-160",
        "size": "160×160×160",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-3-160-160-160.webp",
-       "w": 142,
-       "h": 118,
-       "lumRef": 175.2
+       "w": 284,
+       "h": 236,
+       "lumRef": 175.8
       }
      ],
      "id": "dentil-zubets-k-3-160-160-160"
@@ -563,10 +637,12 @@
        "id": "dentil-zubets-k-5-160-160-80",
        "size": "160×160×80",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-5-160-160-80.webp",
-       "w": 118,
-       "h": 119,
-       "lumRef": 195.8
+       "w": 236,
+       "h": 238,
+       "lumRef": 196.3
       }
      ],
      "id": "dentil-zubets-k-5-160-160-80"
@@ -579,10 +655,12 @@
        "id": "dentil-zubets-k-6-160-160-50",
        "size": "160×160×50",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-6-160-160-50.webp",
-       "w": 107,
-       "h": 116,
-       "lumRef": 197.6
+       "w": 214,
+       "h": 232,
+       "lumRef": 198.1
       }
      ],
      "id": "dentil-zubets-k-6-160-160-50"
@@ -595,10 +673,12 @@
        "id": "dentil-zubets-k-11-160-160-160",
        "size": "160×160×160",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-11-160-160-160.webp",
-       "w": 142,
-       "h": 118,
-       "lumRef": 179.1
+       "w": 284,
+       "h": 236,
+       "lumRef": 180.1
       }
      ],
      "id": "dentil-zubets-k-11-160-160-160"
@@ -611,10 +691,12 @@
        "id": "dentil-zubets-k-18-160-160-50",
        "size": "160×160×50",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-18-160-160-50.webp",
-       "w": 106,
-       "h": 115,
-       "lumRef": 201.9
+       "w": 212,
+       "h": 230,
+       "lumRef": 202.7
       }
      ],
      "id": "dentil-zubets-k-18-160-160-50"
@@ -627,10 +709,12 @@
        "id": "dentil-zubets-k-19-160-160-80",
        "size": "160×160×80",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-19-160-160-80.webp",
-       "w": 118,
-       "h": 118,
-       "lumRef": 194.9
+       "w": 236,
+       "h": 236,
+       "lumRef": 195.8
       }
      ],
      "id": "dentil-zubets-k-19-160-160-80"
@@ -643,10 +727,12 @@
        "id": "dentil-zubets-k-28-160-160-160",
        "size": "160×160×160",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-28-160-160-160.webp",
-       "w": 142,
-       "h": 118,
-       "lumRef": 177.9
+       "w": 284,
+       "h": 236,
+       "lumRef": 178.4
       }
      ],
      "id": "dentil-zubets-k-28-160-160-160"
@@ -659,10 +745,12 @@
        "id": "dentil-zubets-k-29-160-160-160",
        "size": "160×160×160",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-29-160-160-160.webp",
-       "w": 142,
-       "h": 118,
-       "lumRef": 190.1
+       "w": 284,
+       "h": 236,
+       "lumRef": 190.3
       }
      ],
      "id": "dentil-zubets-k-29-160-160-160"
@@ -675,10 +763,12 @@
        "id": "dentil-zubets-k-31-160-160-35",
        "size": "160×160×35",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-31-160-160-35.webp",
-       "w": 101,
-       "h": 115,
-       "lumRef": 199.1
+       "w": 202,
+       "h": 230,
+       "lumRef": 200.1
       }
      ],
      "id": "dentil-zubets-k-31-160-160-35"
@@ -691,10 +781,12 @@
        "id": "dentil-zubets-k-33-160-160-160",
        "size": "160×160×160",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-33-160-160-160.webp",
-       "w": 142,
-       "h": 118,
-       "lumRef": 178.1
+       "w": 284,
+       "h": 236,
+       "lumRef": 178.7
       }
      ],
      "id": "dentil-zubets-k-33-160-160-160"
@@ -707,10 +799,12 @@
        "id": "dentil-zubets-k-37-160-160-80",
        "size": "160×160×80",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-37-160-160-80.webp",
-       "w": 118,
-       "h": 119,
-       "lumRef": 195.2
+       "w": 236,
+       "h": 238,
+       "lumRef": 195.8
       }
      ],
      "id": "dentil-zubets-k-37-160-160-80"
@@ -723,10 +817,12 @@
        "id": "dentil-zubets-k-22-160-160-50",
        "size": "160×160×50",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-22-160-160-50.webp",
-       "w": 112,
-       "h": 120,
-       "lumRef": 196.1
+       "w": 224,
+       "h": 240,
+       "lumRef": 197.0
       }
      ],
      "id": "dentil-zubets-k-22-160-160-50"
@@ -739,10 +835,12 @@
        "id": "dentil-zubets-k-27-160-160-160",
        "size": "160×160×160",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-27-160-160-160.webp",
-       "w": 142,
-       "h": 118,
-       "lumRef": 173.8
+       "w": 284,
+       "h": 236,
+       "lumRef": 173.9
       }
      ],
      "id": "dentil-zubets-k-27-160-160-160"
@@ -755,10 +853,12 @@
        "id": "dentil-zubets-k-48-160-160-50",
        "size": "160×160×50",
        "look": null,
+       "page": 10,
+       "tall": false,
        "image": "assets/catalog/dentil-zubets-k-48-160-160-50.webp",
-       "w": 107,
-       "h": 116,
-       "lumRef": 197.8
+       "w": 214,
+       "h": 232,
+       "lumRef": 198.6
       }
      ],
      "id": "dentil-zubets-k-48-160-160-50"
@@ -778,10 +878,12 @@
        "id": "window-nalichnik-okonnyy-k-12-160-360-50",
        "size": "160×360×50",
        "look": null,
+       "page": 2,
+       "tall": false,
        "image": "assets/catalog/window-nalichnik-okonnyy-k-12-160-360-50.webp",
-       "w": 169,
-       "h": 102,
-       "lumRef": 222.8
+       "w": 338,
+       "h": 204,
+       "lumRef": 224.0
       }
      ],
      "id": "window-nalichnik-okonnyy-k-12-160-360-50"
@@ -794,9 +896,11 @@
        "id": "window-podokonnik-k-37-160-360-80",
        "size": "160×360×80",
        "look": null,
+       "page": 2,
+       "tall": false,
        "image": "assets/catalog/window-podokonnik-k-37-160-360-80.webp",
-       "w": 163,
-       "h": 93,
+       "w": 326,
+       "h": 186,
        "lumRef": 213.2
       }
      ],
@@ -817,10 +921,12 @@
        "id": "keystone-zamok-prostoy-215-165-80",
        "size": "215×165×80",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/keystone-zamok-prostoy-215-165-80.webp",
-       "w": 260,
-       "h": 362,
-       "lumRef": 202.0
+       "w": 520,
+       "h": 724,
+       "lumRef": 202.3
       }
      ],
      "id": "keystone-zamok-prostoy-215-165-80"
@@ -833,19 +939,23 @@
        "id": "keystone-zamok-reznoy-240-180-120",
        "size": "240×180×120",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/keystone-zamok-reznoy-240-180-120.webp",
-       "w": 95,
-       "h": 123,
-       "lumRef": 192.0
+       "w": 190,
+       "h": 246,
+       "lumRef": 193.7
       },
       {
        "id": "keystone-zamok-reznoy-240-200-120",
        "size": "240×200×120",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/keystone-zamok-reznoy-240-200-120.webp",
-       "w": 102,
-       "h": 122,
-       "lumRef": 185.0
+       "w": 204,
+       "h": 244,
+       "lumRef": 187.9
       }
      ],
      "id": "keystone-zamok-reznoy-240-180-120"
@@ -858,10 +968,12 @@
        "id": "keystone-zamok-stupenchatyy-300-240-150",
        "size": "300×240×150",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/keystone-zamok-stupenchatyy-300-240-150.webp",
-       "w": 101,
-       "h": 122,
-       "lumRef": 196.0
+       "w": 202,
+       "h": 244,
+       "lumRef": 196.1
       }
      ],
      "id": "keystone-zamok-stupenchatyy-300-240-150"
@@ -874,10 +986,12 @@
        "id": "keystone-kartush-reznoy-470-350-140",
        "size": "470×350×140",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/keystone-kartush-reznoy-470-350-140.webp",
-       "w": 91,
-       "h": 122,
-       "lumRef": 186.8
+       "w": 182,
+       "h": 244,
+       "lumRef": 188.8
       }
      ],
      "id": "keystone-kartush-reznoy-470-350-140"
@@ -890,10 +1004,12 @@
        "id": "keystone-zamok-figurnyy-240-170-90",
        "size": "240×170×90",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/keystone-zamok-figurnyy-240-170-90.webp",
-       "w": 78,
-       "h": 116,
-       "lumRef": 195.8
+       "w": 156,
+       "h": 232,
+       "lumRef": 196.8
       }
      ],
      "id": "keystone-zamok-figurnyy-240-170-90"
@@ -913,10 +1029,12 @@
        "id": "console-konsol-prostaya-k-1-160-210-50",
        "size": "160×210×50",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/console-konsol-prostaya-k-1-160-210-50.webp",
-       "w": 121,
-       "h": 105,
-       "lumRef": 201.9
+       "w": 242,
+       "h": 210,
+       "lumRef": 202.8
       }
      ],
      "id": "console-konsol-prostaya-k-1-160-210-50"
@@ -929,10 +1047,12 @@
        "id": "console-konsol-prostaya-k-5-160-210-80",
        "size": "160×210×80",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/console-konsol-prostaya-k-5-160-210-80.webp",
-       "w": 137,
-       "h": 101,
-       "lumRef": 197.0
+       "w": 274,
+       "h": 202,
+       "lumRef": 198.0
       }
      ],
      "id": "console-konsol-prostaya-k-5-160-210-80"
@@ -945,10 +1065,12 @@
        "id": "console-konsol-prostaya-k-6-160-210-50",
        "size": "160×210×50",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/console-konsol-prostaya-k-6-160-210-50.webp",
-       "w": 127,
-       "h": 104,
-       "lumRef": 199.1
+       "w": 254,
+       "h": 208,
+       "lumRef": 199.9
       }
      ],
      "id": "console-konsol-prostaya-k-6-160-210-50"
@@ -961,28 +1083,34 @@
        "id": "console-konsol-reznaya-240-160-90",
        "size": "240×160×90",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/console-konsol-reznaya-240-160-90.webp",
-       "w": 86,
-       "h": 128,
-       "lumRef": 196.9
+       "w": 172,
+       "h": 256,
+       "lumRef": 199.0
       },
       {
        "id": "console-konsol-reznaya-240-160-90-2",
        "size": "240×160×90",
        "look": 2,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/console-konsol-reznaya-240-160-90-2.webp",
-       "w": 85,
-       "h": 124,
-       "lumRef": 203.2
+       "w": 170,
+       "h": 248,
+       "lumRef": 204.6
       },
       {
        "id": "console-konsol-reznaya-240-160-90-3",
        "size": "240×160×90",
        "look": 3,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/console-konsol-reznaya-240-160-90-3.webp",
-       "w": 69,
-       "h": 125,
-       "lumRef": 199.1
+       "w": 138,
+       "h": 250,
+       "lumRef": 200.1
       }
      ],
      "id": "console-konsol-reznaya-240-160-90"
@@ -995,10 +1123,12 @@
        "id": "console-konsol-prostaya-k-22-160-210-50",
        "size": "160×210×50",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/console-konsol-prostaya-k-22-160-210-50.webp",
-       "w": 134,
-       "h": 105,
-       "lumRef": 200.0
+       "w": 268,
+       "h": 210,
+       "lumRef": 201.0
       }
      ],
      "id": "console-konsol-prostaya-k-22-160-210-50"
@@ -1011,10 +1141,12 @@
        "id": "console-konsol-prostaya-k-45-160-210-50",
        "size": "160×210×50",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/console-konsol-prostaya-k-45-160-210-50.webp",
-       "w": 127,
-       "h": 105,
-       "lumRef": 199.8
+       "w": 254,
+       "h": 210,
+       "lumRef": 200.4
       }
      ],
      "id": "console-konsol-prostaya-k-45-160-210-50"
@@ -1027,10 +1159,12 @@
        "id": "console-konsol-prostaya-k-38-160-210-80",
        "size": "160×210×80",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/console-konsol-prostaya-k-38-160-210-80.webp",
-       "w": 141,
-       "h": 101,
-       "lumRef": 198.0
+       "w": 282,
+       "h": 202,
+       "lumRef": 198.7
       }
      ],
      "id": "console-konsol-prostaya-k-38-160-210-80"
@@ -1043,29 +1177,15 @@
        "id": "console-konsol-prostaya-k-53-1-160-210-80",
        "size": "160×210×80",
        "look": null,
+       "page": 11,
+       "tall": false,
        "image": "assets/catalog/console-konsol-prostaya-k-53-1-160-210-80.webp",
-       "w": 141,
-       "h": 101,
-       "lumRef": 198.8
-      }
-     ],
-     "id": "console-konsol-prostaya-k-53-1-160-210-80"
-    },
-    {
-     "name": "Консоль резная оконная",
-     "model": null,
-     "variants": [
-      {
-       "id": "console-konsol-reznaya-okonnaya-240-180-120",
-       "size": "240×180×120",
-       "look": null,
-       "image": "assets/catalog/console-konsol-reznaya-okonnaya-240-180-120.webp",
-       "w": 82,
-       "h": 106,
+       "w": 282,
+       "h": 202,
        "lumRef": 199.2
       }
      ],
-     "id": "console-konsol-reznaya-okonnaya-240-180-120"
+     "id": "console-konsol-prostaya-k-53-1-160-210-80"
     }
    ]
   },
@@ -1082,6 +1202,8 @@
        "id": "rust-rusty-krupnye-350-750-50",
        "size": "350×750×50",
        "look": null,
+       "page": 14,
+       "tall": false,
        "image": "assets/catalog/rust-rusty-krupnye-350-750-50.webp",
        "w": 493,
        "h": 296,
@@ -1098,10 +1220,12 @@
        "id": "rust-rusty-sparennye-320-360-35",
        "size": "320×360×35",
        "look": null,
+       "page": 14,
+       "tall": true,
        "image": "assets/catalog/rust-rusty-sparennye-320-360-35.webp",
-       "w": 154,
-       "h": 730,
-       "lumRef": 206.3
+       "w": 308,
+       "h": 612,
+       "lumRef": 207.4
       }
      ],
      "id": "rust-rusty-sparennye-320-360-35"
@@ -1114,10 +1238,12 @@
        "id": "rust-rusty-iz-sparennoy-rustovoy-plity-320-360-35",
        "size": "320×360×35",
        "look": null,
+       "page": 14,
+       "tall": true,
        "image": "assets/catalog/rust-rusty-iz-sparennoy-rustovoy-plity-320-360-35.webp",
-       "w": 162,
-       "h": 736,
-       "lumRef": 206.3
+       "w": 324,
+       "h": 618,
+       "lumRef": 204.1
       }
      ],
      "id": "rust-rusty-iz-sparennoy-rustovoy-plity-320-360-35"
@@ -1130,10 +1256,12 @@
        "id": "rust-rusty-iz-krupnoy-rustovoy-plity-350-750-50",
        "size": "350×750×50",
        "look": null,
+       "page": 14,
+       "tall": true,
        "image": "assets/catalog/rust-rusty-iz-krupnoy-rustovoy-plity-350-750-50.webp",
-       "w": 162,
-       "h": 738,
-       "lumRef": 206.0
+       "w": 324,
+       "h": 618,
+       "lumRef": 203.7
       }
      ],
      "id": "rust-rusty-iz-krupnoy-rustovoy-plity-350-750-50"
@@ -1146,10 +1274,12 @@
        "id": "rust-rusty-rascheska-160-360-35",
        "size": "160×360×35",
        "look": null,
+       "page": 14,
+       "tall": true,
        "image": "assets/catalog/rust-rusty-rascheska-160-360-35.webp",
-       "w": 155,
-       "h": 731,
-       "lumRef": 207.2
+       "w": 310,
+       "h": 614,
+       "lumRef": 208.4
       }
      ],
      "id": "rust-rusty-rascheska-160-360-35"
@@ -1162,10 +1292,12 @@
        "id": "rust-rusty-standartnye-160-360-35",
        "size": "160×360×35",
        "look": null,
+       "page": 14,
+       "tall": true,
        "image": "assets/catalog/rust-rusty-standartnye-160-360-35.webp",
-       "w": 154,
-       "h": 730,
-       "lumRef": 206.2
+       "w": 308,
+       "h": 612,
+       "lumRef": 207.5
       }
      ],
      "id": "rust-rusty-standartnye-160-360-35"
@@ -1185,6 +1317,8 @@
        "id": "pilaster-pilyastra-krupnaya-gladkaya-350-750-50",
        "size": "350×750×50",
        "look": null,
+       "page": 15,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-krupnaya-gladkaya-350-750-50.webp",
        "w": 482,
        "h": 293,
@@ -1201,6 +1335,8 @@
        "id": "pilaster-pilyastra-gladkaya-s-kapitelyu-k-48-160-360-35",
        "size": "160×360×35",
        "look": null,
+       "page": 15,
+       "tall": true,
        "image": "assets/catalog/pilaster-pilyastra-gladkaya-s-kapitelyu-k-48-160-360-35.webp",
        "w": 126,
        "h": 712,
@@ -1217,37 +1353,45 @@
        "id": "pilaster-pilyastra-gladkaya-standartnaya-160-360-35",
        "size": "160×360×35",
        "look": null,
+       "page": 15,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-gladkaya-standartnaya-160-360-35.webp",
-       "w": 166,
-       "h": 100,
-       "lumRef": 204.2
+       "w": 332,
+       "h": 200,
+       "lumRef": 205.0
       },
       {
        "id": "pilaster-pilyastra-gladkaya-standartnaya-160-360-50",
        "size": "160×360×50",
        "look": null,
+       "page": 15,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-gladkaya-standartnaya-160-360-50.webp",
-       "w": 165,
-       "h": 100,
-       "lumRef": 204.2
+       "w": 330,
+       "h": 200,
+       "lumRef": 204.9
       },
       {
        "id": "pilaster-pilyastra-gladkaya-standartnaya-160-360-80",
        "size": "160×360×80",
        "look": null,
+       "page": 15,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-gladkaya-standartnaya-160-360-80.webp",
-       "w": 170,
-       "h": 100,
-       "lumRef": 203.8
+       "w": 340,
+       "h": 200,
+       "lumRef": 204.2
       },
       {
        "id": "pilaster-pilyastra-gladkaya-standartnaya-160-360-25",
        "size": "160×360×25",
        "look": null,
+       "page": 15,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-gladkaya-standartnaya-160-360-25.webp",
-       "w": 163,
-       "h": 99,
-       "lumRef": 204.2
+       "w": 326,
+       "h": 198,
+       "lumRef": 205.2
       }
      ],
      "id": "pilaster-pilyastra-gladkaya-standartnaya-160-360-35"
@@ -1260,6 +1404,8 @@
        "id": "pilaster-pilyastra-krupnaya-s-kannelyurami-350-750-50",
        "size": "350×750×50",
        "look": null,
+       "page": 16,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-krupnaya-s-kannelyurami-350-750-50.webp",
        "w": 483,
        "h": 288,
@@ -1276,6 +1422,8 @@
        "id": "pilaster-pilyastra-s-kannelyurami-160-360-35",
        "size": "160×360×35",
        "look": null,
+       "page": 16,
+       "tall": true,
        "image": "assets/catalog/pilaster-pilyastra-s-kannelyurami-160-360-35.webp",
        "w": 158,
        "h": 718,
@@ -1285,46 +1433,56 @@
        "id": "pilaster-pilyastra-s-kannelyurami-160-360-35-2",
        "size": "160×360×35",
        "look": 2,
+       "page": 16,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-s-kannelyurami-160-360-35-2.webp",
-       "w": 164,
-       "h": 98,
-       "lumRef": 199.0
+       "w": 328,
+       "h": 196,
+       "lumRef": 199.8
       },
       {
        "id": "pilaster-pilyastra-s-kannelyurami-160-360-50",
        "size": "160×360×50",
        "look": null,
+       "page": 16,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-s-kannelyurami-160-360-50.webp",
-       "w": 167,
-       "h": 99,
-       "lumRef": 199.0
+       "w": 334,
+       "h": 198,
+       "lumRef": 199.4
       },
       {
        "id": "pilaster-pilyastra-s-kannelyurami-160-360-80",
        "size": "160×360×80",
        "look": null,
+       "page": 16,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-s-kannelyurami-160-360-80.webp",
-       "w": 173,
-       "h": 101,
-       "lumRef": 198.2
+       "w": 346,
+       "h": 202,
+       "lumRef": 199.0
       },
       {
        "id": "pilaster-pilyastra-s-kannelyurami-160-360-25",
        "size": "160×360×25",
        "look": null,
+       "page": 16,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-s-kannelyurami-160-360-25.webp",
-       "w": 161,
-       "h": 98,
-       "lumRef": 199.1
+       "w": 322,
+       "h": 196,
+       "lumRef": 199.9
       },
       {
        "id": "pilaster-pilyastra-s-kannelyurami-160-450-50",
        "size": "160×450×50",
        "look": null,
+       "page": 2,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-s-kannelyurami-160-450-50.webp",
-       "w": 117,
-       "h": 124,
-       "lumRef": 220.0
+       "w": 234,
+       "h": 248,
+       "lumRef": 220.2
       }
      ],
      "id": "pilaster-pilyastra-s-kannelyurami-160-360-35"
@@ -1337,6 +1495,8 @@
        "id": "pilaster-pilyastra-slozhnaya-s-karnizom-k-22-160-500-50",
        "size": "160×500×50",
        "look": null,
+       "page": 17,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-slozhnaya-s-karnizom-k-22-160-500-50.webp",
        "w": 497,
        "h": 297,
@@ -1353,6 +1513,8 @@
        "id": "pilaster-pilyastra-slozhnaya-s-plintusom-p-15-160-500-50",
        "size": "160×500×50",
        "look": null,
+       "page": 17,
+       "tall": true,
        "image": "assets/catalog/pilaster-pilyastra-slozhnaya-s-plintusom-p-15-160-500-50.webp",
        "w": 152,
        "h": 721,
@@ -1362,10 +1524,12 @@
        "id": "pilaster-pilyastra-slozhnaya-s-plintusom-p-15-160-500-50-2",
        "size": "160×500×50",
        "look": 2,
+       "page": 17,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-slozhnaya-s-plintusom-p-15-160-500-50-2.webp",
-       "w": 171,
-       "h": 104,
-       "lumRef": 203.8
+       "w": 342,
+       "h": 208,
+       "lumRef": 204.7
       }
      ],
      "id": "pilaster-pilyastra-slozhnaya-s-plintusom-p-15-160-500-50"
@@ -1378,10 +1542,12 @@
        "id": "pilaster-pilyastra-slozhnaya-s-karnizom-k-10-160-500-80",
        "size": "160×500×80",
        "look": null,
+       "page": 17,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-slozhnaya-s-karnizom-k-10-160-500-80.webp",
-       "w": 168,
-       "h": 100,
-       "lumRef": 204.2
+       "w": 336,
+       "h": 200,
+       "lumRef": 205.1
       }
      ],
      "id": "pilaster-pilyastra-slozhnaya-s-karnizom-k-10-160-500-80"
@@ -1394,10 +1560,12 @@
        "id": "pilaster-pilyastra-slozhnaya-s-karnizom-k-19-160-500-80",
        "size": "160×500×80",
        "look": null,
+       "page": 17,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-slozhnaya-s-karnizom-k-19-160-500-80.webp",
-       "w": 171,
-       "h": 101,
-       "lumRef": 204.2
+       "w": 342,
+       "h": 202,
+       "lumRef": 205.2
       }
      ],
      "id": "pilaster-pilyastra-slozhnaya-s-karnizom-k-19-160-500-80"
@@ -1410,10 +1578,12 @@
        "id": "pilaster-pilyastra-slozhnaya-s-karnizom-k-1-160-500-35",
        "size": "160×500×35",
        "look": null,
+       "page": 17,
+       "tall": false,
        "image": "assets/catalog/pilaster-pilyastra-slozhnaya-s-karnizom-k-1-160-500-35.webp",
-       "w": 167,
-       "h": 99,
-       "lumRef": 204.8
+       "w": 334,
+       "h": 198,
+       "lumRef": 205.7
       }
      ],
      "id": "pilaster-pilyastra-slozhnaya-s-karnizom-k-1-160-500-35"
@@ -1433,6 +1603,8 @@
        "id": "column-kolonna-kruglaya-gladkaya-k-48-d-380-430",
        "size": "D-380/430",
        "look": null,
+       "page": 18,
+       "tall": true,
        "image": "assets/catalog/column-kolonna-kruglaya-gladkaya-k-48-d-380-430.webp",
        "w": 188,
        "h": 721,
@@ -1449,36 +1621,44 @@
        "id": "column-kolonna-kruglaya-gladkaya-d-490-530",
        "size": "D-490/530",
        "look": null,
+       "page": 18,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-kruglaya-gladkaya-d-490-530.webp",
-       "w": 146,
-       "h": 119,
+       "w": 292,
+       "h": 238,
        "lumRef": 197.8
       },
       {
        "id": "column-kolonna-kruglaya-gladkaya-d-590-630",
        "size": "D-590/630",
        "look": null,
+       "page": 18,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-kruglaya-gladkaya-d-590-630.webp",
-       "w": 167,
-       "h": 119,
+       "w": 334,
+       "h": 238,
        "lumRef": 197.8
       },
       {
        "id": "column-kolonna-kruglaya-gladkaya-d-380-430",
        "size": "D-380/430",
        "look": null,
+       "page": 18,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-kruglaya-gladkaya-d-380-430.webp",
-       "w": 125,
-       "h": 119,
-       "lumRef": 197.2
+       "w": 250,
+       "h": 238,
+       "lumRef": 197.8
       },
       {
        "id": "column-kolonna-kruglaya-gladkaya-d-230-270",
        "size": "D-230/270",
        "look": null,
+       "page": 18,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-kruglaya-gladkaya-d-230-270.webp",
-       "w": 115,
-       "h": 119,
+       "w": 230,
+       "h": 238,
        "lumRef": 197.8
       }
      ],
@@ -1492,6 +1672,8 @@
        "id": "column-kolonna-kruglaya-s-kannelyurami-k-48-d-380-430",
        "size": "D-380/430",
        "look": null,
+       "page": 19,
+       "tall": true,
        "image": "assets/catalog/column-kolonna-kruglaya-s-kannelyurami-k-48-d-380-430.webp",
        "w": 218,
        "h": 720,
@@ -1508,46 +1690,56 @@
        "id": "column-kolonna-kruglaya-s-kannelyurami-d-490-530",
        "size": "D-490/530",
        "look": null,
+       "page": 19,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-kruglaya-s-kannelyurami-d-490-530.webp",
-       "w": 146,
-       "h": 118,
-       "lumRef": 198.1
+       "w": 292,
+       "h": 236,
+       "lumRef": 198.9
       },
       {
        "id": "column-kolonna-kruglaya-s-kannelyurami-d-380-430",
        "size": "D-380/430",
        "look": null,
+       "page": 19,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-kruglaya-s-kannelyurami-d-380-430.webp",
-       "w": 125,
-       "h": 118,
-       "lumRef": 198.0
+       "w": 250,
+       "h": 236,
+       "lumRef": 198.9
       },
       {
        "id": "column-kolonna-kruglaya-s-kannelyurami-d-230-270",
        "size": "D-230/270",
        "look": null,
+       "page": 19,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-kruglaya-s-kannelyurami-d-230-270.webp",
-       "w": 114,
-       "h": 118,
-       "lumRef": 198.1
+       "w": 228,
+       "h": 236,
+       "lumRef": 199.0
       },
       {
        "id": "column-kolonna-kruglaya-s-kannelyurami-d-590-630",
        "size": "D-590/630",
        "look": null,
+       "page": 19,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-kruglaya-s-kannelyurami-d-590-630.webp",
-       "w": 166,
-       "h": 118,
-       "lumRef": 198.2
+       "w": 332,
+       "h": 236,
+       "lumRef": 198.8
       },
       {
        "id": "column-kolonna-kruglaya-s-kannelyurami-d-500",
        "size": "D-500",
        "look": null,
+       "page": 2,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-kruglaya-s-kannelyurami-d-500.webp",
-       "w": 126,
-       "h": 125,
-       "lumRef": 200.8
+       "w": 252,
+       "h": 250,
+       "lumRef": 201.6
       }
      ],
      "id": "column-kolonna-kruglaya-s-kannelyurami-d-490-530"
@@ -1560,6 +1752,8 @@
        "id": "column-kolonna-konusnaya-gladkaya-d-380-430",
        "size": "D-380/430",
        "look": null,
+       "page": 20,
+       "tall": true,
        "image": "assets/catalog/column-kolonna-konusnaya-gladkaya-d-380-430.webp",
        "w": 196,
        "h": 723,
@@ -1569,37 +1763,45 @@
        "id": "column-kolonna-konusnaya-gladkaya-d-490-530",
        "size": "D-490/530",
        "look": null,
+       "page": 20,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-konusnaya-gladkaya-d-490-530.webp",
-       "w": 145,
-       "h": 116,
-       "lumRef": 200.1
+       "w": 290,
+       "h": 232,
+       "lumRef": 200.8
       },
       {
        "id": "column-kolonna-konusnaya-gladkaya-d-380-430-2",
        "size": "D-380/430",
        "look": 2,
+       "page": 20,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-konusnaya-gladkaya-d-380-430-2.webp",
-       "w": 124,
-       "h": 116,
-       "lumRef": 200.2
+       "w": 248,
+       "h": 232,
+       "lumRef": 200.7
       },
       {
        "id": "column-kolonna-konusnaya-gladkaya-d-230-270",
        "size": "D-230/270",
        "look": null,
+       "page": 20,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-konusnaya-gladkaya-d-230-270.webp",
-       "w": 114,
-       "h": 116,
-       "lumRef": 200.0
+       "w": 228,
+       "h": 232,
+       "lumRef": 200.6
       },
       {
        "id": "column-kolonna-konusnaya-gladkaya-d-590-630",
        "size": "D-590/630",
        "look": null,
+       "page": 20,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-konusnaya-gladkaya-d-590-630.webp",
-       "w": 166,
-       "h": 116,
-       "lumRef": 200.2
+       "w": 332,
+       "h": 232,
+       "lumRef": 200.7
       }
      ],
      "id": "column-kolonna-konusnaya-gladkaya-d-380-430"
@@ -1612,6 +1814,8 @@
        "id": "column-kolonna-konusnaya-s-kannelyurami-d-380-430",
        "size": "D-380/430",
        "look": null,
+       "page": 21,
+       "tall": true,
        "image": "assets/catalog/column-kolonna-konusnaya-s-kannelyurami-d-380-430.webp",
        "w": 196,
        "h": 723,
@@ -1621,37 +1825,45 @@
        "id": "column-kolonna-konusnaya-s-kannelyurami-d-490-530",
        "size": "D-490/530",
        "look": null,
+       "page": 21,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-konusnaya-s-kannelyurami-d-490-530.webp",
-       "w": 145,
-       "h": 115,
-       "lumRef": 202.0
+       "w": 290,
+       "h": 230,
+       "lumRef": 203.0
       },
       {
        "id": "column-kolonna-konusnaya-s-kannelyurami-d-590-630",
        "size": "D-590/630",
        "look": null,
+       "page": 21,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-konusnaya-s-kannelyurami-d-590-630.webp",
-       "w": 166,
-       "h": 115,
-       "lumRef": 202.0
+       "w": 332,
+       "h": 230,
+       "lumRef": 203.0
       },
       {
        "id": "column-kolonna-konusnaya-s-kannelyurami-d-380-430-2",
        "size": "D-380/430",
        "look": 2,
+       "page": 21,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-konusnaya-s-kannelyurami-d-380-430-2.webp",
-       "w": 124,
-       "h": 115,
-       "lumRef": 202.0
+       "w": 248,
+       "h": 230,
+       "lumRef": 203.0
       },
       {
        "id": "column-kolonna-konusnaya-s-kannelyurami-d-230-270",
        "size": "D-230/270",
        "look": null,
+       "page": 21,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-konusnaya-s-kannelyurami-d-230-270.webp",
-       "w": 114,
-       "h": 115,
-       "lumRef": 201.9
+       "w": 228,
+       "h": 230,
+       "lumRef": 203.1
       }
      ],
      "id": "column-kolonna-konusnaya-s-kannelyurami-d-380-430"
@@ -1664,6 +1876,8 @@
        "id": "column-kolonna-kvadratnaya-s-rustami-400",
        "size": "400",
        "look": null,
+       "page": 22,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-kvadratnaya-s-rustami-400.webp",
        "w": 514,
        "h": 278,
@@ -1673,6 +1887,8 @@
        "id": "column-kolonna-kvadratnaya-s-rustami-160-360-35",
        "size": "160×360×35",
        "look": null,
+       "page": 22,
+       "tall": true,
        "image": "assets/catalog/column-kolonna-kvadratnaya-s-rustami-160-360-35.webp",
        "w": 171,
        "h": 725,
@@ -1689,6 +1905,8 @@
        "id": "column-kolonna-kvadratnaya-s-rustovoy-plitkoy-160-360-25",
        "size": "160×360×25",
        "look": null,
+       "page": 22,
+       "tall": true,
        "image": "assets/catalog/column-kolonna-kvadratnaya-s-rustovoy-plitkoy-160-360-25.webp",
        "w": 163,
        "h": 725,
@@ -1705,6 +1923,8 @@
        "id": "column-kolonna-kvadratnaya-so-sparennoy-rust-pl-320-360-25",
        "size": "320×360×25",
        "look": null,
+       "page": 22,
+       "tall": true,
        "image": "assets/catalog/column-kolonna-kvadratnaya-so-sparennoy-rust-pl-320-360-25.webp",
        "w": 163,
        "h": 725,
@@ -1721,6 +1941,8 @@
        "id": "column-kolonna-kvadratnaya-so-sparennymi-rustami-320-360-35",
        "size": "320×360×35",
        "look": null,
+       "page": 22,
+       "tall": true,
        "image": "assets/catalog/column-kolonna-kvadratnaya-so-sparennymi-rustami-320-360-35.webp",
        "w": 171,
        "h": 725,
@@ -1737,6 +1959,8 @@
        "id": "column-kolonna-kvadratnaya-s-krupnoy-rust-pl-350-750-25",
        "size": "350×750×25",
        "look": null,
+       "page": 22,
+       "tall": true,
        "image": "assets/catalog/column-kolonna-kvadratnaya-s-krupnoy-rust-pl-350-750-25.webp",
        "w": 163,
        "h": 725,
@@ -1753,6 +1977,8 @@
        "id": "column-kolonna-kvadratnaya-gladkaya-400",
        "size": "400",
        "look": null,
+       "page": 23,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-kvadratnaya-gladkaya-400.webp",
        "w": 476,
        "h": 316,
@@ -1769,6 +1995,8 @@
        "id": "column-kolonna-kvadratnaya-gladkaya-k-48-400",
        "size": "400",
        "look": null,
+       "page": 23,
+       "tall": true,
        "image": "assets/catalog/column-kolonna-kvadratnaya-gladkaya-k-48-400.webp",
        "w": 179,
        "h": 725,
@@ -1785,6 +2013,8 @@
        "id": "column-kolonna-kvadratnaya-s-kannelyurami-400",
        "size": "400",
        "look": null,
+       "page": 24,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-kvadratnaya-s-kannelyurami-400.webp",
        "w": 476,
        "h": 313,
@@ -1801,6 +2031,8 @@
        "id": "column-kolonna-kvadratnaya-s-kannelyurami-k-48-400",
        "size": "400",
        "look": null,
+       "page": 24,
+       "tall": true,
        "image": "assets/catalog/column-kolonna-kvadratnaya-s-kannelyurami-k-48-400.webp",
        "w": 211,
        "h": 723,
@@ -1817,6 +2049,8 @@
        "id": "column-kolonna-slozhnaya-s-plintusom-p-15-400",
        "size": "400",
        "look": null,
+       "page": 25,
+       "tall": true,
        "image": "assets/catalog/column-kolonna-slozhnaya-s-plintusom-p-15-400.webp",
        "w": 201,
        "h": 723,
@@ -1826,6 +2060,8 @@
        "id": "column-kolonna-slozhnaya-s-plintusom-p-15-400-2",
        "size": "400",
        "look": 2,
+       "page": 25,
+       "tall": false,
        "image": "assets/catalog/column-kolonna-slozhnaya-s-plintusom-p-15-400-2.webp",
        "w": 475,
        "h": 316,
@@ -1849,10 +2085,12 @@
        "id": "capital-baza-prostaya-k-5-160-360-80",
        "size": "160×360×80",
        "look": null,
+       "page": 15,
+       "tall": false,
        "image": "assets/catalog/capital-baza-prostaya-k-5-160-360-80.webp",
-       "w": 188,
-       "h": 80,
-       "lumRef": 217.3
+       "w": 376,
+       "h": 160,
+       "lumRef": 217.9
       }
      ],
      "id": "capital-baza-prostaya-k-5-160-360-80"
@@ -1865,10 +2103,12 @@
        "id": "capital-baza-prostaya-k-11-160-360-160",
        "size": "160×360×160",
        "look": null,
+       "page": 15,
+       "tall": false,
        "image": "assets/catalog/capital-baza-prostaya-k-11-160-360-160.webp",
-       "w": 201,
-       "h": 71,
-       "lumRef": 212.2
+       "w": 402,
+       "h": 142,
+       "lumRef": 212.8
       }
      ],
      "id": "capital-baza-prostaya-k-11-160-360-160"
@@ -1881,10 +2121,12 @@
        "id": "capital-kapitel-reznaya-ionicheskaya-180-500-80",
        "size": "180×500×80",
        "look": null,
+       "page": 15,
+       "tall": false,
        "image": "assets/catalog/capital-kapitel-reznaya-ionicheskaya-180-500-80.webp",
-       "w": 184,
-       "h": 89,
-       "lumRef": 199.0
+       "w": 368,
+       "h": 178,
+       "lumRef": 201.7
       }
      ],
      "id": "capital-kapitel-reznaya-ionicheskaya-180-500-80"
@@ -1897,10 +2139,12 @@
        "id": "capital-kapitel-reznaya-korinfskaya-350-650-160",
        "size": "350×650×160",
        "look": null,
+       "page": 15,
+       "tall": false,
        "image": "assets/catalog/capital-kapitel-reznaya-korinfskaya-350-650-160.webp",
-       "w": 147,
-       "h": 128,
-       "lumRef": 194.9
+       "w": 294,
+       "h": 256,
+       "lumRef": 196.1
       }
      ],
      "id": "capital-kapitel-reznaya-korinfskaya-350-650-160"
@@ -1913,10 +2157,12 @@
        "id": "capital-kapitel-prostaya-p-15-80-360-80",
        "size": "80×360×80",
        "look": null,
+       "page": 15,
+       "tall": false,
        "image": "assets/catalog/capital-kapitel-prostaya-p-15-80-360-80.webp",
-       "w": 175,
-       "h": 48,
-       "lumRef": 201.2
+       "w": 350,
+       "h": 96,
+       "lumRef": 202.7
       }
      ],
      "id": "capital-kapitel-prostaya-p-15-80-360-80"
@@ -1929,10 +2175,12 @@
        "id": "capital-kapitel-prostaya-k-48-160-360-80",
        "size": "160×360×80",
        "look": null,
+       "page": 15,
+       "tall": false,
        "image": "assets/catalog/capital-kapitel-prostaya-k-48-160-360-80.webp",
-       "w": 172,
-       "h": 74,
-       "lumRef": 204.2
+       "w": 344,
+       "h": 148,
+       "lumRef": 206.0
       }
      ],
      "id": "capital-kapitel-prostaya-k-48-160-360-80"
@@ -1945,10 +2193,12 @@
        "id": "capital-baza-prostaya-p-15-80-360-80",
        "size": "80×360×80",
        "look": null,
+       "page": 15,
+       "tall": false,
        "image": "assets/catalog/capital-baza-prostaya-p-15-80-360-80.webp",
-       "w": 173,
-       "h": 48,
-       "lumRef": 216.2
+       "w": 346,
+       "h": 96,
+       "lumRef": 217.2
       }
      ],
      "id": "capital-baza-prostaya-p-15-80-360-80"
@@ -1961,10 +2211,12 @@
        "id": "capital-baza-prostaya-k-48-160-360-80",
        "size": "160×360×80",
        "look": null,
+       "page": 15,
+       "tall": false,
        "image": "assets/catalog/capital-baza-prostaya-k-48-160-360-80.webp",
-       "w": 170,
-       "h": 75,
-       "lumRef": 208.8
+       "w": 340,
+       "h": 150,
+       "lumRef": 209.3
       }
      ],
      "id": "capital-baza-prostaya-k-48-160-360-80"
@@ -1977,10 +2229,12 @@
        "id": "capital-kapitel-kruglaya-prostaya-p-15-d-230-270",
        "size": "D-230/270",
        "look": null,
+       "page": 18,
+       "tall": false,
        "image": "assets/catalog/capital-kapitel-kruglaya-prostaya-p-15-d-230-270.webp",
-       "w": 154,
-       "h": 54,
-       "lumRef": 188.0
+       "w": 308,
+       "h": 108,
+       "lumRef": 189.9
       }
      ],
      "id": "capital-kapitel-kruglaya-prostaya-p-15-d-230-270"
@@ -1993,10 +2247,12 @@
        "id": "capital-kapitel-kruglaya-prostaya-k-48-d-380-430",
        "size": "D-380/430",
        "look": null,
+       "page": 18,
+       "tall": false,
        "image": "assets/catalog/capital-kapitel-kruglaya-prostaya-k-48-d-380-430.webp",
-       "w": 176,
-       "h": 78,
-       "lumRef": 190.0
+       "w": 352,
+       "h": 156,
+       "lumRef": 191.2
       }
      ],
      "id": "capital-kapitel-kruglaya-prostaya-k-48-d-380-430"
@@ -2009,10 +2265,12 @@
        "id": "capital-baza-kruglaya-prostaya-k-48-d-380-430",
        "size": "D-380/430",
        "look": null,
+       "page": 18,
+       "tall": false,
        "image": "assets/catalog/capital-baza-kruglaya-prostaya-k-48-d-380-430.webp",
-       "w": 189,
-       "h": 84,
-       "lumRef": 204.8
+       "w": 378,
+       "h": 168,
+       "lumRef": 205.7
       }
      ],
      "id": "capital-baza-kruglaya-prostaya-k-48-d-380-430"
@@ -2025,10 +2283,12 @@
        "id": "capital-baza-kruglaya-prostaya-k-11-d-590-630",
        "size": "D-590/630",
        "look": null,
+       "page": 18,
+       "tall": false,
        "image": "assets/catalog/capital-baza-kruglaya-prostaya-k-11-d-590-630.webp",
-       "w": 234,
-       "h": 87,
-       "lumRef": 210.0
+       "w": 468,
+       "h": 174,
+       "lumRef": 210.8
       }
      ],
      "id": "capital-baza-kruglaya-prostaya-k-11-d-590-630"
@@ -2041,10 +2301,12 @@
        "id": "capital-baza-kruglaya-prostaya-k-5-d-490-530",
        "size": "D-490/530",
        "look": null,
+       "page": 18,
+       "tall": false,
        "image": "assets/catalog/capital-baza-kruglaya-prostaya-k-5-d-490-530.webp",
-       "w": 199,
-       "h": 88,
-       "lumRef": 207.8
+       "w": 398,
+       "h": 176,
+       "lumRef": 208.6
       }
      ],
      "id": "capital-baza-kruglaya-prostaya-k-5-d-490-530"
@@ -2057,10 +2319,12 @@
        "id": "capital-baza-kruglaya-prostaya-p-15-d-230-270",
        "size": "D-230/270",
        "look": null,
+       "page": 18,
+       "tall": false,
        "image": "assets/catalog/capital-baza-kruglaya-prostaya-p-15-d-230-270.webp",
-       "w": 165,
-       "h": 59,
-       "lumRef": 203.9
+       "w": 330,
+       "h": 118,
+       "lumRef": 205.7
       }
      ],
      "id": "capital-baza-kruglaya-prostaya-p-15-d-230-270"
@@ -2073,10 +2337,12 @@
        "id": "capital-kapitel-kruglaya-reznaya-ionicheskaya-d-490-530",
        "size": "D-490/530",
        "look": null,
+       "page": 18,
+       "tall": false,
        "image": "assets/catalog/capital-kapitel-kruglaya-reznaya-ionicheskaya-d-490-530.webp",
-       "w": 211,
-       "h": 101,
-       "lumRef": 190.3
+       "w": 422,
+       "h": 202,
+       "lumRef": 192.3
       }
      ],
      "id": "capital-kapitel-kruglaya-reznaya-ionicheskaya-d-490-530"
@@ -2089,10 +2355,12 @@
        "id": "capital-kapitel-kruglaya-reznaya-korinfskaya-d-590-630",
        "size": "D-590/630",
        "look": null,
+       "page": 18,
+       "tall": false,
        "image": "assets/catalog/capital-kapitel-kruglaya-reznaya-korinfskaya-d-590-630.webp",
-       "w": 183,
-       "h": 135,
-       "lumRef": 187.8
+       "w": 366,
+       "h": 270,
+       "lumRef": 189.6
       }
      ],
      "id": "capital-kapitel-kruglaya-reznaya-korinfskaya-d-590-630"
@@ -2105,10 +2373,12 @@
        "id": "capital-baza-kvadratnaya-na-kolonnu-k-5-160-360-80",
        "size": "160×360×80",
        "look": null,
+       "page": 23,
+       "tall": false,
        "image": "assets/catalog/capital-baza-kvadratnaya-na-kolonnu-k-5-160-360-80.webp",
-       "w": 188,
-       "h": 80,
-       "lumRef": 217.3
+       "w": 376,
+       "h": 160,
+       "lumRef": 217.9
       }
      ],
      "id": "capital-baza-kvadratnaya-na-kolonnu-k-5-160-360-80"
@@ -2121,10 +2391,12 @@
        "id": "capital-kapitel-kvadratnaya-korinfskaya-350-650-650",
        "size": "350×650×650",
        "look": null,
+       "page": 23,
+       "tall": false,
        "image": "assets/catalog/capital-kapitel-kvadratnaya-korinfskaya-350-650-650.webp",
-       "w": 166,
-       "h": 127,
-       "lumRef": 185.6
+       "w": 332,
+       "h": 254,
+       "lumRef": 187.0
       }
      ],
      "id": "capital-kapitel-kvadratnaya-korinfskaya-350-650-650"
@@ -2137,10 +2409,12 @@
        "id": "capital-kapitel-kvadratnaya-ionicheskaya-180-500-500",
        "size": "180×500×500",
        "look": null,
+       "page": 23,
+       "tall": false,
        "image": "assets/catalog/capital-kapitel-kvadratnaya-ionicheskaya-180-500-500.webp",
-       "w": 212,
-       "h": 97,
-       "lumRef": 196.9
+       "w": 424,
+       "h": 194,
+       "lumRef": 198.7
       }
      ],
      "id": "capital-kapitel-kvadratnaya-ionicheskaya-180-500-500"
@@ -2153,10 +2427,12 @@
        "id": "capital-kapitel-kruglaya-na-kolonnu-k-11-d-500",
        "size": "D-500",
        "look": null,
+       "page": 2,
+       "tall": false,
        "image": "assets/catalog/capital-kapitel-kruglaya-na-kolonnu-k-11-d-500.webp",
-       "w": 174,
-       "h": 66,
-       "lumRef": 168.8
+       "w": 348,
+       "h": 132,
+       "lumRef": 170.6
       }
      ],
      "id": "capital-kapitel-kruglaya-na-kolonnu-k-11-d-500"
@@ -2169,10 +2445,12 @@
        "id": "capital-kapitel-ionicheskaya-na-pilyastru-280-700-160",
        "size": "280×700×160",
        "look": null,
+       "page": 2,
+       "tall": false,
        "image": "assets/catalog/capital-kapitel-ionicheskaya-na-pilyastru-280-700-160.webp",
-       "w": 169,
-       "h": 80,
-       "lumRef": 210.4
+       "w": 338,
+       "h": 160,
+       "lumRef": 212.1
       }
      ],
      "id": "capital-kapitel-ionicheskaya-na-pilyastru-280-700-160"
@@ -2192,19 +2470,12 @@
        "id": "balustrade-balyasina-b-1-750-160-160",
        "size": "750×160×160",
        "look": null,
+       "page": 12,
+       "tall": true,
        "image": "assets/catalog/balustrade-balyasina-b-1-750-160-160.webp",
-       "w": 37,
-       "h": 131,
-       "lumRef": 211.2
-      },
-      {
-       "id": "balustrade-balyasina-b-1-750-160-160-2",
-       "size": "750×160×160",
-       "look": 2,
-       "image": "assets/catalog/balustrade-balyasina-b-1-750-160-160-2.webp",
-       "w": 37,
-       "h": 131,
-       "lumRef": 226.4
+       "w": 74,
+       "h": 262,
+       "lumRef": 212.4
       }
      ],
      "id": "balustrade-balyasina-b-1-750-160-160"
@@ -2217,10 +2488,12 @@
        "id": "balustrade-balyasina-b-2-750-160-160",
        "size": "750×160×160",
        "look": null,
+       "page": 12,
+       "tall": true,
        "image": "assets/catalog/balustrade-balyasina-b-2-750-160-160.webp",
-       "w": 40,
-       "h": 133,
-       "lumRef": 212.9
+       "w": 80,
+       "h": 266,
+       "lumRef": 213.5
       }
      ],
      "id": "balustrade-balyasina-b-2-750-160-160"
@@ -2233,10 +2506,12 @@
        "id": "balustrade-balyasina-b-3-750-210-210",
        "size": "750×210×210",
        "look": null,
+       "page": 12,
+       "tall": true,
        "image": "assets/catalog/balustrade-balyasina-b-3-750-210-210.webp",
-       "w": 37,
-       "h": 129,
-       "lumRef": 196.8
+       "w": 74,
+       "h": 258,
+       "lumRef": 198.5
       }
      ],
      "id": "balustrade-balyasina-b-3-750-210-210"
@@ -2249,10 +2524,12 @@
        "id": "balustrade-balyasina-b-4-750-210-210",
        "size": "750×210×210",
        "look": null,
+       "page": 12,
+       "tall": true,
        "image": "assets/catalog/balustrade-balyasina-b-4-750-210-210.webp",
-       "w": 37,
-       "h": 129,
-       "lumRef": 195.9
+       "w": 74,
+       "h": 258,
+       "lumRef": 197.7
       }
      ],
      "id": "balustrade-balyasina-b-4-750-210-210"
@@ -2265,10 +2542,12 @@
        "id": "balustrade-tumba-kruglaya-gladkaya-910-210-210",
        "size": "910×210×210",
        "look": null,
+       "page": 12,
+       "tall": true,
        "image": "assets/catalog/balustrade-tumba-kruglaya-gladkaya-910-210-210.webp",
-       "w": 39,
-       "h": 121,
-       "lumRef": 201.8
+       "w": 78,
+       "h": 242,
+       "lumRef": 202.6
       }
      ],
      "id": "balustrade-tumba-kruglaya-gladkaya-910-210-210"
@@ -2281,10 +2560,12 @@
        "id": "balustrade-tumba-kruglaya-s-kannelyurami-750-210-210",
        "size": "750×210×210",
        "look": null,
+       "page": 12,
+       "tall": true,
        "image": "assets/catalog/balustrade-tumba-kruglaya-s-kannelyurami-750-210-210.webp",
-       "w": 39,
-       "h": 121,
-       "lumRef": 200.9
+       "w": 78,
+       "h": 242,
+       "lumRef": 203.2
       }
      ],
      "id": "balustrade-tumba-kruglaya-s-kannelyurami-750-210-210"
@@ -2297,10 +2578,12 @@
        "id": "balustrade-tumba-kvadratnaya-gladkaya-910-210-210",
        "size": "910×210×210",
        "look": null,
+       "page": 12,
+       "tall": true,
        "image": "assets/catalog/balustrade-tumba-kvadratnaya-gladkaya-910-210-210.webp",
-       "w": 39,
-       "h": 124,
-       "lumRef": 205.9
+       "w": 78,
+       "h": 248,
+       "lumRef": 207.0
       }
      ],
      "id": "balustrade-tumba-kvadratnaya-gladkaya-910-210-210"
@@ -2313,19 +2596,12 @@
        "id": "balustrade-tumba-kvadratnaya-s-kannelyurami-910-210-210",
        "size": "910×210×210",
        "look": null,
+       "page": 12,
+       "tall": true,
        "image": "assets/catalog/balustrade-tumba-kvadratnaya-s-kannelyurami-910-210-210.webp",
-       "w": 39,
-       "h": 124,
-       "lumRef": 202.0
-      },
-      {
-       "id": "balustrade-tumba-kvadratnaya-s-kannelyurami-910-210-210-2",
-       "size": "910×210×210",
-       "look": 2,
-       "image": "assets/catalog/balustrade-tumba-kvadratnaya-s-kannelyurami-910-210-210-2.webp",
-       "w": 39,
-       "h": 124,
-       "lumRef": 218.9
+       "w": 78,
+       "h": 248,
+       "lumRef": 205.0
       }
      ],
      "id": "balustrade-tumba-kvadratnaya-s-kannelyurami-910-210-210"
@@ -2338,10 +2614,12 @@
        "id": "balustrade-perila-p-15-160-750-50",
        "size": "160×750×50",
        "look": null,
+       "page": 12,
+       "tall": false,
        "image": "assets/catalog/balustrade-perila-p-15-160-750-50.webp",
-       "w": 182,
-       "h": 49,
-       "lumRef": 221.0
+       "w": 364,
+       "h": 98,
+       "lumRef": 221.7
       }
      ],
      "id": "balustrade-perila-p-15-160-750-50"
@@ -2354,10 +2632,12 @@
        "id": "balustrade-perila-p-32-160-750-50",
        "size": "160×750×50",
        "look": null,
+       "page": 12,
+       "tall": false,
        "image": "assets/catalog/balustrade-perila-p-32-160-750-50.webp",
-       "w": 182,
-       "h": 48,
-       "lumRef": 223.4
+       "w": 364,
+       "h": 96,
+       "lumRef": 224.4
       }
      ],
      "id": "balustrade-perila-p-32-160-750-50"
@@ -2370,10 +2650,12 @@
        "id": "balustrade-perila-p-2-160-750-50",
        "size": "160×750×50",
        "look": null,
+       "page": 12,
+       "tall": false,
        "image": "assets/catalog/balustrade-perila-p-2-160-750-50.webp",
-       "w": 182,
-       "h": 48,
-       "lumRef": 222.4
+       "w": 364,
+       "h": 96,
+       "lumRef": 223.2
       }
      ],
      "id": "balustrade-perila-p-2-160-750-50"
@@ -2386,10 +2668,12 @@
        "id": "balustrade-navershie-prostoe-konus-d-150",
        "size": "D-150",
        "look": null,
+       "page": 12,
+       "tall": false,
        "image": "assets/catalog/balustrade-navershie-prostoe-konus-d-150.webp",
-       "w": 65,
-       "h": 123,
-       "lumRef": 207.9
+       "w": 130,
+       "h": 246,
+       "lumRef": 208.5
       }
      ],
      "id": "balustrade-navershie-prostoe-konus-d-150"
@@ -2402,10 +2686,12 @@
        "id": "balustrade-navershie-reznoe-shar-d-250",
        "size": "D-250",
        "look": null,
+       "page": 12,
+       "tall": false,
        "image": "assets/catalog/balustrade-navershie-reznoe-shar-d-250.webp",
-       "w": 83,
-       "h": 125,
-       "lumRef": 206.8
+       "w": 166,
+       "h": 250,
+       "lumRef": 208.1
       }
      ],
      "id": "balustrade-navershie-reznoe-shar-d-250"
@@ -2418,19 +2704,12 @@
        "id": "balustrade-navershie-prostoe-shar-d-150",
        "size": "D-150",
        "look": null,
+       "page": 12,
+       "tall": false,
        "image": "assets/catalog/balustrade-navershie-prostoe-shar-d-150.webp",
-       "w": 149,
-       "h": 123,
-       "lumRef": 207.2
-      },
-      {
-       "id": "balustrade-navershie-prostoe-shar-d-150-2",
-       "size": "D-150",
-       "look": 2,
-       "image": "assets/catalog/balustrade-navershie-prostoe-shar-d-150-2.webp",
-       "w": 149,
-       "h": 123,
-       "lumRef": 224.8
+       "w": 298,
+       "h": 246,
+       "lumRef": 207.8
       }
      ],
      "id": "balustrade-navershie-prostoe-shar-d-150"
@@ -2443,10 +2722,12 @@
        "id": "balustrade-navershie-reznoe-shishka-d-250",
        "size": "D-250",
        "look": null,
+       "page": 12,
+       "tall": false,
        "image": "assets/catalog/balustrade-navershie-reznoe-shishka-d-250.webp",
-       "w": 63,
-       "h": 125,
-       "lumRef": 206.8
+       "w": 126,
+       "h": 250,
+       "lumRef": 208.1
       }
      ],
      "id": "balustrade-navershie-reznoe-shishka-d-250"
@@ -2459,6 +2740,8 @@
        "id": "balustrade-balyustrada-910-210-210",
        "size": "910×210×210",
        "look": null,
+       "page": 12,
+       "tall": false,
        "image": "assets/catalog/balustrade-balyustrada-910-210-210.webp",
        "w": 436,
        "h": 379,
@@ -2466,22 +2749,6 @@
       }
      ],
      "id": "balustrade-balyustrada-910-210-210"
-    },
-    {
-     "name": "Перила П-2 стандартные",
-     "model": "П-2",
-     "variants": [
-      {
-       "id": "balustrade-perila-p-2-standartnye-160-750-80",
-       "size": "160×750×80",
-       "look": null,
-       "image": "assets/catalog/balustrade-perila-p-2-standartnye-160-750-80.webp",
-       "w": 182,
-       "h": 62,
-       "lumRef": 235.9
-      }
-     ],
-     "id": "balustrade-perila-p-2-standartnye-160-750-80"
     }
    ]
   },
@@ -2498,46 +2765,56 @@
        "id": "carved-panno-reznoe-v-ramke-600-1200-50",
        "size": "600×1200×50",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-panno-reznoe-v-ramke-600-1200-50.webp",
-       "w": 158,
-       "h": 116,
-       "lumRef": 205.8
+       "w": 316,
+       "h": 232,
+       "lumRef": 207.2
       },
       {
        "id": "carved-panno-reznoe-v-ramke-500-1600-50",
        "size": "500×1600×50",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-panno-reznoe-v-ramke-500-1600-50.webp",
-       "w": 190,
-       "h": 83,
-       "lumRef": 207.0
+       "w": 380,
+       "h": 166,
+       "lumRef": 209.0
       },
       {
        "id": "carved-panno-reznoe-v-ramke-600-1600-50",
        "size": "600×1600×50",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-panno-reznoe-v-ramke-600-1600-50.webp",
-       "w": 191,
-       "h": 104,
-       "lumRef": 204.7
+       "w": 382,
+       "h": 208,
+       "lumRef": 207.8
       },
       {
        "id": "carved-panno-reznoe-v-ramke-600-1400-80",
        "size": "600×1400×80",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-panno-reznoe-v-ramke-600-1400-80.webp",
-       "w": 158,
-       "h": 113,
-       "lumRef": 209.3
+       "w": 316,
+       "h": 226,
+       "lumRef": 212.0
       },
       {
        "id": "carved-panno-reznoe-v-ramke-600-1200-80",
        "size": "600×1200×80",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-panno-reznoe-v-ramke-600-1200-80.webp",
-       "w": 155,
-       "h": 116,
-       "lumRef": 205.9
+       "w": 310,
+       "h": 232,
+       "lumRef": 207.8
       }
      ],
      "id": "carved-panno-reznoe-v-ramke-600-1200-50"
@@ -2550,46 +2827,56 @@
        "id": "carved-barelef-reznoy-450-1600-50",
        "size": "450×1600×50",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-barelef-reznoy-450-1600-50.webp",
-       "w": 201,
-       "h": 69,
-       "lumRef": 207.1
+       "w": 402,
+       "h": 138,
+       "lumRef": 209.8
       },
       {
        "id": "carved-barelef-reznoy-400-1400-50",
        "size": "400×1400×50",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-barelef-reznoy-400-1400-50.webp",
-       "w": 174,
-       "h": 77,
-       "lumRef": 203.8
+       "w": 348,
+       "h": 154,
+       "lumRef": 206.3
       },
       {
        "id": "carved-barelef-reznoy-700-1800-80",
        "size": "700×1800×80",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-barelef-reznoy-700-1800-80.webp",
-       "w": 199,
-       "h": 87,
-       "lumRef": 210.9
+       "w": 398,
+       "h": 174,
+       "lumRef": 215.6
       },
       {
        "id": "carved-barelef-reznoy-600-1800-80",
        "size": "600×1800×80",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-barelef-reznoy-600-1800-80.webp",
-       "w": 189,
-       "h": 78,
-       "lumRef": 206.8
+       "w": 378,
+       "h": 156,
+       "lumRef": 210.2
       },
       {
        "id": "carved-barelef-reznoy-500-1700-50",
        "size": "500×1700×50",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-barelef-reznoy-500-1700-50.webp",
-       "w": 201,
-       "h": 74,
-       "lumRef": 207.8
+       "w": 402,
+       "h": 148,
+       "lumRef": 210.0
       }
      ],
      "id": "carved-barelef-reznoy-450-1600-50"
@@ -2602,6 +2889,8 @@
        "id": "carved-barelef-600-1250-50",
        "size": "600×1250×50",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-barelef-600-1250-50.webp",
        "w": 538,
        "h": 309,
@@ -2618,336 +2907,59 @@
        "id": "carved-rozetka-kruglaya-reznaya-600-600-50",
        "size": "600×600×50",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-rozetka-kruglaya-reznaya-600-600-50.webp",
-       "w": 103,
-       "h": 116,
-       "lumRef": 214.2
+       "w": 206,
+       "h": 232,
+       "lumRef": 215.9
       },
       {
        "id": "carved-rozetka-kruglaya-reznaya-160-160-50",
        "size": "160×160×50",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-rozetka-kruglaya-reznaya-160-160-50.webp",
-       "w": 97,
-       "h": 111,
-       "lumRef": 205.8
+       "w": 194,
+       "h": 222,
+       "lumRef": 207.7
       },
       {
        "id": "carved-rozetka-kruglaya-reznaya-800-800-80",
        "size": "800×800×80",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-rozetka-kruglaya-reznaya-800-800-80.webp",
-       "w": 107,
-       "h": 120,
-       "lumRef": 213.3
+       "w": 214,
+       "h": 240,
+       "lumRef": 215.5
       },
       {
        "id": "carved-rozetka-kruglaya-reznaya-800-800-80-2",
        "size": "800×800×80",
        "look": 2,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-rozetka-kruglaya-reznaya-800-800-80-2.webp",
-       "w": 106,
-       "h": 123,
-       "lumRef": 215.8
+       "w": 212,
+       "h": 246,
+       "lumRef": 218.2
       },
       {
        "id": "carved-rozetka-kruglaya-reznaya-500-500-50",
        "size": "500×500×50",
        "look": null,
+       "page": 13,
+       "tall": false,
        "image": "assets/catalog/carved-rozetka-kruglaya-reznaya-500-500-50.webp",
-       "w": 107,
-       "h": 116,
-       "lumRef": 194.1
+       "w": 214,
+       "h": 232,
+       "lumRef": 195.9
       }
      ],
      "id": "carved-rozetka-kruglaya-reznaya-600-600-50"
-    },
-    {
-     "name": "Барельеф резной на фронтон",
-     "model": null,
-     "variants": [
-      {
-       "id": "carved-barelef-reznoy-na-fronton-900-2700-80",
-       "size": "900×2700×80",
-       "look": null,
-       "image": "assets/catalog/carved-barelef-reznoy-na-fronton-900-2700-80.webp",
-       "w": 174,
-       "h": 62,
-       "lumRef": 225.1
-      }
-     ],
-     "id": "carved-barelef-reznoy-na-fronton-900-2700-80"
-    }
-   ]
-  },
-  {
-   "id": "tile",
-   "title": "Плитка",
-   "icon": "wall",
-   "items": [
-    {
-     "name": "Плитка гладкая на 2-й этаж",
-     "model": null,
-     "variants": [
-      {
-       "id": "tile-plitka-gladkaya-na-2-y-etazh-350-750-20",
-       "size": "350×750×20",
-       "look": null,
-       "image": "assets/catalog/tile-plitka-gladkaya-na-2-y-etazh-350-750-20.webp",
-       "w": 168,
-       "h": 101,
-       "lumRef": 219.2
-      }
-     ],
-     "id": "tile-plitka-gladkaya-na-2-y-etazh-350-750-20"
-    },
-    {
-     "name": "Плитка рустовая на 1-й этаж",
-     "model": null,
-     "variants": [
-      {
-       "id": "tile-plitka-rustovaya-na-1-y-etazh-350-750-25",
-       "size": "350×750×25",
-       "look": null,
-       "image": "assets/catalog/tile-plitka-rustovaya-na-1-y-etazh-350-750-25.webp",
-       "w": 112,
-       "h": 134,
-       "lumRef": 220.2
-      }
-     ],
-     "id": "tile-plitka-rustovaya-na-1-y-etazh-350-750-25"
-    },
-    {
-     "name": "Плитка гладкая на колонну",
-     "model": null,
-     "variants": [
-      {
-       "id": "tile-plitka-gladkaya-na-kolonnu-350-750-20",
-       "size": "350×750×20",
-       "look": null,
-       "image": "assets/catalog/tile-plitka-gladkaya-na-kolonnu-350-750-20.webp",
-       "w": 163,
-       "h": 99,
-       "lumRef": 204.2
-      },
-      {
-       "id": "tile-plitka-gladkaya-na-kolonnu-160-360-15",
-       "size": "160×360×15",
-       "look": null,
-       "image": "assets/catalog/tile-plitka-gladkaya-na-kolonnu-160-360-15.webp",
-       "w": 168,
-       "h": 101,
-       "lumRef": 203.0
-      }
-     ],
-     "id": "tile-plitka-gladkaya-na-kolonnu-350-750-20"
-    }
-   ]
-  },
-  {
-   "id": "paving",
-   "title": "Брусчатка",
-   "icon": "paving",
-   "items": [
-    {
-     "name": "Брусчатка 80х80",
-     "model": null,
-     "variants": [
-      {
-       "id": "paving-bruschatka-80h80-80-80-50",
-       "size": "80×80×50",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-80h80-80-80-50.webp",
-       "w": 553,
-       "h": 345,
-       "lumRef": 230.2
-      }
-     ],
-     "id": "paving-bruschatka-80h80-80-80-50"
-    },
-    {
-     "name": "Брусчатка «Шахматы»",
-     "model": null,
-     "variants": [
-      {
-       "id": "paving-bruschatka-shahmaty-80-160-80-160-50",
-       "size": "80(160)×80(160)×50",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-shahmaty-80-160-80-160-50.webp",
-       "w": 185,
-       "h": 115,
-       "lumRef": 228.8
-      },
-      {
-       "id": "paving-bruschatka-shahmaty-80-160-80-160-80",
-       "size": "80(160)×80(160)×80",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-shahmaty-80-160-80-160-80.webp",
-       "w": 185,
-       "h": 120,
-       "lumRef": 222.2
-      }
-     ],
-     "id": "paving-bruschatka-shahmaty-80-160-80-160-50"
-    },
-    {
-     "name": "Брусчатка «Плетёнка»",
-     "model": null,
-     "variants": [
-      {
-       "id": "paving-bruschatka-pletenka-120-120-360-50",
-       "size": "120×120(360)×50",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-pletenka-120-120-360-50.webp",
-       "w": 194,
-       "h": 121,
-       "lumRef": 230.0
-      },
-      {
-       "id": "paving-bruschatka-pletenka-120-120-360-50-2",
-       "size": "120×120(360)×50",
-       "look": 2,
-       "image": "assets/catalog/paving-bruschatka-pletenka-120-120-360-50-2.webp",
-       "w": 194,
-       "h": 126,
-       "lumRef": 227.3
-      }
-     ],
-     "id": "paving-bruschatka-pletenka-120-120-360-50"
-    },
-    {
-     "name": "Брусчатка «Диагональ»",
-     "model": null,
-     "variants": [
-      {
-       "id": "paving-bruschatka-diagonal-80-160-80-160-50",
-       "size": "80(160)×80(160)×50",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-diagonal-80-160-80-160-50.webp",
-       "w": 185,
-       "h": 115,
-       "lumRef": 229.9
-      },
-      {
-       "id": "paving-bruschatka-diagonal-80-160-80-160-80",
-       "size": "80(160)×80(160)×80",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-diagonal-80-160-80-160-80.webp",
-       "w": 185,
-       "h": 120,
-       "lumRef": 228.9
-      }
-     ],
-     "id": "paving-bruschatka-diagonal-80-160-80-160-50"
-    },
-    {
-     "name": "Брусчатка «Фигурная»",
-     "model": null,
-     "variants": [
-      {
-       "id": "paving-bruschatka-figurnaya-80-160-80-160-50",
-       "size": "80(160)×80(160)×50",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-figurnaya-80-160-80-160-50.webp",
-       "w": 185,
-       "h": 113,
-       "lumRef": 236.0
-      },
-      {
-       "id": "paving-bruschatka-figurnaya-80-160-80-160-80",
-       "size": "80(160)×80(160)×80",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-figurnaya-80-160-80-160-80.webp",
-       "w": 185,
-       "h": 117,
-       "lumRef": 233.0
-      }
-     ],
-     "id": "paving-bruschatka-figurnaya-80-160-80-160-50"
-    },
-    {
-     "name": "Брусчатка «Мозаика»",
-     "model": null,
-     "variants": [
-      {
-       "id": "paving-bruschatka-mozaika-80-160-80-160-50",
-       "size": "80(160)×80(160)×50",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-mozaika-80-160-80-160-50.webp",
-       "w": 185,
-       "h": 115,
-       "lumRef": 229.4
-      },
-      {
-       "id": "paving-bruschatka-mozaika-80-160-80-160-80",
-       "size": "80(160)×80(160)×80",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-mozaika-80-160-80-160-80.webp",
-       "w": 185,
-       "h": 120,
-       "lumRef": 226.0
-      }
-     ],
-     "id": "paving-bruschatka-mozaika-80-160-80-160-50"
-    },
-    {
-     "name": "Брусчатка",
-     "model": null,
-     "variants": [
-      {
-       "id": "paving-bruschatka-80-80-80",
-       "size": "80×80×80",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-80-80-80.webp",
-       "w": 185,
-       "h": 120,
-       "lumRef": 227.9
-      },
-      {
-       "id": "paving-bruschatka-160-160-50",
-       "size": "160×160×50",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-160-160-50.webp",
-       "w": 185,
-       "h": 115,
-       "lumRef": 229.3
-      },
-      {
-       "id": "paving-bruschatka-160-160-80",
-       "size": "160×160×80",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-160-160-80.webp",
-       "w": 185,
-       "h": 120,
-       "lumRef": 221.9
-      }
-     ],
-     "id": "paving-bruschatka-80-80-80"
-    },
-    {
-     "name": "Брусчатка «Ёлочка»",
-     "model": null,
-     "variants": [
-      {
-       "id": "paving-bruschatka-elochka-80-160-50",
-       "size": "80×160×50",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-elochka-80-160-50.webp",
-       "w": 182,
-       "h": 114,
-       "lumRef": 229.0
-      },
-      {
-       "id": "paving-bruschatka-elochka-80-160-80",
-       "size": "80×160×80",
-       "look": null,
-       "image": "assets/catalog/paving-bruschatka-elochka-80-160-80.webp",
-       "w": 182,
-       "h": 119,
-       "lumRef": 228.8
-      }
-     ],
-     "id": "paving-bruschatka-elochka-80-160-50"
     }
    ]
   }
