@@ -3,8 +3,10 @@
 Каждая картинка изделия связывается с подписью под ней по положению на странице,
 поэтому названия, модели и размеры берутся из PDF как есть.
 
-Запуск: python3 scripts/fasad_build_catalog.py <каталог.pdf> <папка приложения fasad>
+Запуск: python3 scripts/fasad_build_catalog.py <каталог.pdf> <папка приложения fasad> [RealESRGAN_x4plus.pth]
 Нужны: poppler-utils (pdfimages), pdfplumber, Pillow.
+С весами Real-ESRGAN (нужны torch и spandrel) картинки изделий увеличиваются нейросетью в 4 раза,
+без них — Lanczos вдвое с повышением резкости.
 """
 import json
 import os
@@ -17,6 +19,7 @@ import pdfplumber
 from PIL import Image, ImageFilter, ImageStat
 
 PDF, APP = sys.argv[1:3]
+ESRGAN = sys.argv[3] if len(sys.argv) > 3 else None
 
 TR = dict(zip('абвгдеёжзийклмнопрстуфхцчшщъыьэюя',
               'a b v g d e e zh z i y k l m n o p r s t u f h ts ch sh sch  y  e yu ya'.split(' ')))
@@ -199,6 +202,40 @@ sections = []
 seen_images = set()
 
 
+upscaler = None
+if ESRGAN:
+    import numpy as np
+    import torch
+    from spandrel import ModelLoader
+    torch.set_num_threads(os.cpu_count() or 4)
+    upscaler = ModelLoader().load_from_file(ESRGAN).model.eval()
+
+MAX_SIDE = 1200  # длинные колонны после увеличения не нужны больше этого
+
+
+def upscale(im):
+    """Картинки в PDF маленькие (~180 px): нейросеть дорисовывает чёткие края, прозрачность — Lanczos."""
+    if max(im.size) >= 420:
+        return im
+    if upscaler is None:
+        big = im.resize((im.size[0] * 2, im.size[1] * 2), Image.LANCZOS)
+        rgb = big.convert('RGB').filter(ImageFilter.UnsharpMask(radius=1.6, percent=70, threshold=2))
+    else:
+        x = torch.from_numpy(np.asarray(im.convert('RGB'), dtype=np.float32) / 255).permute(2, 0, 1)[None]
+        with torch.no_grad():
+            y = upscaler(x)[0].clamp(0, 1).permute(1, 2, 0).numpy()
+        # Нейросеть сглаживает фактуру камня — возвращаем зерно из обычного увеличения исходника
+        lz = im.convert('RGB').resize((y.shape[1], y.shape[0]), Image.LANCZOS)
+        grain = np.asarray(lz, np.float32) - np.asarray(lz.filter(ImageFilter.GaussianBlur(3)), np.float32)
+        rgb = Image.fromarray(np.clip(y * 255 + grain * 0.8, 0, 255).round().astype('uint8'))
+        big = im
+    rgb.putalpha(big.getchannel('A').resize(rgb.size, Image.LANCZOS))
+    if max(rgb.size) > MAX_SIDE:
+        k = MAX_SIDE / max(rgb.size)
+        rgb = rgb.resize((round(rgb.size[0] * k), round(rgb.size[1] * k)), Image.LANCZOS)
+    return rgb
+
+
 def fingerprint(im):
     """Одинаковые картинки повторяются на разных страницах — узнаём их по уменьшенной копии."""
     small = im.convert('LA').resize((12, 12))
@@ -241,12 +278,7 @@ for sid, title, icon, pages, pattern in SECTIONS:
             same_size = sum(1 for v in group['variants'] if v['size'] == size_text(size))
             vid = slug(f'{sid} {name} {size or ""} {same_size + 1 if same_size else ""}')[:70]
             path = f'assets/catalog/{vid}.webp'
-            # Картинки в PDF маленькие (~180 px): увеличиваем вдвое с повышением резкости
-            if max(im.size) < 420:
-                im = im.resize((im.size[0] * 2, im.size[1] * 2), Image.LANCZOS)
-                rgb = im.convert('RGB').filter(ImageFilter.UnsharpMask(radius=1.6, percent=70, threshold=2))
-                rgb.putalpha(im.getchannel('A'))
-                im = rgb
+            im = upscale(im)
             im.save(f'{APP}/{path}', 'WEBP', quality=86, method=4)
             px = sorted(0.299 * r + 0.587 * g + 0.114 * b for r, g, b, a in im.get_flattened_data() if a > 200)
             group['variants'].append({
