@@ -221,7 +221,7 @@ const StonePreview = {
   },
 
   // Картинка изделия из каталога, перекрашенная в выбранный камень: объём с фото, цвет и рисунок — камня
-  async recolor(variant, stone, maxSide = 260) {
+  async recolor(variant, stone, maxSide = 480) {
     const [tex, src] = await Promise.all([this.loadData(stone?.texture), this.loadData(variant.image)]);
     const k = Math.min(1, maxSide / Math.max(variant.w, variant.h));
     const W = Math.max(1, Math.round(variant.w * k)), H = Math.max(1, Math.round(variant.h * k));
@@ -231,7 +231,7 @@ const StonePreview = {
     const ctx = c.getContext('2d');
     const out = ctx.createImageData(W, H);
     const col = [0, 0, 0];
-    const mmPerPx = 2.2 / k; // крупность рисунка камня на изделии
+    const mmPerPx = 1.1 / k; // крупность рисунка камня на изделии (картинки увеличены вчетверо от PDF)
     for (let y = 0; y < H; y++) {
       for (let x = 0; x < W; x++) {
         const si = (Math.min(src.height - 1, (y / k) | 0) * src.width + Math.min(src.width - 1, (x / k) | 0)) * 4;
