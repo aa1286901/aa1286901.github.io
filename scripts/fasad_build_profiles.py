@@ -1,4 +1,4 @@
-"""Снимает сечения карнизов, плинтусов и зубцов с картинок каталога Fasad для 3D-просмотра.
+"""Снимает сечения карнизов, плинтусов, зубцов и простых консолей с картинок каталога Fasad для 3D-просмотра.
 
 На рендерах «Камень Юг» изделие снято слева: торец серо-синий, камень бежевый.
 1. По торцу узнаём, как изделие лежит на картинке: где стена, масштаб и наклон
@@ -23,7 +23,7 @@ from scipy.spatial import cKDTree
 
 APP = sys.argv[1]
 CHECK = sys.argv[2] if len(sys.argv) > 2 else None
-SECTIONS = ('cornice', 'plinth', 'dentil')
+SECTIONS = ('cornice', 'plinth', 'dentil', 'console')
 STEP = 0.5  # мм по высоте между точками профиля
 # Камера на всех рендерах каталога одна; по изделиям с широким торцом (медиана):
 T_CATALOG = -0.32  # наклон горизонтали торца на фото
@@ -72,7 +72,7 @@ def simplify(pts, eps):
     return pts[keep]
 
 
-def measure(path, H, D):
+def measure(path, H, D, corners_only=False):
     """Профиль изделия по картинке: список (вынос, высота) в мм и данные для проверки."""
     rgba = np.asarray(Image.open(path).convert('RGBA')).astype(float)
     r, b, a = rgba[..., 0], rgba[..., 2], rgba[..., 3]
@@ -88,7 +88,7 @@ def measure(path, H, D):
     y_corner = float(np.polyval(kline, x_corner))
     y_last = edge[:, 1].max()
 
-    g = end_face(alpha, r, b)
+    g = None if corners_only else end_face(alpha, r, b)
     if (g is None or g.sum() < 200 or np.ptp(np.where(g.any(1))[0]) < 20
             or g.sum() > 0.5 * alpha.sum()
             or np.ptp(np.where(g.any(0))[0]) > 0.6 * np.ptp(np.where(alpha.any(0))[0])):
@@ -148,6 +148,8 @@ def measure(path, H, D):
                 if best is None or res.fun < best.fun:
                     best = res
         X0, Y0, m = best.x
+        if not 0.62 < m < 1.28:  # торец распознан плохо — подгонка упёрлась в край
+            return measure(path, H, D, corners_only=True)
 
     x, y = edge[:, 0], edge[:, 1]
     d = (x - X0) / (m * ax)
@@ -155,6 +157,16 @@ def measure(path, H, D):
     ok = (h >= -1) & (h <= H + 1) & (d >= -2) & (d <= D * 1.1)
     d, h = d[ok], h[ok]
 
+    line, k, cover = trace(d, h, H, D, 1 / (m * ax))
+    if line is None:
+        return None if corners_only else measure(path, H, D, corners_only=True)
+    return dict(line=line, fit=(X0, Y0, m, ax / k, by, t, wall, y_top), edge=edge, cover=cover,
+                mode='по углам' if corners_only or g is None else 'правый край')
+
+
+def trace(d, h, H, D, q):
+    """Точки края в мм → плавный профиль: (вынос, высота) с шагом 0,5 мм по высоте.
+    q — сколько мм в одном пикселе картинки по выносу. Возвращает профиль, поправку масштаба и долю высоты с данными."""
     # По высоте с шагом 0,5 мм: середина края в каждой полосе
     grid = np.arange(0, H + STEP / 2, STEP)
     prof = np.full(len(grid), np.nan)
@@ -164,14 +176,13 @@ def measure(path, H, D):
             prof[i] = np.median(d[sel])
     good = ~np.isnan(prof)
     if good.sum() < len(grid) * 0.6:
-        return None
+        return None, 1, 0
     prof = np.interp(grid, grid[good], prof[good])
     prof = ndimage.median_filter(prof, size=5, mode='nearest')
 
-    # Один пиксель картинки по выносу — q мм: у тонких изделий край идёт ступеньками в пиксель.
+    # У тонких изделий край идёт ступеньками в пиксель (q мм).
     # Уступы профиля — скачок больше пикселя; между ними проводим плавную кривую (сплайн),
     # которая отходит от края фото не больше, чем на погрешность пикселя.
-    q = 1 / (m * ax)
     jumps = np.where(np.abs(np.diff(prof)) > max(1.2, 2.5 * q))[0]
     cuts = [0] + [j + 1 for j in jumps] + [len(prof)]
     smooth = prof.copy()
@@ -183,8 +194,103 @@ def measure(path, H, D):
     # Вынос приводим ровно к размеру из каталога; k — во сколько раз поправили масштаб фото
     k = D / max(smooth.max(), 1e-6)
     smooth = np.clip(smooth * k, 0, D)
-    line = np.stack([smooth, grid], 1)
-    return dict(line=line, fit=(X0, Y0, m, ax / k, by, t, wall, y_top), edge=edge, gray=g, q=q)
+    return np.stack([smooth, grid], 1), k, float(good.mean())
+
+
+def measure_left(path, H, D):
+    """Второй способ — по левому торцу: там, где серо-синий торец переходит в тёплый бежевый камень.
+    Подходит, когда торец крупный (консоли, зубцы), а правый край изделия частично закрыт."""
+    rgba = np.asarray(Image.open(path).convert('RGBA')).astype(float)
+    alpha = rgba[..., 3] > 128
+    warm = ndimage.gaussian_filter(rgba[..., 0] - rgba[..., 2], 1.0)  # камень тёплый, торец — нет
+    rows = []
+    for y in range(alpha.shape[0]):
+        xs = np.where(alpha[y])[0]
+        if len(xs) < 5:
+            continue
+        seg = warm[y, xs[0]:xs[-1] + 1]
+        hot = seg > 8
+        run = np.convolve(hot, np.ones(4), 'valid') == 4  # тепло держится 4 пикселя подряд
+        if run.any():
+            rows.append((y, xs[0], xs[0] + int(np.argmax(run))))
+    if len(rows) < 20:
+        return None
+    rows = np.array(rows, float)
+    wall = float(np.median(rows[:, 1]))
+    on = rows[np.abs(rows[:, 1] - wall) <= 2]
+    y_top, y_bot = on[:, 0].min(), on[:, 0].max()
+    if y_bot - y_top < 20:
+        return None
+    by = (y_bot - y_top) / H
+    inside = rows[(rows[:, 0] >= y_top) & (rows[:, 0] <= y_bot)]
+    W = float(np.percentile(inside[:, 2] - wall, 98))
+    if W < 12:
+        return None
+    # Наклон верхней кромки торца — по верху силуэта над торцом
+    cols = [(x, np.where(alpha[:, x])[0][0]) for x in range(int(wall) + 2, int(wall + W) - 1) if alpha[:, x].any()]
+    t = np.polyfit(*np.array(cols, float).T, 1)[0] if len(cols) > 5 else T_CATALOG
+    if not -0.6 < t < 0.3:
+        t = T_CATALOG
+    ax = W / D
+    sel = rows[(rows[:, 0] >= y_top - abs(t) * W - 2) & (rows[:, 0] <= y_bot)]
+    x, y = sel[:, 2], sel[:, 0]
+    d = (x - wall) / ax
+    h = (y - y_top - t * (x - wall)) / by
+    ok = (h >= 1) & (h <= H - 1) & (d >= -2) & (d <= D * 1.1)
+    line, k, cover = trace(d[ok], h[ok], H, D, 1 / ax)
+    if line is None:
+        return None
+    return dict(line=line, fit=(wall, y_top, 1.0, ax / k, by, t, wall, y_top),
+                edge=np.stack([x[ok], y[ok]], 1), cover=cover, mode='левый торец')
+
+
+def measure_wrap(path, H, L, D):
+    """Консоль: профиль обходит блок спереди и с боков. Сбоку блок отступает на side·(D − d) с каждой
+    стороны (side подбирается по фото: у разных консолей боковой отступ разный).
+    Правый край силуэта — передний правый угол (z = d): по нему профиль, он чёткий.
+    Левый край — задний левый угол у стены (z = 0): по нему проверяем профиль и подбираем side.
+    Пропорции и наклон съёмки — общие для каталога (как у карнизов)."""
+    alpha = np.asarray(Image.open(path).convert('RGBA'))[..., 3] > 128
+    rows = np.array([(y, *np.where(alpha[y])[0][[0, -1]]) for y in range(alpha.shape[0]) if alpha[y].sum() > 5], float)
+    y_top, y_bot = rows[0, 0], rows[-1, 0]
+    by = (y_bot - y_top) / H                   # у стены наклона нет: высота — по левому краю
+    sx = RHO_CATALOG * by                       # пикселей на мм выноса
+    t = T_CATALOG
+    y, xl, xr = rows[:, 0], rows[:, 1], rows[:, 2]
+    h_l = (y - y_top) / by
+    top = (h_l > 0.03 * H) & (h_l < 0.10 * H)
+    xl_top = np.median(xl[top])
+    xr_top = np.percentile(xr[h_l < 0.3 * H], 95)  # вверху справа сначала идёт наклонная кромка — берём сам угол блока
+    cx = (xr_top - xl_top - D * sx) / L         # пикселей на мм по длине
+    if cx <= 0:
+        return None
+
+    def from_right(side):
+        kr = side * cx + sx
+        d = D + (xr - xr_top) / kr
+        h = (y - y_top - t * sx * d) / by
+        return d, h
+
+    def left_error(side):
+        d, h = from_right(side)
+        ok = (h >= 0) & (h <= H)
+        order = np.argsort(h[ok])
+        pred = xl_top + side * cx * (D - np.interp(h_l, h[ok][order], d[ok][order]))
+        sel = (h_l >= 4) & (h_l <= H - 4)
+        return np.abs(xl[sel] - pred[sel]) / cx   # в мм
+
+    sides = np.linspace(0.1, 1.6, 61)
+    side = float(sides[np.argmin([np.median(left_error(s_)) for s_ in sides])])
+    d, h = from_right(side)
+    ok = (h >= 1) & (h <= H - 1) & (d >= -2) & (d <= D * 1.15)
+    line, k, cover = trace(d[ok], h[ok], H, D, 1 / (side * cx + sx))
+    if line is None:
+        return None
+    dev = left_error(side)
+    kr = side * cx + sx
+    img = np.stack([xr_top + (line[:, 0] - D) * kr, y_top + by * line[:, 1] + t * sx * line[:, 0]], 1)
+    return dict(line=line, cover=cover, side=round(side, 2), score=float((dev <= 3).mean()), img_line=img,
+                edge=rows[:, [2, 0]], mode=f'консоль: боковой отступ ×{side:.2f}, среднее отклонение {dev.mean():.1f} мм')
 
 
 def match(R, H, D):
@@ -228,13 +334,27 @@ for section in catalog['sections']:
     if section['id'] not in SECTIONS:
         continue
     for item in section['items']:
+        if section['id'] == 'console' and not item.get('model'):
+            continue  # резные консоли с листьями — не протянутый профиль
         for v in item['variants']:
             nums = [int(n) for n in v['size'].replace('×', 'x').split('x') if n.strip().isdigit()]
             if len(nums) != 3:
                 continue
             H, L, D = nums
             path = f"{APP}/{v['image']}"
-            R = measure(path, H, D)
+            # Оба способа; берём тот, что лучше совпадает с фото и покрывает всю высоту изделия
+            R = None
+            if section['id'] == 'console':
+                # Профиль консоли обходит её с трёх сторон: слева видна не торцевая плоскость, а боковая грань
+                cands = (measure_wrap(path, H, L, D),)
+            else:
+                cands = (measure(path, H, D), measure_left(path, H, D))
+            for cand in cands:
+                if cand is not None:
+                    if 'score' not in cand:
+                        cand['score'], cand['img_line'] = match(cand, H, D)
+                    if R is None or cand['score'] * cand['cover'] > R['score'] * R['cover']:
+                        R = cand
             if R is None and v['id'] in MANUAL:
                 pts = MANUAL[v['id']]
                 print(f"{v['id']}: задан вручную")
@@ -242,14 +362,18 @@ for section in catalog['sections']:
                 print('нет сечения:', v['id'])
                 continue
             else:
-                score, img_line = match(R, H, D)
+                score, img_line = R['score'], R['img_line']
                 scores.append(score)
-                print(f"{v['id']}: совпадение {score * 100:.1f}%")
+                print(f"{v['id']}: совпадение {score * 100:.1f}%, высота {R['cover'] * 100:.0f}%, {R['mode']}")
                 if CHECK:
                     draw_check(path, R, img_line, score, f"{CHECK}/{v['id']}.png")
                 line = simplify(R['line'], 0.05)  # на скруглениях точки через 1–3 мм — изгиб плавный
                 pts = [[0, 0]] + [[round(float(x), 1), round(float(y), 1)] for x, y in line] + [[0, H]]
-            out[v['id']] = {'kind': 'extrude', 'H': H, 'L': L, 'D': D, 'pts': pts}
+            # wrap — профиль обходит изделие спереди и с боков (консоли), extrude — протянут по длине
+            kind = 'wrap' if section['id'] == 'console' else 'extrude'
+            out[v['id']] = {'kind': kind, 'H': H, 'L': L, 'D': D, 'pts': pts}
+            if kind == 'wrap':
+                out[v['id']]['side'] = R['side'] if R else 1
 
 json.dump(out, open(f'{APP}/data/profiles.json', 'w', encoding='utf-8'), separators=(',', ':'))
 print(len(out), 'profiles; совпадение: среднее', round(np.mean(scores) * 100, 1), '%, худшее', round(min(scores) * 100, 1), '%')
