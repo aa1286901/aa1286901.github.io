@@ -214,7 +214,7 @@ const Catalog = {
           <span class="stone-dot__none">Как в каталоге</span>
         </button>
         ${stones.map(s => `
-          <button class="stone-dot${this.sectionStone?.id === s.id ? ' active' : ''}" data-section-stone="${s.id}">
+          <button class="stone-dot${this.sectionStone?.id === s.id ? ' active' : ''}" data-section-stone="${s.id}" title="${esc(s.name)}">
             <img src="${s.texture}" alt=""><span>${esc(s.name)}</span>
           </button>`).join('')}
       </div>
@@ -257,7 +257,7 @@ const Catalog = {
         <div class="stone-strip">
           <button class="stone-dot" data-stone-pick=""><span class="stone-dot__none">Как в каталоге</span></button>
           ${stones.map(s => `
-            <button class="stone-dot" data-stone-pick="${s.id}"><img src="${s.texture}" alt=""><span>${esc(s.name)}</span></button>`).join('')}
+            <button class="stone-dot" data-stone-pick="${s.id}" title="${esc(s.name)}"><img src="${s.texture}" alt=""><span>${esc(s.name)}</span></button>`).join('')}
         </div>
       </div>`);
     const box = document.getElementById('product-detail');
