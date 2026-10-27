@@ -245,11 +245,7 @@ const Catalog = {
           <img id="product-img" src="${variant.image}" alt=""${profile ? ' hidden' : ''}>
           ${profile ? `
             <div class="product-3d" id="product-3d"><span class="product-3d__hint">Загрузка 3D…</span></div>
-            <div class="view-toggle">
-              <button class="active" data-view="3d">3D</button>
-              <button data-view="photo">Фото</button>
-              <button data-view="turn" title="Вращать только по кругу">↻</button>
-            </div>` : ''}
+            <button class="view-3d active" data-view="3d" aria-pressed="true" title="3D — вкл./выкл.">3D</button>` : ''}
         </div>
         <div class="product-detail__name">${esc(line1)} ${esc(line2)}</div>
         <div class="product-detail__size" id="product-size"></div>
@@ -279,20 +275,16 @@ const Catalog = {
       mode = m;
       img.hidden = m !== 'photo';
       view3d.hidden = m !== '3d';
-      box.querySelectorAll('[data-view="3d"], [data-view="photo"]').forEach(b => b.classList.toggle('active', b.dataset.view === m));
+      const btn = box.querySelector('[data-view="3d"]');
+      btn?.classList.toggle('active', m === '3d');
+      btn?.setAttribute('aria-pressed', String(m === '3d'));
     };
 
     box.addEventListener('click', e => {
       const st = e.target.closest('[data-stone-pick]');
       if (st) { current = stones.find(x => x.id === st.dataset.stonePick) || null; return update(); }
-      const v = e.target.closest('[data-view]');
-      if (!v) return;
-      if (v.dataset.view === 'turn') {
-        v.classList.toggle('active');
-        if (mode !== '3d') setMode('3d');
-        return view?.setTurnOnly(v.classList.contains('active'));
-      }
-      setMode(v.dataset.view);
+      // Одна кнопка: горит — 3D, не горит — фото
+      if (e.target.closest('[data-view="3d"]')) setMode(mode === '3d' ? 'photo' : '3d');
     });
     update();
     if (profile) {
@@ -302,7 +294,7 @@ const Catalog = {
       } catch (err) {
         console.error('3D:', err);
         view3d.remove();
-        box.querySelector('.view-toggle')?.remove();
+        box.querySelector('.view-3d')?.remove();
         setMode('photo');
       }
     }
