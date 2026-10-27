@@ -1,23 +1,35 @@
 """Снимает сечения карнизов, плинтусов и зубцов с картинок каталога Fasad для 3D-просмотра.
 
-На рендерах «Камень Юг» торец изделия серо-синий, а камень бежевый: серая область слева —
-это сечение. Для каждой строки картинки берётся вынос от стены (ширина торца), затем
-профиль приводится к размерам из каталога (высота × вынос, мм) и упрощается.
+На рендерах «Камень Юг» изделие снято слева: торец серо-синий, камень бежевый.
+1. По торцу узнаём, как изделие лежит на картинке: где стена, масштаб и наклон
+   (чем дальше от стены, тем выше точка — съёмка немного снизу).
+2. Правый край изделия на картинке — это тот же профиль, только чёткий: граница камня
+   с прозрачным фоном. Подгоняем торец к правому краю (сдвиг и масштаб перспективы)
+   и переводим каждую точку края обратно в миллиметры: вынос от стены и высоту.
+3. Профиль сглаживается по участкам между уступами: кривые плавные, уступы острые.
 
-Запуск: python3 scripts/fasad_build_profiles.py <папка приложения fasad>
-Нужны: numpy, scipy, Pillow. Пишет data/profiles.json.
+Запуск: python3 scripts/fasad_build_profiles.py <папка приложения fasad> [папка для проверочных картинок]
+Нужны: numpy, scipy, Pillow. Пишет data/profiles.json и печатает совпадение с фото для каждого изделия.
 """
 import json
+import os
 import sys
 
 import numpy as np
-from PIL import Image
-from scipy import ndimage
+from PIL import Image, ImageDraw
+from scipy import ndimage, optimize
+from scipy.interpolate import UnivariateSpline
+from scipy.spatial import cKDTree
 
 APP = sys.argv[1]
+CHECK = sys.argv[2] if len(sys.argv) > 2 else None
 SECTIONS = ('cornice', 'plinth', 'dentil')
+STEP = 0.5  # мм по высоте между точками профиля
+# Камера на всех рендерах каталога одна; по изделиям с широким торцом (медиана):
+T_CATALOG = -0.32  # наклон горизонтали торца на фото
+RHO_CATALOG = 0.58  # пикселей на мм по выносу к пикселям на мм по высоте
 
-# Где торец на картинке не отделить от камня — сечение задано вручную: [вынос, высота сверху], мм
+# Запасной вариант, если профиль не снять с картинки: сечение вручную: [вынос, высота сверху], мм
 MANUAL = {
     'cornice-karniz-mezhetazhnyy-k-26-160-360-80': [
         [0, 0], [80, 0], [80, 70], [74, 70], [68, 71], [55, 76], [43, 84], [33, 94], [25, 107],
@@ -26,56 +38,192 @@ MANUAL = {
 }
 
 
-def end_face(path):
-    im = np.asarray(Image.open(path).convert('RGBA')).astype(int)
-    r, b, a = im[..., 0], im[..., 2], im[..., 3]
-    gray = ndimage.binary_opening((a > 128) & (b >= r + 4), iterations=2)
+def end_face(alpha, r, b):
+    """Торец — крупная серо-синяя область ближе к левому краю."""
+    gray = ndimage.binary_opening(alpha & (b >= r + 4), iterations=2)
     lab, n = ndimage.label(gray)
     if not n:
         return None
     sizes = ndimage.sum(gray, lab, range(1, n + 1))
-    # Торец — крупная серая область ближе к левому краю
     best = max(range(1, n + 1),
-               key=lambda i: sizes[i - 1] / (1 + ndimage.center_of_mass(gray, lab, i)[1] / im.shape[1]))
+               key=lambda i: sizes[i - 1] / (1 + ndimage.center_of_mass(gray, lab, i)[1] / alpha.shape[1]))
     return lab == best
 
 
 def simplify(pts, eps):
     """Рамер — Дуглас — Пекер: убираем лишние точки, оставляя форму."""
-    if len(pts) < 3:
-        return pts
-    a, b = np.array(pts[0]), np.array(pts[-1])
-    ab = b - a
-    norm = np.hypot(*ab) or 1
-    dist = [abs(ab[0] * (p[1] - a[1]) - ab[1] * (p[0] - a[0])) / norm for p in pts]
-    i = int(np.argmax(dist))
-    if dist[i] <= eps:
-        return [pts[0], pts[-1]]
-    return simplify(pts[:i + 1], eps)[:-1] + simplify(pts[i:], eps)
+    pts = np.asarray(pts, float)
+    keep = np.zeros(len(pts), bool)
+    keep[0] = keep[-1] = True
+    stack = [(0, len(pts) - 1)]
+    while stack:
+        i0, i1 = stack.pop()
+        if i1 - i0 < 2:
+            continue
+        a, b = pts[i0], pts[i1]
+        ab = b - a
+        norm = np.hypot(*ab) or 1
+        seg = pts[i0 + 1:i1]
+        dist = np.abs(ab[0] * (seg[:, 1] - a[1]) - ab[1] * (seg[:, 0] - a[0])) / norm
+        k = int(np.argmax(dist))
+        if dist[k] > eps:
+            keep[i0 + 1 + k] = True
+            stack += [(i0, i0 + 1 + k), (i0 + 1 + k, i1)]
+    return pts[keep]
 
 
-def profile(path, H, D):
-    m = end_face(path)
-    if m is None or m.sum() < 200:
+def measure(path, H, D):
+    """Профиль изделия по картинке: список (вынос, высота) в мм и данные для проверки."""
+    rgba = np.asarray(Image.open(path).convert('RGBA')).astype(float)
+    r, b, a = rgba[..., 0], rgba[..., 2], rgba[..., 3]
+    alpha = a > 128
+    edge = np.array([(np.where(alpha[y])[0][-1], y) for y in range(alpha.shape[0]) if alpha[y].any()], float)
+    # Углы правого торца. Верхний — там, где кончается верхняя кромка изделия (на фото это ровная
+    # наклонная линия), нижний — последняя строка изделия.
+    tops = np.array([(x, np.where(alpha[:, x])[0][0]) for x in range(alpha.shape[1]) if alpha[:, x].any()], float)
+    mid = tops[(tops[:, 0] > tops[:, 0].min() + 0.3 * np.ptp(tops[:, 0])) & (tops[:, 0] < tops[:, 0].min() + 0.8 * np.ptp(tops[:, 0]))]
+    kline = np.polyfit(mid[:, 0], mid[:, 1], 1)
+    on_line = tops[np.abs(tops[:, 1] - np.polyval(kline, tops[:, 0])) <= 3]
+    x_corner = on_line[:, 0].max()
+    y_corner = float(np.polyval(kline, x_corner))
+    y_last = edge[:, 1].max()
+
+    g = end_face(alpha, r, b)
+    if (g is None or g.sum() < 200 or np.ptp(np.where(g.any(1))[0]) < 20
+            or g.sum() > 0.5 * alpha.sum()
+            or np.ptp(np.where(g.any(0))[0]) > 0.6 * np.ptp(np.where(alpha.any(0))[0])):
+        # Торец не отделить от камня (светлый или голубоватый камень, синеватая тень вдоль изделия): привязываем профиль к углам правого торца,
+        # пропорции и наклон — общие для каталога. Верх изделия считаем самым выступающим.
+        t = T_CATALOG
+        by = (y_last - y_corner) / (H - t * RHO_CATALOG * D)
+        ax = RHO_CATALOG * by
+        m = 1.0
+        X0 = edge[:, 0].max() - ax * D
+        Y0 = y_last - by * H
+        wall, y_top = X0, Y0
+    else:
+        rows = [(y, np.where(g[y])[0]) for y in range(g.shape[0]) if g[y].any()]
+        wall = float(np.median([xs[0] for _, xs in rows]))
+        # Наклон: верхняя кромка торца — горизонтальная линия профиля, на фото она идёт под углом
+        cols = [(x, np.where(g[:, x])[0][0]) for x in range(int(wall), g.shape[1]) if g[:, x].any()]
+        t = np.polyfit(*np.array(cols, float).T, 1)[0] if len(cols) > 5 else 0.0
+        wy = np.where(g[:, min(g.shape[1] - 1, int(round(wall)) + 2)])[0]
+        if len(wy) < 10:
+            return None
+        y_top, y_bot = float(wy[0]), float(wy[-1])
+        by = (y_bot - y_top) / H                             # пикселей на мм по высоте
+        W = max(xs[-1] for _, xs in rows) - wall
+        # Узкий торец (тонкое изделие) наклон не показывает — все рендеры сняты одной камерой, берём общий
+        if W < 40 or not -0.6 < t < 0.1:
+            t = T_CATALOG
+        ax = W / D                                            # пикселей на мм по выносу
+        coarse = np.array([((xs[-1] - wall) / ax, (y - y_top - t * (xs[-1] - wall)) / by) for y, xs in rows])
+
+        tree = cKDTree(edge)
+
+        def to_img(p, X0, Y0, m):
+            return np.stack([X0 + m * ax * p[:, 0], Y0 + m * (by * p[:, 1] + t * ax * p[:, 0])], 1)
+
+        def cost(q):
+            X0, Y0, m = q
+            if not 0.6 < m < 1.3:
+                return 1e9
+            img = to_img(coarse, X0, Y0, m)
+            dist, _ = tree.query(img)
+            # И наоборот: весь край торца на фото должен быть покрыт профилем — иначе профиль «съезжает»
+            band = edge[(edge[:, 0] >= X0 - 2) & (edge[:, 1] >= img[:, 1].min() - 3) & (edge[:, 1] <= img[:, 1].max() + 3)]
+            back, _ = cKDTree(img).query(band) if len(band) else (np.zeros(1), None)
+            lost = edge[(edge[:, 0] >= X0 + 2) & ((edge[:, 1] < img[:, 1].min() - 3) | (edge[:, 1] > img[:, 1].max() + 3))]
+            # Верх и низ профиля — на углах правого торца
+            ends = (img[:, 1].min() - y_corner) ** 2 + (img[:, 1].max() - y_last) ** 2
+            return (np.mean(np.minimum(dist, 15) ** 2) + np.mean(np.minimum(back, 15) ** 2)
+                    + 225 * len(lost) / max(len(band), 1) + 0.5 * ends)
+
+        # Правый торец дальше от камеры: тот же профиль, сдвинут и чуть меньше
+        best = None
+        for m in (0.75, 0.85, 0.95, 1.05):
+            for dy in (-20, 0, 20):
+                res = optimize.minimize(cost, [edge[:, 0].max() - m * W, y_corner - 2 + dy, m], method='Nelder-Mead',
+                                        options={'xatol': 0.05, 'fatol': 0.01, 'maxiter': 2000})
+                if best is None or res.fun < best.fun:
+                    best = res
+        X0, Y0, m = best.x
+
+    x, y = edge[:, 0], edge[:, 1]
+    d = (x - X0) / (m * ax)
+    h = (y - Y0 - t * (x - X0)) / (m * by)
+    ok = (h >= -1) & (h <= H + 1) & (d >= -2) & (d <= D * 1.1)
+    d, h = d[ok], h[ok]
+
+    # По высоте с шагом 0,5 мм: середина края в каждой полосе
+    grid = np.arange(0, H + STEP / 2, STEP)
+    prof = np.full(len(grid), np.nan)
+    for i, hh in enumerate(grid):
+        sel = np.abs(h - hh) <= STEP
+        if sel.sum():
+            prof[i] = np.median(d[sel])
+    good = ~np.isnan(prof)
+    if good.sum() < len(grid) * 0.6:
         return None
-    rows = [(y, np.where(m[y])[0]) for y in range(m.shape[0]) if m[y].any()]
-    y0, y1 = rows[0][0], rows[-1][0]
-    if y1 - y0 < 20:
-        return None
-    left = np.median([xs[0] for _, xs in rows])
-    d = ndimage.median_filter(np.array([xs[-1] - left for _, xs in rows], float), size=5)
-    # Края торца «гуляют» на пиксель — без сглаживания на гладких гранях видна лесенка
-    d = ndimage.gaussian_filter1d(d, 2.0).clip(0)
-    if d.max() <= 0:
-        return None
-    line = [[float(dd / d.max() * D), float((y - y0) / (y1 - y0) * H)] for (y, _), dd in zip(rows, d)]
-    line = simplify(line, 1.0)
-    pts = [[0, 0], [line[0][0], 0]] + line + [[line[-1][0], H], [0, H]]
-    return [[round(x, 1), round(y, 1)] for x, y in pts]
+    prof = np.interp(grid, grid[good], prof[good])
+    prof = ndimage.median_filter(prof, size=5, mode='nearest')
+
+    # Один пиксель картинки по выносу — q мм: у тонких изделий край идёт ступеньками в пиксель.
+    # Уступы профиля — скачок больше пикселя; между ними проводим плавную кривую (сплайн),
+    # которая отходит от края фото не больше, чем на погрешность пикселя.
+    q = 1 / (m * ax)
+    jumps = np.where(np.abs(np.diff(prof)) > max(1.2, 2.5 * q))[0]
+    cuts = [0] + [j + 1 for j in jumps] + [len(prof)]
+    smooth = prof.copy()
+    for s0, s1 in zip(cuts[:-1], cuts[1:]):
+        n = s1 - s0
+        if n > 6:
+            spline = UnivariateSpline(grid[s0:s1], prof[s0:s1], k=3, s=n * q * q * 0.3)
+            smooth[s0:s1] = spline(grid[s0:s1])
+    # Вынос приводим ровно к размеру из каталога; k — во сколько раз поправили масштаб фото
+    k = D / max(smooth.max(), 1e-6)
+    smooth = np.clip(smooth * k, 0, D)
+    line = np.stack([smooth, grid], 1)
+    return dict(line=line, fit=(X0, Y0, m, ax / k, by, t, wall, y_top), edge=edge, gray=g, q=q)
+
+
+def match(R, H, D):
+    """Совпадение с фото: доля точек правого края, до которых профиль ближе 2 пикселей (неровность края от зерна камня)."""
+    X0, Y0, m, ax, by, t, wall, y_top = R['fit']
+    line = R['line']
+    dense = np.concatenate([np.linspace(p, q, 6) for p, q in zip(line[:-1], line[1:])])
+    img = np.stack([X0 + m * ax * dense[:, 0], Y0 + m * (by * dense[:, 1] + t * ax * dense[:, 0])], 1)
+    tree = cKDTree(img)
+    e = R['edge']
+    # только та часть края, что принадлежит торцу (без верхней кромки и тени под изделием)
+    hh = (e[:, 1] - Y0 - t * (e[:, 0] - X0)) / (m * by)
+    e = e[(hh >= 1) & (hh <= H - 1)]
+    dist, _ = tree.query(e)
+    return float((dist <= 2).mean()), img
+
+
+def draw_check(path, R, img_line, score, out):
+    im = Image.open(path).convert('RGBA')
+    k = 420 / im.size[1]
+    big = im.resize((int(im.size[0] * k), 420))
+    line = R['line']
+    H, D = line[-1, 1], line[:, 0].max()
+    s = 400 / max(H, D)
+    tile = Image.new('RGB', (big.size[0] + 440, 460), 'white')
+    tile.paste(big, (0, 30), big)
+    dr = ImageDraw.Draw(tile)
+    dr.line([(p[0] * k, 30 + p[1] * k) for p in img_line], fill=(220, 0, 0), width=2)
+    poly = [(big.size[0] + 20, 30)] + [(big.size[0] + 20 + p[0] * s, 30 + p[1] * s) for p in line] + [(big.size[0] + 20, 30 + H * s)]
+    dr.polygon(poly, outline=(220, 0, 0), fill=(245, 236, 220))
+    dr.text((6, 6), f'{os.path.basename(path)}  совпадение {score * 100:.1f}%', fill='black')
+    tile.save(out)
 
 
 catalog = json.load(open(f'{APP}/data/catalog.json', encoding='utf-8'))
+if CHECK:
+    os.makedirs(CHECK, exist_ok=True)
 out = {}
+scores = []
 for section in catalog['sections']:
     if section['id'] not in SECTIONS:
         continue
@@ -85,11 +233,23 @@ for section in catalog['sections']:
             if len(nums) != 3:
                 continue
             H, L, D = nums
-            pts = MANUAL.get(v['id']) or profile(f"{APP}/{v['image']}", H, D)
-            if pts:
-                out[v['id']] = {'kind': 'extrude', 'H': H, 'L': L, 'D': D, 'pts': pts}
-            else:
+            path = f"{APP}/{v['image']}"
+            R = measure(path, H, D)
+            if R is None and v['id'] in MANUAL:
+                pts = MANUAL[v['id']]
+                print(f"{v['id']}: задан вручную")
+            elif R is None:
                 print('нет сечения:', v['id'])
+                continue
+            else:
+                score, img_line = match(R, H, D)
+                scores.append(score)
+                print(f"{v['id']}: совпадение {score * 100:.1f}%")
+                if CHECK:
+                    draw_check(path, R, img_line, score, f"{CHECK}/{v['id']}.png")
+                line = simplify(R['line'], 0.05)  # на скруглениях точки через 1–3 мм — изгиб плавный
+                pts = [[0, 0]] + [[round(float(x), 1), round(float(y), 1)] for x, y in line] + [[0, H]]
+            out[v['id']] = {'kind': 'extrude', 'H': H, 'L': L, 'D': D, 'pts': pts}
 
 json.dump(out, open(f'{APP}/data/profiles.json', 'w', encoding='utf-8'), separators=(',', ':'))
-print(len(out), 'profiles')
+print(len(out), 'profiles; совпадение: среднее', round(np.mean(scores) * 100, 1), '%, худшее', round(min(scores) * 100, 1), '%')
