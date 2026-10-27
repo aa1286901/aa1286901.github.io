@@ -98,7 +98,7 @@ const Catalog = {
     const [line1, line2] = this.caption(item);
     return `
       <button class="product-card" data-product="${sid}:${item.id}:${v.id}">
-        <span class="product-card__img"><img src="${v.image}" ${recolor ? `data-recolor="${v.id}"` : ''} alt="" loading="lazy"></span>
+        <span class="product-card__img"><img src="${v.image}" ${recolor ? `data-recolor="${v.id}"` : ''} alt="" loading="lazy">${Viewer3D.profiles?.[v.id] ? '<span class="badge-3d">3D</span>' : ''}</span>
         <span class="product-card__name">${esc(line1)}${line2 ? `<br>${esc(line2)}` : ''}</span>
         <span class="product-card__size">${esc(v.size)}${/^\d|^D/.test(v.size) && v.size !== 'Под заказ' ? ' мм' : ''}</span>
       </button>`;
@@ -199,6 +199,7 @@ const Catalog = {
 
   async renderSection() {
     const catalog = await Materials.getCatalog();
+    await Viewer3D.getProfiles();
     const group = CATALOG_GROUPS.find(g => g.id === this.group);
     if (!group) return Router.navigateTo('catalog');
     const stones = await Materials.getStones();
@@ -232,30 +233,79 @@ const Catalog = {
     let current = stone || null;
     const [line1, line2] = this.caption(item);
 
-    showModal(`<div class="product-detail" id="product-detail"></div>`);
-    const box = document.getElementById('product-detail');
-    const draw = async () => {
-      box.innerHTML = `
-        <div class="product-detail__img"><img id="product-img" src="${variant.image}" alt=""></div>
+    const profile = (await Viewer3D.getProfiles())[variant.id];
+    // В 3D камень нужен всегда: «как в каталоге» — светлый кремовый, как на рендерах
+    const baseStone = stones.find(s => s.id === 'akushinskiy-kremovyy') || stones[0];
+    let mode = profile ? '3d' : 'photo';
+    let view = null;
+
+    showModal(`
+      <div class="product-detail" id="product-detail">
+        <div class="product-detail__img">
+          <img id="product-img" src="${variant.image}" alt=""${profile ? ' hidden' : ''}>
+          ${profile ? `
+            <div class="product-3d" id="product-3d"><span class="product-3d__hint">Загрузка 3D…</span></div>
+            <div class="view-toggle">
+              <button class="active" data-view="3d">3D</button>
+              <button data-view="photo">Фото</button>
+              <button data-view="turn" title="Вращать только по кругу">↻</button>
+            </div>` : ''}
+        </div>
         <div class="product-detail__name">${esc(line1)} ${esc(line2)}</div>
-        <div class="product-detail__size">${esc(variant.size)} мм${current ? ` · ${esc(current.name)}` : ''}</div>
+        <div class="product-detail__size" id="product-size"></div>
         <div class="opt-label">Камень</div>
         <div class="stone-strip">
-          <button class="stone-dot${!current ? ' active' : ''}" data-stone-pick=""><span class="stone-dot__none">Как в каталоге</span></button>
+          <button class="stone-dot" data-stone-pick=""><span class="stone-dot__none">Как в каталоге</span></button>
           ${stones.map(s => `
-            <button class="stone-dot${current?.id === s.id ? ' active' : ''}" data-stone-pick="${s.id}"><img src="${s.texture}" alt=""><span>${esc(s.name)}</span></button>`).join('')}
-        </div>`;
+            <button class="stone-dot" data-stone-pick="${s.id}"><img src="${s.texture}" alt=""><span>${esc(s.name)}</span></button>`).join('')}
+        </div>
+      </div>`);
+    const box = document.getElementById('product-detail');
+    const img = document.getElementById('product-img');
+    const view3d = document.getElementById('product-3d');
+
+    const update = async () => {
+      document.getElementById('product-size').textContent = `${variant.size} мм${current ? ` · ${current.name}` : ''}`;
+      box.querySelectorAll('[data-stone-pick]').forEach(b => b.classList.toggle('active', b.dataset.stonePick === (current?.id || '')));
+      if (view) view.setStone((current || baseStone).texture);
       if (current) {
         const c = await StonePreview.recolor(variant, current, 640);
-        const img = document.getElementById('product-img');
-        if (img) img.src = c.toDataURL('image/webp', 0.92);
+        if (img.isConnected) img.src = c.toDataURL('image/webp', 0.92);
+      } else {
+        img.src = variant.image;
       }
     };
+    const setMode = (m) => {
+      mode = m;
+      img.hidden = m !== 'photo';
+      view3d.hidden = m !== '3d';
+      box.querySelectorAll('[data-view="3d"], [data-view="photo"]').forEach(b => b.classList.toggle('active', b.dataset.view === m));
+    };
+
     box.addEventListener('click', e => {
       const st = e.target.closest('[data-stone-pick]');
-      if (st) { current = stones.find(x => x.id === st.dataset.stonePick) || null; draw(); }
+      if (st) { current = stones.find(x => x.id === st.dataset.stonePick) || null; return update(); }
+      const v = e.target.closest('[data-view]');
+      if (!v) return;
+      if (v.dataset.view === 'turn') {
+        v.classList.toggle('active');
+        if (mode !== '3d') setMode('3d');
+        return view?.setTurnOnly(v.classList.contains('active'));
+      }
+      setMode(v.dataset.view);
     });
-    draw();
+    update();
+    if (profile) {
+      try {
+        view = await Viewer3D.mount(view3d, profile, (current || baseStone).texture);
+        view3d.querySelector('.product-3d__hint')?.remove();
+      } catch (err) {
+        console.error('3D:', err);
+        view3d.remove();
+        box.querySelector('.view-toggle')?.remove();
+        setMode('photo');
+      }
+    }
   },
 
   bind() {
