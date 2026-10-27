@@ -28,6 +28,7 @@ const STATIC_ASSETS = [
   'js/camera.js',
   'js/stone-preview.js',
   'js/configurator.js',
+  'js/viewer3d.js',
   'js/catalog.js',
   'js/profile.js',
   'js/screens.js',
