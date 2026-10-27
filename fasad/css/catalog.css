@@ -156,15 +156,13 @@
   color: var(--color-text);
 }
 
+/* Рамка всегда 4:3 — высокие и низкие изделия вписываются целиком, ряды карточек ровные */
 .product-card__img {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
-  padding: 8px;
-  background: #ffffff;
+  overflow: hidden;
   margin-bottom: 6px;
   border-radius: var(--radius-md);
   background: var(--color-surface);
@@ -172,8 +170,10 @@
 }
 
 .product-card__img img {
-  max-width: 100%;
-  max-height: 100%;
+  position: absolute;
+  inset: 8px;
+  width: calc(100% - 16px);
+  height: calc(100% - 16px);
   object-fit: contain;
 }
 
