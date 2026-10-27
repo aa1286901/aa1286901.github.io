@@ -143,7 +143,7 @@ const Configurator = {
   stoneStrip(field, current) {
     return `
       <div class="stone-strip">${this.stones.map(s => `
-        <button class="stone-dot${s.id === current ? ' active' : ''}" data-set="${field}" data-value="${s.id}">
+        <button class="stone-dot${s.id === current ? ' active' : ''}" data-set="${field}" data-value="${s.id}" title="${esc(s.name)}">
           <img src="${s.texture}" alt=""><span>${esc(s.name)}</span>
         </button>`).join('')}
       </div>`;
