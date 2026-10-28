@@ -78,8 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
         }
     }
 
-    // Подбор в три экрана (version 4): плитка стен и цоколя, изделия — из камня своей группы
-    if (($design['version'] ?? 0) === 4 && is_array($design['materials'] ?? null)) {
+    // Подбор в три экрана: плитка стен и цоколя, изделия — в своём камне.
+    // version 5: у каждой части {item, stone}; version 4: камень по группам частей
+    $version = $design['version'] ?? 0;
+    if (in_array($version, [4, 5], true) && is_array($design['materials'] ?? null)) {
         $m = $design['materials'];
         $addMaterial = function ($stone, $category, $variant) use (&$db, $projectId) {
             if (!is_string($stone) || $stone === '') return;
@@ -101,9 +103,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
             'corners' => 'corners',
             'column' => 'columns', 'capital' => 'columns', 'baluster' => 'columns', 'post' => 'columns', 'rail' => 'columns', 'finial' => 'columns',
         ];
-        foreach (($design['parts'] ?? []) as $partKey => $variant) {
-            if (!is_string($variant) || $variant === '' || !isset($groupOf[$partKey])) continue;
-            $g = $m['groups'][$groupOf[$partKey]] ?? 'main';
+        foreach (($design['parts'] ?? []) as $partKey => $part) {
+            if (!isset($groupOf[$partKey])) continue;
+            $variant = $version === 5 ? ($part['item'] ?? null) : $part;
+            if (!is_string($variant) || $variant === '') continue;
+            $g = $version === 5 ? ($part['stone'] ?? 'main') : ($m['groups'][$groupOf[$partKey]] ?? 'main');
             $stone = $g === 'main' ? $mainStone : ($g === 'base' ? ($baseOn ? ($m['base']['stone'] ?? null) : $mainStone) : $g);
             $addMaterial($stone, (string)$partKey, $variant);
         }
