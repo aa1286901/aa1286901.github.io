@@ -683,7 +683,8 @@
 /* === Анимации появления экрана === */
 .screen {
   display: none;
-  animation: screenIn var(--duration-slow) var(--ease-out) forwards;
+  /* без forwards: после анимации у экрана не остаётся transform, и нижние панели position: fixed держатся у края окна */
+  animation: screenIn var(--duration-slow) var(--ease-out);
   padding-bottom: 140px;
   padding-left: var(--page-padding);
   padding-right: var(--page-padding);
@@ -695,7 +696,7 @@
 
 @keyframes screenIn {
   from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  to { opacity: 1; transform: none; }
 }
 
 /* === Loading spinner === */

@@ -534,77 +534,169 @@
   margin: 0 auto;
   padding: var(--spacing-sm) var(--page-padding) calc(var(--spacing-sm) + var(--safe-bottom));
   background: linear-gradient(to top, var(--color-bg) 70%, transparent);
-}
-
-.part {
-  margin-bottom: var(--spacing-sm);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border-light);
-  overflow: hidden;
-}
-
-.part.open {
-  border-color: var(--color-accent);
-  box-shadow: var(--shadow-md);
-}
-
-.part__head {
   display: flex;
-  align-items: center;
   gap: var(--spacing-sm);
-  min-height: 64px;
-  padding: 10px var(--spacing-md);
-  cursor: pointer;
 }
 
-.part__icon {
+.configure-bar .btn {
+  flex: 2;
+}
+
+.configure-bar .btn-secondary {
+  flex: 1;
+}
+
+.configure-bar .btn[hidden] {
+  display: none;
+}
+
+/* Полоса шагов подбора: 1 Материалы · 2 Узоры · 3 Итог */
+.flow-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: var(--spacing-md);
+}
+
+.flow-step {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-  border-radius: var(--radius-sm);
+  gap: 6px;
+  padding: 8px 4px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.flow-step span {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-border-light);
+  font-size: 12px;
+}
+
+.flow-step.done span {
   background: var(--color-accent-light);
   color: var(--color-accent-dark);
 }
 
-.part__icon .i {
-  width: 24px;
-  height: 24px;
+.flow-step.active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #fff;
 }
 
-.part__text {
+.flow-step.active span {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* Блок экрана подбора: стены, цоколь, камень изделий, группа узоров */
+.cfg-block {
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+}
+
+.cfg-block__title {
   display: flex;
-  flex-direction: column;
-  min-width: 0;
-  flex: 1;
-}
-
-.part__title {
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin: 0 0 var(--spacing-sm);
+  font-size: var(--font-size-lg);
   font-weight: 700;
 }
 
-.part__summary {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.cfg-block__title .i {
+  width: 22px;
+  height: 22px;
+  color: var(--color-accent-dark);
 }
 
-.part.off .part__icon {
+.cfg-block__title .switch,
+.cfg-block__title .cfg-stone {
+  margin-left: auto;
+}
+
+.cfg-off {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Камень группы изделий */
+.cfg-group {
+  padding: var(--spacing-sm) 0;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.cfg-group:first-of-type {
+  border-top: 0;
+}
+
+.cfg-group__head,
+.cfg-row__head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-bottom: 6px;
+  font-size: var(--font-size-sm);
+}
+
+.cfg-group__head b,
+.cfg-row__head b {
+  color: var(--color-accent-dark);
+  text-align: right;
+}
+
+.cfg-group .stone-strip {
+  margin-top: var(--spacing-sm);
+}
+
+/* Камень группы в заголовке узоров — нажать, чтобы поменять */
+.cfg-stone {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 3px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
   background: var(--color-surface-alt);
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
 }
 
-.part.off .part__summary {
-  color: var(--color-text-muted);
+.cfg-stone img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
-.part__body {
-  padding: 0 var(--spacing-md) var(--spacing-md);
+.cfg-row {
+  padding: var(--spacing-sm) 0;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.cfg-row:first-of-type {
+  border-top: 0;
+}
+
+.spec-title {
+  margin: 0 0 var(--spacing-sm);
+  font-size: var(--font-size-lg);
 }
 
 .part-preview {

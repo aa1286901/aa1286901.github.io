@@ -152,13 +152,15 @@
     <div class="screen screen--configure" data-screen="configure">
       <div class="page-header">
         <button class="btn-icon" id="configure-back" aria-label="Назад"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <h2 class="page-header__title">Подбор фасада</h2>
+        <h2 class="page-header__title" id="configure-title">Материалы</h2>
       </div>
+      <nav class="flow-steps" id="configure-steps" aria-label="Шаги подбора"></nav>
       <img class="configure-photo" id="configure-photo" alt="Фото фасада">
-      <p class="configure-hint">Выберите, что из какого камня будет на фасаде. Части, которые не меняются, выключите.</p>
+      <p class="configure-hint" id="configure-hint"></p>
       <div id="configure-parts"></div>
       <div class="configure-bar">
-        <button class="btn btn-primary btn-full" id="configure-done">Готово — спецификация</button>
+        <button class="btn btn-secondary" id="configure-prev" hidden>Назад</button>
+        <button class="btn btn-primary" id="configure-next">Далее — узоры</button>
       </div>
     </div>
 
@@ -166,9 +168,15 @@
     <div class="screen" data-screen="spec">
       <div class="page-header">
         <button class="btn-icon" id="spec-back" aria-label="Назад"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <h2 class="page-header__title">Спецификация</h2>
+        <h2 class="page-header__title">Итог</h2>
       </div>
+      <nav class="flow-steps" id="spec-steps" aria-label="Шаги подбора"></nav>
       <img class="configure-photo" id="spec-photo" alt="Фото фасада">
+      <section class="cfg-block">
+        <h3 class="cfg-block__title">Размер здания</h3>
+        <div id="spec-building"></div>
+      </section>
+      <h3 class="spec-title">Спецификация</h3>
       <div class="spec-list" id="spec-list"></div>
       <button class="btn btn-primary btn-full" id="spec-generate">Сгенерировать фасад</button>
       <p class="configure-hint">Генерация изображения ИИ подключается на следующем этапе.</p>
