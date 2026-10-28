@@ -554,7 +554,7 @@ const Spec = {
       showToast(`Сохранён вариант ${vs.length}`);
       if (generate) {
         try {
-          await Api.projectVariant(edit.projectId, 'generate', { variant_id: newId });
+          await ProjectPage.generate(edit.projectId, newId, vs[vs.length - 1].design);
         } catch (e) {
           showToast(`Вариант сохранён. ${e.message}`);
         }
@@ -571,14 +571,15 @@ const Spec = {
     }
   },
 
-  async saveProject() {
-    if (ProjectFlow.getState('editProject')) return this.saveVariant(false);
+  // Новый проект; generate — сразу отдать первый вариант ИИ
+  async saveProject(generate = false) {
+    if (ProjectFlow.getState('editProject')) return this.saveVariant(generate);
     if (!Auth.isLoggedIn()) {
       showAuthModal();
       showToast('Войдите, чтобы сохранить проект');
       return;
     }
-    const btn = document.getElementById('spec-save');
+    const btn = document.getElementById(generate ? 'spec-generate' : 'spec-save');
     btn.disabled = true;
     try {
       const photo = await (await fetch(ProjectFlow.getState('originalPhoto'))).blob();
@@ -589,8 +590,16 @@ const Spec = {
         original_image: up.data.url,
         design: ProjectFlow.getState('design'),
       });
+      const design = ProjectFlow.getState('design');
       ProjectFlow.clearDraft();
       showToast('Проект сохранён');
+      if (generate) {
+        try {
+          await ProjectPage.generate(project.data.id, 1, design);  // у нового проекта вариант 1
+        } catch (e) {
+          showToast(`Проект сохранён. ${e.message}`);
+        }
+      }
       openProject(project.data.id);
     } catch (e) {
       if ((e.message || '').includes('Не авторизован')) {
@@ -629,8 +638,7 @@ const Spec = {
     document.getElementById('spec-building').addEventListener('click', e => this.onStep(e));
     document.getElementById('spec-share').addEventListener('click', () => this.share());
     document.getElementById('spec-save').addEventListener('click', () => this.saveProject());
-    document.getElementById('spec-generate').addEventListener('click', () => (ProjectFlow.getState('editProject')
-      ? this.saveVariant(true) : showToast('Генерацию ИИ подключим на следующем этапе')));
+    document.getElementById('spec-generate').addEventListener('click', () => this.saveProject(true));
   },
 };
 

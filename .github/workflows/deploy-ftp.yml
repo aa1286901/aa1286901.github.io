@@ -38,6 +38,7 @@ jobs:
             **/.git*
             data/database.json
             data/db.php
+            data/ai.php
             data/db.php.tmp
             data/db.lock
             uploads/originals/**
