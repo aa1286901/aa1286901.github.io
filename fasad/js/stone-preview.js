@@ -250,13 +250,13 @@ const StonePreview = {
   },
 
   // Подставляет перекрашенные картинки во все <img data-recolor="variantId"> внутри контейнера
-  async recolorAll(container, stone, variants) {
+  async recolorAll(container, stone, variants, maxSide) {
     const imgs = [...container.querySelectorAll('img[data-recolor]')];
     for (const img of imgs) {
       const v = variants[img.dataset.recolor];
       if (!v) continue;
       const token = (img.dataset.token = String(Math.random()));
-      const c = await this.recolor(v, stone);
+      const c = await this.recolor(v, stone, maxSide);
       if (img.dataset.token === token && img.isConnected) img.src = c.toDataURL('image/webp', 0.9);
     }
   },

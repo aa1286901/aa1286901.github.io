@@ -78,6 +78,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($body['original_image'])) {
         }
     }
 
+    // Подбор в три экрана (version 4): плитка стен и цоколя, изделия — из камня своей группы
+    if (($design['version'] ?? 0) === 4 && is_array($design['materials'] ?? null)) {
+        $m = $design['materials'];
+        $addMaterial = function ($stone, $category, $variant) use (&$db, $projectId) {
+            if (!is_string($stone) || $stone === '') return;
+            $db['project_materials'][] = [
+                'id' => getNextId($db['project_materials']),
+                'project_id' => $projectId,
+                'material_id' => $stone,
+                'category' => $category,
+                'selected_variant' => $variant
+            ];
+        };
+        $mainStone = $m['main']['stone'] ?? null;
+        $baseOn = !empty($m['base']['on']);
+        $addMaterial($mainStone, 'main', null);
+        if ($baseOn) $addMaterial($m['base']['stone'] ?? null, 'base', null);
+        $groupOf = [
+            'topCornice' => 'cornice', 'floorCornice' => 'cornice', 'baseCornice' => 'cornice', 'dentils' => 'cornice',
+            'frame' => 'windows', 'sill' => 'windows', 'keystone' => 'windows', 'console' => 'windows',
+            'corners' => 'corners',
+            'column' => 'columns', 'capital' => 'columns', 'baluster' => 'columns', 'post' => 'columns', 'rail' => 'columns', 'finial' => 'columns',
+        ];
+        foreach (($design['parts'] ?? []) as $partKey => $variant) {
+            if (!is_string($variant) || $variant === '' || !isset($groupOf[$partKey])) continue;
+            $g = $m['groups'][$groupOf[$partKey]] ?? 'main';
+            $stone = $g === 'main' ? $mainStone : ($g === 'base' ? ($baseOn ? ($m['base']['stone'] ?? null) : $mainStone) : $g);
+            $addMaterial($stone, (string)$partKey, $variant);
+        }
+    }
+
     // Камни из разметки: по одной записи на зону
     foreach (($design['zones'] ?? []) as $zone) {
         if (!empty($zone['materialId']) && ($zone['type'] ?? '') !== 'opening') {
