@@ -6,3 +6,5 @@ data/database.json
 uploads/originals/*
 uploads/generated/*
 !uploads/*/.gitkeep
+# Ключ ИИ — только на хостинге
+data/ai.php
