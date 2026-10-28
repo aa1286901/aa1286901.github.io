@@ -1021,3 +1021,330 @@
 #spec-generate {
   margin-bottom: 4px;
 }
+
+/* === Страница проекта: варианты === */
+.ba {
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Ползунок «до / после»: нижняя картинка целиком, верхняя открывается справа от линии */
+.ba__frame {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #1a1a1a;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.ba__img {
+  display: block;
+  width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+}
+
+.ba__after {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  max-height: none;
+  clip-path: inset(0 0 0 var(--cut));
+}
+
+.ba__handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--cut);
+  width: 3px;
+  margin-left: -1.5px;
+  background: #fff;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.ba__handle::after {
+  content: "⇆";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-text);
+  transform: translate(-50%, -50%);
+}
+
+.ba__label {
+  position: absolute;
+  top: 8px;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-text);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.ba__label--a { left: 8px; }
+.ba__label--b { right: 8px; }
+
+.ba__note {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: var(--font-size-sm);
+  text-align: center;
+  pointer-events: none;
+}
+
+.ba__full {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-text);
+  font-size: 18px;
+}
+
+.ba__frame:has(.ba__label--b) .ba__full {
+  top: auto;
+  bottom: 8px;
+}
+
+.ba__full[hidden] {
+  display: none;
+}
+
+/* На весь экран — показать заказчику */
+.ba-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: calc(var(--spacing-md) + env(safe-area-inset-top, 0px)) var(--spacing-sm) calc(var(--spacing-md) + var(--safe-bottom));
+  background: #000;
+}
+
+.ba-fullscreen .ba__frame {
+  border-radius: var(--radius-md);
+}
+
+.ba-fullscreen .ba__img {
+  max-height: 80vh;
+}
+
+.ba-fullscreen .ba__after {
+  max-height: none;
+}
+
+.ba-fullscreen__close {
+  align-self: center;
+  min-width: 160px;
+}
+
+.variant-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.variant-head b {
+  font-size: var(--font-size-lg);
+}
+
+.variant-head span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.variant-head .variant-head__star {
+  color: var(--color-accent-dark);
+  font-weight: 700;
+}
+
+/* Лента вариантов */
+.variants {
+  display: flex;
+  gap: var(--spacing-sm);
+  overflow-x: auto;
+  padding: 2px 2px 6px;
+  margin-bottom: var(--spacing-md);
+  scrollbar-width: none;
+}
+
+.variants::-webkit-scrollbar {
+  display: none;
+}
+
+.variant {
+  flex-shrink: 0;
+  width: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+}
+
+.variant__img {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 72px;
+  border-radius: var(--radius-md);
+  border: 3px solid transparent;
+  background: var(--color-surface-alt);
+  overflow: hidden;
+  font-size: 26px;
+  color: var(--color-text-muted);
+}
+
+.variant__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.variant.active .variant__img {
+  border-color: var(--color-accent);
+}
+
+.variant.compare .variant__img {
+  border-color: var(--color-text);
+  border-style: dashed;
+}
+
+.variant__wait {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 10px;
+}
+
+.variant__star {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  color: var(--color-accent);
+  font-size: 18px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.variant__name {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.variant__name img {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.variant--new .variant__img {
+  border: 2px dashed var(--color-border);
+}
+
+.project-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.project-actions__row {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.project-actions__row .btn {
+  flex: 1;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+#project-star.active {
+  border-color: var(--color-accent);
+  color: var(--color-accent-dark);
+}
+
+/* Что изменилось между вариантами */
+.project-changes {
+  margin-bottom: var(--spacing-lg);
+}
+
+.project-changes .section-title {
+  margin-bottom: var(--spacing-sm);
+}
+
+.change {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 2px 8px;
+  padding: 8px 0;
+  border-top: 1px solid var(--color-border-light);
+  font-size: var(--font-size-sm);
+}
+
+.change__part {
+  grid-column: 1 / -1;
+  font-weight: 700;
+}
+
+.change__was {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.change__arrow {
+  color: var(--color-accent-dark);
+}
+
+.spec-edit-note {
+  margin: 0 0 var(--spacing-sm);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-light);
+  font-size: var(--font-size-sm);
+}
+
+.spec-edit-note[hidden] {
+  display: none;
+}
+
+.project-actions .btn:disabled {
+  opacity: 0.45;
+}

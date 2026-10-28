@@ -342,7 +342,14 @@ const Configurator = {
     const box = document.getElementById('configure-parts');
     box.addEventListener('click', e => this.onClick(e));
     box.addEventListener('change', e => this.onChange(e));
-    document.getElementById('configure-back').addEventListener('click', () => (this.step > 1 ? this.goStep(this.step - 1) : Router.navigateTo('photo')));
+    document.getElementById('configure-back').addEventListener('click', () => {
+      if (this.step > 1) return this.goStep(this.step - 1);
+      const edit = ProjectFlow.getState('editProject');
+      if (!edit) return Router.navigateTo('photo');
+      // Правка варианта: назад — в проект, без сохранения
+      ProjectFlow.clearDraft();
+      openProject(edit.projectId, edit.variantId);
+    });
     document.getElementById('configure-prev').addEventListener('click', () => this.goStep(this.step - 1));
     document.getElementById('configure-next').addEventListener('click', () => this.goStep(this.step + 1));
     document.getElementById('configure-steps').addEventListener('click', e => {
@@ -485,6 +492,11 @@ const Spec = {
     if (!spec || spec.version !== 5) return Router.navigateTo('configure');
     this.bind();
     document.getElementById('spec-steps').innerHTML = flowSteps(3);
+    const edit = ProjectFlow.getState('editProject');
+    document.getElementById('spec-save').textContent = edit ? 'Сохранить вариант' : 'Сохранить в проекты';
+    document.getElementById('spec-generate').textContent = edit ? 'Сохранить и сгенерировать' : 'Сгенерировать фасад';
+    document.getElementById('spec-edit-note').hidden = !edit;
+    if (edit) document.getElementById('spec-edit-note').textContent = `Новый вариант проекта «${edit.name || 'Проект'}». Прежние варианты останутся.`;
     const [stones, catalog] = await Promise.all([Materials.getStones(), Materials.getCatalog()]);
     document.getElementById('spec-photo').src = ProjectFlow.getState('originalPhoto');
     this.drawBuilding(spec);
@@ -529,7 +541,38 @@ const Spec = {
     }
   },
 
+  // Правка проекта: подбор сохраняется новым вариантом, generate — сразу запросить картинку
+  async saveVariant(generate) {
+    const edit = ProjectFlow.getState('editProject');
+    const btn = document.getElementById(generate ? 'spec-generate' : 'spec-save');
+    btn.disabled = true;
+    try {
+      const res = await Api.projectVariant(edit.projectId, 'add', { design: ProjectFlow.getState('design') });
+      const vs = res.data.variants;
+      const newId = vs[vs.length - 1].id;
+      ProjectFlow.clearDraft();
+      showToast(`Сохранён вариант ${vs.length}`);
+      if (generate) {
+        try {
+          await Api.projectVariant(edit.projectId, 'generate', { variant_id: newId });
+        } catch (e) {
+          showToast(`Вариант сохранён. ${e.message}`);
+        }
+      }
+      openProject(edit.projectId, newId);
+    } catch (e) {
+      if ((e.message || '').includes('Не авторизован')) {
+        Auth._user = null;
+        showAuthModal();
+      }
+      showToast(e.message || 'Не удалось сохранить вариант');
+    } finally {
+      btn.disabled = false;
+    }
+  },
+
   async saveProject() {
+    if (ProjectFlow.getState('editProject')) return this.saveVariant(false);
     if (!Auth.isLoggedIn()) {
       showAuthModal();
       showToast('Войдите, чтобы сохранить проект');
@@ -586,7 +629,8 @@ const Spec = {
     document.getElementById('spec-building').addEventListener('click', e => this.onStep(e));
     document.getElementById('spec-share').addEventListener('click', () => this.share());
     document.getElementById('spec-save').addEventListener('click', () => this.saveProject());
-    document.getElementById('spec-generate').addEventListener('click', () => showToast('Генерацию ИИ подключим на следующем этапе'));
+    document.getElementById('spec-generate').addEventListener('click', () => (ProjectFlow.getState('editProject')
+      ? this.saveVariant(true) : showToast('Генерацию ИИ подключим на следующем этапе')));
   },
 };
 

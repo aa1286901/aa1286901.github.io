@@ -7,6 +7,7 @@ const ProjectFlow = {
     sketch: null,             // dataURL готового наброска
     projectName: '',
     projectId: null,
+    editProject: null,        // { projectId, variantId, name } — правим вариант сохранённого проекта
   },
 
   setState(key, value) {
@@ -23,6 +24,7 @@ const ProjectFlow = {
     const draftable = {
       originalPhoto: this.state.originalPhoto,
       design: this.state.design,
+      editProject: this.state.editProject,
     };
     Storage.save('project-draft', draftable);
   },
@@ -40,6 +42,7 @@ const ProjectFlow = {
       sketch: null,
       projectName: '',
       projectId: null,
+      editProject: null,
     };
   },
 

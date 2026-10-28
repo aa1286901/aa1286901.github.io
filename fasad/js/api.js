@@ -67,6 +67,14 @@ const Api = {
     return this.request(`./projects/get.php?id=${id}`);
   },
 
+  // Варианты проекта: action = add | star | delete | generate
+  async projectVariant(projectId, action, data = {}) {
+    return this.request('./projects/variants.php', {
+      method: 'POST',
+      body: JSON.stringify({ project_id: projectId, action, ...data }),
+    });
+  },
+
   async deleteProject(id) {
     return this.request(`./projects/delete.php?id=${id}`, { method: 'DELETE' });
   },

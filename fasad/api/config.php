@@ -157,6 +157,20 @@ function requireAuth() {
     return $_SESSION['user_id'];
 }
 
+// Варианты проекта. У проектов, сохранённых до вариантов, единственный вариант — их подбор и картинка
+function projectVariants($project) {
+    if (!empty($project['variants']) && is_array($project['variants'])) {
+        return $project['variants'];
+    }
+    return [[
+        'id' => 1,
+        'design' => $project['design'] ?? null,
+        'generated_image' => $project['generated_image'] ?? null,
+        'created_at' => $project['created_at'] ?? date('Y-m-d H:i:s'),
+        'starred' => false,
+    ]];
+}
+
 function sanitize($input) {
     return htmlspecialchars(strip_tags(trim($input)), ENT_QUOTES, 'UTF-8');
 }

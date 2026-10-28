@@ -7,6 +7,8 @@ function onScreenHome() {
 
 // === Экран: Фото ===
 function onScreenPhoto() {
+  // Экран фото — только для нового проекта: правка варианта сюда не ведёт
+  if (ProjectFlow.getState('editProject')) ProjectFlow.setState('editProject', null);
   showPhotoPreview();
 
   // Кнопки привязываем один раз: экран открывается много раз
@@ -47,59 +49,20 @@ function showPhotoPreview() {
   }
 }
 
-// === Экран: Проект (результат) ===
+// === Экран: Проект — варианты подбора (js/project-page.js) ===
 let currentProjectId = null;
+let currentVariantId = null;
 
-function openProject(id) {
+function openProject(id, variantId = null) {
   currentProjectId = id;
+  currentVariantId = variantId;
   Router.navigateTo('project');
 }
 
 async function onScreenProject() {
-  if (currentProjectId) {
-    await loadProjectPage(currentProjectId);
-  } else {
-    Router.navigateTo('projects');
-  }
-}
-
-async function loadProjectPage(projectId) {
-  const projectImage = document.getElementById('project-image');
-  const projectDetails = document.getElementById('project-details');
-
+  if (!currentProjectId) return Router.navigateTo('projects');
   try {
-    const project = await Api.getProject(projectId);
-    const data = project.data;
-    const img = data.generated_image || data.original_image;
-
-    if (projectImage) projectImage.src = img;
-
-    if (projectDetails) {
-      const all = await Materials.getAll();
-      const materials = Object.fromEntries(all.map(m => [m.id, m]));
-      let rows = summarizeDesign(data.design, await Materials.getStones(), await Materials.getCatalog());
-      if (!rows) {
-        // Старые проекты без разметки: просто список материалов
-        const zoneNames = { base: 'Цоколь', facade: 'Стена' };
-        rows = Object.values(data.materials || {}).map(m => `
-          <div class="project-details__item">
-            <span class="project-details__label">${zoneNames[m.category] || 'Материал'}</span>
-            <span class="project-details__value">${materials[m.material_id]?.name || m.material_id}</span>
-          </div>`).join('');
-      }
-      projectDetails.innerHTML = rows + `
-        <div class="project-details__item">
-          <span class="project-details__label">Дата</span>
-          <span class="project-details__value">${formatFullDate(data.created_at)}</span>
-        </div>`;
-    }
-
-    // onclick вместо addEventListener: при каждом открытии проекта обработчик заменяется, а не копится
-    document.getElementById('project-back').onclick = () => Router.navigateTo('projects');
-    document.getElementById('project-save').onclick = () => showToast('Проект уже сохранён');
-    document.getElementById('project-download').onclick = () => downloadImage(img, `fasad-project-${projectId}.jpg`);
-    document.getElementById('project-share').onclick = () => shareProject(data.name, img);
-
+    await ProjectPage.load(currentProjectId, currentVariantId);
   } catch (e) {
     console.error('Load project error:', e);
     showToast('Не удалось загрузить проект');

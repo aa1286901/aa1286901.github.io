@@ -176,6 +176,7 @@
         <h3 class="cfg-block__title">Размер здания</h3>
         <div id="spec-building"></div>
       </section>
+      <p class="spec-edit-note" id="spec-edit-note" hidden></p>
       <h3 class="spec-title">Спецификация</h3>
       <div class="spec-list" id="spec-list"></div>
       <button class="btn btn-primary btn-full" id="spec-generate">Сгенерировать фасад</button>
@@ -193,7 +194,7 @@
         <button class="btn-icon" id="project-back" aria-label="Назад">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <h2 class="page-header__title">Готовый проект</h2>
+        <h2 class="page-header__title" id="project-title">Проект</h2>
         <div style="display: flex; gap: 8px;">
           <button class="btn-icon" id="project-fav" aria-label="В избранное">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
@@ -204,22 +205,29 @@
         </div>
       </div>
 
-      <div class="result-image-container">
-        <img id="project-image" src="" alt="Результат">
+      <!-- До / после: фото заказчика и картинка варианта (или два варианта при сравнении) -->
+      <div class="ba" id="project-ba"></div>
+      <div class="variant-head" id="variant-head"></div>
+
+      <div class="variants" id="project-variants"></div>
+
+      <div class="project-actions">
+        <button class="btn btn-primary btn-full" id="project-edit">Изменить и сгенерировать</button>
+        <div class="project-actions__row">
+          <button class="btn btn-secondary" id="project-star">☆ Выбран клиентом</button>
+          <button class="btn btn-secondary" id="project-compare">Сравнить</button>
+        </div>
+        <div class="project-actions__row">
+          <button class="btn btn-secondary" id="project-generate">Сгенерировать</button>
+          <button class="btn btn-secondary" id="project-download" aria-label="Скачать картинку">Скачать</button>
+          <button class="btn btn-ghost" id="project-variant-delete">Удалить</button>
+        </div>
       </div>
 
-      <div class="result-actions">
-        <button class="btn btn-primary btn-full" id="project-save">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Сохранить
-        </button>
-        <button class="btn btn-secondary" id="project-download">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        </button>
-      </div>
+      <div class="project-changes" id="project-changes"></div>
 
       <div class="section-header">
-        <h3 class="section-title">Детали проекта</h3>
+        <h3 class="section-title">Спецификация варианта</h3>
       </div>
       <div class="project-details" id="project-details"></div>
     </div>
@@ -375,6 +383,7 @@
   <script src="js/camera.js?v=007"></script>
   <script src="js/stone-preview.js?v=007"></script>
   <script src="js/configurator.js?v=007"></script>
+  <script src="js/project-page.js?v=007"></script>
   <script src="js/viewer3d.js?v=007"></script>
   <script src="js/catalog.js?v=007"></script>
   <script src="js/profile.js?v=007"></script>

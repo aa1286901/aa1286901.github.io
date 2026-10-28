@@ -54,6 +54,7 @@ const App = {
       if (draft.originalPhoto) {
         ProjectFlow.setState('originalPhoto', draft.originalPhoto);
         ProjectFlow.setState('design', draft.design || null);
+        ProjectFlow.setState('editProject', draft.editProject || null);
         Router.navigateTo('configure');
       }
     });

@@ -28,6 +28,7 @@ $cornices = array_filter($db['project_cornices'], function($c) use ($projectId) 
     return $c['project_id'] === $projectId;
 });
 
+$project['variants'] = projectVariants($project);
 $project['materials'] = $materials;
 $project['cornices'] = $cornices;
 
