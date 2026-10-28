@@ -1,6 +1,6 @@
 // === Подбор фасада: три экрана ===
-// 1. Материалы — плитка стен и цоколя, из какого камня изделия.
-// 2. Узоры — модели карнизов, плинтусов, окон, углов, колонн; карточки уже в камне своей группы.
+// 1. Плитка — стены и цоколь: камень, фаска, поверхность, формат, толщина.
+// 2. Узоры и материалы — у каждой части свой узор (изделие из каталога) и свой камень, выбор в окне сеткой.
 // 3. Итог — размер здания и спецификация (экран spec).
 
 const DEFAULT_MAIN_STONE = 'akushinskiy-kremovyy';
@@ -13,14 +13,6 @@ const TILE_DEFAULTS = {
   main: { stone: DEFAULT_MAIN_STONE, format: '300x600', thickness: 20, edge: 'chamfer', surface: 'sawn', layout: 'running', joint: 'light' },
   base: { stone: 'mekeginskiy', format: '300x600', thickness: 25, edge: 'chamfer', surface: 'split', layout: 'running', joint: 'grey' },
 };
-
-// Группы изделий: из какого камня делать. Значение: 'main' — как стены, 'base' — как цоколь, иначе id камня
-const STONE_GROUPS = [
-  { key: 'cornice', title: 'Карнизы, плинтусы, зубцы', icon: 'cornice' },
-  { key: 'windows', title: 'Окна: наличники, подоконники, замки', icon: 'opening' },
-  { key: 'corners', title: 'Углы дома — русты', icon: 'rust' },
-  { key: 'columns', title: 'Колонны и балюстрада', icon: 'column' },
-];
 
 // Узоры: часть фасада → разделы каталога, из которых выбирают. def — модель по умолчанию (по названию)
 const PATTERN_GROUPS = [
@@ -48,23 +40,22 @@ const PATTERN_GROUPS = [
     { key: 'finial', title: 'Навершие', sections: ['balustrade'], match: /^Навершие/ },
   ] },
 ];
-const PATTERN_ROWS = PATTERN_GROUPS.flatMap(g => g.rows.map(r => ({ ...r, group: g.group })));
+const PATTERN_ROWS = PATTERN_GROUPS.flatMap(g => g.rows);
 
 const Configurator = {
   spec: null,
   step: 1,
-  otherOpen: {},   // для каких групп раскрыт выбор «другой камень»
   bound: false,
 
   newSpec(mainStone) {
     const spec = {
-      version: 4,
+      version: 5,
       materials: {
         main: { ...TILE_DEFAULTS.main },
         base: { on: true, ...TILE_DEFAULTS.base },
-        groups: { cornice: DEFAULT_DECOR_STONE, windows: DEFAULT_DECOR_STONE, corners: DEFAULT_DECOR_STONE, columns: DEFAULT_DECOR_STONE },
       },
-      parts: Object.fromEntries(PATTERN_ROWS.map(r => [r.key, null])),
+      // У каждой части свой узор (изделие) и свой камень: 'main' — как стены, 'base' — как цоколь, иначе id камня
+      parts: Object.fromEntries(PATTERN_ROWS.map(r => [r.key, { item: null, stone: DEFAULT_DECOR_STONE }])),
       building: { floors: null, heightM: null },
       filled: false,  // модели по умолчанию ещё не подставлены
     };
@@ -85,8 +76,8 @@ const Configurator = {
     if (!ProjectFlow.getState('originalPhoto')) return Router.navigateTo('photo');
     this.bind();
     const draft = ProjectFlow.getState('design');
-    if (draft?.version === 4) this.spec = draft;
-    else if (this.spec?.version !== 4) { this.spec = this.newSpec(); this.step = 1; }
+    if (draft?.version === 5) this.spec = draft;
+    else if (this.spec?.version !== 5) { this.spec = this.newSpec(); this.step = 1; }
     const [stones, catalog] = await Promise.all([Materials.getStones(), Materials.getCatalog()]);
     this.stones = stones;
     this.catalog = catalog;
@@ -103,7 +94,7 @@ const Configurator = {
       if (!r.def) return;
       for (const sid of r.sections) {
         const item = this.catalog.sections.find(s => s.id === sid)?.items.find(i => r.def.test(i.name));
-        if (item) { this.spec.parts[r.key] = item.variants[0].id; break; }
+        if (item) { this.spec.parts[r.key].item = item.variants[0].id; break; }
       }
     });
     this.spec.filled = true;
@@ -113,12 +104,9 @@ const Configurator = {
     return this.stones.find(s => s.id === id) || this.stones[0];
   },
 
-  // Камень группы изделий: как стены, как цоколь или свой
-  groupStone(group) {
-    const m = this.spec.materials, v = m.groups[group];
-    if (v === 'main') return this.stone(m.main.stone);
-    if (v === 'base') return this.stone(m.base.on ? m.base.stone : m.main.stone);
-    return this.stone(v);
+  // Камень части: как стены, как цоколь или свой
+  partStone(key) {
+    return this.stone(resolveStone(this.spec, this.spec.parts[key].stone));
   },
 
   save() {
@@ -126,19 +114,17 @@ const Configurator = {
   },
 
   draw() {
-    document.getElementById('configure-title').textContent = this.step === 1 ? 'Материалы' : 'Узоры';
+    document.getElementById('configure-title').textContent = this.step === 1 ? 'Плитка' : 'Узоры и материалы';
     document.getElementById('configure-steps').innerHTML = flowSteps(this.step);
     document.getElementById('configure-hint').textContent = this.step === 1
-      ? 'Из чего фасад: плитка стен и цоколя, камень для карнизов, окон, углов и колонн.'
-      : 'Выберите модели. Карточки уже в камне своей группы, «Нет» — части не будет.';
+      ? 'Плитка стен и цоколя: камень, фаска, поверхность, формат, толщина.'
+      : 'Для каждой части выберите узор и камень. «Нет» в узоре — части не будет.';
     document.getElementById('configure-prev').hidden = this.step === 1;
     document.getElementById('configure-next').textContent = this.step === 1 ? 'Далее — узоры' : 'Далее — итог';
-    const box = document.getElementById('configure-parts');
-    box.innerHTML = this.step === 1 ? this.materialsHtml() : this.patternsHtml();
-    this.afterDraw(box);
+    this.redraw(true);
   },
 
-  // === Экран 1: материалы ===
+  // === Экран 1: плитка ===
   materialsHtml() {
     const m = this.spec.materials;
     return `
@@ -150,10 +136,6 @@ const Configurator = {
         <h3 class="cfg-block__title">${icon('base')} Цоколь
           <label class="switch"><input type="checkbox" data-base-on ${m.base.on ? 'checked' : ''}><span></span></label></h3>
         ${m.base.on ? this.tileHtml('base') : '<p class="cfg-off">Без цоколя из камня</p>'}
-      </section>
-      <section class="cfg-block">
-        <h3 class="cfg-block__title">${icon('cornice')} Камень изделий</h3>
-        ${STONE_GROUPS.map(g => this.groupStoneHtml(g)).join('')}
       </section>`;
   },
 
@@ -180,53 +162,31 @@ const Configurator = {
       ${this.chips(`tile:${key}:joint`, Object.entries(JOINT_COLORS).map(([k, l]) => [k, l.name]), part.joint)}`;
   },
 
-  groupStoneHtml(g) {
-    const m = this.spec.materials, v = m.groups[g.key];
-    const own = v !== 'main' && v !== 'base';
-    const open = own || this.otherOpen[g.key];
-    const opts = [['main', 'Как стены'], ...(m.base.on ? [['base', 'Как цоколь']] : []), ['other', 'Другой камень']];
-    return `
-      <div class="cfg-group">
-        <div class="cfg-group__head"><span>${g.title}</span><b>${esc(this.groupStone(g.key)?.name)}</b></div>
-        <div class="catalog-chips">${opts.map(([val, label]) => `
-          <button class="catalog-chip${(val === 'other' ? own : v === val) ? ' active' : ''}" data-group-stone="${g.key}" data-value="${val}">${label}</button>`).join('')}</div>
-        ${open ? this.stoneStrip(`group:${g.key}`, own ? v : null) : ''}
-      </div>`;
-  },
-
-  // === Экран 2: узоры ===
+  // === Экран 2: у каждой части — кнопки «Узор» и «Материал» ===
   patternsHtml() {
     return PATTERN_GROUPS.map(g => `
-      <section class="cfg-block" data-group="${g.group}">
-        <h3 class="cfg-block__title">${g.title}
-          <button class="cfg-stone" data-goto-materials title="Изменить камень">
-            <img src="${this.groupStone(g.group)?.texture}" alt="">${esc(this.groupStone(g.group)?.name)}</button></h3>
+      <section class="cfg-block">
+        <h3 class="cfg-block__title">${g.title}</h3>
         ${g.rows.map(r => this.rowHtml(r)).join('')}
       </section>`).join('');
   },
 
   rowHtml(r) {
-    const current = this.spec.parts[r.key];
-    const v = current ? this.catalog.variants[current] : null;
-    const cards = [];
-    r.sections.forEach(sid => {
-      const sec = this.catalog.sections.find(s => s.id === sid);
-      sec?.items.filter(i => !r.match || r.match.test(i.name)).forEach(item => item.variants.forEach(vv => {
-        if (r.skipTall && vv.tall) return;
-        cards.push(`
-          <button class="pick${vv.id === current ? ' active' : ''}" data-part="${r.key}" data-value="${vv.id}">
-            <span class="pick__img"><img src="${vv.image}" data-recolor="${vv.id}" alt="" loading="lazy"></span>
-            <span class="pick__name">${esc(item.name)}</span>
-            <span class="pick__size">${esc(vv.size)}${vv.look ? ` · вид ${vv.look}` : ''}</span>
-          </button>`);
-      }));
-    });
+    const part = this.spec.parts[r.key];
+    const v = part.item ? this.catalog.variants[part.item] : null;
+    const st = this.partStone(r.key);
     return `
-      <div class="cfg-row">
-        <div class="cfg-row__head"><span>${r.title}</span><b>${v ? esc(`${v.name} ${v.size}`) : 'Нет'}</b></div>
-        <div class="pick-strip">
-          <button class="pick${!current ? ' active' : ''}" data-part="${r.key}" data-value=""><span class="pick__img pick__none">—</span><span class="pick__name">Нет</span></button>
-          ${cards.join('')}
+      <div class="cfg-row" data-row="${r.key}">
+        <div class="cfg-row__title">${r.title}</div>
+        <div class="cfg-pair">
+          <button class="cfg-choice" data-open-pattern="${r.key}">
+            <span class="cfg-choice__img">${v ? `<img src="${v.image}" data-recolor="${v.id}" alt="">` : '<span class="pick__none">—</span>'}</span>
+            <span class="cfg-choice__text"><small>Узор</small><b>${v ? esc(v.name) : 'Нет'}</b>${v ? `<small>${esc(v.size)} мм</small>` : ''}</span>
+          </button>
+          <button class="cfg-choice" data-open-stone="${r.key}" ${v ? '' : 'disabled'}>
+            <span class="cfg-choice__img"><img class="cover" src="${st?.texture}" alt=""></span>
+            <span class="cfg-choice__text"><small>Материал</small><b>${esc(st?.name)}</b>${stoneNote(part.stone)}</span>
+          </button>
         </div>
       </div>`;
   },
@@ -245,7 +205,67 @@ const Configurator = {
       <button class="catalog-chip${iconHtml ? ' catalog-chip--icon' : ''}${String(value) === String(current) ? ' active' : ''}" data-set="${field}" data-value="${value}">${iconHtml || ''}${label}</button>`).join('')}</div>`;
   },
 
-  // Образцы плитки, перекраска изделий в камень группы, выбранное — в середину ленты
+  // === Окно выбора: сетка по 3 в ряд, выбор применяется кнопкой «Сохранить» ===
+  openPicker(kind, key) {
+    const r = PATTERN_ROWS.find(x => x.key === key);
+    const part = this.spec.parts[key];
+    let chosen = kind === 'stone' ? part.stone : part.item;
+    const cells = kind === 'stone' ? this.stoneCells() : this.patternCells(r);
+    showModal(`
+      <div class="picker" id="picker">
+        <div class="picker__head"><b>${kind === 'stone' ? 'Материал' : 'Узор'}</b><span>${r.title}</span></div>
+        <div class="picker__grid">${cells.map(c => `
+          <button class="picker__cell${String(c.value) === String(chosen ?? '') ? ' active' : ''}" data-value="${c.value}">
+            <span class="picker__img${c.cover ? ' picker__img--cover' : ''}">${c.img ? `<img src="${c.img}" ${c.recolor ? `data-recolor="${c.recolor}"` : ''} alt="" loading="lazy">` : '<span class="pick__none">—</span>'}</span>
+            <span class="picker__name">${esc(c.name)}</span>${c.note ? `<span class="picker__note">${esc(c.note)}</span>` : ''}
+          </button>`).join('')}</div>
+        <div class="picker__bar">
+          ${kind === 'stone' ? '<button class="btn btn-secondary" data-picker-all>Для всех изделий</button>' : ''}
+          <button class="btn btn-primary" data-picker-save>Сохранить</button>
+        </div>
+      </div>`);
+    const box = document.getElementById('picker');
+    if (kind === 'pattern') StonePreview.recolorAll(box, this.partStone(key), this.catalog.variants, 240);
+    box.querySelector('.picker__cell.active')?.scrollIntoView({ block: 'center' });
+    box.addEventListener('click', e => {
+      const cell = e.target.closest('.picker__cell');
+      if (cell) {
+        chosen = cell.dataset.value;
+        box.querySelectorAll('.picker__cell').forEach(c => c.classList.toggle('active', c === cell));
+        return;
+      }
+      const all = e.target.closest('[data-picker-all]');
+      if (!e.target.closest('[data-picker-save]') && !all) return;
+      if (kind === 'pattern') part.item = chosen || null;
+      else if (all) Object.values(this.spec.parts).forEach(p => { p.stone = chosen; });
+      else part.stone = chosen;
+      this.save();
+      closeModal();
+      this.redraw();
+      if (all) showToast('Камень выбран для всех изделий');
+    });
+  },
+
+  stoneCells() {
+    const m = this.spec.materials;
+    const cells = [{ value: 'main', name: 'Как стены', note: this.stone(m.main.stone)?.name, img: this.stone(m.main.stone)?.texture, cover: true }];
+    if (m.base.on) cells.push({ value: 'base', name: 'Как цоколь', note: this.stone(m.base.stone)?.name, img: this.stone(m.base.stone)?.texture, cover: true });
+    return cells.concat(this.stones.map(s => ({ value: s.id, name: s.name, img: s.texture, cover: true })));
+  },
+
+  patternCells(r) {
+    const cells = [{ value: '', name: 'Нет' }];
+    r.sections.forEach(sid => {
+      const sec = this.catalog.sections.find(s => s.id === sid);
+      sec?.items.filter(i => !r.match || r.match.test(i.name)).forEach(item => item.variants.forEach(v => {
+        if (r.skipTall && v.tall) return;
+        cells.push({ value: v.id, name: item.name, note: `${v.size}${v.look ? ` · вид ${v.look}` : ''}`, img: v.image, recolor: v.id });
+      }));
+    });
+    return cells;
+  },
+
+  // Образцы плитки и изделия в камне своей части
   afterDraw(box) {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     box.querySelectorAll('[data-preview]').forEach(c => {
@@ -258,21 +278,22 @@ const Configurator = {
       c.width = Math.round(c.clientWidth * dpr); c.height = Math.round(150 * dpr);
       StonePreview.renderSlab(c, { ...part, stone: this.stone(part.stone) });
     });
-    box.querySelectorAll('[data-group]').forEach(sec => StonePreview.recolorAll(sec, this.groupStone(sec.dataset.group), this.catalog.variants, 240));
-    box.querySelectorAll('.active').forEach(el => {
+    box.querySelectorAll('[data-row]').forEach(row => StonePreview.recolorAll(row, this.partStone(row.dataset.row), this.catalog.variants, 240));
+    box.querySelectorAll('.stone-strip .active').forEach(el => {
       const strip = el.parentElement;
       if (strip.scrollWidth > strip.clientWidth) strip.scrollLeft = el.offsetLeft - strip.clientWidth / 2 + el.clientWidth / 2;
     });
   },
 
-  // Перерисовать экран, сохранив прокрутку страницы и лент
-  redraw() {
+  // Перерисовать экран; без top — сохранить прокрутку страницы и лент образцов
+  redraw(top) {
     const box = document.getElementById('configure-parts');
-    const strips = [...box.querySelectorAll('.pick-strip, .stone-strip')].map(s => s.scrollLeft);
+    const strips = [...box.querySelectorAll('.stone-strip')].map(s => s.scrollLeft);
     const y = window.scrollY;
     box.innerHTML = this.step === 1 ? this.materialsHtml() : this.patternsHtml();
     this.afterDraw(box);
-    box.querySelectorAll('.pick-strip, .stone-strip').forEach((s, i) => { if (strips[i] != null) s.scrollLeft = strips[i]; });
+    if (top) return;
+    box.querySelectorAll('.stone-strip').forEach((s, i) => { if (strips[i] != null) s.scrollLeft = strips[i]; });
     window.scrollTo(0, y);
   },
 
@@ -287,36 +308,21 @@ const Configurator = {
   },
 
   onClick(e) {
-    if (e.target.closest('[data-goto-materials]')) return this.goStep(1);
-    const pick = e.target.closest('[data-part]');
-    if (pick) {
-      this.spec.parts[pick.dataset.part] = pick.dataset.value || null;
-      this.save();
-      return this.redraw();
-    }
-    const gs = e.target.closest('[data-group-stone]');
-    if (gs) {
-      const g = gs.dataset.groupStone, val = gs.dataset.value;
-      if (val === 'other') this.otherOpen[g] = true;
-      else { this.spec.materials.groups[g] = val; this.otherOpen[g] = false; }
-      this.save();
-      return this.redraw();
-    }
+    const pat = e.target.closest('[data-open-pattern]');
+    if (pat) return this.openPicker('pattern', pat.dataset.openPattern);
+    const st = e.target.closest('[data-open-stone]');
+    if (st) return this.openPicker('stone', st.dataset.openStone);
     const set = e.target.closest('[data-set]');
     if (set) {
-      const [kind, key, field] = set.dataset.set.split(':');
+      const [, key, field] = set.dataset.set.split(':');
       const value = set.dataset.value;
-      if (kind === 'group') {
-        this.spec.materials.groups[key] = value;
-      } else {
-        const part = this.spec.materials[key];
-        part[field] = field === 'thickness' ? +value : value;
-        // Новый камень может не выпускаться в выбранном формате или толщине
-        if (field === 'stone') {
-          const st = this.stone(value);
-          if (!st.formats.includes(part.format)) part.format = st.formats[0];
-          if (!st.thickness.includes(part.thickness)) part.thickness = st.thickness[0];
-        }
+      const part = this.spec.materials[key];
+      part[field] = field === 'thickness' ? +value : value;
+      // Новый камень может не выпускаться в выбранном формате или толщине
+      if (field === 'stone') {
+        const s = this.stone(value);
+        if (!s.formats.includes(part.format)) part.format = s.formats[0];
+        if (!s.thickness.includes(part.thickness)) part.thickness = s.thickness[0];
       }
       this.save();
       return this.redraw();
@@ -325,10 +331,7 @@ const Configurator = {
 
   onChange(e) {
     if (!e.target.matches('[data-base-on]')) return;
-    const m = this.spec.materials;
-    m.base.on = e.target.checked;
-    // Без цоколя «как цоколь» теряет смысл — такие группы берут камень стен
-    if (!m.base.on) Object.keys(m.groups).forEach(g => { if (m.groups[g] === 'base') m.groups[g] = 'main'; });
+    this.spec.materials.base.on = e.target.checked;
     this.save();
     this.redraw();
   },
@@ -349,9 +352,21 @@ const Configurator = {
   },
 };
 
-// Полоса шагов подбора: 1 Материалы · 2 Узоры · 3 Итог
+// Камень части: 'main' — как стены, 'base' — как цоколь (без цоколя — как стены), иначе id камня
+function resolveStone(spec, value) {
+  const m = spec.materials;
+  if (value === 'main') return m.main.stone;
+  if (value === 'base') return m.base.on ? m.base.stone : m.main.stone;
+  return value;
+}
+
+function stoneNote(value) {
+  return value === 'main' ? '<small>как стены</small>' : value === 'base' ? '<small>как цоколь</small>' : '';
+}
+
+// Полоса шагов подбора: 1 Плитка · 2 Узоры · 3 Итог
 function flowSteps(current) {
-  return ['Материалы', 'Узоры', 'Итог'].map((t, i) => `
+  return ['Плитка', 'Узоры', 'Итог'].map((t, i) => `
     <button class="flow-step${i + 1 === current ? ' active' : ''}${i + 1 < current ? ' done' : ''}" data-flow-step="${i + 1}">
       <span>${i + 1}</span>${t}</button>`).join('');
 }
@@ -371,6 +386,9 @@ const PARTS_V3 = [
   { key: 'columns', title: 'Колонны и пилястры', icon: 'column' },
   { key: 'balustrade', title: 'Балюстрада', icon: 'balustrade', type: 'balustrade' },
 ];
+// Группа камня частей в подборе версии 4
+const V4_GROUPS = { topCornice: 'cornice', floorCornice: 'cornice', baseCornice: 'cornice', dentils: 'cornice', frame: 'windows', sill: 'windows',
+  keystone: 'windows', console: 'windows', corners: 'corners', column: 'columns', capital: 'columns', baluster: 'columns', post: 'columns', rail: 'columns', finial: 'columns' };
 const ROW_ICONS = { topCornice: 'cornice', floorCornice: 'cornice', baseCornice: 'plinth', dentils: 'dentil', frame: 'opening', sill: 'opening',
   keystone: 'opening', console: 'opening', corners: 'rust', column: 'column', capital: 'column', baluster: 'balustrade', post: 'balustrade', rail: 'balustrade', finial: 'balustrade' };
 
@@ -382,14 +400,25 @@ function tileDetails(part) {
 function specLines(spec, stones, catalog) {
   const stoneById = id => stones.find(s => s.id === id);
   const lines = [];
-  if (spec?.version === 4) {
+  if (spec?.version === 5) {
+    const m = spec.materials;
+    lines.push(['wall', 'Стены — плитка', stoneById(m.main.stone)?.name || '', tileDetails(m.main), stoneById(m.main.stone)?.texture]);
+    if (m.base.on) lines.push(['base', 'Цоколь', stoneById(m.base.stone)?.name || '', tileDetails(m.base), stoneById(m.base.stone)?.texture]);
+    PATTERN_ROWS.forEach(r => {
+      const part = spec.parts[r.key];
+      const v = catalog.variants[part?.item];
+      const sid = resolveStone(spec, part?.stone);
+      if (v) lines.push([ROW_ICONS[r.key], r.title, v.name, `${v.size} мм, ${stoneById(sid)?.name || ''}`, v.image, v.id, sid]);
+    });
+  } else if (spec?.version === 4) {
+    // Подбор с камнем по группам (недолго был на сайте)
     const m = spec.materials;
     const groupStone = g => (m.groups[g] === 'main' ? m.main.stone : m.groups[g] === 'base' ? (m.base.on ? m.base.stone : m.main.stone) : m.groups[g]);
     lines.push(['wall', 'Стены — плитка', stoneById(m.main.stone)?.name || '', tileDetails(m.main), stoneById(m.main.stone)?.texture]);
     if (m.base.on) lines.push(['base', 'Цоколь', stoneById(m.base.stone)?.name || '', tileDetails(m.base), stoneById(m.base.stone)?.texture]);
     PATTERN_ROWS.forEach(r => {
       const v = catalog.variants[spec.parts[r.key]];
-      const sid = groupStone(r.group);
+      const sid = groupStone(V4_GROUPS[r.key]);
       if (v) lines.push([ROW_ICONS[r.key], r.title, v.name, `${v.size} мм, ${stoneById(sid)?.name || ''}`, v.image, v.id, sid]);
     });
   } else {
@@ -453,7 +482,7 @@ const Spec = {
 
   async render() {
     const spec = ProjectFlow.getState('design');
-    if (!spec || spec.version !== 4) return Router.navigateTo('configure');
+    if (!spec || spec.version !== 5) return Router.navigateTo('configure');
     this.bind();
     document.getElementById('spec-steps').innerHTML = flowSteps(3);
     const [stones, catalog] = await Promise.all([Materials.getStones(), Materials.getCatalog()]);
@@ -563,7 +592,7 @@ const Spec = {
 
 // Список материалов в карточке сохранённого проекта
 function summarizeDesign(design, stones, catalog) {
-  if (design?.version === 3 || design?.version === 4) return specHtml(design, stones, catalog);
+  if ([3, 4, 5].includes(design?.version)) return specHtml(design, stones, catalog);
   return '';
 }
 
