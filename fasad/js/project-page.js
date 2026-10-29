@@ -252,9 +252,22 @@ const ProjectPage = {
     this.watch();
   },
 
+  // Что отправить: картинку или коммерческое предложение со сметой
   share() {
     const v = this.variant(this.sel);
-    shareProject(this.project.name, v?.generated_image || this.project.original_image);
+    showModal(`
+      <div class="sheet-list">
+        <h3 class="sheet-title">Отправить заказчику</h3>
+        <button class="sheet-item" data-send="kp">${icon('edit')}<span><b>Коммерческое предложение</b><small>PDF: фото, смета, сроки и ваши контакты</small></span></button>
+        <button class="sheet-item" data-send="image">${icon('gallery')}<span><b>Только картинку</b><small>фото «после» в мессенджер</small></span></button>
+      </div>`);
+    document.querySelector('.sheet-list').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-send]');
+      if (!b) return;
+      closeModal();
+      if (b.dataset.send === 'kp') KP.open(this.project.id, v?.id);
+      else shareProject(this.project.name, v?.generated_image || this.project.original_image);
+    });
   },
 
   // «Ещё»: редкие действия одним списком

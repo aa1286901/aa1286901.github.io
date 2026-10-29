@@ -90,6 +90,17 @@ const Api = {
       : this.request('./admin/ai-key.php');
   },
 
+  // КП: данные и цены прораба (без data — прочитать)
+  async kpProfile(data = null) {
+    return data ? this.request('./user/kp.php', { method: 'POST', body: JSON.stringify(data) }) : this.request('./user/kp.php');
+  },
+
+  // КП проекта (без kp — прочитать; issue — выдаётся новый PDF, номер растёт)
+  async projectKp(projectId, kp = null, issue = false) {
+    return kp ? this.request('./projects/kp.php', { method: 'POST', body: JSON.stringify({ project_id: projectId, kp, issue }) })
+      : this.request(`./projects/kp.php?project_id=${projectId}`);
+  },
+
   // Контакты поддержки
   async getSupport() {
     return this.request('./support.php');
