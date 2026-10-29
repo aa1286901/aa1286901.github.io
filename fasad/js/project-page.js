@@ -2,6 +2,44 @@
 // Одно фото — несколько вариантов подбора, у каждого своя картинка от ИИ.
 // Фото: картинка варианта; «До и после» включает ползунок; нажатие — на весь экран с увеличением.
 
+// Чем рисовать: прораб выбирает сам, выбор запоминается на телефоне
+const AI_MODELS = [
+  { id: 'nano-banana-2-1', name: 'Nano Banana', note: 'Google · ~30 с', wait: 'обычно 30–60 секунд' },
+  { id: 'gpt-image-2-5-sunburst-image-to-image', name: 'GPT Image 2.5', note: 'OpenAI · ~1,5 мин', wait: 'обычно 1–2 минуты' },
+];
+
+const AiChoice = {
+  get() {
+    let id = null;
+    try { id = localStorage.getItem('fasad-ai-model'); } catch (e) { /* без хранилища — по умолчанию */ }
+    return AI_MODELS.some(m => m.id === id) ? id : AI_MODELS[0].id;
+  },
+  set(id) {
+    try { localStorage.setItem('fasad-ai-model', id); } catch (e) { /* не запомнится — не страшно */ }
+    this.render();
+  },
+  wait(id) {
+    return AI_MODELS.find(m => m.id === id)?.wait || 'обычно 30–90 секунд';
+  },
+  name(id) {
+    return AI_MODELS.find(m => m.id === id)?.name || '';
+  },
+  // Переключатель на странице проекта и на последнем экране подбора
+  render() {
+    const cur = this.get();
+    document.querySelectorAll('[data-ai-pick]').forEach(box => {
+      box.innerHTML = `<span class="ai-pick__label">${icon('sparkle')}Рисует</span>
+        <div class="ai-pick__seg">${AI_MODELS.map(m => `
+          <button class="${m.id === cur ? 'active' : ''}" data-ai-model="${m.id}"><b>${m.name}</b><small>${m.note}</small></button>`).join('')}</div>`;
+    });
+  },
+};
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-ai-model]');
+  if (b) AiChoice.set(b.dataset.aiModel);
+});
+
 const ProjectPage = {
   project: null,
   sel: null,         // id выбранного варианта
@@ -37,7 +75,7 @@ const ProjectPage = {
   async generate(projectId, variantId, design) {
     const [stones, catalog] = await Promise.all([Materials.getStones(), Materials.getCatalog()]);
     const task = aiTask(design, stones, catalog);
-    return Api.projectVariant(projectId, 'generate', { variant_id: variantId, ...task });
+    return Api.projectVariant(projectId, 'generate', { variant_id: variantId, model: AiChoice.get(), ...task });
   },
 
   // Пока ИИ рисует — раз в 5 секунд спрашиваем сервер; готовая картинка сразу появляется
@@ -70,6 +108,7 @@ const ProjectPage = {
     document.getElementById('project-title').textContent = p.name || 'Проект';
     this.renderPhoto(v);
     this.renderHead(v);
+    AiChoice.render();
     this.renderActions(v);
     this.renderStrip();
     const box = document.getElementById('project-details');
@@ -88,7 +127,7 @@ const ProjectPage = {
     const photo = this.project.original_image;
     const img = v?.generated_image;
     const slider = this.slider && img;
-    const note = this.busy(v) ? 'ИИ рисует картинку — обычно 30–90 секунд'
+    const note = this.busy(v) ? `${this.aiName(v) || 'ИИ'} рисует картинку — ${AiChoice.wait(v.ai.model)}`
       : img ? '' : v?.ai?.status === 'failed' ? v.ai.error : 'Нажмите «Сгенерировать» — ИИ нарисует облицовку на этом фото';
     box.innerHTML = `
       <div class="photo__frame${slider ? ' photo__frame--slider' : ''}" style="--cut:50%">
@@ -125,10 +164,15 @@ const ProjectPage = {
 
   renderHead(v) {
     const n = this.index(this.sel);
-    const state = this.busy(v) ? ['busy', 'ИИ рисует…'] : v?.generated_image ? ['done', 'Готово']
+    const by = this.aiName(v);
+    const state = this.busy(v) ? ['busy', `${by || 'ИИ'} рисует…`] : v?.generated_image ? ['done', by ? `Готово · ${by}` : 'Готово']
       : v?.ai?.status === 'failed' ? ['failed', 'Не получилось'] : ['wait', 'Без картинки'];
     document.getElementById('variant-head').innerHTML = `
       <b>Вариант ${n}</b><span class="variant-state variant-state--${state[0]}">${state[1]}</span>`;
+  },
+
+  aiName(v) {
+    return AiChoice.name(v?.ai?.model) || (v?.ai?.model ? 'ИИ' : '');
   },
 
   renderStrip() {
@@ -187,7 +231,7 @@ const ProjectPage = {
       try {
         const res = await this.generate(this.project.id, v.id, v.design);
         this.project.variants = res.data.variants;
-        showToast('ИИ начал рисовать — обычно 30–90 секунд');
+        showToast(`${AiChoice.name(AiChoice.get())} начал рисовать — ${AiChoice.wait(AiChoice.get())}`);
       } catch (err) {
         showToast(err.message || 'Не удалось запустить генерацию');
       }
