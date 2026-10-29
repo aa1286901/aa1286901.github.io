@@ -14,12 +14,17 @@ define('MAX_FILE_SIZE', 10 * 1024 * 1024); // 10MB
 define('ALLOWED_TYPES', ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']);
 define('ALLOWED_EXTENSIONS', ['jpg', 'jpeg', 'png', 'webp']);
 
-// Session
+// Session. Сама сессия на хостинге живёт недолго, поэтому вход держит ещё и долгий токен
+// «запомнить меня» (кука fasad_remember на год): по нему сессия восстанавливается сама.
+define('REMEMBER_COOKIE', 'fasad_remember');
+define('REMEMBER_DAYS', 365);
+define('IS_HTTPS', ($_SERVER['HTTPS'] ?? '') === 'on' || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
 if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.gc_maxlifetime', (string)(30 * 86400));
     session_set_cookie_params([
-        'lifetime' => 0,
+        'lifetime' => 30 * 86400,
         'path' => '/',
-        'secure' => false,
+        'secure' => IS_HTTPS,
         'httponly' => true,
         'samesite' => 'Lax',
     ]);
@@ -151,10 +156,74 @@ function getJsonBody() {
 }
 
 function requireAuth() {
-    if (!isset($_SESSION['user_id'])) {
+    $userId = currentUserId();
+    if ($userId === null) {
         respondError('Не авторизован', 401);
     }
-    return $_SESSION['user_id'];
+    return $userId;
+}
+
+// Кто вошёл: из сессии, а если она истекла — по токену «запомнить меня»
+function currentUserId() {
+    if (isset($_SESSION['user_id'])) return $_SESSION['user_id'];
+    $cookie = (string)($_COOKIE[REMEMBER_COOKIE] ?? '');
+    if (!preg_match('/^(\d+)\.([a-f0-9]{64})$/', $cookie, $m)) return null;
+    $db = getDB();
+    $hash = hash('sha256', $m[2]);
+    foreach ($db['users'] as $i => $u) {
+        if ($u['id'] !== (int)$m[1]) continue;
+        foreach ($u['remember'] ?? [] as $j => $t) {
+            if (!hash_equals($t['hash'], $hash) || $t['expires'] < date('Y-m-d H:i:s')) continue;
+            session_regenerate_id(true);
+            $_SESSION['user_id'] = $u['id'];
+            // Пользуется — продлеваем ещё на год
+            $db['users'][$i]['remember'][$j]['expires'] = date('Y-m-d H:i:s', strtotime('+' . REMEMBER_DAYS . ' days'));
+            saveDB($db);
+            setRememberCookie("{$u['id']}.{$m[2]}");
+            return $u['id'];
+        }
+    }
+    setRememberCookie('');  // токен устарел или отозван
+    return null;
+}
+
+function setRememberCookie($value) {
+    setcookie(REMEMBER_COOKIE, $value, [
+        'expires' => $value === '' ? time() - 3600 : time() + REMEMBER_DAYS * 86400,
+        'path' => '/',
+        'secure' => IS_HTTPS,
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+}
+
+// После входа или регистрации: новый токен на это устройство (у каждого до 10 устройств)
+function rememberUser(&$db, $userId) {
+    $token = bin2hex(random_bytes(32));
+    $now = date('Y-m-d H:i:s');
+    foreach ($db['users'] as $i => $u) {
+        if ($u['id'] !== $userId) continue;
+        $tokens = array_values(array_filter($u['remember'] ?? [], fn($t) => $t['expires'] > $now));
+        $tokens[] = ['hash' => hash('sha256', $token), 'expires' => date('Y-m-d H:i:s', strtotime('+' . REMEMBER_DAYS . ' days')), 'created_at' => $now];
+        $db['users'][$i]['remember'] = array_slice($tokens, -10);
+    }
+    saveDB($db);
+    setRememberCookie("$userId.$token");
+}
+
+// Выход: отозвать токен этого устройства
+function forgetUser() {
+    $cookie = (string)($_COOKIE[REMEMBER_COOKIE] ?? '');
+    if (preg_match('/^(\d+)\.([a-f0-9]{64})$/', $cookie, $m)) {
+        $db = getDB();
+        $hash = hash('sha256', $m[2]);
+        foreach ($db['users'] as $i => $u) {
+            if ($u['id'] !== (int)$m[1]) continue;
+            $db['users'][$i]['remember'] = array_values(array_filter($u['remember'] ?? [], fn($t) => !hash_equals($t['hash'], $hash)));
+        }
+        saveDB($db);
+    }
+    setRememberCookie('');
 }
 
 // Варианты проекта. У проектов, сохранённых до вариантов, единственный вариант — их подбор и картинка

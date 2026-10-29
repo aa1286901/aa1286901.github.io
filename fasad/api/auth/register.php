@@ -42,7 +42,9 @@ $newUser = [
 $db['users'][] = $newUser;
 saveDB($db);
 
+session_regenerate_id(true);
 $_SESSION['user_id'] = $newUser['id'];
+rememberUser($db, $newUser['id']);
 
 respondSuccess([
     'id' => $newUser['id'],
