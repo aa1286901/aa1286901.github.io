@@ -116,36 +116,94 @@ function projectCardMeta(project) {
   return `<div class="project-card__meta"><span>${n} ${word}</span>${done ? '<span class="project-card__ok">✓ есть картинка</span>' : '<span>без картинки</span>'}</div>`;
 }
 
+// Карточка проекта. Смахнуть влево — справа «Переименовать» и «Удалить»
 function renderProjectCard(project, onClick = null) {
-  const card = document.createElement('div');
-  card.className = 'project-card';
-  card.innerHTML = `
-    <div class="project-card__thumb">
-      <img src="${project.generated_image || project.original_image}" alt="" loading="lazy">
-    </div>
-    <div class="project-card__info">
-      <div class="project-card__name">${esc(project.name)}</div>
-      <div class="project-card__date">${formatDate(project.created_at)}</div>
-      ${projectCardMeta(project)}
-    </div>
-    <div class="project-card__menu">
-      <button class="project-card__btn" data-rename="${project.id}" aria-label="Переименовать проект">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>
+  const wrap = document.createElement('div');
+  wrap.className = 'swipe';
+  wrap.innerHTML = `
+    <div class="swipe__actions">
+      <button class="swipe__btn swipe__btn--rename" data-rename="${project.id}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>
+        Название
       </button>
-      <button class="project-card__btn project-card__btn--danger" data-delete="${project.id}" aria-label="Удалить проект">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+      <button class="swipe__btn swipe__btn--delete" data-delete="${project.id}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        Удалить
       </button>
+    </div>
+    <div class="project-card">
+      <div class="project-card__thumb">
+        <img src="${project.generated_image || project.original_image}" alt="" loading="lazy">
+      </div>
+      <div class="project-card__info">
+        <div class="project-card__name">${esc(project.name)}</div>
+        <div class="project-card__date">${formatDateTime(project.created_at)}</div>
+        ${projectCardMeta(project)}
+      </div>
     </div>
   `;
-
-  if (onClick) {
-    card.addEventListener('click', (e) => {
-      if (!e.target.closest('[data-delete], [data-rename]')) onClick(project);
-    });
-  }
-
-  return card;
+  const card = wrap.querySelector('.project-card');
+  bindSwipe(wrap, card);
+  card.addEventListener('click', () => {
+    if (wrap.dataset.swiped) return;              // только что смахнули — это не нажатие
+    if (wrap.classList.contains('open')) return setSwipeOpen(wrap, false);
+    if (onClick) onClick(project);
+  });
+  // После действия карточка закрывается
+  wrap.querySelector('.swipe__actions').addEventListener('click', () => setSwipeOpen(wrap, false));
+  return wrap;
 }
+
+const SWIPE_W = 168;  // ширина двух кнопок справа
+
+function setSwipeOpen(wrap, open) {
+  const card = wrap.querySelector('.project-card');
+  wrap.classList.toggle('open', open);
+  card.style.transform = open ? `translateX(-${SWIPE_W}px)` : '';
+  if (open) {
+    document.querySelectorAll('.swipe.open').forEach(w => { if (w !== wrap) setSwipeOpen(w, false); });
+    try { localStorage.setItem('fasad-swipe-hint', '1'); } catch (e) { /* не запомнится — подсказка покажется ещё раз */ }
+    document.getElementById('swipe-hint')?.remove();
+  }
+}
+
+// Горизонтальное движение пальцем двигает карточку; вертикальное — обычная прокрутка списка
+function bindSwipe(wrap, card) {
+  let x0 = 0, y0 = 0, dx = 0, axis = null, down = false;
+  card.addEventListener('pointerdown', (e) => {
+    down = true; axis = null; dx = 0;
+    x0 = e.clientX; y0 = e.clientY;
+  });
+  card.addEventListener('pointermove', (e) => {
+    if (!down) return;
+    const mx = e.clientX - x0, my = e.clientY - y0;
+    if (axis === null) {
+      if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+      axis = Math.abs(mx) > Math.abs(my) ? 'x' : 'y';
+      if (axis === 'x') { card.setPointerCapture?.(e.pointerId); card.style.transition = 'none'; }
+    }
+    if (axis !== 'x') return;
+    const base = wrap.classList.contains('open') ? -SWIPE_W : 0;
+    dx = Math.max(-SWIPE_W - 40, Math.min(0, base + mx));
+    card.style.transform = `translateX(${dx}px)`;
+  });
+  const end = () => {
+    if (!down) return;
+    down = false;
+    if (axis !== 'x') return;
+    card.style.transition = '';
+    setSwipeOpen(wrap, dx < -SWIPE_W / 2);
+    wrap.dataset.swiped = '1';
+    setTimeout(() => delete wrap.dataset.swiped, 60);
+  };
+  card.addEventListener('pointerup', end);
+  card.addEventListener('pointercancel', end);
+}
+
+// Нажатие мимо открытой карточки закрывает её
+document.addEventListener('pointerdown', (e) => {
+  if (!e.target.closest('.swipe.open')) document.querySelectorAll('.swipe.open').forEach(w => setSwipeOpen(w, false));
+});
 
 // === Catalog Card Renderer ===
 function renderCatalogCard(material, onClick = null) {
@@ -186,15 +244,27 @@ function renderCarousel(items, renderItem, selectedIds = [], onSelect = null) {
 }
 
 // === Date Formatter ===
+// «2026-10-29 14:25:00» с сервера: Safari на iPhone понимает его только с «T»
+function parseDate(dateStr) {
+  return new Date(String(dateStr || '').replace(' ', 'T'));
+}
+
 function formatDate(dateStr) {
-  const date = new Date(dateStr);
+  const date = parseDate(dateStr);
   const months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
   return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
 }
 
+// Дата и время: «29 окт 2026, 14:25»
+function formatDateTime(dateStr) {
+  const date = parseDate(dateStr);
+  if (isNaN(date)) return '';
+  return `${formatDate(dateStr)}, ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
+
 // === Full Date Formatter ===
 function formatFullDate(dateStr) {
-  const date = new Date(dateStr);
+  const date = parseDate(dateStr);
   const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
   return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
 }

@@ -102,6 +102,10 @@ async function loadProjectsList() {
     }
 
     list.innerHTML = '';
+    // Подсказка, пока человек ни разу не смахнул карточку
+    let hinted = false;
+    try { hinted = !!localStorage.getItem('fasad-swipe-hint'); } catch (e) { /* без хранилища — покажем */ }
+    if (!hinted) list.insertAdjacentHTML('beforeend', '<p class="swipe-hint" id="swipe-hint">← Смахните проект влево, чтобы переименовать или удалить</p>');
     projects.forEach(project => {
       const card = renderProjectCard(project, (p) => {
         openProject(p.id);

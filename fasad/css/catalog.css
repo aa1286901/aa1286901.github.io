@@ -2864,3 +2864,71 @@
   padding: 0 12px;
   font-size: var(--font-size-sm);
 }
+
+/* Список проектов: смахнуть влево — «Название» и «Удалить» */
+.swipe {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-surface-alt);
+}
+
+.swipe__actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  width: 168px;
+}
+
+.swipe__btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  color: #fff;
+  font: inherit;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.swipe__btn--rename {
+  background: var(--color-accent-dark);
+}
+
+.swipe__btn--delete {
+  background: var(--color-error);
+}
+
+.swipe .project-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  touch-action: pan-y;
+  transition: transform 0.25s var(--ease-out, ease);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.swipe .project-card:active {
+  transform: none;
+}
+
+.swipe.open .project-card {
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+
+.swipe .project-card__thumb img {
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.swipe-hint {
+  margin: -4px 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
