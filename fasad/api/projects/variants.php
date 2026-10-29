@@ -4,7 +4,7 @@
 //   add      { design }       — новый вариант с подбором (картинка появится после генерации)
 //   star     { variant_id }   — отметить «Выбран клиентом» (повторно — снять)
 //   delete   { variant_id }   — удалить вариант (последний удалить нельзя)
-//   generate { variant_id, prompt, refs } — поставить генерацию картинки ИИ (refs — образцы камня и изделий)
+//   generate { variant_id, prompt, refs, model? } — поставить генерацию картинки ИИ (refs — образцы камня и изделий)
 //   poll                      — проверить идущие генерации, готовые картинки сохранить в проект
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../ai.php';
@@ -85,6 +85,8 @@ if ($action === 'add') {
         if (is_string($ref) && preg_match('#^assets/(textures/stones|ai)/[a-z0-9-]+\.jpg$#', $ref)) $refs[] = $ref;
     }
     $cfg = aiConfig();
+    $model = (string)($body['model'] ?? '');
+    if (isset(AI_MODELS[$model])) $cfg['model'] = $model;  // выбор прораба: Nano Banana или GPT Image
     $project['variants'][$found]['ai'] = aiStart($cfg, $project['original_image'], $prompt, array_values(array_unique($refs)));
 } elseif ($action === 'poll') {
     $cfg = null;

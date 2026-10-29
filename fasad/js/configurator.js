@@ -495,6 +495,7 @@ const Spec = {
     const edit = ProjectFlow.getState('editProject');
     document.getElementById('spec-save').textContent = edit ? 'Сохранить вариант' : 'Сохранить в проекты';
     document.getElementById('spec-generate').textContent = edit ? 'Сохранить и сгенерировать' : 'Сгенерировать фасад';
+    AiChoice.render();
     document.getElementById('spec-edit-note').hidden = !edit;
     if (edit) document.getElementById('spec-edit-note').textContent = `Новый вариант проекта «${edit.name || 'Проект'}». Прежние варианты останутся.`;
     const [stones, catalog] = await Promise.all([Materials.getStones(), Materials.getCatalog()]);
