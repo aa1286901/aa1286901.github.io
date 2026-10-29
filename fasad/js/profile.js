@@ -48,10 +48,11 @@ async function renderProfile() {
       <div class="me">
         <div class="me__avatar">${esc(initials(user.name))}</div>
         <div class="me__text">
-          <b>${esc(user.name)}</b>
+          <button class="me__name" id="profile-rename" aria-label="Изменить имя"><b>${esc(user.name)}</b>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>
           <span>${esc(user.email)}</span>
+          ${admin ? '<em class="me__badge">Администратор</em>' : ''}
         </div>
-        ${admin ? '<span class="me__badge">Администратор</span>' : ''}
       </div>
 
       ${w ? `
@@ -91,6 +92,18 @@ async function renderProfile() {
       <button class="btn btn-ghost btn-full profile-logout" id="profile-logout">${PROFILE_ICONS.logout}Выйти из аккаунта</button>
     `;
 
+    document.getElementById('profile-rename')?.addEventListener('click', async () => {
+      const name = await showPrompt('Ваше имя', user.name, 'Сохранить', 'Как вас зовут');
+      if (!name || name === user.name) return;
+      try {
+        await Api.updateProfile({ name });
+        user.name = name;
+        showToast('Имя сохранено');
+        renderProfile();
+      } catch (err) {
+        showToast(err.message || 'Не удалось сохранить имя');
+      }
+    });
     const go = (id, screen) => document.getElementById(id)?.addEventListener('click', () => Router.navigateTo(screen));
     go('profile-favorites', 'favorites');
     go('profile-tips', 'tips');
