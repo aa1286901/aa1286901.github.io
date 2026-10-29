@@ -128,6 +128,10 @@ function aiErrorText($msg) {
     if (stripos($msg, 'inappropriate') !== false || stripos($msg, 'sensitive') !== false) {
         return 'ИИ отклонил фото (сработал фильтр) — попробуйте другое фото или ещё раз';
     }
-    if ($msg === '' || stripos($msg, 'internal') !== false) return 'ИИ не смог нарисовать — попробуйте ещё раз';
+    if (stripos($msg, 'credit') !== false || stripos($msg, 'balance') !== false) return 'На балансе kie.ai закончились кредиты';
+    if ($msg === '' || stripos($msg, 'internal') !== false || stripos($msg, 'response exception') !== false) {
+        return 'ИИ не смог нарисовать — попробуйте ещё раз или выберите другую модель';
+    }
+    $msg = trim(explode('|', $msg)[0]);  // kie.ai дублирует текст по-китайски после «|»
     return "ИИ не смог нарисовать: $msg — попробуйте ещё раз";
 }
