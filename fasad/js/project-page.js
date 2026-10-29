@@ -42,8 +42,7 @@ const AiChoice = {
             <small>${coin('plain')}${m.coins} ${coinsWord(m.coins)} · ${m.note}</small></button>`).join('')}</div>`;
     });
     // Цена на кнопках генерации
-    const gen = document.getElementById('project-generate');
-    if (gen && ProjectPage.project) ProjectPage.renderActions(ProjectPage.variant(ProjectPage.sel));
+    if (ProjectPage.project && document.getElementById('project-main')) ProjectPage.renderMain(ProjectPage.variant(ProjectPage.sel));
     Spec.renderCost?.();
   },
 };
@@ -124,10 +123,9 @@ const ProjectPage = {
     const v = this.variant(this.sel);
     document.getElementById('project-title').textContent = p.name || 'Проект';
     this.renderPhoto(v);
-    this.renderHead(v);
-    AiChoice.render();
-    this.renderActions(v);
     this.renderStrip();
+    this.renderHead(v);
+    this.renderMain(v);
     const box = document.getElementById('project-details');
     const rows = summarizeDesign(v?.design, this.stones, this.catalog);
     box.innerHTML = (rows || '<p class="configure-hint">У этого варианта нет подбора.</p>') + `
@@ -138,14 +136,13 @@ const ProjectPage = {
     recolorSpec(box, this.stones, this.catalog);
   },
 
-  // Фото варианта; без картинки ИИ — фото заказчика с подписью
+  // Фото варианта. Поверх — «До / После» и «на весь экран»; нажатие на фото тоже открывает его целиком
   renderPhoto(v) {
     const box = document.getElementById('project-photo');
     const photo = this.project.original_image;
     const img = v?.generated_image;
     const slider = this.slider && img;
-    const note = this.busy(v) ? `${this.aiName(v) || 'ИИ'} рисует картинку — ${AiChoice.wait(v.ai.model)}`
-      : img ? '' : v?.ai?.status === 'failed' ? v.ai.error : 'Нажмите «Сгенерировать» — ИИ нарисует облицовку на этом фото';
+    const note = this.busy(v) ? '' : img ? '' : v?.ai?.status === 'failed' ? v.ai.error : 'Это фото без облицовки — нажмите «Нарисовать фасад»';
     box.innerHTML = `
       <div class="photo__frame${slider ? ' photo__frame--slider' : ''}" style="--cut:50%">
         <img class="photo__img" src="${slider ? photo : img || photo}" alt="">
@@ -154,19 +151,18 @@ const ProjectPage = {
           <span class="photo__label photo__label--a">До</span><span class="photo__label photo__label--b">После</span>` : ''}
         ${note ? `<span class="photo__note">${esc(note)}</span>` : ''}
         ${this.busy(v) ? '<span class="photo__busy"></span>' : ''}
-      </div>
-      <div class="photo__tools">
-        ${img ? `<button class="photo__tool${slider ? ' active' : ''}" id="photo-slider" aria-pressed="${!!slider}">
-          ${icon('compare')}До и после</button>` : ''}
-        <button class="photo__tool" id="photo-zoom">${icon('zoom-in')}Увеличить</button>
+        ${img ? `<button class="photo__pill${slider ? ' active' : ''}" id="photo-slider">${icon('compare')}${slider ? 'Скрыть «до»' : 'До / После'}</button>` : ''}
+        <button class="photo__round" id="photo-zoom" aria-label="На весь экран">${icon('fit')}</button>
       </div>`;
     const frame = box.querySelector('.photo__frame');
     if (slider) bindSlider(frame);
-    else frame.addEventListener('click', () => this.openViewer());
-    document.getElementById('photo-zoom').addEventListener('click', () => this.openViewer());
-    document.getElementById('photo-slider')?.addEventListener('click', () => {
-      this.slider = !this.slider;
-      this.renderPhoto(this.variant(this.sel));
+    frame.addEventListener('click', (e) => {
+      if (e.target.closest('#photo-slider')) {
+        e.stopPropagation();
+        this.slider = !this.slider;
+        return this.renderPhoto(this.variant(this.sel));
+      }
+      if (e.target.closest('#photo-zoom') || !slider) this.openViewer();
     });
   },
 
@@ -180,40 +176,109 @@ const ProjectPage = {
   },
 
   renderHead(v) {
-    const n = this.index(this.sel);
-    const by = this.aiName(v);
-    const state = this.busy(v) ? ['busy', `${by || 'ИИ'} рисует…`] : v?.generated_image ? ['done', by ? `Готово · ${by}` : 'Готово']
-      : v?.ai?.status === 'failed' ? ['failed', 'Не получилось'] : ['wait', 'Без картинки'];
+    const n = this.index(this.sel), all = (this.project.variants || []).length;
+    const state = this.busy(v) ? ['busy', 'ИИ рисует…'] : v?.generated_image ? ['done', 'Готово']
+      : v?.ai?.status === 'failed' ? ['failed', 'Не получилось'] : ['wait', 'Без облицовки'];
     document.getElementById('variant-head').innerHTML = `
-      <b>Вариант ${n}</b><span class="variant-state variant-state--${state[0]}">${state[1]}</span>`;
+      <b>Вариант ${n}${all > 1 ? `<small> из ${all}</small>` : ''}</b><span class="variant-state variant-state--${state[0]}">${state[1]}</span>`;
   },
 
   aiName(v) {
     return AiChoice.name(v?.ai?.model) || (v?.ai?.model ? 'ИИ' : '');
   },
 
+  // Лента вариантов сразу под фото — как галерея
   renderStrip() {
     const vs = this.project.variants || [];
-    document.getElementById('project-variants-title').textContent = `Варианты (${vs.length})`;
     document.getElementById('project-variants').innerHTML = vs.map((v, i) => `
-        <button class="variant${v.id === this.sel ? ' active' : ''}" data-variant="${v.id}">
+        <button class="variant${v.id === this.sel ? ' active' : ''}" data-variant="${v.id}" aria-label="Вариант ${i + 1}">
           <span class="variant__img"><img src="${v.generated_image || this.project.original_image}" alt="" loading="lazy">
-            ${this.busy(v) ? '<span class="variant__wait variant__wait--busy">рисует…</span>'
-              : v.generated_image ? '' : v.ai?.status === 'failed' ? '<span class="variant__wait variant__wait--failed">ошибка</span>' : '<span class="variant__wait">без ИИ</span>'}</span>
-          <span class="variant__name">Вариант ${i + 1}</span>
+            ${this.busy(v) ? '<span class="variant__wait variant__wait--busy">…</span>'
+              : v.ai?.status === 'failed' && !v.generated_image ? '<span class="variant__wait variant__wait--failed">!</span>' : ''}
+            <span class="variant__num">${i + 1}</span></span>
         </button>`).join('') + `
-      <button class="variant variant--new" data-variant-new>
-        <span class="variant__img"><span>＋</span></span><span class="variant__name">Новый</span>
+      <button class="variant variant--new" data-variant-new aria-label="Новый вариант">
+        <span class="variant__img"><span>＋</span></span>
       </button>`;
     document.querySelector('#project-variants .active')?.scrollIntoView({ inline: 'center', block: 'nearest' });
   },
 
-  renderActions(v) {
-    const gen = document.getElementById('project-generate');
-    gen.querySelector('span').innerHTML = this.busy(v) ? 'ИИ рисует…'
-      : `${v?.generated_image ? 'Перерисовать' : 'Сгенерировать'} ${AiChoice.costHtml()}`;
-    gen.disabled = this.busy(v);
-    document.getElementById('project-download').disabled = !v?.generated_image;
+  // Одна главная кнопка по ситуации: нарисовать → отправить заказчику; пока рисует — только ожидание
+  renderMain(v) {
+    const box = document.getElementById('project-main');
+    const img = v?.generated_image;
+    let main;
+    if (this.busy(v)) {
+      main = `<div class="main-busy"><span class="spinner"></span><div><b>ИИ рисует фасад</b>
+        <small>${AiChoice.wait(v.ai.model)} · можно выйти, картинка сохранится</small></div></div>`;
+    } else if (img) {
+      main = `<button class="btn btn-primary btn-full main-btn" data-act="share">${icon('share')}Отправить заказчику</button>`;
+    } else {
+      main = `<button class="btn btn-primary btn-full main-btn" data-act="generate">${icon('sparkle')}Нарисовать фасад ${AiChoice.costHtml()}</button>
+        <p class="main-hint">ИИ облицует дом на фото выбранным камнем и узорами</p>`;
+    }
+    box.innerHTML = `${main}
+      <div class="main-row">
+        <button class="btn btn-secondary" data-act="edit">${icon('edit')}Изменить камень</button>
+        <button class="btn btn-secondary" data-act="more">${icon('dots')}Ещё</button>
+      </div>`;
+  },
+
+  async runGenerate() {
+    const v = this.variant(this.sel);
+    if (!v || this.busy(v)) return;
+    try {
+      const res = await this.generate(this.project.id, v.id, v.design);
+      this.project.variants = res.data.variants;
+      showToast(`ИИ начал рисовать — ${AiChoice.wait(AiChoice.get())}`);
+    } catch (err) {
+      if (!Wallet.handleError(err)) showToast(err.message || 'Не удалось запустить генерацию');
+    }
+    this.render();
+    this.watch();
+  },
+
+  share() {
+    const v = this.variant(this.sel);
+    shareProject(this.project.name, v?.generated_image || this.project.original_image);
+  },
+
+  // «Ещё»: редкие действия одним списком
+  openMore() {
+    const v = this.variant(this.sel);
+    const img = v?.generated_image;
+    const item = (act, ic, text, sub = '', dis = false) => `
+      <button class="sheet-item" data-more="${act}"${dis ? ' disabled' : ''}>${icon(ic)}<span><b>${text}</b>${sub ? `<small>${sub}</small>` : ''}</span></button>`;
+    showModal(`
+      <div class="sheet-list">
+        ${img ? item('generate', 'sparkle', `Перерисовать этот вариант`, `ещё раз тем же камнем · ${AiChoice.cost()} ${coinsWord(AiChoice.cost())}`, this.busy(v)) : ''}
+        ${img ? item('download', 'download', 'Скачать картинку', 'сохранить в галерею телефона') : ''}
+        ${item('new', 'plus', 'Новый вариант', 'другой камень — прежний вариант останется')}
+        ${item('rename', 'edit', 'Переименовать проект', esc(this.project.name || ''))}
+        <div class="sheet-ai"><div class="ai-pick" data-ai-pick></div></div>
+      </div>`);
+    AiChoice.render();
+    document.querySelector('.sheet-list').addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-more]');
+      if (!b) return;
+      closeModal();
+      const act = b.dataset.more;
+      if (act === 'generate') this.runGenerate();
+      if (act === 'download') downloadImage(img, `fasad-${this.project.id}-variant-${this.index(this.sel)}.jpg`);
+      if (act === 'new') this.edit(false);
+      if (act === 'rename') {
+        const name = await showPrompt('Название проекта', this.project.name, 'Сохранить');
+        if (!name || name === this.project.name) return;
+        try {
+          await Api.renameProject(this.project.id, name);
+          this.project.name = name;
+          document.getElementById('project-title').textContent = name;
+          showToast('Проект переименован');
+        } catch (err) {
+          showToast(err.message || 'Не удалось переименовать');
+        }
+      }
+    });
   },
 
   // Изменить подбор выбранного варианта; сохранение даст новый вариант
@@ -241,28 +306,15 @@ const ProjectPage = {
     this.bound = true;
     document.getElementById('project-variants').addEventListener('click', e => this.onStrip(e));
     document.getElementById('project-back').addEventListener('click', () => Router.navigateTo('projects'));
-    document.getElementById('project-edit').addEventListener('click', () => this.edit(false));
-    document.getElementById('project-generate').addEventListener('click', async (e) => {
-      const v = this.variant(this.sel);
-      if (!v || this.busy(v)) return;
-      e.currentTarget.disabled = true;
-      try {
-        const res = await this.generate(this.project.id, v.id, v.design);
-        this.project.variants = res.data.variants;
-        showToast(`${AiChoice.name(AiChoice.get())} начал рисовать — ${AiChoice.wait(AiChoice.get())}`);
-      } catch (err) {
-        if (!Wallet.handleError(err)) showToast(err.message || 'Не удалось запустить генерацию');
-      }
-      this.render();
-      this.watch();
-    });
-    document.getElementById('project-download').addEventListener('click', () => {
-      const v = this.variant(this.sel);
-      if (v?.generated_image) downloadImage(v.generated_image, `fasad-${this.project.id}-variant-${this.index(this.sel)}.jpg`);
-    });
-    document.getElementById('project-share').addEventListener('click', () => {
-      const v = this.variant(this.sel);
-      shareProject(this.project.name, v?.generated_image || this.project.original_image);
+    document.getElementById('project-more').addEventListener('click', () => this.openMore());
+    document.getElementById('project-main').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-act]');
+      if (!b) return;
+      const act = b.dataset.act;
+      if (act === 'generate') { b.disabled = true; this.runGenerate(); }
+      if (act === 'share') this.share();
+      if (act === 'edit') this.edit(false);
+      if (act === 'more') this.openMore();
     });
   },
 };
