@@ -127,6 +127,19 @@ function saveDB($db) {
     }
 }
 
+// Настройки хостинга (data/ai.php) читаем мимо opcache: после смены ключа сразу нужен новый
+function includeFresh($file) {
+    if (!file_exists($file)) return null;
+    if (function_exists('opcache_invalidate')) opcache_invalidate($file, true);
+    return include $file;
+}
+
+function writeConfig($file, $cfg) {
+    $ok = file_put_contents($file, '<?php return ' . var_export($cfg, true) . ";\n") !== false;
+    if ($ok && function_exists('opcache_invalidate')) opcache_invalidate($file, true);
+    return $ok;
+}
+
 function getNextId($rows) {
     $max = 0;
     foreach ($rows as $item) {

@@ -17,7 +17,7 @@ const AI_MODELS = [
 ];
 
 function aiConfig() {
-    $cfg = file_exists(AI_CONFIG) ? include AI_CONFIG : null;
+    $cfg = includeFresh(AI_CONFIG);
     if (!is_array($cfg) || empty($cfg['key'])) {
         respondError('Генерация ИИ ещё не подключена', 501);
     }

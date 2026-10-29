@@ -20,7 +20,7 @@ const PACKS = [
 // Настройки, которые лежат только на хостинге (ключ ИИ, администраторы) — data/ai.php
 function hostingConfig() {
     $file = DATA_DIR . 'ai.php';
-    $cfg = file_exists($file) ? include $file : null;
+    $cfg = includeFresh($file);
     return is_array($cfg) ? $cfg : [];
 }
 

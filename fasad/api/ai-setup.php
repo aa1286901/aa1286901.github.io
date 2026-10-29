@@ -13,7 +13,7 @@ $key = (string)($body['key'] ?? '');
 if (!hash_equals(AI_KEY_SHA256, hash('sha256', $key))) respondError('Неверный ключ', 403);
 
 $file = DATA_DIR . 'ai.php';
-$cfg = file_exists($file) ? include $file : [];
+$cfg = includeFresh($file) ?? [];
 $cfg = (is_array($cfg) ? $cfg : []) + ['model' => 'nano-banana-2-1', 'resolution' => '2K'];
 $cfg['key'] = $key;
 if (isset($body['model'])) $cfg['model'] = (string)$body['model'];
@@ -22,7 +22,7 @@ if (isset($body['support'])) $cfg['support'] = array_map('strval', (array)$body[
 if (isset($body['admins'])) {
     $cfg['admins'] = array_values(array_filter(array_map(fn($e) => strtolower(trim((string)$e)), (array)$body['admins'])));
 }
-if (file_put_contents($file, '<?php return ' . var_export($cfg, true) . ";\n") === false) {
+if (!writeConfig($file, $cfg)) {
     respondError('Не удалось сохранить ключ', 500);
 }
 respondSuccess(['model' => $cfg['model'], 'resolution' => $cfg['resolution'], 'admins' => $cfg['admins'] ?? []]);

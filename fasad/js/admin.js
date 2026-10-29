@@ -38,11 +38,40 @@ const AdminScreen = {
         <div class="kie__credits"><b>${k.credits.toLocaleString('ru-RU')}</b> кредитов <small>≈ $${k.usd}</small></div>
         <div class="kie__left${low ? ' kie__left--low' : ''}">Хватит примерно на ${k.left.nano} картинок Nano Banana или ${k.left.gpt} GPT Image</div>
         ${low ? '<p class="kie__warn">Пора пополнить: когда кредиты kie.ai кончатся, генерации перестанут проходить даже у пользователей с монетами.</p>' : ''}
-        <a class="btn btn-secondary btn-full kie__top" href="https://kie.ai/" target="_blank" rel="noopener">Пополнить на kie.ai</a>`;
+        <a class="btn btn-secondary btn-full kie__top" href="https://kie.ai/" target="_blank" rel="noopener">Пополнить на kie.ai</a>
+        ${this.keyRow()}`;
     } catch (e) {
       el.innerHTML = `<div class="kie__head">${icon('sparkle')}<span>Баланс ИИ · kie.ai</span>
         <button class="kie__refresh" id="admin-kie-refresh" aria-label="Обновить">↻</button></div>
-        <p class="kie__warn">${esc(e.message || 'Не удалось узнать баланс')}</p>`;
+        <p class="kie__warn">${esc(e.message || 'Не удалось узнать баланс')}</p>
+        ${this.keyRow()}`;
+    }
+    this.loadKey();
+  },
+
+  // Ключ kie.ai: видно только последние 4 символа; сменить — при переходе на другой аккаунт kie.ai
+  keyRow() {
+    return `<div class="kie__key"><span>Ключ API: <b id="admin-key-mask">…</b></span>
+      <button class="btn btn-ghost kie__key-btn" id="admin-key-change">Сменить ключ</button></div>`;
+  },
+
+  async loadKey() {
+    try {
+      const k = (await Api.adminAiKey()).data;
+      const el = document.getElementById('admin-key-mask');
+      if (el) el.textContent = k.key || 'не задан';
+    } catch (e) { /* баланс уже показал ошибку */ }
+  },
+
+  async changeKey() {
+    const key = await showPrompt('Новый ключ kie.ai', '', 'Проверить и сохранить', 'Вставьте ключ со страницы kie.ai/api-key');
+    if (!key) return;
+    try {
+      const res = await Api.adminAiKey(key);
+      showToast(`Ключ сохранён · на балансе ${res.data.credits.toLocaleString('ru-RU')} кредитов`);
+      this.loadKie();
+    } catch (e) {
+      showToast(e.message || 'Ключ не подошёл');
     }
   },
 
@@ -179,6 +208,7 @@ const AdminScreen = {
       if (u) return this.openUser(+u.dataset.user);
       if (e.target.closest('#admin-add')) return this.openCreate();
       if (e.target.closest('#admin-kie-refresh')) return this.loadKie();
+      if (e.target.closest('#admin-key-change')) return this.changeKey();
     });
     box.addEventListener('input', e => {
       if (e.target.id !== 'admin-search') return;
