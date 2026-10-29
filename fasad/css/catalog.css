@@ -1851,13 +1851,17 @@
 }
 
 .me__text {
+  flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 
 .me__text b {
+  overflow: hidden;
   font-size: var(--font-size-xl);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .me__text span {
@@ -1869,7 +1873,9 @@
 }
 
 .me__badge {
-  margin-left: auto;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 6px;
   padding: 3px 10px;
   border-radius: var(--radius-full);
   background: #2b2620;
