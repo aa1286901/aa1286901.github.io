@@ -107,6 +107,15 @@ function renderMaterialCard(material, selected = false, onClick = null) {
 }
 
 // === Project Card Renderer ===
+// Под названием проекта: сколько вариантов и есть ли картинка ИИ
+function projectCardMeta(project) {
+  const vs = project.variants || [];
+  const n = vs.length || 1;
+  const done = vs.length ? vs.filter(v => v.generated_image).length : (project.generated_image ? 1 : 0);
+  const word = n % 10 === 1 && n % 100 !== 11 ? 'вариант' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'варианта' : 'вариантов';
+  return `<div class="project-card__meta"><span>${n} ${word}</span>${done ? '<span class="project-card__ok">✓ есть картинка</span>' : '<span>без картинки</span>'}</div>`;
+}
+
 function renderProjectCard(project, onClick = null) {
   const card = document.createElement('div');
   card.className = 'project-card';
@@ -117,6 +126,7 @@ function renderProjectCard(project, onClick = null) {
     <div class="project-card__info">
       <div class="project-card__name">${esc(project.name)}</div>
       <div class="project-card__date">${formatDate(project.created_at)}</div>
+      ${projectCardMeta(project)}
     </div>
     <div class="project-card__menu">
       <button class="project-card__btn" data-rename="${project.id}" aria-label="Переименовать проект">

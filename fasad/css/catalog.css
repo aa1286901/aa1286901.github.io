@@ -2766,3 +2766,70 @@
   padding: 8px 14px;
   font-size: var(--font-size-sm);
 }
+
+/* === История проектов: крупнее карточки, «Создать проект», значки столбиком === */
+.projects-create {
+  margin-bottom: var(--spacing-md);
+}
+
+.projects-create .i {
+  width: 22px;
+  height: 22px;
+}
+
+.project-card {
+  min-height: 124px;
+}
+
+.project-card__thumb {
+  position: relative;
+  width: 124px;
+  height: auto;
+  min-height: 124px;
+}
+
+.project-card__thumb img {
+  position: absolute;
+  inset: 0;
+}
+
+.project-card__info {
+  padding: 14px 4px 14px 0;
+}
+
+.project-card__name {
+  font-size: var(--font-size-lg);
+  line-height: 1.25;
+}
+
+.project-card__date {
+  margin-top: 2px;
+  font-size: var(--font-size-sm);
+}
+
+.project-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 6px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.project-card__ok {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.project-card__menu {
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px 0 0;
+  align-self: stretch;
+}
+
+.project-card__btn {
+  width: 36px;
+  height: 36px;
+}
