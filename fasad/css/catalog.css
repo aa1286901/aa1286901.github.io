@@ -2932,3 +2932,138 @@
   font-size: var(--font-size-sm);
   text-align: center;
 }
+
+/* === Главная: черновик и «Создать проект» внизу === */
+.screen[data-screen="home"] {
+  padding-bottom: calc(var(--bottom-nav-height) + 110px);
+}
+
+.screen[data-screen="home"] .hero {
+  padding-bottom: var(--spacing-lg);
+}
+
+.draft {
+  margin-bottom: var(--spacing-md);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.draft__photo {
+  position: relative;
+  height: 170px;
+}
+
+.draft__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.draft__tag {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.draft__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 16px;
+}
+
+.draft__title {
+  font-size: var(--font-size-lg);
+  line-height: 1.25;
+}
+
+.draft__where,
+.draft__hint {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.draft__steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.draft__steps span {
+  padding-top: 6px;
+  border-top: 4px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.draft__steps .done {
+  border-color: var(--color-accent);
+  color: var(--color-accent-dark);
+}
+
+.draft__steps .now {
+  border-color: var(--color-accent-dark);
+  color: var(--color-text);
+}
+
+.draft__stones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.draft__stone {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-alt);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.draft__stone img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.draft__stone span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.draft__stone small {
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.draft__actions {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-sm);
+  margin-top: 4px;
+}
+
+.draft__actions .btn {
+  min-height: 48px;
+}
+
+.draft__actions .btn-ghost {
+  color: var(--color-text-muted);
+}

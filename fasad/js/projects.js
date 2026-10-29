@@ -8,6 +8,7 @@ const ProjectFlow = {
     projectName: '',
     projectId: null,
     editProject: null,        // { projectId, variantId, name } — правим вариант сохранённого проекта
+    step: 1,                  // где остановились: 1 плитка, 2 узоры, 3 итог
   },
 
   setState(key, value) {
@@ -25,6 +26,8 @@ const ProjectFlow = {
       originalPhoto: this.state.originalPhoto,
       design: this.state.design,
       editProject: this.state.editProject,
+      step: this.state.step,
+      savedAt: Date.now(),
     };
     Storage.save('project-draft', draftable);
   },
@@ -43,6 +46,7 @@ const ProjectFlow = {
       projectName: '',
       projectId: null,
       editProject: null,
+      step: 1,
     };
   },
 

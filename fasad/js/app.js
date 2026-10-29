@@ -19,11 +19,6 @@ const App = {
     
     const user = await Auth.init();
     
-    // Если есть черновик проекта - предложить продолжить
-    if (ProjectFlow.hasDraft()) {
-      this.showDraftPrompt();
-    }
-
     // Навигация
     this.bindNavigation();
     this.bindButtons();
@@ -31,38 +26,6 @@ const App = {
     // Маршрут
     const screen = Router.getScreenFromHash();
     Router.navigateTo(screen, false);
-  },
-
-  showDraftPrompt() {
-    showModal(`
-      <div style="text-align: center;">
-        <div style="font-size: 48px; margin-bottom: 16px;">📐</div>
-        <h3 style="margin-bottom: 8px;">Есть незавершённый проект</h3>
-        <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-bottom: 24px;">
-          Вы подбирали материалы для фасада. Продолжить?
-        </p>
-        <div style="display: flex; gap: 12px;">
-          <button class="btn btn-secondary btn-full" id="draft-skip">Начать заново</button>
-          <button class="btn btn-primary btn-full" id="draft-continue">Продолжить</button>
-        </div>
-      </div>
-    `);
-
-    document.getElementById('draft-continue')?.addEventListener('click', () => {
-      closeModal();
-      const draft = ProjectFlow.loadDraft();
-      if (draft.originalPhoto) {
-        ProjectFlow.setState('originalPhoto', draft.originalPhoto);
-        ProjectFlow.setState('design', draft.design || null);
-        ProjectFlow.setState('editProject', draft.editProject || null);
-        Router.navigateTo('configure');
-      }
-    });
-
-    document.getElementById('draft-skip')?.addEventListener('click', () => {
-      closeModal();
-      ProjectFlow.clearDraft();
-    });
   },
 
   bindNavigation() {
@@ -76,7 +39,7 @@ const App = {
 
   bindButtons() {
     // Кнопка "Создать проект" на главной
-    document.querySelector('.hero__cta')?.addEventListener('click', () => {
+    document.getElementById('hero-create')?.addEventListener('click', () => {
       Router.navigateTo('photo');
     });
 

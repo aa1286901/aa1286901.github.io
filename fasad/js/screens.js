@@ -2,7 +2,63 @@
 
 // === Экран: Главная ===
 function onScreenHome() {
-  // Главная — ничего дополнительно не нужно
+  renderHomeDraft();
+}
+
+// Черновик на главной: фото, шаг, на котором остановились, и выбранный камень
+const DRAFT_STEPS = ['Плитка', 'Узоры', 'Итог'];
+
+async function renderHomeDraft() {
+  const box = document.getElementById('home-draft');
+  if (!box) return;
+  const draft = ProjectFlow.hasDraft() ? ProjectFlow.loadDraft() : null;
+  if (!draft) { box.innerHTML = ''; return; }
+  const step = Math.min(3, Math.max(1, draft.step || 1));
+  const spec = draft.design?.version === 5 ? draft.design : null;
+  let stones = [];
+  try { stones = await Materials.getStones(); } catch (e) { /* без каталога — без образцов */ }
+  const stone = id => stones.find(s => s.id === id);
+  const chosen = [];
+  if (spec) {
+    const m = spec.materials;
+    if (stone(m.main?.stone)) chosen.push(['Стены', stone(m.main.stone)]);
+    if (m.base?.on && stone(m.base.stone)) chosen.push(['Цоколь', stone(m.base.stone)]);
+  }
+  const parts = spec ? Object.values(spec.parts || {}).filter(p => p?.item).length : 0;
+  const edit = draft.editProject;
+  box.innerHTML = `
+    <div class="draft">
+      <div class="draft__photo">
+        <img src="${draft.originalPhoto}" alt="">
+        <span class="draft__tag">Черновик</span>
+      </div>
+      <div class="draft__body">
+        <b class="draft__title">${edit ? `Новый вариант «${esc(edit.name || 'проекта')}»` : 'Продолжите свой фасад'}</b>
+        <span class="draft__where">Вы остановились на шаге ${step} из 3 — ${DRAFT_STEPS[step - 1].toLowerCase()}</span>
+        <div class="draft__steps">${DRAFT_STEPS.map((t, i) => `<span class="${i + 1 < step ? 'done' : i + 1 === step ? 'now' : ''}">${t}</span>`).join('')}</div>
+        ${chosen.length ? `<div class="draft__stones">${chosen.map(([part, s]) => `
+          <span class="draft__stone"><img src="${s.texture}" alt=""><span><small>${part}</small>${esc(s.name)}</span></span>`).join('')}</div>` : '<span class="draft__hint">Фото выбрано — дальше камень для стен</span>'}
+        ${parts ? `<span class="draft__hint">Узоров выбрано: ${parts}</span>` : ''}
+        <div class="draft__actions">
+          <button class="btn btn-primary" id="draft-continue">Продолжить</button>
+          <button class="btn btn-ghost" id="draft-drop">Удалить</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('draft-continue').addEventListener('click', () => {
+    const d = ProjectFlow.loadDraft();
+    ProjectFlow.setState('originalPhoto', d.originalPhoto);
+    ProjectFlow.setState('design', d.design || null);
+    ProjectFlow.setState('editProject', d.editProject || null);
+    Configurator.spec = null;
+    Configurator.step = Math.min(2, step);
+    Router.navigateTo(step === 3 && spec ? 'spec' : 'configure');
+  });
+  document.getElementById('draft-drop').addEventListener('click', async () => {
+    if (!(await showConfirm('Удалить черновик?', 'Фото и выбранные материалы этого черновика удалятся.'))) return;
+    ProjectFlow.clearDraft();
+    renderHomeDraft();
+  });
 }
 
 // === Экран: Фото ===
