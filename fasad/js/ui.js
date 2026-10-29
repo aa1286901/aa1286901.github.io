@@ -72,7 +72,7 @@ function showPrompt(title, value = '', okLabel = 'Сохранить', placehold
   return new Promise((resolve) => {
     showModal(`
       <h3 style="margin-bottom: 12px;">${esc(title)}</h3>
-      <input class="input" id="prompt-input" value="${esc(value)}" placeholder="${esc(placeholder)}" maxlength="80" autocomplete="off">
+      <input class="input" id="prompt-input" value="${esc(value)}" placeholder="${esc(placeholder)}" maxlength="200" autocomplete="off" autocapitalize="off" spellcheck="false">
       <div style="display: flex; gap: 12px; margin-top: 16px;">
         <button class="btn btn-secondary btn-full" id="prompt-cancel">Отмена</button>
         <button class="btn btn-primary btn-full" id="prompt-ok">${esc(okLabel)}</button>
