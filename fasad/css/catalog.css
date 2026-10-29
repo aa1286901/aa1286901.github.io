@@ -1471,6 +1471,11 @@
 
 #project-generate {
   flex: 1.5;
+  white-space: nowrap;
+}
+
+#project-generate .i {
+  margin-right: -2px;
 }
 
 .spec-edit-note {
@@ -1487,4 +1492,337 @@
 
 .project-actions .btn:disabled {
   opacity: 0.45;
+}
+
+/* === Монеты: серебряные (тариф) и золотые (купленные) === */
+.coin {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1.15em;
+  height: 1.15em;
+  border-radius: 50%;
+  vertical-align: -0.2em;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18), 0 1px 1.5px rgba(0, 0, 0, 0.18);
+}
+
+.coin::after {
+  content: "";
+  position: absolute;
+  inset: 20%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.coin--silver {
+  background: radial-gradient(circle at 32% 28%, #ffffff 0%, #e3e6ea 38%, #a9b0ba 100%);
+}
+
+.coin--gold {
+  background: radial-gradient(circle at 32% 28%, #fff7cf 0%, #f3cd55 40%, #c48f1a 100%);
+}
+
+/* Цена генерации — без «металла» */
+.coin--plain {
+  width: 0.95em;
+  height: 0.95em;
+  margin-left: 2px;
+  background: radial-gradient(circle at 32% 28%, #fff3d6 0%, #dcc08a 45%, #b8944f 100%);
+}
+
+.btn-cost {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 4px;
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.08);
+  font-size: 0.8em;
+  font-weight: 700;
+}
+
+.btn-primary .btn-cost {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Остаток над выбором ИИ */
+.ai-pick__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-bottom: 6px;
+}
+
+.ai-pick__top .ai-pick__label {
+  margin-bottom: 0;
+}
+
+.wallet-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-sm);
+}
+
+.wallet-chip b + .coin {
+  margin-left: 6px;
+}
+
+.ai-pick__seg small .coin {
+  margin: 0 3px 0 0;
+}
+
+/* Экран «Монеты и тариф» */
+.balance {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, #2b2620, #4a3f30);
+  color: #fff;
+}
+
+.balance__row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.balance__row .coin {
+  font-size: 34px;
+}
+
+.balance__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.balance__text b {
+  font-size: var(--font-size-xl);
+}
+
+.balance__text span,
+.balance__until {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: var(--font-size-sm);
+  line-height: 1.35;
+}
+
+.balance__until {
+  margin: 0;
+}
+
+.coins-help {
+  margin-bottom: var(--spacing-lg);
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-light);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+}
+
+.coins-help p + p {
+  margin-top: 6px;
+}
+
+.coins-title {
+  margin: var(--spacing-lg) 0 var(--spacing-sm);
+}
+
+.coins-sub {
+  margin: -4px 0 var(--spacing-sm);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.plans {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.plan {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 4px var(--spacing-sm);
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.plan--best {
+  border: 2px solid var(--color-accent);
+}
+
+.plan--current {
+  background: var(--color-surface-alt);
+}
+
+.plan__badge {
+  position: absolute;
+  top: -10px;
+  right: 14px;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  color: #fff;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.plan__head {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.plan__head b {
+  font-size: var(--font-size-lg);
+}
+
+.plan__price {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.plan__price small {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.plan__coins {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.plan__note {
+  grid-column: 1;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.plan__btn,
+.plan__mine {
+  grid-column: 2;
+  grid-row: 2 / span 2;
+}
+
+.plan__btn {
+  min-height: 42px;
+  padding: 8px 16px;
+  font-size: var(--font-size-sm);
+}
+
+.plan__mine {
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  background: #e7f4e8;
+  color: #2e7d32;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.packs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-sm);
+}
+
+.pack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 6px;
+  border: 1px solid #ecd9a6;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, #fffaf0, #fff);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.pack .coin {
+  font-size: 30px;
+}
+
+.pack b {
+  font-size: var(--font-size-xl);
+}
+
+.pack__price {
+  font-weight: 700;
+}
+
+.pack small {
+  color: var(--color-text-muted);
+  font-size: 11px;
+  text-align: center;
+}
+
+.admin-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-xl, 32px);
+  padding: var(--spacing-md);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.admin-box__row {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.admin-box__row select:first-child {
+  flex: 2;
+}
+
+.admin-box__row select:last-child {
+  flex: 1;
+}
+
+.admin-box__result {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Профиль: строка «Монеты и тариф» */
+.profile-menu__coin {
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+}
+
+.profile-menu__coins {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+}
+
+.profile-menu__coins .coin + .coin,
+.profile-menu__coins .coin:not(:first-child) {
+  margin-left: 6px;
 }

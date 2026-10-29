@@ -7,13 +7,13 @@
 define('AI_CONFIG', DATA_DIR . 'ai.php');
 define('KIE_API', 'https://api.kie.ai/api/v1/');
 
-// Модели kie.ai: как называются поле со ссылками на картинки и допустимое число картинок
+// Модели kie.ai: поле со ссылками на картинки, допустимое число картинок и цена генерации в монетах
 const AI_MODELS = [
-    'nano-banana-2-1' => ['images' => 'image_input', 'max' => 10],
-    'nano-banana-2' => ['images' => 'image_input', 'max' => 10],
-    'nano-banana-pro' => ['images' => 'image_input', 'max' => 8],
-    'gpt-image-2-5-sunburst-image-to-image' => ['images' => 'input_urls', 'max' => 16],
-    'gpt-image-2-5-flare-image-to-image' => ['images' => 'input_urls', 'max' => 16],
+    'nano-banana-2-1' => ['images' => 'image_input', 'max' => 10, 'coins' => 1],
+    'nano-banana-2' => ['images' => 'image_input', 'max' => 10, 'coins' => 1],
+    'nano-banana-pro' => ['images' => 'image_input', 'max' => 8, 'coins' => 3],
+    'gpt-image-2-5-sunburst-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
+    'gpt-image-2-5-flare-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
 ];
 
 function aiConfig() {
@@ -35,7 +35,8 @@ function publicUrl($cfg) {
 }
 
 function kieCall($cfg, $path, $body = null) {
-    $ch = curl_init(KIE_API . $path);
+    // api_url в настройках — только для проверки на подставном сервере
+    $ch = curl_init(($cfg['api_url'] ?? KIE_API) . $path);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT => 30,

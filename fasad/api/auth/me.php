@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../wallet.php';
 
 // me.php — безопасный endpoint, не требует авторизации
 // Возвращает данные пользователя если авторизован, null если нет
@@ -28,6 +29,8 @@ if ($user) {
         'email' => $user['email'],
         'avatar' => $user['avatar'] ?? '',
         'created_at' => $user['created_at'] ?? null,
+        'wallet' => isset($user['wallet']) ? walletPublic($user) : null,
+        'is_admin' => isAdmin($user),
     ]);
 } else {
     respondSuccess(null);

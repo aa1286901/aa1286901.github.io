@@ -4,8 +4,8 @@
 
 // Чем рисовать: прораб выбирает сам, выбор запоминается на телефоне
 const AI_MODELS = [
-  { id: 'nano-banana-2-1', name: 'Nano Banana', note: 'Google · ~30 с', wait: 'обычно 30–60 секунд' },
-  { id: 'gpt-image-2-5-sunburst-image-to-image', name: 'GPT Image 2.5', note: 'OpenAI · ~1,5 мин', wait: 'обычно 1–2 минуты' },
+  { id: 'nano-banana-2-1', name: 'Nano Banana', note: '~30 с', coins: 1, wait: 'обычно 30–60 секунд' },
+  { id: 'gpt-image-2-5-sunburst-image-to-image', name: 'GPT Image 2.5', note: '~1,5 мин', coins: 2, wait: 'обычно 1–2 минуты' },
 ];
 
 const AiChoice = {
@@ -24,14 +24,27 @@ const AiChoice = {
   name(id) {
     return AI_MODELS.find(m => m.id === id)?.name || '';
   },
+  // Сколько монет стоит генерация выбранной моделью
+  cost(id = this.get()) {
+    return AI_MODELS.find(m => m.id === id)?.coins || 1;
+  },
+  // «· 1 🪙» на кнопке генерации
+  costHtml() {
+    return `<small class="btn-cost">${this.cost()}${coin('plain')}</small>`;
+  },
   // Переключатель на странице проекта и на последнем экране подбора
   render() {
     const cur = this.get();
     document.querySelectorAll('[data-ai-pick]').forEach(box => {
-      box.innerHTML = `<span class="ai-pick__label">${icon('sparkle')}Рисует</span>
+      box.innerHTML = `<div class="ai-pick__top"><span class="ai-pick__label">${icon('sparkle')}Рисует</span>${Wallet.chip()}</div>
         <div class="ai-pick__seg">${AI_MODELS.map(m => `
-          <button class="${m.id === cur ? 'active' : ''}" data-ai-model="${m.id}"><b>${m.name}</b><small>${m.note}</small></button>`).join('')}</div>`;
+          <button class="${m.id === cur ? 'active' : ''}" data-ai-model="${m.id}"><b>${m.name}</b>
+            <small>${coin('plain')}${m.coins} ${coinsWord(m.coins)} · ${m.note}</small></button>`).join('')}</div>`;
     });
+    // Цена на кнопках генерации
+    const gen = document.getElementById('project-generate');
+    if (gen && ProjectPage.project) ProjectPage.renderActions(ProjectPage.variant(ProjectPage.sel));
+    Spec.renderCost?.();
   },
 };
 
@@ -57,6 +70,7 @@ const ProjectPage = {
     this.bind();
     this.render();
     this.watch();
+    Wallet.load();
   },
 
   variant(id) {
@@ -75,7 +89,9 @@ const ProjectPage = {
   async generate(projectId, variantId, design) {
     const [stones, catalog] = await Promise.all([Materials.getStones(), Materials.getCatalog()]);
     const task = aiTask(design, stones, catalog);
-    return Api.projectVariant(projectId, 'generate', { variant_id: variantId, model: AiChoice.get(), ...task });
+    const res = await Api.projectVariant(projectId, 'generate', { variant_id: variantId, model: AiChoice.get(), ...task });
+    Wallet.set(res.data.wallet);
+    return res;
   },
 
   // Пока ИИ рисует — раз в 5 секунд спрашиваем сервер; готовая картинка сразу появляется
@@ -89,6 +105,7 @@ const ProjectPage = {
         const before = this.project.variants;
         const res = await Api.projectVariant(id, 'poll');
         this.project.variants = res.data.variants;
+        Wallet.set(res.data.wallet);  // неудачная генерация вернула монеты
         const was = v => this.busy(before.find(b => b.id === v.id));
         const done = res.data.variants.find(v => v.ai?.status === 'done' && was(v));
         const failed = res.data.variants.find(v => v.ai?.status === 'failed' && was(v));
@@ -193,7 +210,8 @@ const ProjectPage = {
 
   renderActions(v) {
     const gen = document.getElementById('project-generate');
-    gen.querySelector('span').textContent = this.busy(v) ? 'ИИ рисует…' : v?.generated_image ? 'Перерисовать' : 'Сгенерировать';
+    gen.querySelector('span').innerHTML = this.busy(v) ? 'ИИ рисует…'
+      : `${v?.generated_image ? 'Перерисовать' : 'Сгенерировать'} ${AiChoice.costHtml()}`;
     gen.disabled = this.busy(v);
     document.getElementById('project-download').disabled = !v?.generated_image;
   },
@@ -233,7 +251,7 @@ const ProjectPage = {
         this.project.variants = res.data.variants;
         showToast(`${AiChoice.name(AiChoice.get())} начал рисовать — ${AiChoice.wait(AiChoice.get())}`);
       } catch (err) {
-        showToast(err.message || 'Не удалось запустить генерацию');
+        if (!Wallet.handleError(err)) showToast(err.message || 'Не удалось запустить генерацию');
       }
       this.render();
       this.watch();
