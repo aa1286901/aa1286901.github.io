@@ -2768,13 +2768,26 @@
 }
 
 /* === История проектов: крупнее карточки, «Создать проект», значки столбиком === */
-.projects-create {
-  margin-bottom: var(--spacing-md);
+.projects-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+  z-index: 900;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-lg) var(--page-padding) var(--spacing-sm);
+  background: linear-gradient(to top, var(--color-bg) 65%, transparent);
 }
 
-.projects-create .i {
+.projects-bar .i {
   width: 22px;
   height: 22px;
+}
+
+/* Последняя карточка не прячется под кнопкой */
+.screen[data-screen="projects"] .projects-grid {
+  padding-bottom: 84px;
 }
 
 .project-card {
