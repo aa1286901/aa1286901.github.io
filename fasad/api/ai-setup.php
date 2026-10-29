@@ -2,6 +2,7 @@
 // Настройки хостинга мимо GitHub: принимается только ключ kie.ai с этим отпечатком (sha256).
 // POST { key, model?, resolution?, admins? } → дополняет data/ai.php (что не передано — остаётся как было).
 // admins — email администраторов: они начисляют монеты и включают тарифы вручную.
+// support — контакты поддержки { telegram, whatsapp, phone, email } для экрана «Помощь».
 require_once __DIR__ . '/config.php';
 
 const AI_KEY_SHA256 = 'b37d6f28bcdca54567bdf9d2451281a66be7bbeb45ad1fdf1da10c91cc7ab1bf';
@@ -17,6 +18,7 @@ $cfg = (is_array($cfg) ? $cfg : []) + ['model' => 'nano-banana-2-1', 'resolution
 $cfg['key'] = $key;
 if (isset($body['model'])) $cfg['model'] = (string)$body['model'];
 if (isset($body['resolution'])) $cfg['resolution'] = (string)$body['resolution'];
+if (isset($body['support'])) $cfg['support'] = array_map('strval', (array)$body['support']);  // контакты поддержки
 if (isset($body['admins'])) {
     $cfg['admins'] = array_values(array_filter(array_map(fn($e) => strtolower(trim((string)$e)), (array)$body['admins'])));
 }

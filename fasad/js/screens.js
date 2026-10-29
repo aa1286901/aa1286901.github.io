@@ -167,10 +167,16 @@ function onScreenFavorites() {
 
 // === Экран: Советы ===
 function onScreenTips() {
-  document.getElementById('tips-back')?.addEventListener('click', () => {
-    Router.navigateTo('photo');
+  // Сюда приходят и с экрана фото, и из профиля — назад туда, откуда пришли
+  document.getElementById('tips-back').onclick = () => (history.length > 1 ? history.back() : Router.navigateTo('photo'));
+}
+
+function bindBackToProfile() {
+  ['help-back', 'about-back'].forEach(id => {
+    document.getElementById(id).onclick = () => Router.navigateTo('profile');
   });
 }
+document.addEventListener('DOMContentLoaded', bindBackToProfile);
 
 // === Авторизация ===
 function bindAuth() {
