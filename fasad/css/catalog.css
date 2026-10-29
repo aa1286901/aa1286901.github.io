@@ -1857,11 +1857,29 @@
   min-width: 0;
 }
 
-.me__text b {
+.me__name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+}
+
+.me__name b {
   overflow: hidden;
   font-size: var(--font-size-xl);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.me__name svg {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
 }
 
 .me__text span {
@@ -1873,9 +1891,9 @@
 }
 
 .me__badge {
-  flex-shrink: 0;
   align-self: flex-start;
-  margin-top: 6px;
+  margin-top: 4px;
+  font-style: normal;
   padding: 3px 10px;
   border-radius: var(--radius-full);
   background: #2b2620;
@@ -1979,7 +1997,39 @@
 }
 
 .profile-stats--3 .profile-stat {
-  padding: var(--spacing-md) 6px;
+  padding: 10px 6px;
+  border-radius: var(--radius-md);
+}
+
+.profile-stats--3 .profile-stat__number {
+  font-size: var(--font-size-xl);
+  margin-bottom: 0;
+}
+
+.profile-stats--3 .profile-stat__label {
+  font-size: 11px;
+}
+
+/* Список проектов: переименовать и удалить */
+.project-card__menu {
+  display: flex;
+  gap: 4px;
+  padding: 10px 10px 0 0;
+}
+
+.project-card__btn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 50%;
+  background: var(--color-surface-alt);
+  color: var(--color-text-secondary);
+}
+
+.project-card__btn--danger {
+  color: var(--color-error);
 }
 
 .profile-section {

@@ -96,6 +96,15 @@ const Api = {
     });
   },
 
+  async renameProject(id, name) {
+    return this.request('./projects/rename.php', { method: 'POST', body: JSON.stringify({ project_id: id, name }) });
+  },
+
+  // Своё имя в профиле
+  async updateProfile(data) {
+    return this.request('./user/update.php', { method: 'POST', body: JSON.stringify(data) });
+  },
+
   async deleteProject(id) {
     return this.request(`./projects/delete.php?id=${id}`, { method: 'DELETE' });
   },

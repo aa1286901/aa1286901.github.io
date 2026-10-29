@@ -107,6 +107,21 @@ async function loadProjectsList() {
         openProject(p.id);
       });
       
+      // Переименование
+      card.querySelector('[data-rename]')?.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const name = await showPrompt('Название проекта', project.name, 'Сохранить', 'Например, Дом Магомеда');
+        if (!name || name === project.name) return;
+        try {
+          await Api.renameProject(project.id, name);
+          project.name = name;
+          card.querySelector('.project-card__name').textContent = name;
+          showToast('Проект переименован');
+        } catch (err) {
+          showToast(err.message || 'Не удалось переименовать');
+        }
+      });
+
       // Удаление
       const deleteBtn = card.querySelector('[data-delete]');
       deleteBtn?.addEventListener('click', async (e) => {
