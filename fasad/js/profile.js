@@ -13,7 +13,6 @@ function menuItem(id, iconSvg, text, extra = '', attrs = '') {
 }
 
 const PROFILE_ICONS = {
-  get coins() { return coin('gold'); },  // coins.js грузится позже
   heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>',
   camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>',
   help: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
@@ -83,7 +82,6 @@ async function renderProfile() {
 
       <h3 class="profile-section">Приложение</h3>
       <div class="profile-menu">
-        ${menuItem('profile-coins', PROFILE_ICONS.coins, 'Монеты и тариф', w ? `<span class="profile-menu__coins">${coin('silver')}${w.silver}${coin('gold')}${w.gold}</span>` : '', 'data-open-coins')}
         ${menuItem('profile-favorites', PROFILE_ICONS.heart, 'Избранные материалы', favorites.length ? `<span class="profile-menu__value">${favorites.length}</span>` : '')}
         ${menuItem('profile-tips', PROFILE_ICONS.camera, 'Как сфотографировать дом')}
         ${menuItem('profile-help', PROFILE_ICONS.help, 'Помощь и поддержка')}
