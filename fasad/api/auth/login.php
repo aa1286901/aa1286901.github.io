@@ -24,7 +24,9 @@ if (!$user || !password_verify($password, $user['password_hash'])) {
     respondError('Неверный email или пароль');
 }
 
+session_regenerate_id(true);
 $_SESSION['user_id'] = $user['id'];
+rememberUser($db, $user['id']);
 respondSuccess([
     'id' => $user['id'],
     'name' => $user['name'],
