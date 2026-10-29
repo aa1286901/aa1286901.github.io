@@ -126,6 +126,7 @@ const ProjectPage = {
     this.renderStrip();
     this.renderHead(v);
     this.renderMain(v);
+    this.renderChosen(v);
     const box = document.getElementById('project-details');
     const rows = summarizeDesign(v?.design, this.stones, this.catalog);
     box.innerHTML = (rows || '<p class="configure-hint">У этого варианта нет подбора.</p>') + `
@@ -134,6 +135,19 @@ const ProjectPage = {
         <span class="project-details__value">${formatFullDate(v?.created_at || p.created_at)}</span>
       </div>`;
     recolorSpec(box, this.stones, this.catalog);
+  },
+
+  // Заголовок свёрнутого «Что выбрано»: образцы камня и сколько позиций
+  renderChosen(v) {
+    const spec = upgradeDesign(v?.design, this.stones);
+    const lines = specLines(v?.design, this.stones, this.catalog).filter(l => l[0] !== 'fit');
+    const m = spec.materials;
+    const swatch = id => this.stones.find(s => s.id === id)?.texture;
+    const sw = [swatch(m.main.stone), m.base.on ? swatch(m.base.stone) : null].filter(Boolean);
+    document.getElementById('project-chosen-head').innerHTML = `
+      <span class="chosen__sw">${sw.map(src => `<img src="${src}" alt="">`).join('')}</span>
+      <span class="chosen__text"><b>Что выбрано</b><small>${lines.length ? `${lines.length} ${plural(lines.length, 'позиция', 'позиции', 'позиций')} · камень и узоры` : 'подбор не сохранён'}</small></span>
+      <span class="chosen__arrow" aria-hidden="true"></span>`;
   },
 
   // Фото варианта. Поверх — «До / После» и «на весь экран»; нажатие на фото тоже открывает его целиком

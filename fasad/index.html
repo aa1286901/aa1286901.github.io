@@ -213,10 +213,11 @@
       <div class="variant-head" id="variant-head"></div>
       <div class="project-main" id="project-main"></div>
 
-      <div class="section-header">
-        <h3 class="section-title">Что выбрано</h3>
-      </div>
-      <div class="project-details" id="project-details"></div>
+      <!-- Что выбрано: свёрнуто, раскрывается по нажатию -->
+      <details class="chosen" id="project-chosen">
+        <summary class="chosen__head" id="project-chosen-head"></summary>
+        <div class="project-details chosen__list" id="project-details"></div>
+      </details>
     </div>
 
     <!-- История проектов -->

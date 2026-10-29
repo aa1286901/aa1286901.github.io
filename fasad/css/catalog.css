@@ -2666,3 +2666,103 @@
   padding-top: var(--spacing-md);
   border-top: 1px solid var(--color-border-light);
 }
+
+/* «Что выбрано» на странице проекта: свёрнуто, компактный список */
+.chosen {
+  margin-bottom: var(--spacing-lg);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.chosen__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.chosen__head::-webkit-details-marker {
+  display: none;
+}
+
+.chosen__sw {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.chosen__sw img {
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--color-surface);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.chosen__sw img + img {
+  margin-left: -10px;
+}
+
+.chosen__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.chosen__text b {
+  font-size: var(--font-size-base);
+}
+
+.chosen__text small {
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chosen__arrow {
+  width: 10px;
+  height: 10px;
+  margin-right: 4px;
+  border-right: 2px solid var(--color-text-muted);
+  border-bottom: 2px solid var(--color-text-muted);
+  transform: rotate(45deg) translateY(-3px);
+  transition: transform 0.2s;
+}
+
+.chosen[open] .chosen__arrow {
+  transform: rotate(-135deg) translateX(-3px);
+}
+
+.chosen__list {
+  border-top: 1px solid var(--color-border-light);
+}
+
+.chosen__list .spec-line {
+  gap: 10px;
+  padding: 7px 14px;
+}
+
+.chosen__list .spec-line__img {
+  width: 38px;
+  height: 38px;
+}
+
+.chosen__list .spec-line__part,
+.chosen__list .spec-line__details {
+  font-size: 11px;
+}
+
+.chosen__list .spec-line__value {
+  font-size: var(--font-size-sm);
+}
+
+.chosen__list .project-details__item {
+  padding: 8px 14px;
+  font-size: var(--font-size-sm);
+}
