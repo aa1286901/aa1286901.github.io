@@ -66,6 +66,8 @@
       <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
       <symbol id="i-download" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></g></symbol>
       <symbol id="i-edit" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></g></symbol>
+      <symbol id="i-share" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></g></symbol>
+      <symbol id="i-dots" viewBox="0 0 24 24"><g fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></g></symbol>
       <symbol id="i-gallery" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></g></symbol>
       <symbol id="i-point-add" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18L10 5l10 8"/><circle cx="10" cy="5" r="2" fill="currentColor"/><path d="M17 17v6M14 20h6"/></g></symbol>
       <symbol id="i-point-remove" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18L10 5l10 8"/><circle cx="10" cy="5" r="2" fill="currentColor"/><path d="M14 20h6"/></g></symbol>
@@ -200,36 +202,19 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
         <h2 class="page-header__title" id="project-title">Проект</h2>
-        <div style="display: flex; gap: 8px;">
-          <button class="btn-icon" id="project-fav" aria-label="В избранное">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-          </button>
-          <button class="btn-icon" id="project-share" aria-label="Поделиться">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          </button>
-        </div>
+        <button class="btn-icon" id="project-more" aria-label="Ещё">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+        </button>
       </div>
 
-      <!-- Фото варианта: «До и после» — ползунок, нажатие — на весь экран -->
+      <!-- Фото варианта; под ним варианты, одна главная кнопка, редкое — в «Ещё» -->
       <div class="photo" id="project-photo"></div>
+      <div class="variants variants--top" id="project-variants"></div>
       <div class="variant-head" id="variant-head"></div>
-      <div class="ai-pick" data-ai-pick></div>
-
-      <div class="project-actions">
-        <button class="btn btn-primary btn-full" id="project-edit"><svg class="i" aria-hidden="true"><use href="#i-edit"/></svg>Изменить и сгенерировать</button>
-        <div class="project-actions__row">
-          <button class="btn btn-secondary" id="project-generate"><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg><span>Сгенерировать</span></button>
-          <button class="btn btn-secondary" id="project-download"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg>Скачать</button>
-        </div>
-      </div>
+      <div class="project-main" id="project-main"></div>
 
       <div class="section-header">
-        <h3 class="section-title" id="project-variants-title">Варианты</h3>
-      </div>
-      <div class="variants" id="project-variants"></div>
-
-      <div class="section-header">
-        <h3 class="section-title">Спецификация варианта</h3>
+        <h3 class="section-title">Что выбрано</h3>
       </div>
       <div class="project-details" id="project-details"></div>
     </div>
