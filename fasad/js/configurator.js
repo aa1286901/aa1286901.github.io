@@ -494,7 +494,8 @@ const Spec = {
     document.getElementById('spec-steps').innerHTML = flowSteps(3);
     const edit = ProjectFlow.getState('editProject');
     document.getElementById('spec-save').textContent = edit ? 'Сохранить вариант' : 'Сохранить в проекты';
-    document.getElementById('spec-generate').textContent = edit ? 'Сохранить и сгенерировать' : 'Сгенерировать фасад';
+    this.renderCost();
+    Wallet.load();
     AiChoice.render();
     document.getElementById('spec-edit-note').hidden = !edit;
     if (edit) document.getElementById('spec-edit-note').textContent = `Новый вариант проекта «${edit.name || 'Проект'}». Прежние варианты останутся.`;
@@ -504,6 +505,13 @@ const Spec = {
     const box = document.getElementById('spec-list');
     box.innerHTML = specHtml(spec, stones, catalog);
     recolorSpec(box, stones, catalog);
+  },
+
+  // Текст главной кнопки с ценой генерации в монетах
+  renderCost() {
+    const btn = document.getElementById('spec-generate');
+    if (!btn) return;
+    btn.innerHTML = `${ProjectFlow.getState('editProject') ? 'Сохранить и сгенерировать' : 'Сгенерировать фасад'} ${AiChoice.costHtml()}`;
   },
 
   // Размер здания — для расчёта количества плитки и изделий
@@ -557,7 +565,7 @@ const Spec = {
         try {
           await ProjectPage.generate(edit.projectId, newId, vs[vs.length - 1].design);
         } catch (e) {
-          showToast(`Вариант сохранён. ${e.message}`);
+          if (!Wallet.handleError(e)) showToast(`Вариант сохранён. ${e.message}`);
         }
       }
       openProject(edit.projectId, newId);
@@ -598,7 +606,7 @@ const Spec = {
         try {
           await ProjectPage.generate(project.data.id, 1, design);  // у нового проекта вариант 1
         } catch (e) {
-          showToast(`Проект сохранён. ${e.message}`);
+          if (!Wallet.handleError(e)) showToast(`Проект сохранён. ${e.message}`);
         }
       }
       openProject(project.data.id);

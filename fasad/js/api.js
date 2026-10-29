@@ -68,6 +68,16 @@ const Api = {
   },
 
   // Варианты проекта: action = add | star | delete | generate
+  // Монеты, тарифы и пакеты
+  async getWallet() {
+    return this.request('./user/wallet.php');
+  },
+
+  // Администратор: включить тариф и/или начислить золотые монеты
+  async adminWallet(data) {
+    return this.request('./admin/wallet.php', { method: 'POST', body: JSON.stringify(data) });
+  },
+
   async projectVariant(projectId, action, data = {}) {
     return this.request('./projects/variants.php', {
       method: 'POST',

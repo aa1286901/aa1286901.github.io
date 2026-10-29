@@ -29,6 +29,7 @@ const STATIC_ASSETS = [
   'js/stone-preview.js',
   'js/configurator.js',
   'js/project-page.js',
+  'js/coins.js',
   'js/viewer3d.js',
   'js/catalog.js',
   'js/profile.js',

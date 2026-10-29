@@ -51,14 +51,14 @@ function closeModal() {
 }
 
 // === Confirm Dialog ===
-function showConfirm(title, message) {
+function showConfirm(title, message, okLabel = 'Удалить') {
   return new Promise((resolve) => {
     showModal(`
       <h3 style="margin-bottom: 8px;">${title}</h3>
       <p style="color: var(--color-text-secondary); margin-bottom: 24px; font-size: var(--font-size-sm); line-height: 1.5;">${message}</p>
       <div style="display: flex; gap: 12px;">
         <button class="btn btn-secondary btn-full" id="confirm-cancel">Отмена</button>
-        <button class="btn btn-primary btn-full" id="confirm-ok">Удалить</button>
+        <button class="btn btn-primary btn-full" id="confirm-ok">${okLabel}</button>
       </div>
     `);
 

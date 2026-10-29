@@ -8,6 +8,7 @@
 //   poll                      — проверить идущие генерации, готовые картинки сохранить в проект
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../ai.php';
+require_once __DIR__ . '/../wallet.php';
 
 $userId = requireAuth();
 
@@ -87,13 +88,27 @@ if ($action === 'add') {
     $cfg = aiConfig();
     $model = (string)($body['model'] ?? '');
     if (isset(AI_MODELS[$model])) $cfg['model'] = $model;  // выбор прораба: Nano Banana или GPT Image
+    // Монеты списываются сразу; если ИИ не нарисует — вернутся (сбой запуска ничего не сохраняет)
+    $user = &findUser($db, $userId);
+    $charged = walletCharge($user, AI_MODELS[$cfg['model']]['coins']);
+    if ($charged === null) respondError('Не хватает монет', 402);
     $project['variants'][$found]['ai'] = aiStart($cfg, $project['original_image'], $prompt, array_values(array_unique($refs)));
+    $project['variants'][$found]['ai']['charged'] = $charged;
+    unset($user);
 } elseif ($action === 'poll') {
     $cfg = null;
     foreach ($project['variants'] as $vi => $v) {
         if (($v['ai']['status'] ?? '') !== 'processing') continue;
         $cfg = $cfg ?? aiConfig();
         aiPoll($cfg, $project['variants'][$vi]);
+        $ai = &$project['variants'][$vi]['ai'];
+        if ($ai['status'] === 'failed' && !empty($ai['charged'])) {
+            $user = &findUser($db, $userId);
+            walletRefund($user, $ai['charged']);
+            $ai['charged'] = null;  // вернули — второй раз не вернуть
+            unset($user);
+        }
+        unset($ai);
         if (!empty($project['variants'][$vi]['generated_image'])) {
             // Картинка последнего готового варианта — обложка проекта в списке
             $project['generated_image'] = $project['variants'][$vi]['generated_image'];
@@ -106,5 +121,7 @@ if ($action === 'add') {
 }
 
 unset($project);
+$me = &findUser($db, $userId);
+walletSync($me);
 saveDB($db);
-respondSuccess(['variants' => $db['projects'][$index]['variants']]);
+respondSuccess(['variants' => $db['projects'][$index]['variants'], 'wallet' => walletPublic($me)]);

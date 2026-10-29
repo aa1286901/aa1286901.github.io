@@ -34,6 +34,8 @@ async function renderProfile() {
       }
     }
 
+    const w = await Wallet.load();
+
     container.innerHTML = `
       <div class="profile-header">
         <h2 class="page-header__title" style="width: 100%;">Профиль</h2>
@@ -44,7 +46,7 @@ async function renderProfile() {
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </div>
         <div class="profile-header__name">${user.name}</div>
-        <div class="profile-header__role">Профессионал</div>
+        <div class="profile-header__role">Тариф «${esc(w?.plan_name || 'Бесплатный')}»</div>
       </div>
 
       <div class="profile-stats">
@@ -64,9 +66,10 @@ async function renderProfile() {
           <span class="profile-menu__text">Избранные материалы</span>
           <svg class="profile-menu__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
-        <div class="profile-menu__item" id="profile-premium">
-          <svg class="profile-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          <span class="profile-menu__text">Premium</span>
+        <div class="profile-menu__item" id="profile-coins" data-open-coins>
+          <span class="profile-menu__icon profile-menu__coin">${coin('gold')}</span>
+          <span class="profile-menu__text">Монеты и тариф</span>
+          ${w ? `<span class="profile-menu__coins">${coin('silver')}${w.silver}${coin('gold')}${w.gold}</span>` : ''}
           <svg class="profile-menu__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
         <div class="profile-menu__item" id="profile-help">
@@ -91,7 +94,7 @@ async function renderProfile() {
       Router.navigateTo('favorites');
     });
     document.getElementById('profile-logout')?.addEventListener('click', async () => {
-      const ok = await showConfirm('Выйти', 'Вы уверены, что хотите выйти?');
+      const ok = await showConfirm('Выйти', 'Вы уверены, что хотите выйти?', 'Выйти');
       if (ok) {
         await Auth.logout();
         showToast('Вы вышли из аккаунта');
