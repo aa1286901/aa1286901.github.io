@@ -33,15 +33,6 @@ const KP_EXTRAS = [
   { id: 'trash', name: 'Вывоз мусора', sub: 'обрезки камня, упаковка', unit: 'объект', m: 0, w: 6000, lw: 'Услуга' },
 ];
 
-// «Если понадобится» — цены за единицу, в итог не входят
-const KP_OPTIONS = [
-  { id: 'erker', name: 'Эркер — облицовка', sub: 'сложная геометрия, подрезка · за м²', price: '+40% к цене стен' },
-  { id: 'arch', name: 'Арка над входом', sub: 'камень и монтаж · за шт', price: 'от 45 000 ₽' },
-  { id: 'porch', name: 'Колонна у входа', sub: 'с базой и капителью · за шт', price: 'от 38 000 ₽' },
-  { id: 'belt', name: 'Межэтажный пояс', sub: 'карниз между этажами · за п.м', price: '3 300 ₽' },
-  { id: 'balcony', name: 'Балюстрада балкона', sub: 'балясины, перила, тумбы · за п.м', price: 'от 9 500 ₽' },
-];
-
 const KP_TERMS = { payment: '50% на камень и леса, остаток — по этапам', guarantee: '5 лет на монтаж, камень — на весь срок службы', valid: 14 };
 
 const kpRub = (n) => `${Math.round(n || 0).toLocaleString('ru-RU')} ₽`;
@@ -99,11 +90,12 @@ const KP = {
     this.model = Object.assign({
       client: { name: '', object: `частный дом, ${floors} ${floors === 1 ? 'этаж' : floors < 5 ? 'этажа' : 'этажей'}` },
       dims: { floors, height: +b.heightM || +(floors * 3.2).toFixed(1), perimeter: 36, windows: floors * 4, doors: 1, plinth: 0.6 },
-      rows: {}, custom: [], options: {}, discount: 0, days: 35,
+      rows: {}, custom: [], customExtras: [], discount: 0, days: 35,
       terms: { ...KP_TERMS, ...(this.mine.terms || {}) },
       profile: { name: this.mine.profile?.name || user.name || '', company: '', phone: '', telegram: '', city: '', exp: '', ...(this.mine.profile || {}) },
     }, saved.data || {});
     this.model.profile = { ...this.model.profile, ...(this.mine.profile || {}) };
+    this.model.customExtras = this.model.customExtras || [];
     this.render();
   },
 
@@ -139,7 +131,7 @@ const KP = {
       }
       out.push(this.row(def, sub, img, imgKind, ms, prices));
     }
-    return { items: out, ms };
+    return { items: out.filter(r => !r.deleted), ms };
   },
 
   row(def, sub, img, imgKind, ms, prices) {
@@ -147,7 +139,7 @@ const KP = {
     const p = prices[def.id] || {};
     const auto = kpAutoQty(def.id, ms, +this.model.days || 0);
     return {
-      ...def, sub: def.sub || sub, img, imgKind,
+      ...def, name: o.name || def.name, deleted: !!o.deleted, sub: def.sub || sub, img, imgKind,
       qty: o.manual ? +o.qty || 0 : auto, auto, manual: !!o.manual,
       m: +(o.m ?? p.m ?? def.m) || 0, w: +(o.w ?? p.w ?? def.w) || 0,
       on: o.on ?? !(def.id === 'scaffold' && ms.F < 2),
@@ -156,16 +148,18 @@ const KP = {
 
   extras(ms) {
     const prices = this.mine.prices || {};
-    return KP_EXTRAS.map(def => this.row(def, def.sub, null, null, ms, prices));
+    return KP_EXTRAS.map(def => this.row(def, def.sub, null, null, ms, prices)).filter(r => !r.deleted);
   },
 
-  customs() {
-    return this.model.custom.map(c => ({ ...c, unit: c.unit || 'шт', qty: +c.qty || 0, m: +c.m || 0, w: +c.w || 0, on: c.on !== false, custom: true, group: 'Другое' }));
+  // Свои позиции прораба: в смете (custom) и в «Дополнительно» (customExtras)
+  customs(list = 'custom') {
+    return (this.model[list] || []).map(c => ({ ...c, unit: c.unit || 'шт', qty: +c.qty || 0, m: +c.m || 0, w: +c.w || 0, on: c.on !== false,
+      custom: list, group: list === 'custom' ? 'Другое' : 'Дополнительные работы' }));
   },
 
   totals() {
     const { items, ms } = this.rows();
-    const extras = this.extras(ms);
+    const extras = [...this.extras(ms), ...this.customs('customExtras')];
     const all = [...items, ...this.customs(), ...extras].filter(r => r.on);
     let mat = 0, work = 0;
     all.forEach(r => { mat += r.qty * r.m; work += r.qty * r.w; });
@@ -177,8 +171,10 @@ const KP = {
   // === Экран редактора ===
   render() {
     const md = this.model, pf = md.profile, t = this.totals();
-    const field = (path, label, type = 'text', extra = '') => `
-      <label class="kp-field"><span>${label}</span><input class="input" type="${type}" data-k="${path}" value="${esc(path.split('.').reduce((o, k) => o?.[k], md) ?? '')}" ${extra}></label>`;
+    const val = path => path.split('.').reduce((o, k) => o?.[k], md) ?? '';
+    const field = (path, label, type = 'text', extra = '') => type === 'textarea'
+      ? `<label class="kp-field"><span>${label}</span><textarea class="input kp-area" rows="2" data-k="${path}" ${extra}>${esc(val(path))}</textarea></label>`
+      : `<label class="kp-field"><span>${label}</span><input class="input" type="${type}" data-k="${path}" value="${esc(val(path))}" ${extra}></label>`;
     document.getElementById('kp-content').innerHTML = `
       <div class="kp-intro">
         <img src="${this.variant?.generated_image || this.project.original_image}" alt="">
@@ -203,27 +199,21 @@ const KP = {
 
       <section class="kp-card"><h3>Смета <small>материал и работа по каждой позиции</small></h3>
         <div id="kp-items"></div>
-        <button class="btn btn-ghost btn-full kp-add" id="kp-add">＋ Своя позиция</button>
+        <button class="btn btn-ghost btn-full kp-add" data-add="custom">＋ Своя позиция</button>
       </section>
 
-      <section class="kp-card"><h3>Дополнительно <small>сетка, леса, доставка…</small></h3><div id="kp-extras"></div></section>
-
-      <section class="kp-card"><h3>Если понадобится <small>в итог не входит</small></h3>
-        <div class="kp-opts">${KP_OPTIONS.map(o => {
-          const s = md.options[o.id] || {};
-          return `<label class="kp-opt"><input type="checkbox" data-opt="${o.id}" data-f="on" ${s.on !== false ? 'checked' : ''}>
-            <span><b>${o.name}</b><small>${o.sub}</small></span>
-            <input class="input" data-opt="${o.id}" data-f="price" value="${esc(s.price ?? o.price)}"></label>`;
-        }).join('')}</div>
+      <section class="kp-card"><h3>Дополнительно <small>сетка, леса, доставка…</small></h3>
+        <div id="kp-extras"></div>
+        <button class="btn btn-ghost btn-full kp-add" data-add="customExtras">＋ Своя позиция</button>
       </section>
 
       <section class="kp-card"><h3>Условия</h3>
         <div class="kp-grid kp-grid--3">
           ${field('discount', 'Скидка, %', 'number', 'inputmode="decimal"')}
-          ${field('days', 'Срок, раб. дней', 'number', 'inputmode="numeric"')}
-          ${field('terms.valid', 'КП действует, дней', 'number', 'inputmode="numeric"')}
+          ${field('days', 'Срок, дней', 'number', 'inputmode="numeric"')}
+          ${field('terms.valid', 'КП действует', 'number', 'inputmode="numeric"')}
         </div>
-        <div class="kp-grid">${field('terms.payment', 'Оплата')}${field('terms.guarantee', 'Гарантия')}</div>
+        <div class="kp-grid">${field('terms.payment', 'Оплата', 'textarea')}${field('terms.guarantee', 'Гарантия', 'textarea')}</div>
       </section>
 
       <section class="kp-card"><h3>Ваши данные <small>видит заказчик · запомнятся</small></h3>
@@ -235,6 +225,7 @@ const KP = {
       </section>
       <p class="configure-hint">Цены, ваши данные и условия запомнятся для следующих КП.</p>`;
     this.renderRows(t);
+    document.querySelectorAll('#kp-content .kp-area').forEach(kpGrow);
   },
 
   rowHtml(r, kind) {
@@ -243,7 +234,7 @@ const KP = {
       <div class="kp-row${r.on ? '' : ' off'}" data-row="${r.id}" data-kind="${kind}">
         <div class="kp-row__head">
           <label class="kp-check"><input type="checkbox" data-f="on" ${r.on ? 'checked' : ''}><span></span></label>
-          <div class="kp-row__name">${r.custom ? `<input class="input kp-row__title" data-f="name" value="${esc(r.name)}" placeholder="Название позиции">` : `<b>${esc(r.name)}</b>`}
+          <div class="kp-row__name"><b>${esc(r.name || 'Без названия')}</b>
             ${r.sub ? `<small>${esc(r.sub)}</small>` : ''}</div>
           <b class="kp-row__sum" data-sum>${kpRub(r.qty * (r.m + r.w))}</b>
         </div>
@@ -252,13 +243,21 @@ const KP = {
           <label><span>${lm}, ₽</span><input class="input" type="number" inputmode="numeric" data-f="m" value="${r.m}"></label>
           <label><span>${lw}, ₽</span><input class="input" type="number" inputmode="numeric" data-f="w" value="${r.w}"></label>
         </div>
-        ${r.custom ? '<button class="kp-row__del" data-del>Убрать позицию</button>' : ''}
+        <div class="kp-row__tools">
+          <button data-rename>${icon('edit')}Переименовать</button>
+          <button data-del>${icon('trash')}Удалить</button>
+        </div>
       </div>`;
   },
 
   renderRows(t = this.totals()) {
-    document.getElementById('kp-items').innerHTML = [...t.items, ...this.customs()].map(r => this.rowHtml(r, r.custom ? 'custom' : 'item')).join('');
-    document.getElementById('kp-extras').innerHTML = t.extras.map(r => this.rowHtml(r, 'extra')).join('');
+    // Удалённые позиции можно вернуть одной кнопкой
+    const gone = (defs) => defs.filter(d => this.model.rows[d.id]?.deleted).length;
+    const restore = (n, kind) => n ? `<button class="kp-restore" data-restore="${kind}">Вернуть удалённые (${n})</button>` : '';
+    document.getElementById('kp-items').innerHTML = [...t.items, ...this.customs()].map(r => this.rowHtml(r, r.custom || 'item')).join('')
+      + restore(gone(KP_ITEMS), 'items');
+    document.getElementById('kp-extras').innerHTML = t.extras.map(r => this.rowHtml(r, r.custom || 'extra')).join('')
+      + restore(gone(KP_EXTRAS), 'extras');
     this.renderTotals(t);
   },
 
@@ -283,15 +282,14 @@ const KP = {
       // Размеры и срок меняют количества — перерисуем строки, поля размеров не трогаем
       if (/^(dims\.|days)/.test(el.dataset.k)) this.renderRows();
       else this.renderTotals();
-    } else if (el.dataset.opt) {
-      const o = this.model.options[el.dataset.opt] = this.model.options[el.dataset.opt] || {};
-      o[el.dataset.f] = val;
+      if (el.tagName === 'TEXTAREA') kpGrow(el);
     } else {
       const rowEl = el.closest('[data-row]');
       if (!rowEl) return;
       const id = rowEl.dataset.row, f = el.dataset.f;
-      if (rowEl.dataset.kind === 'custom') {
-        const c = this.model.custom.find(x => x.id === id);
+      const list = rowEl.dataset.kind;
+      if (list === 'custom' || list === 'customExtras') {
+        const c = this.model[list].find(x => x.id === id);
         c[f] = val;
       } else {
         const o = this.model.rows[id] = this.model.rows[id] || {};
@@ -311,23 +309,40 @@ const KP = {
     return [...t.items, ...t.extras, ...this.customs()].find(r => r.id === id);
   },
 
-  onClick(e) {
+  async onClick(e) {
     const rowEl = e.target.closest('[data-row]');
+    const list = rowEl?.dataset.kind;
+    const own = list === 'custom' || list === 'customExtras';
+    const changed = () => { this.renderRows(); this.saveSoon(); };
     if (e.target.closest('[data-reset]') && rowEl) {
       e.preventDefault();
       delete this.model.rows[rowEl.dataset.row].manual;
-      this.renderRows();
-      this.saveSoon();
+      return changed();
+    }
+    if (e.target.closest('[data-rename]') && rowEl) {
+      const r = this.findRow(rowEl.dataset.row);
+      const name = await showPrompt('Название позиции', r?.name || '', 'Сохранить');
+      if (!name) return;
+      if (own) this.model[list].find(x => x.id === rowEl.dataset.row).name = name;
+      else (this.model.rows[rowEl.dataset.row] = this.model.rows[rowEl.dataset.row] || {}).name = name;
+      return changed();
     }
     if (e.target.closest('[data-del]') && rowEl) {
-      this.model.custom = this.model.custom.filter(c => c.id !== rowEl.dataset.row);
-      this.renderRows();
-      this.saveSoon();
+      if (own) this.model[list] = this.model[list].filter(c => c.id !== rowEl.dataset.row);
+      else (this.model.rows[rowEl.dataset.row] = this.model.rows[rowEl.dataset.row] || {}).deleted = true;
+      return changed();
     }
-    if (e.target.closest('#kp-add')) {
-      this.model.custom.push({ id: `c${Date.now()}`, name: '', unit: 'шт', qty: 1, m: 0, w: 0, on: true });
-      this.renderRows();
-      document.querySelector('#kp-items [data-kind="custom"]:last-child .kp-row__title')?.focus();
+    const rs = e.target.closest('[data-restore]');
+    if (rs) {
+      (rs.dataset.restore === 'items' ? KP_ITEMS : KP_EXTRAS).forEach(d => { if (this.model.rows[d.id]) delete this.model.rows[d.id].deleted; });
+      return changed();
+    }
+    const add = e.target.closest('[data-add]');
+    if (add) {
+      const name = await showPrompt('Новая позиция', '', 'Добавить', add.dataset.add === 'custom' ? 'Например, Сандрики над окнами' : 'Например, Аренда вышки');
+      if (!name) return;
+      this.model[add.dataset.add].push({ id: `c${Date.now()}`, name, unit: 'шт', qty: 1, m: 0, w: 0, on: true });
+      changed();
     }
   },
 
@@ -404,6 +419,11 @@ const KP = {
   },
 };
 
+function kpGrow(el) {
+  el.style.height = 'auto';
+  el.style.height = `${el.scrollHeight + 2}px`;
+}
+
 function onScreenKp() {
   if (!KP.projectId) return Router.navigateTo('projects');
   KP.bind();
@@ -412,7 +432,13 @@ function onScreenKp() {
   });
 }
 
-// === Сборка PDF: листы в формате экрана телефона ===
+// === Сборка PDF: jsPDF рисует листы 390×844 (как экран телефона) векторно ===
+// Текст — настоящий (шрифт Inter вшит): ровный, чёткий при увеличении, копируется. Фото — картинки
+// с водяным знаком; скруглённые углы фото и значков запекаются в саму картинку.
+
+const KPC = { ink: '#1f1b16', muted: '#857b6f', line: '#ebe4d9', paper: '#f7f4ef', card: '#ffffff', gold: '#c9a86a', goldD: '#a8843f',
+  dark: '#2b2620', yellow: '#f3cd55', chip: '#f3ede3', sub: '#5a5249', green: '#2e7d32', promo: '#2f2821', promoBox: '#41382e' };
+const KPW = 390, KPH = 844, KPM = 18, KPCW = 354;
 
 function kpLoadScript(src) {
   return new Promise((resolve, reject) => {
@@ -433,26 +459,47 @@ function kpLoadImage(src) {
   });
 }
 
-// Картинка ровно под рамку: cover — обрезать, contain — вписать на белом (html2canvas не умеет object-fit)
-async function kpFit(src, w, h, mode = 'cover') {
+async function kpFontBase64(url) {
+  const buf = new Uint8Array(await (await fetch(url)).arrayBuffer());
+  let s = '';
+  for (let i = 0; i < buf.length; i += 32768) s += String.fromCharCode.apply(null, buf.subarray(i, i + 32768));
+  return btoa(s);
+}
+
+// Холст с картинкой ровно под рамку: cover — обрезать, contain — вписать; углы скруглены на цвете фона
+function kpCanvas(w, h, scale = 3) {
+  const c = document.createElement('canvas');
+  c.width = Math.round(w * scale); c.height = Math.round(h * scale);
+  const g = c.getContext('2d');
+  g.scale(scale, scale);
+  return { c, g };
+}
+
+function kpRoundClip(g, w, h, r) {
+  g.beginPath();
+  g.moveTo(r, 0); g.arcTo(w, 0, w, h, r); g.arcTo(w, h, 0, h, r); g.arcTo(0, h, 0, 0, r); g.arcTo(0, 0, w, 0, r);
+  g.closePath();
+  g.clip();
+}
+
+async function kpPicture(src, w, h, { r = 0, bg = KPC.paper, fill = '#ffffff', mode = 'cover', png = false } = {}) {
   if (!src) return null;
   try {
-    const img = await kpLoadImage(src);
-    const c = document.createElement('canvas');
-    c.width = w * 2; c.height = h * 2;
-    const g = c.getContext('2d');
-    g.fillStyle = '#ffffff';
-    g.fillRect(0, 0, c.width, c.height);
-    const s = mode === 'cover' ? Math.max(c.width / img.width, c.height / img.height) : Math.min(c.width / img.width, c.height / img.height) * 0.92;
-    const dw = img.width * s, dh = img.height * s;
-    g.drawImage(img, (c.width - dw) / 2, (c.height - dh) / 2, dw, dh);
-    return c.toDataURL('image/jpeg', 0.86);
+    const img = typeof src === 'string' ? await kpLoadImage(src) : src;
+    const { c, g } = kpCanvas(w, h);
+    if (!png) { g.fillStyle = bg; g.fillRect(0, 0, w, h); }
+    if (r) kpRoundClip(g, w, h, r);
+    g.fillStyle = fill;
+    g.fillRect(0, 0, w, h);
+    const s = mode === 'cover' ? Math.max(w / img.width, h / img.height) : Math.min(w / img.width, h / img.height) * 0.9;
+    g.drawImage(img, (w - img.width * s) / 2, (h - img.height * s) / 2, img.width * s, img.height * s);
+    return png ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', 0.85);
   } catch (e) {
     return null;
   }
 }
 
-// Фото 4:3 с водяным знаком «Fasad AI · имя · телефон» по диагонали и плашкой «Сделано в Fasad AI»
+// Фото 4:3 с водяным знаком «Fasad AI · имя · телефон» и плашкой «Сделано в Fasad AI»
 async function kpWatermark(src, text, icon) {
   const img = await kpLoadImage(src);
   const W = 1200, H = 900;
@@ -471,188 +518,451 @@ async function kpWatermark(src, text, icon) {
     for (let x = -W * 1.4 - (k % 2) * tw / 2; x < W * 1.4; x += tw) g.fillText(text, x, y);
   }
   g.restore();
-  // Плашка в углу
   const bh = 64, label = 'Сделано в Fasad AI';
-  g.font = `700 26px -apple-system, system-ui, sans-serif`;
+  g.font = '700 26px -apple-system, system-ui, sans-serif';
   const bw = 64 + 24 + g.measureText(label).width + 26;
   const bx = W - bw - 22, by = H - bh - 22;
+  g.save();
   g.fillStyle = 'rgba(30,26,22,0.72)';
-  g.beginPath();
-  g.roundRect ? g.roundRect(bx, by, bw, bh, bh / 2) : g.rect(bx, by, bw, bh);
-  g.fill();
+  g.translate(bx, by);
+  kpRoundClip(g, bw, bh, bh / 2);
+  g.fillRect(0, 0, bw, bh);
+  g.restore();
   if (icon) g.drawImage(icon, bx + 10, by + 8, 48, 48);
   g.fillStyle = '#ffffff';
   g.fillText(label, bx + 70, by + 42);
-  return c.toDataURL('image/jpeg', 0.86);
+  return c;
+}
+
+// Карандаш PDF: шрифты, цвета, текст с переносом, плашки, карточки
+class KpDraw {
+  constructor(pdf) {
+    this.pdf = pdf;
+  }
+
+  font(weight, size, color = KPC.ink) {
+    this.pdf.setFont({ r: 'InterR', s: 'InterS', b: 'InterB' }[weight], 'normal');
+    this.pdf.setFontSize(size);
+    this.pdf.setTextColor(color);
+    this.size = size;
+  }
+
+  // Разделители тысяч в рублях — обычный пробел (в шрифте нет узких пробелов)
+  clean(t) {
+    return String(t ?? '').replace(/[\u00a0\u202f]/g, ' ').replace(/\u2212/g, '-');
+  }
+
+  lines(t, w) {
+    return w ? this.pdf.splitTextToSize(this.clean(t), w) : [this.clean(t)];
+  }
+
+  // Текст от верхнего края; вернёт высоту
+  text(t, x, y, { w, align = 'left', lh = 1.32, space = 0 } = {}) {
+    const ls = this.lines(t, w);
+    const ax = align === 'right' ? x + (w || 0) : align === 'center' ? x + (w || 0) / 2 : x;
+    this.pdf.text(ls, ax, y, { baseline: 'top', align, lineHeightFactor: lh, charSpace: space });
+    return ls.length * this.size * lh;
+  }
+
+  height(t, w, lh = 1.32) {
+    return this.lines(t, w).length * this.size * lh;
+  }
+
+  width(t) {
+    return this.pdf.getTextWidth(this.clean(t));
+  }
+
+  box(x, y, w, h, r, fill, stroke) {
+    if (fill) this.pdf.setFillColor(fill);
+    if (stroke) { this.pdf.setDrawColor(stroke); this.pdf.setLineWidth(1); }
+    this.pdf.roundedRect(x, y, w, h, r, r, fill && stroke ? 'FD' : fill ? 'F' : 'S');
+  }
+
+  card(x, y, w, h) {
+    this.box(x, y, w, h, 16, KPC.card, KPC.line);
+  }
+
+  hline(x, y, w, color = KPC.line) {
+    this.pdf.setDrawColor(color);
+    this.pdf.setLineWidth(1);
+    this.pdf.line(x, y, x + w, y);
+  }
+
+  alpha(a, fn) {
+    this.pdf.saveGraphicsState();
+    this.pdf.setGState(new this.pdf.GState({ opacity: a }));
+    fn();
+    this.pdf.restoreGraphicsState();
+  }
+
+  // Тёмная плашка поверх фото
+  chip(t, x, y) {
+    this.font('b', 12, '#ffffff');
+    const w = this.width(t) + 22;
+    this.alpha(0.6, () => this.box(x, y, w, 24, 12, '#000000'));
+    this.font('b', 12, '#ffffff');
+    this.text(t, x + 11, y + 6);
+  }
+
+  // Кружок с цифрой или инициалами
+  badge(t, cx, cy, r, fill, size) {
+    this.pdf.setFillColor(fill);
+    this.pdf.circle(cx, cy, r, 'F');
+    this.font('b', size, '#ffffff');
+    this.pdf.text(this.clean(t), cx, cy, { align: 'center', baseline: 'middle' });
+  }
+
+  image(data, x, y, w, h, fmt = 'JPEG') {
+    if (data) this.pdf.addImage(data, fmt, x, y, w, h, undefined, 'FAST');
+  }
+
+  link(x, y, w, h, url) {
+    this.pdf.link(x, y, w, h, { url });
+  }
 }
 
 async function kpBuildPdf(kp) {
   if (!window.jspdf) await kpLoadScript('js/vendor/jspdf.umd.min.js');
-  if (!window.html2canvas) await kpLoadScript('js/vendor/html2canvas.min.js');
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ unit: 'pt', format: [KPW, KPH], compress: true });
+  const [fr, fs, fb] = await Promise.all(['Regular', 'SemiBold', 'Bold'].map(w => kpFontBase64(`assets/fonts/Inter-${w}.ttf`)));
+  [['InterR', fr], ['InterS', fs], ['InterB', fb]].forEach(([n, d]) => { pdf.addFileToVFS(`${n}.ttf`, d); pdf.addFont(`${n}.ttf`, n, 'normal'); });
+
   const md = kp.model, pf = md.profile, t = kp.totals();
-  const icon = await kpLoadImage('icon-192.png');
+  const iconImg = await kpLoadImage('icon-192.png');
   const wm = `Fasad AI  ·  ${pf.name}  ·  ${pf.phone}`;
-  const after = kp.variant?.generated_image ? await kpWatermark(kp.variant.generated_image, wm, icon) : null;
-  const before = await kpWatermark(kp.project.original_image, wm, icon);
-  const iconUrl = 'icon-192.png';
+  const photo = async (src) => kpPicture(await kpWatermark(src, wm, iconImg), KPCW, 265, { r: 16 });
+  const after = kp.variant?.generated_image ? await photo(kp.variant.generated_image) : null;
+  const before = await photo(kp.project.original_image);
+  const icon = await kpPicture(iconImg, 30, 30, { r: 8, png: true });
+  const iconBig = await kpPicture(iconImg, 92, 92, { r: 24, png: true });
+  const qr = await kpPicture('assets/kp-qr.png', 92, 92, { mode: 'contain', fill: '#ffffff', bg: '#ffffff' });
   const rows = [...t.items, ...kp.customs()].filter(r => r.on);
   const extras = t.extras.filter(r => r.on);
-  const thumbs = {};
-  await Promise.all(rows.map(async r => { thumbs[r.id] = await kpFit(r.img, 48, 38, r.imgKind === 'product' ? 'contain' : 'cover'); }));
-  const pages = kpPages(kp, { after: after || before, before, thumbs, rows, extras, t, iconUrl });
+  const thumbs = {}, mthumbs = {};
+  await Promise.all(rows.map(async r => {
+    const mode = r.imgKind === 'product' ? 'contain' : 'cover';
+    thumbs[r.id] = await kpPicture(r.img, 48, 38, { r: 8, bg: KPC.card, mode });
+    mthumbs[r.id] = await kpPicture(r.img, 64, 50, { r: 9, bg: KPC.card, mode });
+  }));
 
-  const host = document.createElement('div');
-  host.className = 'kpdoc';
-  host.innerHTML = pages.join('');
-  document.body.appendChild(host);
-  try {
-    await Promise.all([...host.querySelectorAll('img')].map(i => i.complete ? null : new Promise(r => { i.onload = i.onerror = r; })));
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ unit: 'pt', format: [390, 844], compress: true });
-    const els = [...host.querySelectorAll('.kpp')];
-    for (let i = 0; i < els.length; i++) {
-      const el = els[i];
-      const canvas = await window.html2canvas(el, { scale: 2, backgroundColor: null, logging: false, useCORS: true });
-      if (i) pdf.addPage([390, 844]);
-      pdf.addImage(canvas.toDataURL('image/jpeg', 0.84), 'JPEG', 0, 0, 390, 844);
-      // Кнопки «Позвонить» / «Написать» и QR-ссылка нажимаются прямо в PDF
-      const box = el.getBoundingClientRect();
-      el.querySelectorAll('[data-link]').forEach(a => {
-        const r = a.getBoundingClientRect();
-        pdf.link(r.left - box.left, r.top - box.top, r.width, r.height, { url: a.dataset.link });
-      });
-    }
-    const name = `КП ${md.client.name || kp.project.name || 'фасад'}.pdf`.replace(/[\\/:*?"<>|]/g, '');
-    return new File([pdf.output('blob')], name, { type: 'application/pdf' });
-  } finally {
-    host.remove();
-  }
-}
+  const d = new KpDraw(pdf);
+  let y = 0, pageNo = 0;
+  const bottom = KPH - 22;
+  const newPage = (dark = false) => {
+    if (pageNo++) pdf.addPage([KPW, KPH]);
+    d.box(0, 0, KPW, KPH, 0, dark ? KPC.promo : KPC.paper);
+    d.image(icon, KPM, 18, 30, 30, 'PNG');
+    d.font('b', 15, dark ? '#ffffff' : KPC.ink);
+    d.text('Fasad AI', KPM + 39, 25);
+    y = 64;
+  };
+  const h2 = (title, small) => {
+    d.font('b', 22);
+    y += d.text(title, KPM, y);
+    if (small) { d.font('r', 13, KPC.muted); y += d.text(small, KPM, y + 1) + 2; }
+    y += 10;
+  };
+  const ensure = (h, title) => {
+    if (y + h <= bottom + 8) return;
+    newPage();
+    h2(title, 'продолжение');
+  };
 
-// Кружок с цифрой или инициалами — SVG: html2canvas сдвигает обычный текст в кружках
-function kpBadge(text, size, font, fill) {
-  const id = `g${Math.random().toString(36).slice(2, 8)}`;
-  const bg = fill === 'gradient'
-    ? `<defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9a86a"/><stop offset="1" stop-color="#a8843f"/></linearGradient></defs><circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="url(#${id})"/>`
-    : `<circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="${fill}"/>`;
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="flex-shrink:0;display:block">${bg}
-    <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="${font}" font-weight="800" font-family="-apple-system, system-ui, sans-serif">${esc(text)}</text></svg>`;
-}
-
-// Листы КП (разметка повторяет утверждённый образец)
-function kpPages(kp, { after, before, thumbs, rows, extras, t, iconUrl }) {
-  const md = kp.model, pf = md.profile;
   const date = new Date();
-  const dstr = date.toLocaleDateString('ru-RU');
   const valid = new Date(date.getTime() + (+md.terms.valid || 14) * 864e5).toLocaleDateString('ru-RU');
   const num = `КП-${date.getFullYear()}-${String(kp.projectId).padStart(3, '0')}${md.number > 1 ? `-${md.number}` : ''}`;
-  const pages = [];
-  const page = (body, cls = '') => `<section class="kpp ${cls}"><div class="kpp__bar"><img src="${iconUrl}" alt=""><b>Fasad AI</b><span>{N} / {T}</span></div>${body}</section>`;
-  const initialsPf = initials(pf.name);
 
-  pages.push(page(`
-    <div class="kpp__eyebrow">Коммерческое предложение</div>
-    <h1>Облицовка фасада натуральным камнем</h1>
-    <p class="kpp__meta">${md.client.name ? `Заказчик: <b>${esc(md.client.name)}</b><br>` : ''}${esc(md.client.object || '')} · ${num} от ${dstr}</p>
-    <div class="kpp__photo"><img src="${after}" alt=""><span class="kpp__chip">Так будет выглядеть ваш дом</span></div>
-    <div class="kpp__card kpp__toc">${['Было и будет', 'Материалы', 'Смета по каждой позиции', 'Итог, сроки и оплата'].map((s, i) => `<div>${kpBadge(i + 1, 22, 12, '#c9a86a')}${s}</div>`).join('')}</div>
-    <div class="kpp__card kpp__pro">${kpBadge(initialsPf, 46, 17, 'gradient')}<div><b>${esc(pf.name)}</b><span>${esc([pf.company, pf.city, pf.exp].filter(Boolean).join(' · '))}</span></div></div>`));
+  // 1. Обложка — без цены: заказчик сначала смотрит, за что платит
+  newPage();
+  d.font('b', 12, KPC.goldD);
+  y += d.text('КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ', KPM, y, { space: 0.6 }) + 4;
+  d.font('b', 27);
+  y += d.text('Облицовка фасада натуральным камнем', KPM, y, { w: KPCW, lh: 1.12 }) + 8;
+  if (md.client.name) {
+    d.font('r', 13, KPC.muted);
+    d.text('Заказчик: ', KPM, y);
+    const lw = d.width('Заказчик: ');
+    d.font('s', 13, KPC.ink);
+    y += d.text(md.client.name, KPM + lw, y, { w: KPCW - lw });
+  }
+  d.font('r', 13, KPC.muted);
+  y += d.text(`${md.client.object || ''} · ${num} от ${date.toLocaleDateString('ru-RU')}`, KPM, y, { w: KPCW }) + 12;
+  d.image(after || before, KPM, y, KPCW, 265);
+  d.chip('Так будет выглядеть ваш дом', KPM + 10, y + 10);
+  y += 265 + 12;
+  d.card(KPM, y, KPCW, 92);
+  ['Было и будет', 'Материалы', 'Смета по каждой позиции', 'Итог, сроки и оплата'].forEach((s, i) => {
+    const cx = KPM + 16 + (i % 2) * 172, cy = y + 16 + Math.floor(i / 2) * 36;
+    d.badge(i + 1, cx + 11, cy + 11, 11, KPC.gold, 11);
+    d.font('s', 13.5);
+    d.text(s, cx + 30, cy + 2, { w: 136, lh: 1.15 });
+  });
+  const py = KPH - 14 - 78;
+  d.card(KPM, py, KPCW, 78);
+  d.badge(initials(pf.name), KPM + 16 + 23, py + 39, 23, KPC.goldD, 17);
+  d.font('b', 16);
+  d.text(pf.name, KPM + 78, py + 20, { w: KPCW - 94 });
+  d.font('r', 12.5, KPC.muted);
+  d.text([pf.company, pf.city, pf.exp].filter(Boolean).join(' · '), KPM + 78, py + 42, { w: KPCW - 94 });
 
-  pages.push(page(`
-    <h2>Было и будет</h2>
-    <div class="kpp__stack">
-      <div class="kpp__photo"><img src="${before}" alt=""><span class="kpp__chip">Сейчас</span></div>
-      <div class="kpp__photo"><img src="${after}" alt=""><span class="kpp__chip">После облицовки</span></div>
-    </div>`));
+  // 2. Было и будет
+  newPage();
+  h2('Было и будет');
+  d.image(before, KPM, y, KPCW, 265);
+  d.chip('Сейчас', KPM + 10, y + 10);
+  y += 275;
+  d.image(after || before, KPM, y, KPCW, 265);
+  d.chip('После облицовки', KPM + 10, y + 10);
 
-  const mats = rows.filter(r => r.img && !r.custom).slice(0, 6);
+  // 3. Материалы (с картинкой, до 6)
+  const mats = rows.filter(r => mthumbs[r.id] && !r.custom).slice(0, 6);
   if (mats.length) {
-    pages.push(page(`
-      <h2>Материалы</h2>
-      <div class="kpp__stack">${mats.map(r => `
-        <div class="kpp__card kpp__mat">${thumbs[r.id] ? `<img src="${thumbs[r.id]}" alt="">` : ''}<div><small>${esc(r.group)}</small><b>${esc(r.name)}</b><span>${esc(r.sub || '')}</span></div></div>`).join('')}</div>
-      <p class="kpp__lead">Натуральный камень дагестанских карьеров: не выгорает, не боится мороза, служит десятилетиями.</p>`));
+    newPage();
+    h2('Материалы');
+    for (const r of mats) {
+      const tw = KPCW - 24 - 64 - 12;
+      d.font('r', 12);
+      const subH = d.height(r.sub || '', tw, 1.3);
+      const h = Math.max(70, 12 + 14 + 20 + subH + 12);
+      d.card(KPM, y, KPCW, h);
+      d.image(mthumbs[r.id], KPM + 12, y + (h - 50) / 2, 64, 50);
+      const tx = KPM + 12 + 64 + 12;
+      d.font('b', 10.5, KPC.muted);
+      d.text(r.group.toUpperCase(), tx, y + 12, { space: 0.4 });
+      d.font('b', 15);
+      d.text(r.name, tx, y + 26, { w: tw });
+      d.font('r', 12, KPC.sub);
+      d.text(r.sub || '', tx, y + 46, { w: tw, lh: 1.3 });
+      y += h + 10;
+    }
+    d.font('r', 13, '#4a433b');
+    d.text('Натуральный камень дагестанских карьеров: не выгорает, не боится мороза, служит десятилетиями.', KPM, y + 2, { w: KPCW, lh: 1.5 });
   }
 
-  const posCard = (r) => `
-    <div class="kpp__pos">
-      <div class="kpp__pos-head">${thumbs[r.id] ? `<img src="${thumbs[r.id]}" alt="">` : ''}<div><b>${esc(r.name || 'Позиция')}</b>${r.sub ? `<small>${esc(r.sub)}</small>` : ''}</div><em>${kpNum(r.qty)} ${esc(kpUnit(r.unit, r.qty))}</em></div>
-      ${r.m ? `<div class="kpp__line"><span>${r.lm || 'Материал'}</span><span>${kpNum(r.qty)} × ${kpRub(r.m)}</span><b>${kpRub(r.qty * r.m)}</b></div>` : ''}
-      ${r.w ? `<div class="kpp__line"><span>${r.lw || 'Работа'}</span><span>${kpNum(r.qty)} × ${kpRub(r.w)}</span><b>${kpRub(r.qty * r.w)}</b></div>` : ''}
-      <div class="kpp__pos-sum"><span>Итого по позиции</span><b>${kpRub(r.qty * (r.m + r.w))}</b></div>
-    </div>`;
-  for (let i = 0; i < rows.length; i += 3) {
-    pages.push(page(`<h2>Смета<small>${i ? 'продолжение' : 'материал и работа по каждой позиции'}</small></h2>
-      <div class="kpp__stack">${rows.slice(i, i + 3).map(posCard).join('')}</div>`));
+  // 4. Смета: карточка на позицию — материал, работа, итог
+  const line = (label, calc, sum, yy, size = 13) => {
+    d.hline(KPM + 14, yy, KPCW - 28);
+    d.font('s', size, KPC.goldD);
+    d.text(label, KPM + 14, yy + 7);
+    d.font('r', size, KPC.muted);
+    d.text(calc, KPM + 90, yy + 7, { w: 150 });
+    d.font('s', size);
+    d.text(sum, KPM + 14, yy + 7, { w: KPCW - 28, align: 'right' });
+  };
+  const posCard = (r) => {
+    const qty = `${kpNum(r.qty)} ${kpUnit(r.unit, r.qty)}`;
+    d.font('s', 12.5);
+    const chipW = d.width(qty) + 18;
+    const img = thumbs[r.id] ? 58 : 0;
+    const tw = KPCW - 28 - img - chipW - 10;
+    d.font('b', 15);
+    const nameH = d.height(r.name || 'Позиция', tw, 1.2);
+    d.font('r', 11.5);
+    const subH = r.sub ? d.height(r.sub, tw, 1.3) : 0;
+    const headH = Math.max(38, nameH + subH + 2);
+    const nl = (r.m ? 1 : 0) + (r.w ? 1 : 0);
+    const h = 12 + headH + 8 + nl * 30 + 4 + 34 + 12;
+    return { h, draw: () => {
+      d.card(KPM, y, KPCW, h);
+      let yy = y + 12;
+      if (img) d.image(thumbs[r.id], KPM + 14, yy + (headH - 38) / 2, 48, 38);
+      const tx = KPM + 14 + img;
+      d.font('b', 15);
+      d.text(r.name || 'Позиция', tx, yy, { w: tw, lh: 1.2 });
+      if (r.sub) { d.font('r', 11.5, KPC.muted); d.text(r.sub, tx, yy + nameH + 2, { w: tw, lh: 1.3 }); }
+      d.box(KPM + KPCW - 14 - chipW, yy + (headH - 22) / 2, chipW, 22, 11, KPC.chip);
+      d.font('s', 12.5);
+      d.text(qty, KPM + KPCW - 14 - chipW, yy + (headH - 22) / 2 + 5, { w: chipW, align: 'center' });
+      yy += headH + 8;
+      if (r.m) { line(r.lm || 'Материал', `${kpNum(r.qty)} × ${kpRub(r.m)}`, kpRub(r.qty * r.m), yy); yy += 30; }
+      if (r.w) { line(r.lw || 'Работа', `${kpNum(r.qty)} × ${kpRub(r.w)}`, kpRub(r.qty * r.w), yy); yy += 30; }
+      yy += 4;
+      d.box(KPM + 14, yy, KPCW - 28, 34, 10, KPC.chip);
+      d.font('r', 13.5);
+      d.text('Итого по позиции', KPM + 26, yy + 10);
+      d.font('b', 15);
+      d.text(kpRub(r.qty * (r.m + r.w)), KPM + 26, yy + 9, { w: KPCW - 52, align: 'right' });
+    } };
+  };
+  if (rows.length) {
+    newPage();
+    h2('Смета', 'материал и работа по каждой позиции');
+    for (const r of rows) {
+      const c = posCard(r);
+      ensure(c.h, 'Смета');
+      c.draw();
+      y += c.h + 10;
+    }
   }
 
-  const extraCard = (r) => `
-    <div class="kpp__pos kpp__pos--mini">
-      <div class="kpp__pos-head"><div><b>${esc(r.name)}</b><small>${esc(r.sub || '')}</small></div><em>${kpRub(r.qty * (r.m + r.w))}</em></div>
-      ${r.m ? `<div class="kpp__line"><span>${r.lm || 'Материал'}</span><span>${kpNum(r.qty)} ${esc(kpUnit(r.unit, r.qty))} × ${kpRub(r.m)}</span><b>${kpRub(r.qty * r.m)}</b></div>` : ''}
-      ${r.w ? `<div class="kpp__line"><span>${r.lw || 'Работа'}</span><span>${kpNum(r.qty)} ${esc(kpUnit(r.unit, r.qty))} × ${kpRub(r.w)}</span><b>${kpRub(r.qty * r.w)}</b></div>` : ''}
-    </div>`;
+  // 5. Дополнительно — компактные карточки
   const extraSum = extras.reduce((s, r) => s + r.qty * (r.m + r.w), 0);
-  for (let i = 0; i < extras.length; i += 5) {
-    const last = i + 5 >= extras.length;
-    pages.push(page(`<h2>Дополнительно<small>${i ? 'продолжение' : 'без этого не обойтись'}</small></h2>
-      <div class="kpp__stack kpp__stack--tight">${extras.slice(i, i + 5).map(extraCard).join('')}</div>
-      ${last ? `<div class="kpp__subtotal"><span>Дополнительные работы</span><span>${kpRub(extraSum)}</span></div>` : ''}`));
+  if (extras.length) {
+    newPage();
+    h2('Дополнительно', 'без этого не обойтись');
+    for (const r of extras) {
+      const unit = kpUnit(r.unit, r.qty);
+      const tw = KPCW - 28 - 110;
+      d.font('r', 11.5);
+      const subH = r.sub ? d.height(r.sub, tw, 1.3) : 0;
+      const nl = (r.m ? 1 : 0) + (r.w ? 1 : 0);
+      const h = 9 + 18 + subH + 4 + nl * 24 + 6;
+      ensure(h, 'Дополнительно');
+      d.card(KPM, y, KPCW, h);
+      d.font('b', 14);
+      d.text(r.name, KPM + 14, y + 10, { w: tw });
+      d.text(kpRub(r.qty * (r.m + r.w)), KPM + 14, y + 10, { w: KPCW - 28, align: 'right' });
+      if (r.sub) { d.font('r', 11.5, KPC.muted); d.text(r.sub, KPM + 14, y + 29, { w: tw, lh: 1.3 }); }
+      let yy = y + 9 + 18 + subH + 4;
+      if (r.m) { line(r.lm || 'Материал', `${kpNum(r.qty)} ${unit} × ${kpRub(r.m)}`, kpRub(r.qty * r.m), yy, 12); yy += 24; }
+      if (r.w) { line(r.lw || 'Работа', `${kpNum(r.qty)} ${unit} × ${kpRub(r.w)}`, kpRub(r.qty * r.w), yy, 12); yy += 24; }
+      y += h + 6;
+    }
+    ensure(44, 'Дополнительно');
+    y += 4;
+    d.box(KPM, y, KPCW, 40, 12, '#efe7da');
+    d.font('b', 15);
+    d.text('Дополнительные работы', KPM + 14, y + 12);
+    d.text(kpRub(extraSum), KPM + 14, y + 12, { w: KPCW - 28, align: 'right' });
   }
 
-  const opts = KP_OPTIONS.filter(o => (md.options[o.id] || {}).on !== false);
-  if (opts.length) {
-    pages.push(page(`<h2>Если понадобится<small>в итог не входит</small></h2>
-      <div class="kpp__card kpp__rows">${opts.map(o => `<div class="kpp__row"><div><b>${o.name}</b><small>${o.sub}</small></div><span class="kpp__sum">${esc((md.options[o.id] || {}).price ?? o.price)}</span></div>`).join('')}</div>
-      <p class="kpp__lead">Эркеры, арки и колонны считаются отдельно — они требуют подрезки камня по месту. Точную цену назову после замера.</p>`));
-  }
-
-  // Итог по разделам
+  // 6. Итог
   const groups = {};
   rows.forEach(r => { groups[r.group] = (groups[r.group] || 0) + r.qty * (r.m + r.w); });
   if (extraSum) groups['Дополнительные работы'] = extraSum;
+  const listCard = (pairs, opts = {}) => {
+    const rh = opts.rh || 36;
+    const h = pairs.length * rh + 12;
+    d.card(KPM, y, KPCW, h);
+    pairs.forEach(([a, b, color], i) => {
+      const yy = y + 6 + i * rh;
+      if (i) d.hline(KPM + 16, yy, KPCW - 32);
+      d.font('r', 14.5, color || KPC.ink);
+      d.text(a, KPM + 16, yy + (rh - 19) / 2, { w: 220 });
+      d.font('s', 14.5, color || KPC.ink);
+      d.text(b, KPM + 16, yy + (rh - 19) / 2, { w: KPCW - 32, align: 'right' });
+    });
+    y += h + 10;
+  };
   const days = +md.days || 0;
-  pages.push(page(`<h2>Итог</h2>
-    <div class="kpp__card kpp__rows">${Object.entries(groups).map(([g, v]) => `<div class="kpp__row"><span>${esc(g)}</span><b>${kpRub(v)}</b></div>`).join('')}</div>
-    <div class="kpp__split"><div><small>Материалы и доставка</small><b>${kpRub(t.mat)}</b></div><div><small>Работы и услуги</small><b>${kpRub(t.work)}</b></div></div>
-    <div class="kpp__card kpp__rows" style="margin-top:10px">
-      <div class="kpp__row"><span>Всего</span><b>${kpRub(t.sum)}</b></div>
-      ${t.disc ? `<div class="kpp__row kpp__disc"><span>Скидка ${kpNum(md.discount)}%</span><b>−${kpRub(t.disc)}</b></div>` : ''}
-    </div>
-    <div class="kpp__total"><small>Под ключ</small><b>${kpRub(t.total)}</b><div>${t.ms.area} м² фасада · ${days} рабочих дней</div></div>`));
+  newPage();
+  h2('Итог');
+  listCard(Object.entries(groups).map(([g, v]) => [g, kpRub(v)]));
+  [['Материалы и доставка', t.mat], ['Работы и услуги', t.work]].forEach(([l, v], i) => {
+    const x = KPM + i * 182;
+    d.card(x, y, 172, 56);
+    d.font('r', 12, KPC.muted);
+    d.text(l, x + 14, y + 11);
+    d.font('b', 17);
+    d.text(kpRub(v), x + 14, y + 29);
+  });
+  y += 66;
+  listCard([['Всего', kpRub(t.sum)], ...(t.disc ? [[`Скидка ${kpNum(md.discount)}%`, `−${kpRub(t.disc)}`, KPC.green]] : [])]);
+  d.box(KPM, y, KPCW, 112, 16, KPC.dark);
+  d.font('r', 12, '#bdb3a6');
+  d.text('Под ключ', KPM + 18, y + 16);
+  d.font('b', 32, KPC.yellow);
+  d.text(kpRub(t.total), KPM + 18, y + 34);
+  d.font('r', 13, '#e3dbd0');
+  d.text(`${t.ms.area} м² фасада · ${days} рабочих дней`, KPM + 18, y + 80);
 
-  // Сроки по неделям и оплата по этапам
+  // 7. Сроки и оплата, кнопки связи
+  newPage();
+  h2('Сроки и оплата');
   const weeks = Math.max(2, Math.ceil(days / 5));
   const wall = 1 + Math.max(1, Math.ceil((weeks - 1) * 0.6));
   const tl = [['Неделя 1', 'поставка камня, леса, сетка'], [`Недели 2–${wall}`, 'стены, цоколь, углы'],
     [wall + 1 < weeks ? `Недели ${wall + 1}–${weeks}` : `Неделя ${weeks}`, 'окна, карнизы, откосы'], ['Сдача', 'уборка, вывоз мусора, приёмка']];
+  d.card(KPM, y, KPCW, tl.length * 28 + 16);
+  tl.forEach(([a, b], i) => {
+    const yy = y + 12 + i * 28;
+    d.pdf.setFillColor(KPC.gold);
+    d.pdf.circle(KPM + 22, yy + 9, 5, 'F');
+    d.font('s', 13.5);
+    d.text(a, KPM + 36, yy + 1);
+    d.font('r', 13.5, KPC.muted);
+    d.text(b, KPM + 132, yy + 1, { w: KPCW - 148 });
+  });
+  y += tl.length * 28 + 26;
   const stages = [['Аванс на камень и леса', 0.5], ['После облицовки стен и цоколя', 0.3], ['После сдачи фасада', 0.2]];
+  listCard(stages.map(([s, p]) => [`${Math.round(p * 100)}% · ${s}`, kpRub(t.total * p)]), { rh: 40 });
+  const terms = [['Оплата', md.terms.payment || ''], ['Гарантия', md.terms.guarantee || ''], ['Предложение действует', `${+md.terms.valid || 14} дней, до ${valid}`]];
+  d.font('r', 12);
+  const th = terms.map(([, b]) => 22 + d.height(b, KPCW - 32, 1.3) + 10);
+  d.card(KPM, y, KPCW, th.reduce((a, b) => a + b, 0) + 8);
+  let ty = y + 8;
+  terms.forEach(([a, b], i) => {
+    if (i) d.hline(KPM + 16, ty, KPCW - 32);
+    d.font('s', 14);
+    d.text(a, KPM + 16, ty + 8);
+    d.font('r', 12, KPC.muted);
+    d.text(b, KPM + 16, ty + 27, { w: KPCW - 32, lh: 1.3 });
+    ty += th[i];
+  });
+  y = ty + 18;
+  const phone = pf.phone.replace(/[^\d+]/g, '');
+  d.box(KPM, y, KPCW, 48, 14, KPC.goldD);
+  d.font('b', 15, '#ffffff');
+  d.text(`Позвонить: ${pf.phone}`, KPM, y + 15, { w: KPCW, align: 'center' });
+  d.link(KPM, y, KPCW, 48, `tel:${phone}`);
+  y += 57;
   const tg = pf.telegram ? pf.telegram.replace(/^@|https?:\/\/t\.me\//g, '') : '';
-  pages.push(page(`<h2>Сроки и оплата</h2>
-    <div class="kpp__card kpp__timeline">${tl.map(([a, b]) => `<div><i></i><b>${a}</b><span>${b}</span></div>`).join('')}</div>
-    <div class="kpp__card kpp__rows" style="margin-top:10px">${stages.map(([s, p]) => `<div class="kpp__row"><b>${Math.round(p * 100)}% · ${s}</b><span class="kpp__sum">${kpRub(t.total * p)}</span></div>`).join('')}</div>
-    <div class="kpp__card kpp__rows" style="margin-top:10px">
-      <div class="kpp__row"><div><b>Оплата</b><small>${esc(md.terms.payment || '')}</small></div></div>
-      <div class="kpp__row"><div><b>Гарантия</b><small>${esc(md.terms.guarantee || '')}</small></div></div>
-      <div class="kpp__row"><div><b>Предложение действует</b><small>${+md.terms.valid || 14} дней, до ${valid}</small></div></div>
-    </div>
-    <div class="kpp__btns">
-      <span class="kpp__btn kpp__btn--gold" data-link="tel:${esc(pf.phone.replace(/[^\d+]/g, ''))}">Позвонить: ${esc(pf.phone)}</span>
-      ${tg ? `<span class="kpp__btn" data-link="https://t.me/${esc(tg)}">Написать в Telegram</span>` : ''}
-    </div>`));
+  if (tg) {
+    d.box(KPM, y, KPCW, 48, 14, KPC.card, KPC.line);
+    d.font('b', 15);
+    d.text('Написать в Telegram', KPM, y + 15, { w: KPCW, align: 'center' });
+    d.link(KPM, y, KPCW, 48, `https://t.me/${tg}`);
+  }
 
-  pages.push(page(`
-    <img class="kpp__promo-icon" src="${iconUrl}" alt="">
-    <h1>Этот проект сделан<br>в <em>Fasad AI</em></h1>
-    <p class="kpp__lead">Фото дома → выбор камня → готовая картинка за 30 секунд</p>
-    <div class="kpp__perks">
-      <div><b>Прорабам:</b> покажите заказчику его дом в камне ещё до начала работ</div>
-      <div>Каталог дагестанского камня, карнизов, наличников, колонн и балюстрад</div>
-      <div>ИИ рисует облицовку прямо на вашем фото — несколько вариантов</div>
-      <div>Коммерческое предложение со сметой — за пару минут</div>
-    </div>
-    <div class="kpp__qr" data-link="https://ahmedov.online/fasad/"><img src="assets/kp-qr.png" alt=""><div><b>Попробуйте бесплатно</b><span>Наведите камеру на код или откройте ahmedov.online/fasad</span><em>3 генерации в подарок</em></div></div>
-    <p class="kpp__note">Визуализация создана ИИ и может немного отличаться от готового фасада. Фото защищены водяным знаком.</p>`, 'kpp--promo'));
+  // 8. Реклама Fasad AI
+  newPage(true);
+  d.image(iconBig, (KPW - 92) / 2, 90, 92, 92, 'PNG');
+  y = 200;
+  d.font('b', 30, '#ffffff');
+  y += d.text('Этот проект сделан', 0, y, { w: KPW, align: 'center', lh: 1.15 });
+  const w1 = d.width('в ');
+  d.font('b', 30, KPC.yellow);
+  const w2 = d.width('Fasad AI');
+  d.font('b', 30, '#ffffff');
+  d.text('в ', (KPW - w1 - w2) / 2, y, { lh: 1.15 });
+  d.font('b', 30, KPC.yellow);
+  y += d.text('Fasad AI', (KPW - w1 - w2) / 2 + w1, y, { lh: 1.15 }) + 8;
+  d.font('r', 14, '#d8cfc3');
+  y += d.text('Фото дома → выбор камня → готовая картинка за 30 секунд', 30, y, { w: KPW - 60, align: 'center', lh: 1.4 }) + 16;
+  ['Прорабам: покажите заказчику его дом в камне ещё до начала работ', 'Каталог дагестанского камня, карнизов, наличников, колонн и балюстрад',
+    'ИИ рисует облицовку прямо на вашем фото — несколько вариантов', 'Коммерческое предложение со сметой — за пару минут'].forEach(s => {
+    d.font('r', 14, '#ffffff');
+    const h = d.height(s, KPCW - 28, 1.35) + 24;
+    d.box(KPM, y, KPCW, h, 14, KPC.promoBox);
+    d.font('r', 14, '#ffffff');
+    d.text(s, KPM + 14, y + 12, { w: KPCW - 28, lh: 1.35 });
+    y += h + 10;
+  });
+  const qy = KPH - 22 - 40 - 120;
+  d.box(KPM, qy, KPCW, 120, 16, '#ffffff');
+  d.image(qr, KPM + 14, qy + 14, 92, 92);
+  d.font('b', 16);
+  d.text('Попробуйте бесплатно', KPM + 120, qy + 16);
+  d.font('r', 12.5, KPC.muted);
+  d.text('Наведите камеру на код или откройте ahmedov.online/fasad', KPM + 120, qy + 38, { w: KPCW - 134, lh: 1.35 });
+  d.font('b', 12, KPC.dark);
+  const gw = d.width('3 генерации в подарок') + 20;
+  d.box(KPM + 120, qy + 84, gw, 22, 11, KPC.yellow);
+  d.font('b', 12, KPC.dark);
+  d.text('3 генерации в подарок', KPM + 130, qy + 89);
+  d.link(KPM, qy, KPCW, 120, 'https://ahmedov.online/fasad/');
+  d.font('r', 11, '#a99f92');
+  d.text('Визуализация создана ИИ и может немного отличаться от готового фасада. Фото защищены водяным знаком.', 30, KPH - 52, { w: KPW - 60, align: 'center', lh: 1.4 });
 
-  return pages.map((p, i) => p.replace('{N}', i + 1).replace('{T}', pages.length));
+  // Номера листов
+  const total = pdf.getNumberOfPages();
+  for (let i = 1; i <= total; i++) {
+    pdf.setPage(i);
+    d.font('s', 11, i === total ? '#a99f92' : KPC.muted);
+    d.text(`${i} / ${total}`, KPM, 27, { w: KPCW, align: 'right' });
+  }
+
+  const name = `КП ${md.client.name || kp.project.name || 'фасад'}.pdf`.replace(/[\\/:*?"<>|]/g, '');
+  return new File([pdf.output('blob')], name, { type: 'application/pdf' });
 }
