@@ -80,6 +80,11 @@ const App = {
       Router.navigateTo('photo');
     });
 
+    // «Создать проект» в истории проектов
+    document.getElementById('projects-create')?.addEventListener('click', () => {
+      Router.navigateTo('photo');
+    });
+
     // Быстрая история
     document.querySelector('.quick-history__card')?.addEventListener('click', () => {
       Router.navigateTo('projects');
