@@ -1,27 +1,32 @@
 // === Страница проекта: варианты одного фасада ===
-// Одно фото — несколько вариантов подбора. У каждого своя картинка (появится после генерации ИИ).
-// Ползунок «до / после», сравнение двух вариантов, «Выбран клиентом», «Изменить и сгенерировать» — новый вариант.
+// Одно фото — несколько вариантов подбора, у каждого своя картинка от ИИ.
+// Фото: картинка варианта; «До и после» включает ползунок; нажатие — на весь экран с увеличением.
 
 const ProjectPage = {
   project: null,
-  sel: null,        // id выбранного варианта
-  cmp: null,        // id варианта для сравнения
-  comparing: false,
+  sel: null,         // id выбранного варианта
+  slider: false,     // ползунок «до / после» включён
 
   async load(id, selectId) {
     const res = await Api.getProject(id);
     this.project = res.data;
     const vs = this.project.variants || [];
-    const starred = vs.find(v => v.starred);
-    this.sel = vs.some(v => v.id === selectId) ? selectId : (starred || vs[vs.length - 1])?.id;
-    this.comparing = false;
-    this.cmp = null;
+    this.sel = vs.some(v => v.id === selectId) ? selectId : vs[vs.length - 1]?.id;
+    this.slider = false;
     const [stones, catalog] = await Promise.all([Materials.getStones(), Materials.getCatalog()]);
     this.stones = stones;
     this.catalog = catalog;
     this.bind();
     this.render();
     this.watch();
+  },
+
+  variant(id) {
+    return (this.project.variants || []).find(v => v.id === id);
+  },
+
+  index(id) {
+    return (this.project.variants || []).findIndex(v => v.id === id) + 1;
   },
 
   busy(v) {
@@ -41,13 +46,14 @@ const ProjectPage = {
     if (!(this.project.variants || []).some(v => this.busy(v))) return;
     const id = this.project.id;
     this.timer = setTimeout(async () => {
-      if (this.project?.id !== id || !document.getElementById('project-ba').offsetParent) return;
+      if (this.project?.id !== id || !document.getElementById('project-photo').offsetParent) return;
       try {
         const before = this.project.variants;
         const res = await Api.projectVariant(id, 'poll');
         this.project.variants = res.data.variants;
-        const done = res.data.variants.find(v => v.ai?.status === 'done' && this.busy(before.find(b => b.id === v.id)));
-        const failed = res.data.variants.find(v => v.ai?.status === 'failed' && this.busy(before.find(b => b.id === v.id)));
+        const was = v => this.busy(before.find(b => b.id === v.id));
+        const done = res.data.variants.find(v => v.ai?.status === 'done' && was(v));
+        const failed = res.data.variants.find(v => v.ai?.status === 'failed' && was(v));
         if (done) showToast(`Вариант ${this.index(done.id)} готов`);
         if (failed) showToast(failed.ai.error || 'ИИ не смог нарисовать');
         if (done || failed) this.render();
@@ -58,23 +64,14 @@ const ProjectPage = {
     }, 5000);
   },
 
-  variant(id) {
-    return (this.project.variants || []).find(v => v.id === id);
-  },
-
-  index(id) {
-    return (this.project.variants || []).findIndex(v => v.id === id) + 1;
-  },
-
   render() {
     const p = this.project;
     const v = this.variant(this.sel);
     document.getElementById('project-title').textContent = p.name || 'Проект';
-    this.renderCompare(v);
+    this.renderPhoto(v);
     this.renderHead(v);
-    this.renderStrip();
     this.renderActions(v);
-    this.renderChanges(v);
+    this.renderStrip();
     const box = document.getElementById('project-details');
     const rows = summarizeDesign(v?.design, this.stones, this.catalog);
     box.innerHTML = (rows || '<p class="configure-hint">У этого варианта нет подбора.</p>') + `
@@ -85,80 +82,76 @@ const ProjectPage = {
     recolorSpec(box, this.stones, this.catalog);
   },
 
-  // До / после — или два варианта при сравнении
-  renderCompare(v) {
-    const box = document.getElementById('project-ba');
+  // Фото варианта; без картинки ИИ — фото заказчика с подписью
+  renderPhoto(v) {
+    const box = document.getElementById('project-photo');
     const photo = this.project.original_image;
-    if (this.comparing && this.cmp) {
-      const w = this.variant(this.cmp);
-      const a = v?.generated_image, b = w?.generated_image;
-      box.innerHTML = baFrame(a || photo, b || photo, `Вариант ${this.index(this.sel)}`, `Вариант ${this.index(this.cmp)}`,
-        a && b ? '' : 'Картинки вариантов появятся после генерации ИИ — ниже видно, чем они отличаются');
-    } else if (this.comparing) {
-      box.innerHTML = baFrame(v?.generated_image || photo, null, '', '', 'Выберите в ленте вариант, с которым сравнить');
-    } else {
-      const note = this.busy(v) ? 'ИИ рисует картинку — обычно 30–90 секунд'
-        : v?.ai?.status === 'failed' && !v.generated_image ? v.ai.error
-        : v?.generated_image ? '' : 'Картинка этого варианта появится после генерации ИИ';
-      box.innerHTML = baFrame(photo, v?.generated_image, 'До', 'После', note);
-    }
-    bindBa(box.querySelector('.ba__frame'));
+    const img = v?.generated_image;
+    const slider = this.slider && img;
+    const note = this.busy(v) ? 'ИИ рисует картинку — обычно 30–90 секунд'
+      : img ? '' : v?.ai?.status === 'failed' ? v.ai.error : 'Нажмите «Сгенерировать» — ИИ нарисует облицовку на этом фото';
+    box.innerHTML = `
+      <div class="photo__frame${slider ? ' photo__frame--slider' : ''}" style="--cut:50%">
+        <img class="photo__img" src="${slider ? photo : img || photo}" alt="">
+        ${slider ? `<img class="photo__img photo__after" src="${img}" alt="">
+          <span class="photo__handle"></span>
+          <span class="photo__label photo__label--a">До</span><span class="photo__label photo__label--b">После</span>` : ''}
+        ${note ? `<span class="photo__note">${esc(note)}</span>` : ''}
+        ${this.busy(v) ? '<span class="photo__busy"></span>' : ''}
+      </div>
+      <div class="photo__tools">
+        ${img ? `<button class="photo__tool${slider ? ' active' : ''}" id="photo-slider" aria-pressed="${!!slider}">
+          ${icon('compare')}До и после</button>` : ''}
+        <button class="photo__tool" id="photo-zoom">${icon('zoom-in')}Увеличить</button>
+      </div>`;
+    const frame = box.querySelector('.photo__frame');
+    if (slider) bindSlider(frame);
+    else frame.addEventListener('click', () => this.openViewer());
+    document.getElementById('photo-zoom').addEventListener('click', () => this.openViewer());
+    document.getElementById('photo-slider')?.addEventListener('click', () => {
+      this.slider = !this.slider;
+      this.renderPhoto(this.variant(this.sel));
+    });
+  },
+
+  // На весь экран: картинка варианта или фото «до», с увеличением пальцами
+  openViewer() {
+    const v = this.variant(this.sel);
+    const shots = [];
+    if (v?.generated_image) shots.push({ label: 'После', src: v.generated_image });
+    shots.push({ label: 'До', src: this.project.original_image });
+    openPhotoViewer(shots, `Вариант ${this.index(this.sel)}`);
   },
 
   renderHead(v) {
     const n = this.index(this.sel);
+    const state = this.busy(v) ? ['busy', 'ИИ рисует…'] : v?.generated_image ? ['done', 'Готово']
+      : v?.ai?.status === 'failed' ? ['failed', 'Не получилось'] : ['wait', 'Без картинки'];
     document.getElementById('variant-head').innerHTML = `
-      <b>Вариант ${n}</b>${v?.starred ? '<span class="variant-head__star">★ Выбран клиентом</span>' : ''}
-      <span>${this.busy(v) ? 'ИИ рисует…' : v?.generated_image ? 'есть картинка' : v?.ai?.status === 'failed' ? 'не получилось' : 'ожидает генерации'}</span>`;
+      <b>Вариант ${n}</b><span class="variant-state variant-state--${state[0]}">${state[1]}</span>`;
   },
 
   renderStrip() {
     const vs = this.project.variants || [];
-    document.getElementById('project-variants').innerHTML = vs.map((v, i) => {
-      const main = this.stones.find(s => s.id === v.design?.materials?.main?.stone || s.id === v.design?.parts?.main?.stone);
-      const cls = [v.id === this.sel ? 'active' : '', v.id === this.cmp ? 'compare' : ''].join(' ');
-      return `
-        <button class="variant ${cls}" data-variant="${v.id}">
+    document.getElementById('project-variants-title').textContent = `Варианты (${vs.length})`;
+    document.getElementById('project-variants').innerHTML = vs.map((v, i) => `
+        <button class="variant${v.id === this.sel ? ' active' : ''}" data-variant="${v.id}">
           <span class="variant__img"><img src="${v.generated_image || this.project.original_image}" alt="" loading="lazy">
             ${this.busy(v) ? '<span class="variant__wait variant__wait--busy">рисует…</span>'
-              : v.generated_image ? '' : v.ai?.status === 'failed' ? '<span class="variant__wait variant__wait--failed">ошибка</span>' : '<span class="variant__wait">ждёт ИИ</span>'}
-            ${v.starred ? '<span class="variant__star">★</span>' : ''}</span>
-          <span class="variant__name">${main ? `<img src="${main.texture}" alt="">` : ''}Вариант ${i + 1}</span>
-        </button>`;
-    }).join('') + `
+              : v.generated_image ? '' : v.ai?.status === 'failed' ? '<span class="variant__wait variant__wait--failed">ошибка</span>' : '<span class="variant__wait">без ИИ</span>'}</span>
+          <span class="variant__name">Вариант ${i + 1}</span>
+        </button>`).join('') + `
       <button class="variant variant--new" data-variant-new>
-        <span class="variant__img"><span>＋</span></span><span class="variant__name">Новый вариант</span>
+        <span class="variant__img"><span>＋</span></span><span class="variant__name">Новый</span>
       </button>`;
     document.querySelector('#project-variants .active')?.scrollIntoView({ inline: 'center', block: 'nearest' });
   },
 
   renderActions(v) {
-    const many = (this.project.variants || []).length > 1;
-    const star = document.getElementById('project-star');
-    star.textContent = v?.starred ? '★ Выбран клиентом' : '☆ Выбран клиентом';
-    star.classList.toggle('active', !!v?.starred);
-    const cmp = document.getElementById('project-compare');
-    cmp.textContent = this.comparing ? 'Закончить сравнение' : 'Сравнить';
-    cmp.disabled = !many;
-    document.getElementById('project-variant-delete').disabled = !many;
     const gen = document.getElementById('project-generate');
-    gen.textContent = this.busy(v) ? 'ИИ рисует…' : v?.generated_image ? 'Сгенерировать заново' : 'Сгенерировать';
+    gen.querySelector('span').textContent = this.busy(v) ? 'ИИ рисует…' : v?.generated_image ? 'Перерисовать' : 'Сгенерировать';
     gen.disabled = this.busy(v);
-  },
-
-  // Чем вариант отличается от предыдущего (или от варианта для сравнения)
-  renderChanges(v) {
-    const box = document.getElementById('project-changes');
-    const vs = this.project.variants || [];
-    const other = this.comparing && this.cmp ? this.variant(this.cmp) : vs[vs.findIndex(x => x.id === this.sel) - 1];
-    if (!v || !other) { box.innerHTML = ''; return; }
-    const diff = designDiff(other.design, v.design, this.stones, this.catalog);
-    box.innerHTML = `
-      <h3 class="section-title">${this.comparing ? `Вариант ${this.index(this.sel)} против варианта ${this.index(other.id)}` : `Что изменилось после варианта ${this.index(other.id)}`}</h3>
-      ${diff.length ? diff.map(d => `
-        <div class="change"><span class="change__part">${esc(d.part)}</span>
-          <span class="change__was">${esc(d.was || 'нет')}</span><span class="change__arrow">→</span><span class="change__now">${esc(d.now || 'нет')}</span></div>`).join('')
-        : '<p class="configure-hint">Подбор не отличается.</p>'}`;
+    document.getElementById('project-download').disabled = !v?.generated_image;
   },
 
   // Изменить подбор выбранного варианта; сохранение даст новый вариант
@@ -173,49 +166,20 @@ const ProjectPage = {
     Router.navigateTo('configure');
   },
 
-  async action(name, data = {}) {
-    try {
-      const res = await Api.projectVariant(this.project.id, name, data);
-      this.project.variants = res.data.variants;
-      return true;
-    } catch (e) {
-      showToast(e.message || 'Не удалось выполнить');
-      return false;
-    }
-  },
-
-  async onClick(e) {
-    const t = e.target;
-    if (t.closest('[data-variant-new]')) return this.edit(false);
-    const vb = t.closest('[data-variant]');
-    if (vb) {
-      const id = +vb.dataset.variant;
-      if (this.comparing && id !== this.sel) this.cmp = id;
-      else { this.sel = id; if (this.cmp === id) this.cmp = null; }
-      return this.render();
-    }
+  onStrip(e) {
+    if (e.target.closest('[data-variant-new]')) return this.edit(false);
+    const vb = e.target.closest('[data-variant]');
+    if (!vb) return;
+    this.sel = +vb.dataset.variant;
+    this.render();
   },
 
   bind() {
     if (this.bound) return;
     this.bound = true;
-    document.getElementById('project-variants').addEventListener('click', e => this.onClick(e));
+    document.getElementById('project-variants').addEventListener('click', e => this.onStrip(e));
     document.getElementById('project-back').addEventListener('click', () => Router.navigateTo('projects'));
     document.getElementById('project-edit').addEventListener('click', () => this.edit(false));
-    document.getElementById('project-star').addEventListener('click', async () => {
-      if (await this.action('star', { variant_id: this.sel })) this.render();
-    });
-    document.getElementById('project-compare').addEventListener('click', () => {
-      this.comparing = !this.comparing;
-      this.cmp = null;
-      if (this.comparing) {
-        // Сравнить с предыдущим вариантом сразу, другой — нажатием в ленте
-        const vs = this.project.variants;
-        const i = vs.findIndex(v => v.id === this.sel);
-        this.cmp = (vs[i - 1] || vs[i + 1])?.id || null;
-      }
-      this.render();
-    });
     document.getElementById('project-generate').addEventListener('click', async (e) => {
       const v = this.variant(this.sel);
       if (!v || this.busy(v)) return;
@@ -232,17 +196,7 @@ const ProjectPage = {
     });
     document.getElementById('project-download').addEventListener('click', () => {
       const v = this.variant(this.sel);
-      downloadImage(v?.generated_image || this.project.original_image, `fasad-${this.project.id}-variant-${this.index(this.sel)}.jpg`);
-    });
-    document.getElementById('project-variant-delete').addEventListener('click', async () => {
-      const ok = await showConfirm(`Удалить вариант ${this.index(this.sel)}?`, 'Подбор и картинка этого варианта удалятся.');
-      if (!ok || !(await this.action('delete', { variant_id: this.sel }))) return;
-      const vs = this.project.variants;
-      this.sel = vs[vs.length - 1]?.id;
-      this.cmp = null;
-      this.comparing = false;
-      showToast('Вариант удалён');
-      this.render();
+      if (v?.generated_image) downloadImage(v.generated_image, `fasad-${this.project.id}-variant-${this.index(this.sel)}.jpg`);
     });
     document.getElementById('project-share').addEventListener('click', () => {
       const v = this.variant(this.sel);
@@ -251,28 +205,14 @@ const ProjectPage = {
   },
 };
 
-// Ползунок «до / после»: слева одна картинка, справа другая; без второй — подпись поверх фото
-function baFrame(before, after, labelA, labelB, note) {
-  return `
-    <div class="ba__frame" style="--cut:50%">
-      <img class="ba__img" src="${before}" alt="">
-      ${after ? `<img class="ba__img ba__after" src="${after}" alt="">
-        <span class="ba__handle"></span>
-        <span class="ba__label ba__label--a">${esc(labelA)}</span><span class="ba__label ba__label--b">${esc(labelB)}</span>` : ''}
-      ${note ? `<span class="ba__note">${esc(note)}</span>` : ''}
-      <button class="ba__full" aria-label="На весь экран">⤢</button>
-    </div>`;
-}
-
-function bindBa(frame) {
-  if (!frame) return;
+// Ползунок «до / после»: слева фото заказчика, справа картинка ИИ
+function bindSlider(frame) {
   const set = (e) => {
     const r = frame.getBoundingClientRect();
     frame.style.setProperty('--cut', `${Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100))}%`);
   };
   let dragging = false;
   frame.addEventListener('pointerdown', e => {
-    if (e.target.closest('.ba__full') || !frame.querySelector('.ba__after')) return;
     dragging = true;
     set(e);
     e.preventDefault();
@@ -291,17 +231,77 @@ function bindBa(frame) {
       obs.disconnect();
     }
   }).observe(document.body, { childList: true, subtree: true });
-  frame.querySelector('.ba__full').addEventListener('click', () => {
-    // На весь экран — показать заказчику
-    const overlay = document.createElement('div');
-    overlay.className = 'ba-fullscreen';
-    overlay.innerHTML = frame.outerHTML.replace('<button class="ba__full" aria-label="На весь экран">⤢</button>', '')
-      + '<button class="btn btn-secondary ba-fullscreen__close">Закрыть</button>';
-    document.body.appendChild(overlay);
-    const f = overlay.querySelector('.ba__frame');
-    f.insertAdjacentHTML('beforeend', '<button class="ba__full" hidden></button>');
-    bindBa(f);
-    overlay.querySelector('.ba-fullscreen__close').addEventListener('click', () => overlay.remove());
+}
+
+// Просмотр на весь экран: увеличение двумя пальцами, колёсиком, двойным нажатием или кнопками
+function openPhotoViewer(shots, title) {
+  const overlay = document.createElement('div');
+  overlay.className = 'viewer';
+  overlay.innerHTML = `
+    <div class="viewer__top">
+      <span class="viewer__title">${esc(title)}</span>
+      <button class="viewer__btn" data-close aria-label="Закрыть">✕</button>
+    </div>
+    <div class="viewer__stage"><img class="viewer__img" src="${shots[0].src}" alt="" draggable="false"></div>
+    <div class="viewer__bottom">
+      ${shots.length > 1 ? `<div class="viewer__seg">${shots.map((s, i) => `<button data-shot="${i}" class="${i ? '' : 'active'}">${s.label}</button>`).join('')}</div>` : ''}
+      <div class="viewer__zoom">
+        <button class="viewer__btn" data-zoom="-1" aria-label="Уменьшить">−</button>
+        <button class="viewer__btn" data-zoom="1" aria-label="Увеличить">+</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  const stage = overlay.querySelector('.viewer__stage');
+  const img = overlay.querySelector('.viewer__img');
+  let scale = 1, x = 0, y = 0;
+  const apply = () => {
+    // Не уводить картинку за край: сдвиг не больше лишнего размера
+    const maxX = (img.offsetWidth * (scale - 1)) / 2, maxY = (img.offsetHeight * (scale - 1)) / 2;
+    x = Math.max(-maxX, Math.min(maxX, x));
+    y = Math.max(-maxY, Math.min(maxY, y));
+    img.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+  };
+  const zoomTo = (s) => { scale = Math.max(1, Math.min(6, s)); if (scale === 1) { x = 0; y = 0; } apply(); };
+
+  const pts = new Map();
+  let start = null, lastTap = 0;
+  stage.addEventListener('pointerdown', e => {
+    stage.setPointerCapture?.(e.pointerId);
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const now = Date.now();
+    if (pts.size === 1 && now - lastTap < 300) zoomTo(scale > 1 ? 1 : 2.5);  // двойное нажатие
+    lastTap = now;
+    start = null;
+  });
+  stage.addEventListener('pointermove', e => {
+    if (!pts.has(e.pointerId)) return;
+    const prev = pts.get(e.pointerId);
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pts.size === 2) {
+      const [a, b] = [...pts.values()];
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (!start) start = { d, scale };
+      zoomTo(start.scale * (d / start.d));
+    } else if (pts.size === 1 && scale > 1) {
+      x += e.clientX - prev.x;
+      y += e.clientY - prev.y;
+      apply();
+    }
+  });
+  const up = e => { pts.delete(e.pointerId); start = null; };
+  stage.addEventListener('pointerup', up);
+  stage.addEventListener('pointercancel', up);
+  stage.addEventListener('wheel', e => { e.preventDefault(); zoomTo(scale * (e.deltaY < 0 ? 1.2 : 1 / 1.2)); }, { passive: false });
+
+  overlay.addEventListener('click', e => {
+    if (e.target.closest('[data-close]')) return overlay.remove();
+    const z = e.target.closest('[data-zoom]');
+    if (z) return zoomTo(scale * (+z.dataset.zoom > 0 ? 1.5 : 1 / 1.5));
+    const s = e.target.closest('[data-shot]');
+    if (s) {
+      overlay.querySelectorAll('[data-shot]').forEach(b => b.classList.toggle('active', b === s));
+      img.src = shots[+s.dataset.shot].src;
+    }
   });
 }
 
@@ -339,16 +339,6 @@ function upgradeDesign(design, stones) {
 }
 
 // Отличия подборов: по каждой части — что было и что стало
-function designDiff(a, b, stones, catalog) {
-  const map = (d) => Object.fromEntries(specLines(d, stones, catalog)
-    .filter(l => l[1] !== 'Здание')
-    .map(l => [l[1], l[3] ? `${l[2]} (${l[3]})` : l[2]]));
-  const A = map(a), B = map(b);
-  return [...new Set([...Object.keys(A), ...Object.keys(B)])]
-    .filter(k => A[k] !== B[k])
-    .map(k => ({ part: k, was: A[k], now: B[k] }));
-}
-
 // === Задание для ИИ: фото + образцы камня и изделий, по-английски (так модели понимают точнее) ===
 // Картинка 1 — фото проекта (подставляет сервер), дальше образцы в порядке refs.
 const AI_PART_TEXT = {
