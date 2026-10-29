@@ -1,3 +1,28 @@
+// === Профиль: кто я, мои монеты и тариф, проекты; для администратора — пользователи и баланс ИИ ===
+
+const chevron = '<svg class="profile-menu__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>';
+
+function initials(name) {
+  return String(name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+}
+
+function menuItem(id, iconSvg, text, extra = '', attrs = '') {
+  return `<div class="profile-menu__item" id="${id}" ${attrs}>
+    <span class="profile-menu__icon">${iconSvg}</span>
+    <span class="profile-menu__text">${text}</span>${extra}${chevron}</div>`;
+}
+
+const PROFILE_ICONS = {
+  get coins() { return coin('gold'); },  // coins.js грузится позже
+  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>',
+  camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+  help: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+  users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',
+  ai: icon('sparkle'),
+  logout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+};
+
 async function renderProfile() {
   const container = document.getElementById('profile-content');
   if (!container) return;
@@ -9,90 +34,72 @@ async function renderProfile() {
   }
 
   try {
-    let projectCount = 0;
-    let favoriteCount = 0;
-    
-    try {
-      const projects = await Api.listProjects();
-      projectCount = projects.data?.length || 0;
-    } catch (e) {
-      if (e.message && e.message.includes('Не авторизован')) {
-        Auth._user = null;
-        showInlineAuth('profile-content');
-        return;
-      }
-    }
-    
-    try {
-      const favorites = await Api.listFavorites();
-      favoriteCount = favorites.data?.length || 0;
-    } catch (e) {
-      if (e.message && e.message.includes('Не авторизован')) {
-        Auth._user = null;
-        showInlineAuth('profile-content');
-        return;
-      }
-    }
-
-    const w = await Wallet.load();
+    const [w, projects, favorites] = await Promise.all([
+      Wallet.load(),
+      Api.listProjects().then(r => r.data || []).catch(e => { if ((e.message || '').includes('Не авторизован')) throw e; return []; }),
+      Api.listFavorites().then(r => r.data || []).catch(e => { if ((e.message || '').includes('Не авторизован')) throw e; return []; }),
+    ]);
+    const images = projects.reduce((n, p) => n + ((p.variants || []).filter(v => v.generated_image).length || (p.generated_image ? 1 : 0)), 0);
+    const admin = !!Wallet.info?.is_admin;
+    const planLine = w ? (w.plan_until ? `до ${formatShortDate(w.plan_until)}` : w.plan === 'free' ? `${w.plan_coins} монеты каждый месяц` : '') : '';
 
     container.innerHTML = `
-      <div class="profile-header">
-        <h2 class="page-header__title" style="width: 100%;">Профиль</h2>
+      <div class="page-header"><h2 class="page-header__title">Профиль</h2></div>
+
+      <div class="me">
+        <div class="me__avatar">${esc(initials(user.name))}</div>
+        <div class="me__text">
+          <b>${esc(user.name)}</b>
+          <span>${esc(user.email)}</span>
+        </div>
+        ${admin ? '<span class="me__badge">Администратор</span>' : ''}
       </div>
 
-      <div class="profile-header">
-        <div class="profile-header__avatar">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      ${w ? `
+      <div class="wallet-card" data-open-coins>
+        <div class="wallet-card__top">
+          <div><small>Тариф</small><b>${esc(w.plan_name)}</b>${planLine ? `<span>${planLine}</span>` : ''}</div>
+          <button class="wallet-card__btn" data-open-coins>${w.plan === 'free' ? 'Выбрать тариф' : 'Пополнить'}</button>
         </div>
-        <div class="profile-header__name">${user.name}</div>
-        <div class="profile-header__role">Тариф «${esc(w?.plan_name || 'Бесплатный')}»</div>
+        <div class="wallet-card__coins">
+          <div class="wallet-card__coin">${coin('silver')}<div><b>${w.silver}</b><small>из тарифа</small></div></div>
+          <div class="wallet-card__coin">${coin('gold')}<div><b>${w.gold}</b><small>купленные</small></div></div>
+        </div>
+        <p class="wallet-card__hint">1 монета = 1 генерация · обновление ${formatShortDate(w.renew_at)}</p>
+      </div>` : ''}
+
+      <div class="profile-stats profile-stats--3">
+        <div class="profile-stat"><div class="profile-stat__number">${projects.length}</div><div class="profile-stat__label">${plural(projects.length, 'проект', 'проекта', 'проектов')}</div></div>
+        <div class="profile-stat"><div class="profile-stat__number">${images}</div><div class="profile-stat__label">${plural(images, 'картинка ИИ', 'картинки ИИ', 'картинок ИИ')}</div></div>
+        <div class="profile-stat"><div class="profile-stat__number">${favorites.length}</div><div class="profile-stat__label">в избранном</div></div>
       </div>
 
-      <div class="profile-stats">
-        <div class="profile-stat">
-          <div class="profile-stat__number">${projectCount}</div>
-          <div class="profile-stat__label">Проектов создано</div>
-        </div>
-        <div class="profile-stat">
-          <div class="profile-stat__number">${favoriteCount}</div>
-          <div class="profile-stat__label">Материалов сохранено</div>
-        </div>
-      </div>
-
+      ${admin ? `
+      <h3 class="profile-section">Администратор</h3>
       <div class="profile-menu">
-        <div class="profile-menu__item" id="profile-favorites">
-          <svg class="profile-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-          <span class="profile-menu__text">Избранные материалы</span>
-          <svg class="profile-menu__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="profile-menu__item" id="profile-coins" data-open-coins>
-          <span class="profile-menu__icon profile-menu__coin">${coin('gold')}</span>
-          <span class="profile-menu__text">Монеты и тариф</span>
-          ${w ? `<span class="profile-menu__coins">${coin('silver')}${w.silver}${coin('gold')}${w.gold}</span>` : ''}
-          <svg class="profile-menu__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="profile-menu__item" id="profile-help">
-          <svg class="profile-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <span class="profile-menu__text">Помощь и поддержка</span>
-          <svg class="profile-menu__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="profile-menu__item" id="profile-about">
-          <svg class="profile-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <span class="profile-menu__text">О приложении</span>
-          <svg class="profile-menu__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="profile-menu__item danger" id="profile-logout">
-          <svg class="profile-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          <span class="profile-menu__text">Выйти</span>
-        </div>
+        ${menuItem('profile-admin', PROFILE_ICONS.users, 'Пользователи', '<span class="profile-menu__value" id="profile-admin-count"></span>')}
+        ${menuItem('profile-kie', PROFILE_ICONS.ai, 'Баланс ИИ (kie.ai)', '<span class="profile-menu__value" id="profile-kie-credits">…</span>')}
+      </div>` : ''}
+
+      <h3 class="profile-section">Приложение</h3>
+      <div class="profile-menu">
+        ${menuItem('profile-coins', PROFILE_ICONS.coins, 'Монеты и тариф', w ? `<span class="profile-menu__coins">${coin('silver')}${w.silver}${coin('gold')}${w.gold}</span>` : '', 'data-open-coins')}
+        ${menuItem('profile-favorites', PROFILE_ICONS.heart, 'Избранные материалы', favorites.length ? `<span class="profile-menu__value">${favorites.length}</span>` : '')}
+        ${menuItem('profile-tips', PROFILE_ICONS.camera, 'Как сфотографировать дом')}
+        ${menuItem('profile-help', PROFILE_ICONS.help, 'Помощь и поддержка')}
+        ${menuItem('profile-about', PROFILE_ICONS.info, 'О приложении')}
       </div>
+
+      <button class="btn btn-ghost btn-full profile-logout" id="profile-logout">${PROFILE_ICONS.logout}Выйти из аккаунта</button>
     `;
 
-    // Events
-    document.getElementById('profile-favorites')?.addEventListener('click', () => {
-      Router.navigateTo('favorites');
-    });
+    const go = (id, screen) => document.getElementById(id)?.addEventListener('click', () => Router.navigateTo(screen));
+    go('profile-favorites', 'favorites');
+    go('profile-tips', 'tips');
+    go('profile-help', 'help');
+    go('profile-about', 'about');
+    go('profile-admin', 'admin');
+    go('profile-kie', 'admin');
     document.getElementById('profile-logout')?.addEventListener('click', async () => {
       const ok = await showConfirm('Выйти', 'Вы уверены, что хотите выйти?', 'Выйти');
       if (ok) {
@@ -101,16 +108,95 @@ async function renderProfile() {
         Router.navigateTo('home');
       }
     });
+    if (admin) {
+      // Цифры администратора — без ожидания, когда придут
+      Api.adminKie().then(r => {
+        const el = document.getElementById('profile-kie-credits');
+        if (el) el.textContent = `${r.data.credits} кр.`;
+      }).catch(() => {
+        const el = document.getElementById('profile-kie-credits');
+        if (el) el.textContent = '—';
+      });
+      Api.adminUsers().then(r => {
+        const el = document.getElementById('profile-admin-count');
+        if (el) el.textContent = r.data.users.length;
+      }).catch(() => {});
+    }
   } catch (e) {
+    if ((e.message || '').includes('Не авторизован')) {
+      Auth._user = null;
+      showInlineAuth('profile-content');
+      return;
+    }
     container.innerHTML = `
       <div class="empty-state">
         <div class="empty-state__icon">⚠️</div>
         <div class="empty-state__title">Ошибка загрузки</div>
-        <div class="empty-state__text">${e.message || 'Попробуйте обновить страницу'}</div>
+        <div class="empty-state__text">${esc(e.message || 'Попробуйте обновить страницу')}</div>
         <button class="btn btn-primary" onclick="renderProfile()">Обновить</button>
       </div>
     `;
   }
+}
+
+function plural(n, one, few, many) {
+  const a = Math.abs(n) % 100, b = a % 10;
+  if (a > 10 && a < 20) return many;
+  if (b === 1) return one;
+  if (b >= 2 && b <= 4) return few;
+  return many;
+}
+
+// === Помощь и поддержка ===
+const HELP_FAQ = [
+  ['Как сделать фасад?', 'На главной нажмите «Создать фасад», сфотографируйте дом или выберите фото из галереи. Затем выберите плитку для стен и цоколя, узоры (карнизы, наличники, русты) и нажмите «Сгенерировать фасад» — ИИ нарисует облицовку прямо на вашем фото.'],
+  ['Что такое монеты?', '1 монета = 1 генерация фасада. Серебряные монеты дают тарифы, каждый месяц их снова столько, сколько в тарифе. Золотые — купленные пакеты, они не сгорают. Сначала тратятся серебряные, потом золотые. Nano Banana рисует за 1 монету, GPT Image 2.5 — за 2.'],
+  ['ИИ не нарисовал — монеты пропали?', 'Нет. Если ИИ не смог нарисовать, монеты возвращаются автоматически. Попробуйте ещё раз или выберите другую модель.'],
+  ['Какое фото лучше?', 'Дневное фото без резких теней, дом целиком в кадре, снято с уровня глаз и по возможности прямо. Чем меньше машин и деревьев перед фасадом, тем точнее результат.'],
+  ['Как показать заказчику?', 'Откройте проект: «До и после» показывает разницу, «Увеличить» — на весь экран. «Скачать» сохраняет картинку, кнопка «Поделиться» вверху отправляет её в мессенджер.'],
+  ['Как сделать несколько вариантов?', 'В проекте нажмите «Изменить и сгенерировать» — поменяйте камень или узоры, и это сохранится новым вариантом. Все варианты видны в ленте «Варианты».'],
+];
+
+const SUPPORT_LINKS = {
+  telegram: (v) => [`https://t.me/${v.replace(/^@|https?:\/\/t\.me\//g, '')}`, 'Telegram'],
+  whatsapp: (v) => [`https://wa.me/${v.replace(/\D/g, '')}`, 'WhatsApp'],
+  phone: (v) => [`tel:${v.replace(/[^\d+]/g, '')}`, 'Позвонить'],
+  email: (v) => [`mailto:${v}`, 'Написать на почту'],
+};
+
+async function onScreenHelp() {
+  const box = document.getElementById('help-content');
+  box.innerHTML = `
+    <div class="faq">${HELP_FAQ.map(([q, a], i) => `
+      <details class="faq__item"${i ? '' : ' open'}><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>
+    <h3 class="profile-section">Связаться с нами</h3>
+    <div class="support" id="support-links"><p class="configure-hint">Загрузка…</p></div>`;
+  let links = {};
+  try { links = (await Api.getSupport()).data || {}; } catch (e) { /* без сети */ }
+  const el = document.getElementById('support-links');
+  const items = Object.entries(links).filter(([k]) => SUPPORT_LINKS[k]).map(([k, v]) => {
+    const [href, label] = SUPPORT_LINKS[k](v);
+    return `<a class="btn btn-secondary btn-full" href="${esc(href)}" target="_blank" rel="noopener">${label}</a>`;
+  });
+  el.innerHTML = items.length ? items.join('') : '<p class="configure-hint">Контакты поддержки скоро появятся здесь.</p>';
+}
+
+// === О приложении ===
+function onScreenAbout() {
+  const v = document.querySelector('script[src*="coins.js"]')?.src.match(/v=([a-z0-9]+)/i)?.[1] || '';
+  document.getElementById('about-content').innerHTML = `
+    <div class="about">
+      <div class="about__logo">F</div>
+      <h2>Fasad</h2>
+      <p class="about__lead">Приложение для прорабов: покажите заказчику его дом в натуральном камне ещё до начала работ.</p>
+      <ul class="about__list">
+        <li>Каталог камня и изделий — плитка, карнизы, наличники, русты, колонны, балюстрады</li>
+        <li>Подбор фасада в три шага: плитка, узоры, итог со спецификацией</li>
+        <li>ИИ рисует облицовку прямо на фото дома — несколько вариантов в одном проекте</li>
+        <li>«До и после», просмотр на весь экран, отправка заказчику</li>
+      </ul>
+      <p class="about__ver">Версия ${esc(v)}</p>
+    </div>`;
 }
 
 async function renderFavorites() {

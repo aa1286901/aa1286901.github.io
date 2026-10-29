@@ -68,7 +68,7 @@ const CoinsScreen = {
       box.innerHTML = '<p class="configure-hint">Не удалось загрузить монеты — проверьте интернет.</p>';
       return;
     }
-    const { wallet: w, plans, packs, is_admin: admin } = Wallet.info;
+    const { wallet: w, plans, packs } = Wallet.info;
     const renew = formatShortDate(w.renew_at);
     const best = 'pro';
     box.innerHTML = `
@@ -112,29 +112,6 @@ const CoinsScreen = {
             <span class="pack__price">${rub(p.price)}</span>
             <small>${(p.price / p.coins).toLocaleString('ru-RU', { maximumFractionDigits: 1 })} ₽ за монету</small>
           </button>`).join('')}
-      </div>
-
-      ${admin ? this.adminHtml(plans) : ''}`;
-  },
-
-  adminHtml(plans) {
-    return `
-      <div class="admin-box">
-        <h3 class="section-title">Администратор</h3>
-        <p class="coins-sub">Пока нет оплаты: включите тариф или начислите золотые монеты вручную.</p>
-        <input class="input" type="email" id="admin-email" placeholder="Email пользователя">
-        <div class="admin-box__row">
-          <select class="input" id="admin-plan">
-            <option value="">Тариф не менять</option>
-            ${plans.map(p => `<option value="${p.id}">${esc(p.name)} — ${p.coins} в месяц</option>`).join('')}
-          </select>
-          <select class="input" id="admin-months">
-            ${[1, 3, 6, 12].map(m => `<option value="${m}">${m} мес.</option>`).join('')}
-          </select>
-        </div>
-        <input class="input" type="number" id="admin-gold" placeholder="Золотые монеты: +10 или −5" inputmode="numeric">
-        <button class="btn btn-primary btn-full" id="admin-apply">Применить</button>
-        <p class="admin-box__result" id="admin-result"></p>
       </div>`;
   },
 
@@ -143,33 +120,6 @@ const CoinsScreen = {
     if (buy) {
       showToast('Оплата появится скоро. Пока напишите нам — подключим вручную');
       return;
-    }
-    if (e.target.closest('#admin-apply')) {
-      const email = document.getElementById('admin-email').value.trim();
-      if (!email) return showToast('Укажите email');
-      const btn = document.getElementById('admin-apply');
-      btn.disabled = true;
-      try {
-        const res = await Api.adminWallet({
-          email,
-          plan: document.getElementById('admin-plan').value,
-          months: +document.getElementById('admin-months').value,
-          gold: +document.getElementById('admin-gold').value || 0,
-        });
-        const w = res.data.wallet;
-        document.getElementById('admin-result').textContent =
-          `${res.data.name}: тариф «${w.plan_name}»${w.plan_until ? ` до ${formatShortDate(w.plan_until)}` : ''}, серебряных ${w.silver}, золотых ${w.gold}`;
-        document.getElementById('admin-gold').value = '';
-        if (email.toLowerCase() === (Auth.getUser()?.email || '').toLowerCase()) {
-          await Wallet.load();
-          this.render();
-        }
-        showToast('Готово');
-      } catch (err) {
-        showToast(err.message || 'Не получилось');
-      } finally {
-        btn.disabled = false;
-      }
     }
   },
 

@@ -73,9 +73,20 @@ const Api = {
     return this.request('./user/wallet.php');
   },
 
-  // Администратор: включить тариф и/или начислить золотые монеты
-  async adminWallet(data) {
-    return this.request('./admin/wallet.php', { method: 'POST', body: JSON.stringify(data) });
+  // Администратор: пользователи (без data — список; { action: 'update' | 'create', ... } — изменить)
+  async adminUsers(data = null) {
+    return data ? this.request('./admin/users.php', { method: 'POST', body: JSON.stringify(data) })
+      : this.request('./admin/users.php');
+  },
+
+  // Администратор: баланс kie.ai
+  async adminKie() {
+    return this.request('./admin/kie.php');
+  },
+
+  // Контакты поддержки
+  async getSupport() {
+    return this.request('./support.php');
   },
 
   async projectVariant(projectId, action, data = {}) {
