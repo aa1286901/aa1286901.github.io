@@ -77,7 +77,7 @@ const Configurator = {
     this.bind();
     const draft = ProjectFlow.getState('design');
     if (draft?.version === 5) this.spec = draft;
-    else if (this.spec?.version !== 5) { this.spec = this.newSpec(); this.step = 1; }
+    else if (this.spec?.version !== 5) { this.spec = this.newSpec(); this.step = 1; ProjectFlow.setState('step', 1); }
     const [stones, catalog] = await Promise.all([Materials.getStones(), Materials.getCatalog()]);
     this.stones = stones;
     this.catalog = catalog;
@@ -298,6 +298,7 @@ const Configurator = {
   },
 
   goStep(n) {
+    ProjectFlow.setState('step', n);  // черновик на главной покажет, где остановились
     if (n === 3) {
       this.save();
       return Router.navigateTo('spec');
