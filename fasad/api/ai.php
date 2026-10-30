@@ -15,6 +15,8 @@ const AI_MODELS = [
     'nano-banana-pro' => ['images' => 'image_input', 'max' => 8, 'coins' => 3],
     'gpt-image-2-5-sunburst-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
     'gpt-image-2-5-flare-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
+    'gpt-image-2-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
+    'gpt-image/1.5-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
 ];
 
 function aiConfig() {
@@ -72,6 +74,12 @@ function aiStart($cfg, $originalImage, $prompt, $refs) {
     if (str_starts_with($cfg['model'], 'nano-banana')) $input['output_format'] = 'jpg';
     // GPT Image — пропорции фото явно (около 1450×1090 при 4:3)
     if (str_starts_with($cfg['model'], 'gpt-image')) $input['aspect_ratio'] = aiAspect(__DIR__ . '/../' . $originalImage);
+    // GPT Image 1.5: только 1:1, 3:2, 2:3, без разрешения, зато с качеством
+    if ($cfg['model'] === 'gpt-image/1.5-image-to-image') {
+        $input['aspect_ratio'] = aiAspect(__DIR__ . '/../' . $originalImage, ['1:1', '3:2', '2:3']);
+        $input['quality'] = 'high';
+        unset($input['resolution']);
+    }
     $data = kieCall($cfg, 'jobs/createTask', ['model' => $cfg['model'], 'input' => $input]);
     if (empty($data['taskId'])) respondError('Сервис ИИ не принял задачу', 502);
     return [
@@ -84,12 +92,12 @@ function aiStart($cfg, $originalImage, $prompt, $refs) {
 }
 
 // Ближайшие к фото пропорции из тех, что умеет GPT Image
-function aiAspect($file) {
+function aiAspect($file, $allowed = ['1:1', '3:2', '2:3', '4:3', '3:4', '16:9', '9:16', '21:9']) {
     $size = @getimagesize($file);
-    if (!$size || !$size[1]) return '4:3';
+    if (!$size || !$size[1]) return in_array('4:3', $allowed, true) ? '4:3' : '3:2';
     $r = $size[0] / $size[1];
     $best = '1:1';
-    foreach (['1:1', '3:2', '2:3', '4:3', '3:4', '16:9', '9:16', '21:9'] as $a) {
+    foreach ($allowed as $a) {
         [$w, $h] = explode(':', $a);
         if (abs(log($r / ($w / $h))) < abs(log($r / (explode(':', $best)[0] / explode(':', $best)[1])))) $best = $a;
     }
