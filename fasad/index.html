@@ -192,15 +192,12 @@
         <div id="spec-building"></div>
       </section>
       <p class="spec-edit-note" id="spec-edit-note" hidden></p>
-      <h3 class="spec-title">Спецификация</h3>
-      <div class="spec-list" id="spec-list"></div>
-      <div class="ai-pick" data-ai-pick></div>
-      <button class="btn btn-primary btn-full" id="spec-generate">Сгенерировать фасад</button>
-      <p class="configure-hint">ИИ нарисует облицовку прямо на вашем фото — от 30 секунд до 2 минут. Каждая генерация сохраняется вариантом в проекте.</p>
-      <div class="spec-actions">
-        <button class="btn btn-secondary" id="spec-share">Отправить заказчику</button>
-        <button class="btn btn-secondary" id="spec-save">Сохранить в проекты</button>
-      </div>
+      <details class="chosen" id="spec-chosen">
+        <summary class="chosen__head" id="spec-chosen-head"></summary>
+        <div class="spec-list chosen__list" id="spec-list"></div>
+      </details>
+      <button class="btn btn-primary btn-full" id="spec-save">Сохранить проект</button>
+      <p class="configure-hint spec-save-hint">После сохранения откроется проект — там ИИ нарисует облицовку прямо на фото дома, и вы сразу покажете заказчику, как он будет выглядеть.</p>
       <button class="btn btn-ghost btn-full" id="spec-edit">Изменить подбор</button>
     </div>
 
