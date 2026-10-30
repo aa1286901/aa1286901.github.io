@@ -32,15 +32,16 @@ const AiChoice = {
   costHtml() {
     return `<small class="btn-cost">${this.cost()}${coin('plain')}</small>`;
   },
-  // Переключатель на странице проекта
-  render() {
+  // Переключатель моделей: над кнопкой «Нарисовать фасад» и в «Ещё» рядом с «Перерисовать»
+  html() {
     const cur = this.get();
-    document.querySelectorAll('[data-ai-pick]').forEach(box => {
-      box.innerHTML = `<div class="ai-pick__top"><span class="ai-pick__label">${icon('sparkle')}Рисует</span>${Wallet.chip()}</div>
-        <div class="ai-pick__seg">${AI_MODELS.map(m => `
-          <button class="${m.id === cur ? 'active' : ''}" data-ai-model="${m.id}"><b>${m.name}</b>
-            <small>${coin('plain')}${m.coins} ${coinsWord(m.coins)} · ${m.note}</small></button>`).join('')}</div>`;
-    });
+    return `<div class="ai-pick__top"><span class="ai-pick__label">${icon('sparkle')}Чем рисовать</span>${Wallet.chip()}</div>
+      <div class="ai-pick__seg">${AI_MODELS.map(m => `
+        <button class="${m.id === cur ? 'active' : ''}" data-ai-model="${m.id}"><b>${m.name}</b>
+          <small>${coin('plain')}${m.coins} ${coinsWord(m.coins)} · ${m.note}</small></button>`).join('')}</div>`;
+  },
+  render() {
+    document.querySelectorAll('.modal [data-ai-pick]').forEach(box => { box.innerHTML = this.html(); });
     // Цена на кнопках генерации
     if (ProjectPage.project && document.getElementById('project-main')) ProjectPage.renderMain(ProjectPage.variant(ProjectPage.sel));
   },
@@ -227,8 +228,11 @@ const ProjectPage = {
     } else if (img) {
       main = `<button class="btn btn-primary btn-full main-btn" data-act="share">${icon('share')}Отправить заказчику</button>`;
     } else {
-      main = `<button class="btn btn-primary btn-full main-btn" data-act="generate">${icon('sparkle')}Нарисовать фасад ${AiChoice.costHtml()}</button>
-        <p class="main-hint">ИИ облицует дом на фото выбранным камнем и узорами</p>`;
+      // Выбор модели прямо над кнопкой: цена на кнопке меняется вместе с ним
+      main = `<div class="main-gen">
+          <div class="ai-pick" data-ai-pick>${AiChoice.html()}</div>
+          <button class="btn btn-primary btn-full main-btn" data-act="generate">${icon('sparkle')}Нарисовать фасад ${AiChoice.costHtml()}</button>
+        </div>`;
     }
     box.innerHTML = `${main}
       <div class="main-row">
@@ -281,7 +285,7 @@ const ProjectPage = {
         ${img ? item('download', 'download', 'Скачать картинку', 'сохранить в галерею телефона') : ''}
         ${item('new', 'plus', 'Новый вариант', 'другой камень — прежний вариант останется')}
         ${item('rename', 'edit', 'Переименовать проект', esc(this.project.name || ''))}
-        <div class="sheet-ai"><div class="ai-pick" data-ai-pick></div></div>
+        ${img ? '<div class="sheet-ai"><div class="ai-pick" data-ai-pick></div></div>' : ''}
       </div>`);
     AiChoice.render();
     document.querySelector('.sheet-list').addEventListener('click', async (e) => {
