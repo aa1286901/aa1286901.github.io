@@ -89,6 +89,8 @@ function aiPoll($cfg, &$variant) {
     if ($state === 'fail') {
         $ai['status'] = 'failed';
         $ai['error'] = aiErrorText($data['failMsg'] ?? '');
+        // Ответ kie.ai как есть — чтобы по проекту было видно настоящую причину сбоя
+        $ai['fail_raw'] = trim(($data['failCode'] ?? '') . ' ' . ($data['failMsg'] ?? ''));
         return;
     }
     if ($state !== 'success') {
