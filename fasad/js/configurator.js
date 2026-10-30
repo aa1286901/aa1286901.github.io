@@ -24,6 +24,7 @@ const PATTERN_GROUPS = [
   ] },
   { group: 'windows', title: 'Окна', rows: [
     { key: 'frame', title: 'Наличник', sections: ['cornice', 'plinth'], def: /^Карниз К-12$/ },
+    { key: 'windowCornice', title: 'Карниз над окном', sections: ['cornice', 'plinth'] },
     { key: 'sill', title: 'Подоконник', sections: ['cornice', 'plinth'], def: /^Карниз К-37$/ },
     { key: 'keystone', title: 'Замок над окном', sections: ['keystone'], def: /^Замок простой/ },
     { key: 'console', title: 'Консоли под подоконник', sections: ['console'] },
@@ -54,8 +55,9 @@ const Configurator = {
         main: { ...TILE_DEFAULTS.main },
         base: { on: true, ...TILE_DEFAULTS.base },
       },
-      // У каждой части свой узор (изделие) и свой камень: 'main' — как стены, 'base' — как цоколь, иначе id камня
-      parts: Object.fromEntries(PATTERN_ROWS.map(r => [r.key, { item: null, stone: DEFAULT_DECOR_STONE }])),
+      // У каждой части свой узор (изделие) и свой камень: 'main' — как стены, 'base' — как цоколь, иначе id камня.
+      // Новый подбор — как стены: какой камень ни выбери для стен, узоры будут из него же
+      parts: Object.fromEntries(PATTERN_ROWS.map(r => [r.key, { item: null, stone: 'main' }])),
       building: { floors: null, heightM: null },
       filled: false,  // модели по умолчанию ещё не подставлены
     };
@@ -78,6 +80,7 @@ const Configurator = {
     const draft = ProjectFlow.getState('design');
     if (draft?.version === 5) this.spec = draft;
     else if (this.spec?.version !== 5) { this.spec = this.newSpec(); this.step = 1; ProjectFlow.setState('step', 1); }
+    addMissingParts(this.spec);
     const [stones, catalog] = await Promise.all([Materials.getStones(), Materials.getCatalog()]);
     this.stones = stones;
     this.catalog = catalog;
@@ -360,6 +363,12 @@ const Configurator = {
   },
 };
 
+// Части, которых не было, когда подбор сохраняли (например, карниз над окном) — пустые, камень как стены
+function addMissingParts(spec) {
+  PATTERN_ROWS.forEach(r => { if (!spec.parts[r.key]) spec.parts[r.key] = { item: null, stone: 'main' }; });
+  return spec;
+}
+
 // Камень части: 'main' — как стены, 'base' — как цоколь (без цоколя — как стены), иначе id камня
 function resolveStone(spec, value) {
   const m = spec.materials;
@@ -395,9 +404,9 @@ const PARTS_V3 = [
   { key: 'balustrade', title: 'Балюстрада', icon: 'balustrade', type: 'balustrade' },
 ];
 // Группа камня частей в подборе версии 4
-const V4_GROUPS = { topCornice: 'cornice', floorCornice: 'cornice', baseCornice: 'cornice', dentils: 'cornice', frame: 'windows', sill: 'windows',
+const V4_GROUPS = { topCornice: 'cornice', floorCornice: 'cornice', baseCornice: 'cornice', dentils: 'cornice', frame: 'windows', windowCornice: 'windows', sill: 'windows',
   keystone: 'windows', console: 'windows', corners: 'corners', column: 'columns', capital: 'columns', baluster: 'columns', post: 'columns', rail: 'columns', finial: 'columns' };
-const ROW_ICONS = { topCornice: 'cornice', floorCornice: 'cornice', baseCornice: 'plinth', dentils: 'dentil', frame: 'opening', sill: 'opening',
+const ROW_ICONS = { topCornice: 'cornice', floorCornice: 'cornice', baseCornice: 'plinth', dentils: 'dentil', frame: 'opening', windowCornice: 'cornice', sill: 'opening',
   keystone: 'opening', console: 'opening', corners: 'rust', column: 'column', capital: 'column', baluster: 'balustrade', post: 'balustrade', rail: 'balustrade', finial: 'balustrade' };
 
 function tileDetails(part) {
