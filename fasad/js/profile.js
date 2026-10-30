@@ -189,7 +189,7 @@ function onScreenAbout() {
   const v = document.querySelector('script[src*="coins.js"]')?.src.match(/v=([a-z0-9]+)/i)?.[1] || '';
   document.getElementById('about-content').innerHTML = `
     <div class="about">
-      <img class="about__logo" src="icon-192.png" alt="Fasad AI">
+      <img class="about__logo" src="app-icon-192.png" alt="Fasad AI">
       <h2>Fasad</h2>
       <p class="about__lead">Приложение для прорабов: покажите заказчику его дом в натуральном камне ещё до начала работ.</p>
       <ul class="about__list">

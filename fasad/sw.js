@@ -44,20 +44,21 @@ const STATIC_ASSETS = [
 
   // PWA
   'manifest.json',
-  'favicon.ico',
-  'icon-32.png',
-  'icon-180.png',
-  'icon-192.png',
-  'icon-512.png',
+  'app-favicon.ico',
+  'app-icon-32.png',
+  'app-icon-180.png',
+  'app-icon-192.png',
+  'app-icon-512.png',
 ];
 
 // === Install: кэшируем статические файлы ===
-// Каждый файл кэшируется отдельно: если одного нет, установка не срывается целиком
+// Каждый файл кэшируется отдельно: если одного нет, установка не срывается целиком.
+// cache: 'reload' — мимо кэша браузера, чтобы после обновления не попали старые файлы
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('[SW] Кэширование статических файлов...');
-      return Promise.allSettled(STATIC_ASSETS.map((asset) => cache.add(asset)));
+      return Promise.allSettled(STATIC_ASSETS.map((asset) => cache.add(new Request(asset, { cache: 'reload' }))));
     }).then(() => {
       console.log('[SW] Статические файлы закэшированы');
       return self.skipWaiting();
@@ -159,8 +160,8 @@ self.addEventListener('push', (event) => {
   const title = data.title || 'Fasad AI';
   const options = {
     body: data.body || 'Новое обновление!',
-    icon: 'icon-192.png',
-    badge: 'icon-96.png',
+    icon: 'app-icon-192.png',
+    badge: 'app-icon-96.png',
   };
   event.waitUntil(self.registration.showNotification(title, options));
 });
