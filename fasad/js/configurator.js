@@ -502,6 +502,11 @@ const Spec = {
     document.getElementById('spec-steps').innerHTML = flowSteps(3);
     const edit = ProjectFlow.getState('editProject');
     document.getElementById('spec-save').textContent = edit ? 'Сохранить вариант' : 'Сохранить проект';
+    // Название — только у нового проекта; у правки варианта название уже есть
+    const name = document.getElementById('spec-name');
+    document.getElementById('spec-name-box').hidden = !!edit;
+    name.placeholder = defaultProjectName();
+    if (document.activeElement !== name) name.value = ProjectFlow.getState('projectName') || '';
     document.getElementById('spec-edit-note').hidden = !edit;
     if (edit) document.getElementById('spec-edit-note').textContent = `Новый вариант проекта «${edit.name || 'Проект'}». Прежние варианты останутся.`;
     const [stones, catalog] = await Promise.all([Materials.getStones(), Materials.getCatalog()]);
@@ -569,9 +574,8 @@ const Spec = {
     try {
       const photo = await (await fetch(ProjectFlow.getState('originalPhoto'))).blob();
       const up = await Api.uploadImage(new File([photo], 'original.jpg', { type: photo.type || 'image/jpeg' }));
-      const now = new Date();
       const project = await Api.createProject({
-        name: `Фасад ${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()}`,
+        name: document.getElementById('spec-name').value.trim() || defaultProjectName(),
         original_image: up.data.url,
         design: ProjectFlow.getState('design'),
       });
@@ -614,8 +618,17 @@ const Spec = {
     });
     document.getElementById('spec-building').addEventListener('click', e => this.onStep(e));
     document.getElementById('spec-save').addEventListener('click', () => this.saveProject());
+    const name = document.getElementById('spec-name');
+    name.addEventListener('input', () => ProjectFlow.setState('projectName', name.value));
+    name.addEventListener('keydown', e => { if (e.key === 'Enter') name.blur(); });
   },
 };
+
+// Название нового проекта, если прораб не написал своё
+function defaultProjectName() {
+  const now = new Date();
+  return `Фасад ${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()}`;
+}
 
 // Список материалов в карточке сохранённого проекта
 function summarizeDesign(design, stones, catalog) {

@@ -50,6 +50,7 @@ async function renderHomeDraft() {
     ProjectFlow.setState('originalPhoto', d.originalPhoto);
     ProjectFlow.setState('design', d.design || null);
     ProjectFlow.setState('editProject', d.editProject || null);
+    ProjectFlow.setState('projectName', d.projectName || '');
     Configurator.spec = null;
     Configurator.step = Math.min(2, step);
     Router.navigateTo(step === 3 && spec ? 'spec' : 'configure');
