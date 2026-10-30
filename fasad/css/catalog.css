@@ -1005,21 +1005,14 @@
   color: var(--color-text-secondary);
 }
 
-.spec-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-sm);
-}
-
-.spec-actions .btn {
-  min-height: 48px;
-  padding: 8px 10px;
-  font-size: var(--font-size-sm);
-}
-
-#spec-generate {
+#spec-save {
   margin-bottom: 4px;
+}
+
+.spec-save-hint {
+  margin: 0 8px var(--spacing-md);
+  font-size: var(--font-size-sm);
+  text-align: center;
 }
 
 /* === Страница проекта: варианты === */
@@ -2736,6 +2729,13 @@
 
 .chosen__list {
   border-top: 1px solid var(--color-border-light);
+}
+
+/* Спецификация на экране «Итог» — внутри такой же свёрнутой карточки */
+.chosen__list.spec-list {
+  margin: 0;
+  border-width: 1px 0 0;
+  border-radius: 0;
 }
 
 .chosen__list .spec-line {

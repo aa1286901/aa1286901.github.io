@@ -501,10 +501,7 @@ const Spec = {
     this.bind();
     document.getElementById('spec-steps').innerHTML = flowSteps(3);
     const edit = ProjectFlow.getState('editProject');
-    document.getElementById('spec-save').textContent = edit ? 'Сохранить вариант' : 'Сохранить в проекты';
-    this.renderCost();
-    Wallet.load();
-    AiChoice.render();
+    document.getElementById('spec-save').textContent = edit ? 'Сохранить вариант' : 'Сохранить проект';
     document.getElementById('spec-edit-note').hidden = !edit;
     if (edit) document.getElementById('spec-edit-note').textContent = `Новый вариант проекта «${edit.name || 'Проект'}». Прежние варианты останутся.`;
     const [stones, catalog] = await Promise.all([Materials.getStones(), Materials.getCatalog()]);
@@ -513,13 +510,18 @@ const Spec = {
     const box = document.getElementById('spec-list');
     box.innerHTML = specHtml(spec, stones, catalog);
     recolorSpec(box, stones, catalog);
+    this.renderChosenHead(spec, stones, catalog);
   },
 
-  // Текст главной кнопки с ценой генерации в монетах
-  renderCost() {
-    const btn = document.getElementById('spec-generate');
-    if (!btn) return;
-    btn.innerHTML = `${ProjectFlow.getState('editProject') ? 'Сохранить и сгенерировать' : 'Сгенерировать фасад'} ${AiChoice.costHtml()}`;
+  // Заголовок свёрнутой спецификации: образцы камня стен и цоколя, число позиций
+  renderChosenHead(spec, stones, catalog) {
+    const lines = specLines(spec, stones, catalog).filter(l => l[0] !== 'fit');
+    const m = spec.materials;
+    const sw = [m.main.stone, m.base.on ? m.base.stone : null].map(id => stones.find(s => s.id === id)?.texture).filter(Boolean);
+    document.getElementById('spec-chosen-head').innerHTML = `
+      <span class="chosen__sw">${sw.map(src => `<img src="${src}" alt="">`).join('')}</span>
+      <span class="chosen__text"><b>Спецификация</b><small>${lines.length} ${plural(lines.length, 'позиция', 'позиции', 'позиций')} · камень и узоры</small></span>
+      <span class="chosen__arrow" aria-hidden="true"></span>`;
   },
 
   // Размер здания — для расчёта количества плитки и изделий
@@ -532,51 +534,17 @@ const Spec = {
         <div class="editor-stepper"><button data-step="heightM" data-d="-0.5">−</button><span>${b.heightM || '—'}</span><button data-step="heightM" data-d="0.5">+</button></div></div>`;
   },
 
-  async share() {
-    const spec = ProjectFlow.getState('design');
-    const [stones, catalog] = await Promise.all([Materials.getStones(), Materials.getCatalog()]);
-    const text = `Фасад — подбор материалов\n${specText(spec, stones, catalog)}`;
-    try {
-      const blob = await (await fetch(ProjectFlow.getState('originalPhoto'))).blob();
-      const file = new File([blob], 'fasad.jpg', { type: blob.type || 'image/jpeg' });
-      if (navigator.canShare && navigator.canShare({ files: [file], text })) {
-        await navigator.share({ files: [file], text, title: 'Подбор фасада' });
-        return;
-      }
-      if (navigator.share) {
-        await navigator.share({ text, title: 'Подбор фасада' });
-        return;
-      }
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-    }
-    try {
-      await navigator.clipboard.writeText(text);
-      showToast('Спецификация скопирована');
-    } catch {
-      showToast('Не удалось поделиться');
-    }
-  },
-
-  // Правка проекта: подбор сохраняется новым вариантом, generate — сразу запросить картинку
-  async saveVariant(generate) {
+  // Правка проекта: подбор сохраняется новым вариантом
+  async saveVariant() {
     const edit = ProjectFlow.getState('editProject');
-    const btn = document.getElementById(generate ? 'spec-generate' : 'spec-save');
+    const btn = document.getElementById('spec-save');
     btn.disabled = true;
     try {
       const res = await Api.projectVariant(edit.projectId, 'add', { design: ProjectFlow.getState('design') });
       const vs = res.data.variants;
-      const newId = vs[vs.length - 1].id;
       ProjectFlow.clearDraft();
       showToast(`Сохранён вариант ${vs.length}`);
-      if (generate) {
-        try {
-          await ProjectPage.generate(edit.projectId, newId, vs[vs.length - 1].design);
-        } catch (e) {
-          if (!Wallet.handleError(e)) showToast(`Вариант сохранён. ${e.message}`);
-        }
-      }
-      openProject(edit.projectId, newId);
+      openProject(edit.projectId, vs[vs.length - 1].id);
     } catch (e) {
       if ((e.message || '').includes('Не авторизован')) {
         Auth._user = null;
@@ -588,15 +556,15 @@ const Spec = {
     }
   },
 
-  // Новый проект; generate — сразу отдать первый вариант ИИ
-  async saveProject(generate = false) {
-    if (ProjectFlow.getState('editProject')) return this.saveVariant(generate);
+  // Новый проект; нарисовать фасад ИИ можно уже на странице проекта
+  async saveProject() {
+    if (ProjectFlow.getState('editProject')) return this.saveVariant();
     if (!Auth.isLoggedIn()) {
       showAuthModal();
       showToast('Войдите, чтобы сохранить проект');
       return;
     }
-    const btn = document.getElementById(generate ? 'spec-generate' : 'spec-save');
+    const btn = document.getElementById('spec-save');
     btn.disabled = true;
     try {
       const photo = await (await fetch(ProjectFlow.getState('originalPhoto'))).blob();
@@ -607,16 +575,8 @@ const Spec = {
         original_image: up.data.url,
         design: ProjectFlow.getState('design'),
       });
-      const design = ProjectFlow.getState('design');
       ProjectFlow.clearDraft();
       showToast('Проект сохранён');
-      if (generate) {
-        try {
-          await ProjectPage.generate(project.data.id, 1, design);  // у нового проекта вариант 1
-        } catch (e) {
-          if (!Wallet.handleError(e)) showToast(`Проект сохранён. ${e.message}`);
-        }
-      }
       openProject(project.data.id);
     } catch (e) {
       if ((e.message || '').includes('Не авторизован')) {
@@ -653,9 +613,7 @@ const Spec = {
       if (b && +b.dataset.flowStep < 3) toConfigure(+b.dataset.flowStep);
     });
     document.getElementById('spec-building').addEventListener('click', e => this.onStep(e));
-    document.getElementById('spec-share').addEventListener('click', () => this.share());
     document.getElementById('spec-save').addEventListener('click', () => this.saveProject());
-    document.getElementById('spec-generate').addEventListener('click', () => this.saveProject(true));
   },
 };
 

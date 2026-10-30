@@ -32,7 +32,7 @@ const AiChoice = {
   costHtml() {
     return `<small class="btn-cost">${this.cost()}${coin('plain')}</small>`;
   },
-  // Переключатель на странице проекта и на последнем экране подбора
+  // Переключатель на странице проекта
   render() {
     const cur = this.get();
     document.querySelectorAll('[data-ai-pick]').forEach(box => {
@@ -43,7 +43,6 @@ const AiChoice = {
     });
     // Цена на кнопках генерации
     if (ProjectPage.project && document.getElementById('project-main')) ProjectPage.renderMain(ProjectPage.variant(ProjectPage.sel));
-    Spec.renderCost?.();
   },
 };
 
