@@ -2,10 +2,12 @@
 // Одно фото — несколько вариантов подбора, у каждого своя картинка от ИИ.
 // Фото: картинка варианта; «До и после» включает ползунок; нажатие — на весь экран с увеличением.
 
-// Чем рисовать: прораб выбирает сам, выбор запоминается на телефоне
+// Чем рисовать: прораб выбирает сам, выбор запоминается на телефоне.
+// refs — сколько образцов отправлять: GPT Image с образцами изделий не укладывается в время kie.ai
+// и падает с «500 Internal Error», поэтому ему — только камень стен и цоколя, изделия словами
 const AI_MODELS = [
-  { id: 'nano-banana-2-1', name: 'Nano Banana', note: '~30 с', coins: 1, wait: 'обычно 30–60 секунд' },
-  { id: 'gpt-image-2-5-sunburst-image-to-image', name: 'GPT Image 2.5', note: '~1,5 мин', coins: 2, wait: 'обычно 1–2 минуты' },
+  { id: 'nano-banana-2-1', name: 'Nano Banana', note: '~30 с', coins: 1, refs: 9, wait: 'обычно 30–60 секунд' },
+  { id: 'gpt-image-2-5-sunburst-image-to-image', name: 'GPT Image 2.5', note: '~1,5 мин', coins: 2, refs: 2, wait: 'обычно 1–2 минуты' },
 ];
 
 const AiChoice = {
@@ -86,7 +88,7 @@ const ProjectPage = {
   // Поставить генерацию варианта: задание собирается из его подбора
   async generate(projectId, variantId, design) {
     const [stones, catalog] = await Promise.all([Materials.getStones(), Materials.getCatalog()]);
-    const task = aiTask(design, stones, catalog);
+    const task = aiTask(design, stones, catalog, AI_MODELS.find(m => m.id === AiChoice.get())?.refs);
     const res = await Api.projectVariant(projectId, 'generate', { variant_id: variantId, model: AiChoice.get(), ...task });
     Wallet.set(res.data.wallet);
     return res;
@@ -523,14 +525,14 @@ const AI_LAYOUT = { running: 'running bond (each row offset by half a tile)', st
 const AI_JOINT = { light: 'light', grey: 'grey', dark: 'dark' };
 const AI_SURFACE = { sawn: 'smooth sawn', split: 'rough split (rock-face)' };
 
-function aiTask(design, stones, catalog) {
+function aiTask(design, stones, catalog, maxRefs = 9) {
   const spec = upgradeDesign(design, stones);
   const m = spec.materials;
   const refs = [];
-  // Номер образца в задании; модель берёт не больше 10 картинок — лишние образцы описываем только словами
+  // Номер образца в задании; сверх maxRefs образцы описываем только словами
   const ref = (path) => {
     let i = refs.indexOf(path);
-    if (i < 0 && refs.length < 9) { refs.push(path); i = refs.length - 1; }
+    if (i < 0 && refs.length < maxRefs) { refs.push(path); i = refs.length - 1; }
     return i < 0 ? null : i + 2;  // картинка 1 — фото
   };
   const stone = (id) => {
