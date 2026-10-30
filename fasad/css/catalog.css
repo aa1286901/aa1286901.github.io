@@ -2676,6 +2676,36 @@
   font-size: var(--font-size-sm);
 }
 
+/* Короткое меню «Ещё»: одна строка на пункт */
+.sheet-list--compact {
+  gap: 0;
+}
+
+.sheet-list--compact .sheet-item {
+  padding: 13px 6px;
+}
+
+.sheet-list--compact .sheet-item b {
+  flex: 1;
+  font-weight: 600;
+}
+
+.sheet-list--compact .btn-cost {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+}
+
+.sheet-sep {
+  height: 1px;
+  margin: 6px 0;
+  background: var(--color-border-light);
+}
+
+.sheet-item--danger,
+.sheet-item--danger .i {
+  color: var(--color-error);
+}
+
 .sheet-ai {
   margin-top: var(--spacing-sm);
   padding-top: var(--spacing-md);
