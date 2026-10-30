@@ -1,7 +1,8 @@
 <?php
 // Генерация фасада ИИ через kie.ai.
 // Ключ и модель лежат только на хостинге: data/ai.php (в GitHub его нет, деплой его не трогает):
-//   <?php return ['key' => '...', 'model' => 'nano-banana-2-1', 'resolution' => '2K'];
+//   <?php return ['key' => '...', 'model' => 'nano-banana-2-1'];
+// Все модели рисуют в 1K: для телефона и КП хватает, дешевле и быстрее; GPT Image 2.5 в 2K на kie.ai не работает
 // Задача ИИ идёт 30–90 секунд: generate ставит её в очередь, poll забирает готовую картинку к себе.
 
 define('AI_CONFIG', DATA_DIR . 'ai.php');
@@ -22,7 +23,6 @@ function aiConfig() {
         respondError('Генерация ИИ ещё не подключена', 501);
     }
     $cfg['model'] = isset(AI_MODELS[$cfg['model'] ?? '']) ? $cfg['model'] : 'nano-banana-2-1';
-    $cfg['resolution'] = in_array($cfg['resolution'] ?? '', ['1K', '2K', '4K'], true) ? $cfg['resolution'] : '2K';
     return $cfg;
 }
 
@@ -68,14 +68,10 @@ function aiStart($cfg, $originalImage, $prompt, $refs) {
     $urls = array_slice(array_merge([$originalImage], $refs), 0, $model['max']);
     $urls = array_map(fn($p) => $base . $p, $urls);
     // Пропорции — как у фото
-    $input = ['prompt' => $prompt, $model['images'] => $urls, 'resolution' => $cfg['resolution'], 'aspect_ratio' => 'auto'];
+    $input = ['prompt' => $prompt, $model['images'] => $urls, 'resolution' => '1K', 'aspect_ratio' => 'auto'];
     if (str_starts_with($cfg['model'], 'nano-banana')) $input['output_format'] = 'jpg';
-    // GPT Image 2.5 в 2K на kie.ai всегда падает с «500 Internal Error» (и с auto, и с явными пропорциями),
-    // в 1K рисует — около 1450×1090. Пропорции фото передаём явно
-    if (str_starts_with($cfg['model'], 'gpt-image')) {
-        $input['aspect_ratio'] = aiAspect(__DIR__ . '/../' . $originalImage);
-        $input['resolution'] = '1K';
-    }
+    // GPT Image — пропорции фото явно (около 1450×1090 при 4:3)
+    if (str_starts_with($cfg['model'], 'gpt-image')) $input['aspect_ratio'] = aiAspect(__DIR__ . '/../' . $originalImage);
     $data = kieCall($cfg, 'jobs/createTask', ['model' => $cfg['model'], 'input' => $input]);
     if (empty($data['taskId'])) respondError('Сервис ИИ не принял задачу', 502);
     return [
