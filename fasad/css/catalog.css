@@ -2392,15 +2392,10 @@
 }
 
 .about__logo {
-  display: grid;
-  place-items: center;
-  width: 76px;
-  height: 76px;
-  border-radius: 22px;
-  background: linear-gradient(135deg, var(--color-accent), #2b2620);
-  color: #fff;
-  font-size: 38px;
-  font-weight: 800;
+  width: 88px;
+  height: 88px;
+  border-radius: 22%;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .about__lead {

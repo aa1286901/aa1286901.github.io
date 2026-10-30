@@ -44,7 +44,8 @@ const STATIC_ASSETS = [
 
   // PWA
   'manifest.json',
-  'icon.svg',
+  'favicon.ico',
+  'icon-32.png',
   'icon-180.png',
   'icon-192.png',
   'icon-512.png',
@@ -158,8 +159,8 @@ self.addEventListener('push', (event) => {
   const title = data.title || 'Fasad AI';
   const options = {
     body: data.body || 'Новое обновление!',
-    icon: 'icon.svg',
-    badge: 'icon.svg',
+    icon: 'icon-192.png',
+    badge: 'icon-96.png',
   };
   event.waitUntil(self.registration.showNotification(title, options));
 });
