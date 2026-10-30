@@ -2,20 +2,21 @@
 // Генерация фасада ИИ через kie.ai.
 // Ключ и модель лежат только на хостинге: data/ai.php (в GitHub его нет, деплой его не трогает):
 //   <?php return ['key' => '...', 'model' => 'nano-banana-2-1'];
-// Все модели рисуют в 1K: для телефона и КП хватает, дешевле и быстрее; GPT Image в 2K на kie.ai падал
+// Nano Banana рисует в 1K, GPT Image 2 — в 2K (GPT Image 2.5 в 2K на kie.ai падал)
 // Задача ИИ идёт 30–90 секунд: generate ставит её в очередь, poll забирает готовую картинку к себе.
 
 define('AI_CONFIG', DATA_DIR . 'ai.php');
 define('KIE_API', 'https://api.kie.ai/api/v1/');
 
-// Модели kie.ai: поле со ссылками на картинки, допустимое число картинок и цена генерации в монетах
+// Модели kie.ai: поле со ссылками на картинки, допустимое число картинок, цена генерации в монетах
+// и разрешение (по умолчанию 1K)
 const AI_MODELS = [
     'nano-banana-2-1' => ['images' => 'image_input', 'max' => 10, 'coins' => 1],
     'nano-banana-2' => ['images' => 'image_input', 'max' => 10, 'coins' => 1],
     'nano-banana-pro' => ['images' => 'image_input', 'max' => 8, 'coins' => 3],
     'gpt-image-2-5-sunburst-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
     'gpt-image-2-5-flare-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
-    'gpt-image-2-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
+    'gpt-image-2-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2, 'resolution' => '2K'],
     'gpt-image/1.5-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
 ];
 
@@ -70,9 +71,9 @@ function aiStart($cfg, $originalImage, $prompt, $refs) {
     $urls = array_slice(array_merge([$originalImage], $refs), 0, $model['max']);
     $urls = array_map(fn($p) => $base . $p, $urls);
     // Пропорции — как у фото
-    $input = ['prompt' => $prompt, $model['images'] => $urls, 'resolution' => '1K', 'aspect_ratio' => 'auto'];
+    $input = ['prompt' => $prompt, $model['images'] => $urls, 'resolution' => $model['resolution'] ?? '1K', 'aspect_ratio' => 'auto'];
     if (str_starts_with($cfg['model'], 'nano-banana')) $input['output_format'] = 'jpg';
-    // GPT Image — пропорции фото явно (около 1450×1090 при 4:3)
+    // GPT Image — пропорции фото явно
     if (str_starts_with($cfg['model'], 'gpt-image')) $input['aspect_ratio'] = aiAspect(__DIR__ . '/../' . $originalImage);
     // GPT Image 1.5: только 1:1, 3:2, 2:3, без разрешения, зато с качеством
     if ($cfg['model'] === 'gpt-image/1.5-image-to-image') {
