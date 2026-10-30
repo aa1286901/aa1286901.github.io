@@ -2,7 +2,7 @@
 // Генерация фасада ИИ через kie.ai.
 // Ключ и модель лежат только на хостинге: data/ai.php (в GitHub его нет, деплой его не трогает):
 //   <?php return ['key' => '...', 'model' => 'nano-banana-2-1'];
-// Nano Banana рисует в 1K, GPT Image 2 — в 2K (GPT Image 2.5 в 2K на kie.ai падал)
+// Все модели рисуют в 1K: для телефона и КП хватает, быстрее и дешевле
 // Задача ИИ идёт 30–90 секунд: generate ставит её в очередь, poll забирает готовую картинку к себе.
 
 define('AI_CONFIG', DATA_DIR . 'ai.php');
@@ -16,7 +16,7 @@ const AI_MODELS = [
     'nano-banana-pro' => ['images' => 'image_input', 'max' => 8, 'coins' => 3],
     'gpt-image-2-5-sunburst-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
     'gpt-image-2-5-flare-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
-    'gpt-image-2-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2, 'resolution' => '2K'],
+    'gpt-image-2-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
     'gpt-image/1.5-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
 ];
 
