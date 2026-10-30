@@ -3814,3 +3814,315 @@ body:has(.screen--kp.active) .bottom-nav {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+/* === КП: шаги «Дом» и «Окна и двери» === */
+.kp-steps {
+  margin-bottom: var(--spacing-md);
+}
+
+.kpw-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+}
+
+.kpw-row + .kpw-row {
+  border-top: 1px solid var(--color-border-light);
+}
+
+.kpw-row > label:first-child {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--font-size-base);
+}
+
+.kpw-row small {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.kpw-num {
+  width: 84px;
+  min-height: 40px;
+  padding: 8px 10px;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpw-unit {
+  width: 22px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.kpw-stepper {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-alt);
+}
+
+.kpw-stepper button {
+  width: 40px;
+  height: 38px;
+  border: 0;
+  background: none;
+  color: var(--color-text-secondary);
+  font-size: 20px;
+}
+
+.kpw-stepper output {
+  min-width: 30px;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpw-plan {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.kpw-plan__house {
+  fill: var(--color-surface-alt);
+}
+
+.kpw-plan__side {
+  stroke: var(--color-border);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 6 7;
+}
+
+.kpw-plan__side.on {
+  stroke: var(--color-accent);
+  stroke-dasharray: none;
+}
+
+.kpw-plan__hit {
+  stroke: transparent;
+  stroke-width: 30;
+  cursor: pointer;
+}
+
+.kpw-plan__erker {
+  fill: var(--color-accent-light);
+  stroke: var(--color-accent);
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+
+.kpw-plan__dot {
+  fill: var(--color-accent-dark);
+}
+
+.kpw-plan text {
+  fill: var(--color-text-muted);
+  font: 600 11px var(--font-family);
+}
+
+.kpw-plan text.on {
+  fill: var(--color-accent-dark);
+}
+
+.kpw-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.kpw-legend i {
+  display: inline-block;
+  width: 18px;
+  height: 4px;
+  margin-right: 5px;
+  border-radius: 2px;
+  background: var(--color-border);
+  vertical-align: middle;
+}
+
+.kpw-legend i.on {
+  background: var(--color-accent);
+}
+
+.kpw-legend i.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-accent-dark);
+}
+
+.kpw-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: var(--spacing-sm);
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+}
+
+.kpw-sub__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kpw-sub__head b {
+  flex: 1;
+}
+
+.kpw-x {
+  padding: 0 6px;
+  border: 0;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.kpw-seg {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+}
+
+.kpw-seg button {
+  flex: 1;
+  padding: 8px 4px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.kpw-seg button.on {
+  background: var(--color-accent-light);
+  color: var(--color-accent-dark);
+}
+
+.kpw-dims {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.kpw-dims label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.kpw-dims .kpw-num {
+  width: 100%;
+}
+
+.kpw-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.kpw-chip {
+  padding: 7px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.kpw-chip.on {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+  color: var(--color-accent-dark);
+}
+
+.kpw-chip--add {
+  border-style: dashed;
+}
+
+.kpw-op {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.kpw-op__icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  padding: 2px;
+  border-radius: 10px;
+  background: var(--color-accent-light);
+  fill: none;
+  stroke: var(--color-accent-dark);
+  stroke-width: 2;
+}
+
+.kpw-op__name {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-base);
+  font-weight: 700;
+}
+
+.kpw-sum {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.kpw-sum dt {
+  color: var(--color-text-secondary);
+}
+
+.kpw-sum dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpw-sum .big {
+  padding-top: 6px;
+  border-top: 1px solid var(--color-border-light);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+}
+
+.kp-row__how {
+  margin-top: 6px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
