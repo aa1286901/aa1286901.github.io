@@ -71,7 +71,10 @@ function aiStart($cfg, $originalImage, $prompt, $refs) {
     $input = ['prompt' => $prompt, $model['images'] => $urls, 'resolution' => $cfg['resolution'], 'aspect_ratio' => 'auto'];
     if (str_starts_with($cfg['model'], 'nano-banana')) $input['output_format'] = 'jpg';
     // GPT Image с «auto» в 2K падает с Internal Error — даём ему ближайшие пропорции фото явно
-    if (str_starts_with($cfg['model'], 'gpt-image')) $input['aspect_ratio'] = aiAspect(__DIR__ . '/../' . $originalImage);
+    if (str_starts_with($cfg['model'], 'gpt-image')) {
+        $input['aspect_ratio'] = aiAspect(__DIR__ . '/../' . $originalImage);
+        $input['resolution'] = '1K';  // проверка: в 2K kie.ai отвечает Internal Error
+    }
     $data = kieCall($cfg, 'jobs/createTask', ['model' => $cfg['model'], 'input' => $input]);
     if (empty($data['taskId'])) respondError('Сервис ИИ не принял задачу', 502);
     return [
