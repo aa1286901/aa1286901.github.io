@@ -70,10 +70,11 @@ function aiStart($cfg, $originalImage, $prompt, $refs) {
     // Пропорции — как у фото
     $input = ['prompt' => $prompt, $model['images'] => $urls, 'resolution' => $cfg['resolution'], 'aspect_ratio' => 'auto'];
     if (str_starts_with($cfg['model'], 'nano-banana')) $input['output_format'] = 'jpg';
-    // GPT Image с «auto» в 2K падает с Internal Error — даём ему ближайшие пропорции фото явно
+    // GPT Image 2.5 в 2K на kie.ai всегда падает с «500 Internal Error» (и с auto, и с явными пропорциями),
+    // в 1K рисует — около 1450×1090. Пропорции фото передаём явно
     if (str_starts_with($cfg['model'], 'gpt-image')) {
         $input['aspect_ratio'] = aiAspect(__DIR__ . '/../' . $originalImage);
-        $input['resolution'] = '1K';  // проверка: в 2K kie.ai отвечает Internal Error
+        $input['resolution'] = '1K';
     }
     $data = kieCall($cfg, 'jobs/createTask', ['model' => $cfg['model'], 'input' => $input]);
     if (empty($data['taskId'])) respondError('Сервис ИИ не принял задачу', 502);
@@ -86,7 +87,7 @@ function aiStart($cfg, $originalImage, $prompt, $refs) {
     ];
 }
 
-// Ближайшие к фото пропорции из тех, что GPT Image рисует в 2K
+// Ближайшие к фото пропорции из тех, что умеет GPT Image
 function aiAspect($file) {
     $size = @getimagesize($file);
     if (!$size || !$size[1]) return '4:3';
