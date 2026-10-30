@@ -1,12 +1,12 @@
 // === Коммерческое предложение (КП) ===
-// Три шага, как прораб думает на объекте:
-// 1. Дом — размеры, какие стороны облицовываем (план сверху), углы, фронтоны, эркеры.
-// 2. Окна и двери — типами («обычное 1,2×1,5 — 8 шт»), у типа отмечено, что на нём ставим.
-// 3. Смета — всё посчитано, у строки видно «откуда цифра»; цены, запас, скидка, условия, контакты.
+// Два шага:
+// 1. Дом — план сверху и размеры. Нажатие на стену открывает вид на неё: окна и двери, эркер, фронтон,
+//    цоколь и что ставим на окна — всё сразу видно на рисунке стены. Похожую стену копируют одной кнопкой.
+// 2. Смета — всё посчитано, у строки видно «откуда цифра»; цены, запас, скидка, условия, контакты.
 // PDF собирается прямо на телефоне в формате экрана: фото с водяным знаком, смета, итог, «Позвонить» / «Написать».
 
-// Позиции сметы. part — узор подбора (строка есть, только если он выбран); op — проём (строка есть, если на
-// каком-то типе окон её отметили); calc — строка есть, только когда посчиталось больше нуля.
+// Позиции сметы. part — узор подбора (строка есть, только если он выбран); op — для окон (строка есть, если на
+// какой-то стене её отметили); calc — строка есть, только когда посчиталось больше нуля.
 // Цены — примерные, прораб ставит свои, они запоминаются
 const KP_ITEMS = [
   { id: 'wall', group: 'Стены и цоколь', name: 'Плитка стен', unit: 'м²', m: 2200, w: 1600 },
@@ -47,121 +47,182 @@ const kpRub = (n) => `${Math.round(n || 0).toLocaleString('ru-RU')} ₽`;
 const kpNum = (n) => (Math.round((+n || 0) * 10) / 10).toLocaleString('ru-RU');
 const kpUnit = (u, n) => (u === 'рейс' ? plural(Math.round(n), 'рейс', 'рейса', 'рейсов') : u);
 
-// === Шаг 1–2: дом и проёмы ===
-const KP_SIDES = { front: 'Фасад', right: 'Правая', back: 'Задняя', left: 'Левая' };
-// Что ставим на проём — те же id, что у позиций сметы
-const KP_OP_PARTS = [['frame', 'Наличник'], ['windowCornice', 'Сандрик'], ['sill', 'Подоконник'], ['keystone', 'Замок'], ['console', 'Консоли'], ['reveals', 'Откосы']];
+// === Дом и стены ===
+// Дом — длина, ширина, этажи. У каждой стены своё: облицовываем или нет, окна и двери, эркер, фронтон,
+// цоколь и что ставим на окна. Стену заполняют в окне «вид на стену», похожие — копируют.
+const KP_WALLS = { front: 'Фасад', right: 'Правая', back: 'Задняя', left: 'Левая' };
+const KP_WALL_ORDER = ['front', 'right', 'back', 'left'];
+// Что ставим на окна стены — те же id, что у позиций сметы
+const KP_DECOR = [['frame', 'Наличник'], ['windowCornice', 'Сандрик'], ['sill', 'Подоконник'], ['keystone', 'Замок'], ['console', 'Консоли'], ['reveals', 'Откосы']];
 const KP_OP_TYPES = {
   win: { name: 'Окно', kind: 'win', w: 1.2, h: 1.5 },
-  big: { name: 'Окно большое', kind: 'win', w: 2.0, h: 1.8 },
-  arch: { name: 'Окно арочное', kind: 'win', w: 1.2, h: 2.0, arch: true },
+  big: { name: 'Большое окно', kind: 'win', w: 2.0, h: 1.8 },
+  arch: { name: 'Арочное окно', kind: 'win', w: 1.2, h: 2.0, arch: true },
   door: { name: 'Дверь', kind: 'door', w: 1.0, h: 2.2 },
-  gate: { name: 'Гараж / ворота', kind: 'door', w: 2.6, h: 2.3 },
+  gate: { name: 'Ворота / гараж', kind: 'door', w: 2.6, h: 2.3 },
 };
 const KP_ERKERS = [['rect', 'Прямой'], ['tri', 'Скошенный'], ['round', 'Полукруглый']];
 
-// Площади, длины и количество по каждой позиции — из дома и проёмов. how — «откуда цифра» для строки сметы
-function kpGeometry(md, baseOn) {
-  const h = md.house, F = Math.max(1, +h.floors || 1), H = F * (+h.floorH || 0);
-  const hb = baseOn ? (+h.plinth || 0) : 0;
-  const n1 = v => kpNum(v);
-  const sideLen = k => (k === 'front' || k === 'back' ? +h.len || 0 : +h.wid || 0);
-  const sides = Object.keys(KP_SIDES).filter(k => h.sides[k]);
-  const P = sides.reduce((a, k) => a + sideLen(k), 0);
-  // Внешние углы — где сходятся две облицованные стороны, плюс углы эркеров
-  const pairs = [['front', 'right'], ['right', 'back'], ['back', 'left'], ['left', 'front']];
-  const houseCorners = pairs.filter(([a, b]) => h.sides[a] && h.sides[b]).length;
-  const erkerCorners = md.erkers.reduce((a, e) => a + (e.shape === 'round' ? 0 : 2), 0);
-  const corners = Math.max(0, houseCorners + erkerCorners + (+h.cornersAdj || 0));
+const kpWallLen = (md, k) => (k === 'front' || k === 'back' ? +md.house.len || 0 : +md.house.wid || 0);
 
-  const q = {}, how = {};
-  const add = (id, v, t) => { q[id] = (q[id] || 0) + v; (how[id] = how[id] || []).push(t); };
-  let winArea = 0, doorWall = 0, doorPlinth = 0, doorW = 0, openings = 0;
-  md.ops.forEach(o => {
+// Что ставим на окна по умолчанию — как в подборе
+function kpDefaultDecor(spec) {
+  const has = k => !!spec.parts?.[k]?.item;
+  return { frame: has('frame'), windowCornice: has('windowCornice'), sill: has('sill'), keystone: has('keystone'), console: has('console'), reveals: true };
+}
+
+// Новый дом: по 2 окна на этаж с фасада и сзади, по одному сбоку, входная дверь на фасаде
+function kpDefaultWalls(spec, floors) {
+  const decor = kpDefaultDecor(spec);
+  const wins = (n) => Array.from({ length: floors }, (_, i) => ({ ...KP_OP_TYPES.win, n, where: String(i + 1) }));
+  return {
+    front: { on: true, plinth: null, ops: [...wins(2), { ...KP_OP_TYPES.door, n: 1, where: '1' }], erker: null, gable: null, decor: { ...decor } },
+    right: { on: true, plinth: null, ops: wins(1), erker: null, gable: null, decor: { ...decor } },
+    back: { on: true, plinth: null, ops: wins(2), erker: null, gable: null, decor: { ...decor } },
+    left: { on: true, plinth: null, ops: wins(1), erker: null, gable: null, decor: { ...decor } },
+  };
+}
+
+// Одна стена: площади и длины. where у проёма — этаж ('1', '2'…), 'erker' или 'gable'
+function kpWallCalc(md, k, baseOn) {
+  const h = md.house, wl = md.walls[k], F = Math.max(1, +h.floors || 1), fh = +h.floorH || 0, H = F * fh;
+  const L = kpWallLen(md, k);
+  const hb = baseOn ? +(wl.plinth ?? h.plinth) || 0 : 0;
+  const r = { k, L, H, hb, on: !!wl.on, wall: 0, gable: 0, erker: 0, plinth: 0, win: 0, door: 0, doorPlinth: 0, doorW: 0,
+    erkerFront: 0, erkerExtra: 0, erkerCorners: 0, slope: 0, openings: 0, q: {} };
+  if (!wl.on) return r;
+  let gableWin = 0, erkerWin = 0;
+  wl.ops.forEach(o => {
     const n = +o.n || 0, w = +o.w || 0, oh = +o.h || 0;
     if (!n) return;
-    openings += n;
-    if (o.kind === 'door') {
+    r.openings += n;
+    const a = w * oh * n;
+    if (o.where === 'gable') gableWin += a;
+    else if (o.where === 'erker') erkerWin += a;
+    else if (o.kind === 'door' && o.where === '1') {
       const low = Math.min(hb, oh);
-      doorPlinth += w * low * n; doorWall += w * (oh - low) * n; doorW += w * n;
-    } else winArea += w * oh * n;
+      r.doorPlinth += w * low * n; r.door += w * (oh - low) * n; r.doorW += w * n;
+    } else r.win += a;
     // Арка: верх по полуокружности вместо прямой
     const top = o.arch ? Math.PI * w / 2 : w, side = o.arch ? Math.max(0, oh - w / 2) : oh;
-    if (o.frame) add('frame', (2 * side + top + 0.3) * n, `${n}×(2×${n1(side)}+${n1(top)}+0,3)`);
-    if (o.windowCornice) add('windowCornice', (w + 0.4) * n, `${n}×(${n1(w)}+0,4)`);
-    if (o.sill && o.kind === 'win') add('sill', (w + 0.2) * n, `${n}×(${n1(w)}+0,2)`);
-    if (o.keystone) add('keystone', n, `${n}`);
-    if (o.console && o.kind === 'win') add('console', 2 * n, `${n}×2`);
-    if (o.reveals) add('reveals', (2 * side + top) * n, `${n}×(2×${n1(side)}+${n1(top)})`);
+    const d = wl.decor || {}, add = (id, v) => { r.q[id] = (r.q[id] || 0) + v; };
+    if (d.frame) add('frame', (2 * side + top + 0.3) * n);
+    if (d.windowCornice) add('windowCornice', (w + 0.4) * n);
+    if (d.sill && o.kind === 'win') add('sill', (w + 0.2) * n);
+    if (d.keystone) add('keystone', n);
+    if (d.console && o.kind === 'win') add('console', 2 * n);
+    if (d.reveals) add('reveals', (2 * side + top) * n);
   });
-  Object.keys(how).forEach(k => { how[k] = `${how[k].join(' + ')} = ${n1(q[k])}`; });
+  const e = wl.erker;
+  if (e) {
+    const w = Math.min(+e.w || 0, L), dd = +e.d || 0, eh = Math.min(+e.floors || 1, F) * fh;
+    const extra = e.shape === 'rect' ? 2 * dd : e.shape === 'tri' ? 2 * Math.hypot(dd, w / 4) - w / 2 : Math.PI * w / 2 - w;
+    r.erker = Math.max(0, (w + extra) * Math.max(0, eh - hb) - erkerWin);
+    r.erkerFront = w * Math.max(0, eh - hb);
+    r.erkerExtra = extra;
+    r.erkerCorners = e.shape === 'round' ? 0 : 2;
+  }
+  const g = wl.gable;
+  if (g) {
+    r.gable = Math.max(0, L * (+g.h || 0) / 2 - gableWin);
+    r.slope = g.cornice ? 2 * Math.hypot(L / 2, +g.h || 0) : 0;
+  }
+  r.wall = Math.max(0, L * (H - hb) - r.win - r.door - r.erkerFront);
+  r.plinth = Math.max(0, L * hb - r.doorPlinth);
+  return r;
+}
 
-  // Эркер: стоит на стороне дома, добавляет боковые грани; полукруглый — длиннее по дуге
-  let erkerArea = 0, erkerFront = 0, erkerExtra = 0;
-  const erkHow = [];
-  md.erkers.forEach(e => {
-    const w = +e.w || 0, d = +e.d || 0, eh = Math.min(+e.floors || 1, F) * (+h.floorH || 0);
-    const extra = e.shape === 'rect' ? 2 * d : e.shape === 'tri' ? 2 * Math.hypot(d, w / 4) - w / 2 : Math.PI * w / 2 - w;
-    erkerArea += (w + extra) * eh; erkerFront += w * eh; erkerExtra += extra;
-    erkHow.push(`(${n1(w)}+${n1(extra)})×${n1(eh)}`);
-  });
-
-  const walls = Math.max(0, P * (H - hb) - winArea - doorWall - erkerFront);
-  const gable = (+md.gables.n || 0) * (+md.gables.base || 0) * (+md.gables.h || 0) / 2;
-  const plinth = Math.max(0, P * hb - doorPlinth);
-  const area = walls + gable + erkerArea + plinth;
+// Весь дом: сумма по стенам → количество по каждой позиции сметы. how — «откуда цифра»
+function kpGeometry(md, baseOn) {
+  const F = Math.max(1, +md.house.floors || 1), H = F * (+md.house.floorH || 0);
+  const n1 = v => kpNum(v);
+  const walls = KP_WALL_ORDER.map(k => kpWallCalc(md, k, baseOn));
+  const on = walls.filter(w => w.on);
+  const sum = f => on.reduce((a, w) => a + w[f], 0);
+  const P = sum('L'), erkerExtra = sum('erkerExtra'), doorW = sum('doorW');
+  // Внешние углы — где сходятся две облицованные стены, плюс углы эркеров
+  const pairs = [['front', 'right'], ['right', 'back'], ['back', 'left'], ['left', 'front']];
+  const houseCorners = pairs.filter(([a, b]) => md.walls[a].on && md.walls[b].on).length;
+  const erkerCorners = sum('erkerCorners');
+  const corners = Math.max(0, houseCorners + erkerCorners + (+md.house.cornersAdj || 0));
+  const wallA = sum('wall'), gable = sum('gable'), erkerArea = sum('erker'), plinth = sum('plinth');
+  const area = wallA + gable + erkerArea + plinth;
   const kw = 1 + (+md.stock.wall || 0) / 100, kh = 1 + (+md.stock.hard || 0) / 100;
   const stock = p => (+p ? ` + запас ${p}%` : '');
-  const slope = Math.hypot((+md.gables.base || 0) / 2, +md.gables.h || 0);
+  const byWall = (f, unit = '') => on.filter(w => w[f] > 0).map(w => `${KP_WALLS[w.k]} ${n1(w[f])}${unit}`).join(' + ');
+  const byWallQ = id => on.filter(w => w.q[id] > 0).map(w => `${KP_WALLS[w.k]} ${n1(w.q[id])}`).join(' + ');
+
+  const q = {}, how = {};
+  KP_DECOR.forEach(([id]) => {
+    q[id] = on.reduce((a, w) => a + (w.q[id] || 0), 0);
+    if (q[id] > 0) how[id] = `${byWallQ(id)} = ${n1(q[id])}`;
+  });
   const decor = (q.frame || 0) + (q.windowCornice || 0) + (q.sill || 0);
   const days = Math.max(1, Math.ceil(area / 7 + decor / 12));
-  const order = walls * kw + (gable + erkerArea) * kh + plinth;
-
+  const order = wallA * kw + (gable + erkerArea) * kh + plinth;
+  const slopes = sum('slope');
   Object.assign(q, {
-    wall: walls * kw, gable: gable * kh, erker: erkerArea * kh, base: plinth, corners: corners * H,
-    topCornice: P + erkerExtra, gableCornice: md.gables.cornice ? (+md.gables.n || 0) * 2 * slope : 0,
-    floorCornice: (P + erkerExtra) * (F - 1), baseCornice: Math.max(0, P - doorW), dentils: P + erkerExtra,
+    wall: wallA * kw, gable: gable * kh, erker: erkerArea * kh, base: plinth, corners: corners * H,
+    topCornice: P + erkerExtra, gableCornice: slopes, floorCornice: (P + erkerExtra) * (F - 1),
+    baseCornice: Math.max(0, P - doorW), dentils: P + erkerExtra,
     column: 2, capital: 2, balustrade: 6,
-    mesh: area, glue: area, scaffold: F > 1 ? walls + gable + erkerArea : 0,
+    mesh: area, glue: area, scaffold: F > 1 ? wallA + gable + erkerArea : 0,
     delivery: Math.max(1, order / 120), unload: 1, food: +md.days || days, trash: 1,
   });
   Object.assign(how, {
-    wall: `${n1(P)} м сторон × ${n1(H - hb)} м − окна ${n1(winArea)} − двери ${n1(doorWall)}${erkerFront ? ` − под эркером ${n1(erkerFront)}` : ''} = ${n1(walls)} м²${stock(md.stock.wall)}`,
-    gable: `${md.gables.n} × ${n1(md.gables.base)} × ${n1(md.gables.h)} ÷ 2 = ${n1(gable)} м²${stock(md.stock.hard)}`,
-    erker: `${erkHow.join(' + ')} = ${n1(erkerArea)} м²${stock(md.stock.hard)}`,
-    base: `${n1(P)} м × ${n1(hb)} м − двери ${n1(doorPlinth)} = ${n1(plinth)} м²`,
+    wall: `${byWall('wall', ' м²')} = ${n1(wallA)} м²${stock(md.stock.wall)} (без окон, дверей и цоколя)`,
+    gable: `${byWall('gable', ' м²')} = ${n1(gable)} м²${stock(md.stock.hard)}`,
+    erker: `${byWall('erker', ' м²')} = ${n1(erkerArea)} м²${stock(md.stock.hard)}`,
+    base: `${byWall('plinth', ' м²')} = ${n1(plinth)} м²`,
     corners: `${corners} ${plural(corners, 'угол', 'угла', 'углов')} × ${n1(H)} м высоты`,
-    topCornice: `${n1(P)} м сторон${erkerExtra ? ` + ${n1(erkerExtra)} м по эркерам` : ''}`,
-    gableCornice: `${md.gables.n} × 2 ската × ${n1(slope)} м`,
+    topCornice: `${n1(P)} м стен${erkerExtra ? ` + ${n1(erkerExtra)} м по эркерам` : ''}`,
+    gableCornice: `скаты фронтонов: ${byWall('slope', ' м')}`,
     floorCornice: `${n1(P + erkerExtra)} м × ${F - 1}`,
     baseCornice: `${n1(P)} м − двери ${n1(doorW)} м`,
     dentils: `под венчающим карнизом, ${n1(P + erkerExtra)} м`,
     mesh: `вся площадь камня ${n1(area)} м²`, glue: `вся площадь камня ${n1(area)} м²`,
-    scaffold: `стены, фронтоны и эркеры от 2 этажей`, delivery: `${n1(order)} м² с запасом ÷ 120 м² за рейс`,
+    scaffold: 'стены, фронтоны и эркеры от 2 этажей', delivery: `${n1(order)} м² с запасом ÷ 120 м² за рейс`,
     food: `срок ${+md.days || days} дн`,
   });
-  return { P, H, F, walls, plinth, gable, erkerArea, area, winArea, openings, corners, houseCorners, erkerCorners, days, q, how };
+  return { P, H, F, walls: wallA, plinth, gable, erkerArea, area, winArea: sum('win'), openings: sum('openings'),
+    corners, houseCorners, erkerCorners, days, q, how, perWall: walls };
 }
 
-// Старое КП (периметр, число окон и дверей) → дом и типы проёмов
+// Прежние КП → стены. Совсем старое (периметр, окна, двери) → дом; общие окна, эркеры, фронтоны → по стенам
 function kpUpgradeModel(md, spec) {
-  if (md.house) return md;
-  const d = md.dims || {}, floors = Math.max(1, +d.floors || 2);
-  const P = +d.perimeter || 44, len = Math.round(P * 0.3), wid = Math.max(1, Math.round(P / 2 - len));
-  md.house = { len, wid, floors, floorH: +(((+d.height || floors * 3.2) / floors).toFixed(1)), plinth: d.plinth ?? 0.6,
-    sides: { front: true, right: true, back: true, left: true }, cornersAdj: 0 };
-  md.ops = kpDefaultOps(spec, +d.windows || floors * 4, d.doors ?? 1);
-  delete md.dims;
+  if (md.walls) return md;
+  if (!md.house) {
+    const d = md.dims || {}, floors = Math.max(1, +d.floors || 2);
+    const P = +d.perimeter || 44, len = Math.round(P * 0.3), wid = Math.max(1, Math.round(P / 2 - len));
+    md.house = { len, wid, floors, floorH: +(((+d.height || floors * 3.2) / floors).toFixed(1)), plinth: d.plinth ?? 0.6,
+      sides: { front: true, right: true, back: true, left: true }, cornersAdj: 0 };
+    md.ops = [{ ...KP_OP_TYPES.win, n: +d.windows || floors * 4, ...kpDefaultDecor(spec) }];
+    if (+d.doors !== 0) md.ops.push({ ...KP_OP_TYPES.door, n: d.doors ?? 1, ...kpDefaultDecor(spec) });
+    delete md.dims;
+  }
+  const h = md.house, sides = h.sides || { front: true, right: true, back: true, left: true };
+  const first = (md.ops || [])[0] || {};
+  const decor = { ...kpDefaultDecor(spec), ...Object.fromEntries(KP_DECOR.filter(([k]) => k in first).map(([k]) => [k, !!first[k]])) };
+  md.walls = {};
+  KP_WALL_ORDER.forEach(k => { md.walls[k] = { on: !!sides[k], plinth: null, ops: [], erker: null, gable: null, decor: { ...decor } }; });
+  // Окна делим по облицованным стенам пропорционально длине, двери и эркеры — на фасад
+  const onWalls = KP_WALL_ORDER.filter(k => sides[k]);
+  const total = onWalls.reduce((a, k) => a + kpWallLen(md, k), 0) || 1;
+  (md.ops || []).forEach(o => {
+    const t = { kind: o.kind, name: o.name, w: o.w, h: o.h, arch: !!o.arch };
+    if (o.kind === 'door') return md.walls.front.ops.push({ ...t, n: +o.n || 0, where: '1' });
+    let left = +o.n || 0;
+    onWalls.forEach((k, i) => {
+      const n = i === onWalls.length - 1 ? left : Math.round((+o.n || 0) * kpWallLen(md, k) / total);
+      left -= n;
+      if (n > 0) md.walls[k].ops.push({ ...t, n, where: '1' });
+    });
+  });
+  (md.erkers || []).slice(0, 1).forEach(e => { md.walls.front.erker = { ...e }; });
+  const gn = +md.gables?.n || 0;
+  ['right', 'left'].slice(0, gn).forEach(k => { md.walls[k].gable = { h: +md.gables.h || 2.5, cornice: md.gables.cornice !== false }; });
+  delete md.ops; delete md.erkers; delete md.gables; delete h.sides;
   return md;
-}
-
-// Проёмы по умолчанию: что ставим на окна — как в подборе
-function kpDefaultOps(spec, windows, doors) {
-  const has = k => !!spec.parts?.[k]?.item;
-  const parts = { frame: has('frame'), windowCornice: has('windowCornice'), sill: has('sill'), keystone: has('keystone'), console: has('console'), reveals: true };
-  const ops = [{ ...KP_OP_TYPES.win, n: windows, ...parts }];
-  if (doors) ops.push({ ...KP_OP_TYPES.door, n: doors, ...parts, sill: false, console: false });
-  return ops;
 }
 
 const KP = {
@@ -193,23 +254,23 @@ const KP = {
     const fresh = !saved.data;
     this.model = Object.assign({
       client: { name: '', object: `частный дом, ${floors} ${floors === 1 ? 'этаж' : floors < 5 ? 'этажа' : 'этажей'}` },
-      house: { len: 12, wid: 10, floors, floorH: b.heightM ? +(b.heightM / floors).toFixed(1) : 3, plinth: this.spec.materials.base.on ? 0.6 : 0,
-        sides: { front: true, right: true, back: true, left: true }, cornersAdj: 0 },
-      gables: { n: 0, base: 10, h: 2.5, cornice: true },
-      erkers: [],
-      ops: kpDefaultOps(this.spec, floors * 4, 1),
       stock: { wall: 10, hard: 20 },
       rows: {}, custom: [], customExtras: [], discount: 0, days: null,
       terms: { ...KP_TERMS, ...(this.mine.terms || {}) },
       profile: { name: this.mine.profile?.name || user.name || '', company: '', phone: '', telegram: '', city: '', exp: '', ...(this.mine.profile || {}) },
     }, saved.data || {});
-    kpUpgradeModel(this.model, this.spec);
-    ['gables', 'stock'].forEach(k => { this.model[k] = this.model[k] || { n: 0, base: 10, h: 2.5, cornice: true, wall: 10, hard: 20 }; });
-    this.model.erkers = this.model.erkers || [];
+    this.model.stock = this.model.stock || { wall: 10, hard: 20 };
+    // Дом: в сохранённом КП — свой (прежние форматы переводятся), иначе — по подбору
+    if (this.model.house || this.model.dims) kpUpgradeModel(this.model, this.spec);
+    else {
+      this.model.house = { len: 12, wid: 10, floors, floorH: b.heightM ? +(b.heightM / floors).toFixed(1) : 3,
+        plinth: this.spec.materials.base.on ? 0.6 : 0, cornersAdj: 0 };
+      this.model.walls = kpDefaultWalls(this.spec, floors);
+    }
     this.model.profile = { ...this.model.profile, ...(this.mine.profile || {}) };
     this.model.customExtras = this.model.customExtras || [];
     // Новое КП — с первого шага; начатое — сразу смета
-    this.step = fresh ? 1 : 3;
+    this.step = fresh ? 1 : 2;
     this.render();
   },
 
@@ -317,23 +378,23 @@ const KP = {
     return { items, extras, ms, mat, work, sum, disc, total: sum - disc };
   },
 
-  // === Экран: три шага ===
+  // === Экран: дом → смета ===
   render(keepScroll) {
     const y = window.scrollY;
-    const steps = ['Дом', 'Окна', 'Смета'];
+    const steps = ['Дом', 'Смета'];
     document.getElementById('kp-content').innerHTML = `
       <div class="kp-intro">
         <img src="${this.variant?.generated_image || this.project.original_image}" alt="">
         <div><b>${esc(this.project.name)}</b><small>Вариант ${(this.project.variants || []).indexOf(this.variant) + 1} · смета считается сама</small></div>
       </div>
-      <nav class="flow-steps kp-steps">${steps.map((t, i) => `
+      <nav class="flow-steps kp-steps kp-steps--2">${steps.map((t, i) => `
         <button class="flow-step${i + 1 === this.step ? ' active' : ''}${i + 1 < this.step ? ' done' : ''}" data-kp-step="${i + 1}"><span>${i + 1}</span>${t}</button>`).join('')}</nav>
-      ${this.step === 1 ? this.stepHouse() : this.step === 2 ? this.stepOps() : this.stepSmeta()}`;
-    if (this.step === 3) {
+      ${this.step === 1 ? this.stepHouse() : this.stepSmeta()}`;
+    if (this.step === 2) {
       this.renderRows();
       document.querySelectorAll('#kp-content .kp-area').forEach(kpGrow);
     } else this.live();
-    document.getElementById('kp-make').textContent = this.step < 3 ? `Далее — ${steps[this.step].toLowerCase()}` : 'Создать PDF';
+    document.getElementById('kp-make').textContent = this.step === 1 ? 'Далее — смета' : 'Создать PDF';
     window.scrollTo(0, keepScroll ? y : 0);
   },
 
@@ -357,43 +418,25 @@ const KP = {
       <div class="kpw-stepper"><button data-dec="${path}" aria-label="Меньше">−</button><output${id ? ` id="${id}"` : ''}>${v}</output><button data-inc="${path}" aria-label="Больше">+</button></div></div>`;
   },
 
-  // Шаг 1: заказчик, размеры, стороны на плане, фронтоны, эркеры
+  // Шаг 1: заказчик, дом сверху (нажатие на стену — вид на стену), размеры
   stepHouse() {
-    const md = this.model, g = kpGeometry(md, this.spec.materials.base.on);
+    const g = kpGeometry(this.model, this.spec.materials.base.on);
     return `
       <section class="kp-card"><h3>Заказчик</h3>
         <div class="kp-grid">${this.field('client.name', 'Имя заказчика', 'text', 'placeholder="Например, Ахмед Гаджиев"')}${this.field('client.object', 'Объект')}</div>
       </section>
+      <section class="kp-card"><h3>Дом сверху <small>нажмите на стену</small></h3>
+        <div id="kpw-plan">${this.planSvg(g)}</div>
+        <div class="kpw-walls" id="kpw-wall-list">${this.wallListHtml(g)}</div>
+      </section>
       <section class="kp-card"><h3>Размеры дома</h3>
-        ${this.num('house.len', 'Длина', 'сторона с фасадом')}
-        ${this.num('house.wid', 'Ширина')}
+        ${this.num('house.len', 'Длина', 'фасад и задняя стена')}
+        ${this.num('house.wid', 'Ширина', 'боковые стены')}
         ${this.stepper('house.floors', 'Этажей')}
         ${this.num('house.floorH', 'Высота этажа', 'с перекрытием')}
-        ${this.spec.materials.base.on ? this.num('house.plinth', 'Цоколь', 'высота от земли') : ''}
-      </section>
-      <section class="kp-card"><h3>Что облицовываем <small>нажмите на сторону</small></h3>
-        <div id="kpw-plan">${this.planSvg()}</div>
-        <div class="kpw-legend"><span><i class="on"></i>в смете</span><span><i></i>не облицовываем</span><span><i class="dot"></i>угол с рустами</span></div>
-        <div class="kpw-row"><label>Внешних углов<small id="kpw-corners-note">${this.cornerNote(g)}</small></label>
+        ${this.spec.materials.base.on ? this.num('house.plinth', 'Цоколь', 'у стены можно поменять') : ''}
+        <div class="kpw-row"><label>Углов с рустами<small id="kpw-corners-note">${this.cornerNote(g)}</small></label>
           <div class="kpw-stepper"><button data-dec="house.cornersAdj" aria-label="Меньше">−</button><output id="kpw-corners">${g.corners}</output><button data-inc="house.cornersAdj" aria-label="Больше">+</button></div></div>
-      </section>
-      <section class="kp-card"><h3>Фронтоны <small>треугольник под крышей</small></h3>
-        ${this.stepper('gables.n', 'Сколько облицовываем')}
-        ${md.gables.n ? `${this.num('gables.base', 'Ширина внизу', 'обычно ширина дома')}${this.num('gables.h', 'Высота до конька')}
-          <div class="kpw-row"><label>Карниз по скатам</label><label class="switch"><input type="checkbox" data-k="gables.cornice" ${md.gables.cornice ? 'checked' : ''}><span></span></label></div>` : ''}
-      </section>
-      <section class="kp-card"><h3>Эркеры и выступы</h3>
-        ${md.erkers.map((e, i) => `
-          <div class="kpw-sub">
-            <div class="kpw-sub__head"><b>Эркер ${i + 1}</b><button class="kpw-x" data-del-erker="${i}" aria-label="Удалить эркер">×</button></div>
-            <div class="kpw-seg">${KP_ERKERS.map(([k, t]) => `<button class="${e.shape === k ? 'on' : ''}" data-erker-shape="${i}:${k}">${t}</button>`).join('')}</div>
-            <div class="kpw-dims">
-              <label>Ширина, м<input class="input kpw-num" type="number" inputmode="decimal" step="0.1" data-k="erkers.${i}.w" value="${e.w}"></label>
-              <label>Выступ, м<input class="input kpw-num" type="number" inputmode="decimal" step="0.1" data-k="erkers.${i}.d" value="${e.d}"></label>
-              <label>Этажей<input class="input kpw-num" type="number" inputmode="numeric" step="1" min="1" data-k="erkers.${i}.floors" value="${e.floors}"></label>
-            </div>
-          </div>`).join('')}
-        <button class="kpw-chip kpw-chip--add" data-add-erker>＋ Добавить эркер</button>
       </section>`;
   },
 
@@ -405,66 +448,251 @@ const KP = {
     return parts.join(' · ');
   },
 
-  // План сверху: фасад внизу; облицованные стороны — золотом, нажатие включает и выключает сторону
-  planSvg() {
-    const h = this.model.house, W = 300, sc = Math.min(200 / Math.max(1, +h.len || 1), 130 / Math.max(1, +h.wid || 1));
-    const w = (+h.len || 1) * sc, d = (+h.wid || 1) * sc, x0 = (W - w) / 2, y0 = 26 + (130 - d) / 2;
-    const on = k => !!h.sides[k];
-    const sides = { back: [x0, y0, x0 + w, y0], right: [x0 + w, y0, x0 + w, y0 + d], front: [x0 + w, y0 + d, x0, y0 + d], left: [x0, y0 + d, x0, y0] };
-    let erk = '', maxD = 0;
-    const n = this.model.erkers.length;
-    this.model.erkers.forEach((e, i) => {
-      const ew = (+e.w || 0) * sc, ed = Math.max(4, (+e.d || 0) * sc), cx = x0 + w * (i + 1) / (n + 1), y = y0 + d;
-      maxD = Math.max(maxD, ed);
-      const path = e.shape === 'rect' ? `M${cx - ew / 2},${y}L${cx - ew / 2},${y + ed}L${cx + ew / 2},${y + ed}L${cx + ew / 2},${y}`
-        : e.shape === 'tri' ? `M${cx - ew / 2},${y}L${cx - ew / 4},${y + ed}L${cx + ew / 4},${y + ed}L${cx + ew / 2},${y}`
-          : `M${cx - ew / 2},${y}A${ew / 2},${ed} 0 0 0 ${cx + ew / 2},${y}`;
-      erk += `<path d="${path}" class="kpw-plan__erker"/>`;
-      if (e.shape !== 'round') {
-        const k = e.shape === 'rect' ? 2 : 4;
-        erk += `<circle cx="${cx - ew / k}" cy="${y + ed}" r="5" class="kpw-plan__dot"/><circle cx="${cx + ew / k}" cy="${y + ed}" r="5" class="kpw-plan__dot"/>`;
-      }
+  // Коротко о стене: что на ней и сколько камня
+  wallNote(r) {
+    const wl = this.model.walls[r.k];
+    if (!wl.on) return 'не облицовываем';
+    const parts = [r.openings ? `${r.openings} ${plural(r.openings, 'проём', 'проёма', 'проёмов')}` : 'без окон'];
+    if (wl.erker) parts.push('эркер');
+    if (wl.gable) parts.push('фронтон');
+    parts.push(`${kpNum(r.wall + r.gable + r.erker + r.plinth)} м²`);
+    return parts.join(' · ');
+  },
+
+  wallListHtml(g) {
+    return g.perWall.map(r => `
+      <button class="kpw-wallbtn${r.on ? '' : ' off'}" data-open-wall="${r.k}">
+        <span class="kpw-wallbtn__name"><b>${KP_WALLS[r.k]}</b><small>${kpNum(r.L)} м</small></span>
+        <span class="kpw-wallbtn__note">${this.wallNote(r)}</span><i aria-hidden="true">›</i>
+      </button>`).join('');
+  },
+
+  // План сверху: фасад внизу, стены — кнопки; эркеры выступают наружу, точки — углы с рустами
+  planSvg(g) {
+    const md = this.model, h = md.house, W = 300;
+    const sc = Math.min(170 / Math.max(1, +h.len || 1), 110 / Math.max(1, +h.wid || 1));
+    const w = (+h.len || 1) * sc, d = (+h.wid || 1) * sc, x0 = (W - w) / 2, y0 = 44 + (110 - d) / 2;
+    const on = k => !!md.walls[k].on;
+    const seg = { back: [x0, y0, x0 + w, y0], right: [x0 + w, y0, x0 + w, y0 + d], front: [x0 + w, y0 + d, x0, y0 + d], left: [x0, y0 + d, x0, y0] };
+    const out = { back: [0, -1], right: [1, 0], front: [0, 1], left: [-1, 0] };
+    let erk = '';
+    KP_WALL_ORDER.forEach(k => {
+      const e = md.walls[k].erker;
+      if (!e || !on(k)) return;
+      const [a, b, c, dd] = seg[k], cx = (a + c) / 2, cy = (b + dd) / 2, [ox, oy] = out[k];
+      const ew = Math.min(+e.w || 0, kpWallLen(md, k)) * sc / 2, ed = Math.max(4, (+e.d || 0) * sc);
+      const along = ox === 0 ? [1, 0] : [0, 1];
+      const p = (t, s) => `${cx + along[0] * t + ox * s},${cy + along[1] * t + oy * s}`;
+      const path = e.shape === 'rect' ? `M${p(-ew, 0)}L${p(-ew, ed)}L${p(ew, ed)}L${p(ew, 0)}`
+        : e.shape === 'tri' ? `M${p(-ew, 0)}L${p(-ew / 2, ed)}L${p(ew / 2, ed)}L${p(ew, 0)}`
+          : `M${p(-ew, 0)}Q${p(-ew, ed * 1.3)} ${p(0, ed * 1.3)}Q${p(ew, ed * 1.3)} ${p(ew, 0)}`;
+      erk += `<path d="${path}" class="kpw-plan__erker" data-open-wall="${k}"/>`;
     });
     const corners = [['front', 'right', x0 + w, y0 + d], ['right', 'back', x0 + w, y0], ['back', 'left', x0, y0], ['left', 'front', x0, y0 + d]];
-    const label = (k, x, y, rot = 0) => `<text x="${x}" y="${y}" text-anchor="middle" class="${on(k) ? 'on' : ''}"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ''}>${KP_SIDES[k]} · ${kpNum(k === 'front' || k === 'back' ? h.len : h.wid)} м</text>`;
-    const H = y0 + d + maxD + 26;
-    return `<svg class="kpw-plan" viewBox="0 0 ${W} ${Math.max(190, H)}" role="img" aria-label="План дома: нажмите на сторону">
+    // Подпись стены — снаружи, за эркером
+    const ed = k => (md.walls[k].erker && on(k) ? Math.max(4, (+md.walls[k].erker.d || 0) * sc) * (md.walls[k].erker.shape === 'round' ? 1.3 : 1) : 0);
+    const lab = { back: [W / 2, y0 - 12 - ed('back'), 0], front: [W / 2, y0 + d + 22 + ed('front'), 0],
+      left: [x0 - 14 - ed('left'), y0 + d / 2, -90], right: [x0 + w + 14 + ed('right'), y0 + d / 2, 90] };
+    return `<svg class="kpw-plan" viewBox="0 0 ${W} 200" role="img" aria-label="План дома: нажмите на стену">
       <rect x="${x0}" y="${y0}" width="${w}" height="${d}" class="kpw-plan__house"/>
-      ${Object.entries(sides).map(([k, c]) => `<line x1="${c[0]}" y1="${c[1]}" x2="${c[2]}" y2="${c[3]}" class="kpw-plan__side${on(k) ? ' on' : ''}"/>
-        <line data-side="${k}" x1="${c[0]}" y1="${c[1]}" x2="${c[2]}" y2="${c[3]}" class="kpw-plan__hit"/>`).join('')}
+      ${KP_WALL_ORDER.map(k => { const c = seg[k]; return `<line x1="${c[0]}" y1="${c[1]}" x2="${c[2]}" y2="${c[3]}" class="kpw-plan__side${on(k) ? ' on' : ''}"/>
+        <line data-open-wall="${k}" x1="${c[0]}" y1="${c[1]}" x2="${c[2]}" y2="${c[3]}" class="kpw-plan__hit"/>`; }).join('')}
       ${erk}
       ${corners.filter(([a, b]) => on(a) && on(b)).map(([, , x, y]) => `<circle cx="${x}" cy="${y}" r="5" class="kpw-plan__dot"/>`).join('')}
-      ${label('back', W / 2, y0 - 9)}${label('front', W / 2, y0 + d + maxD + 18)}${label('left', x0 - 11, y0 + d / 2, -90)}${label('right', x0 + w + 11, y0 + d / 2, 90)}
+      ${KP_WALL_ORDER.map(k => { const [x, y, rot] = lab[k]; return `<text x="${x}" y="${y}" text-anchor="middle" class="${on(k) ? 'on' : ''}" data-open-wall="${k}"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ''}>${KP_WALLS[k]} · ${kpNum(kpWallLen(md, k))} м</text>`; }).join('')}
     </svg>`;
   },
 
-  // Шаг 2: типы окон и дверей, у каждого — что на нём ставим
-  stepOps() {
-    const icon2 = o => (o.arch ? '<path d="M11 28V16a7 7 0 0 1 14 0v12z"/>' : o.kind === 'door'
-      ? '<rect x="12" y="8" width="12" height="21"/><circle cx="21" cy="19" r="1.2"/>' : '<rect x="9" y="10" width="18" height="16"/><path d="M18 10v16M9 18h18"/>');
-    return `
-      <p class="configure-hint">Окна одного размера — одной строкой. Отметьте, что ставим на каждый тип: это сразу идёт в смету.</p>
-      ${this.model.ops.map((o, i) => `
-        <section class="kp-card kpw-op">
-          <div class="kpw-sub__head"><svg class="kpw-op__icon" viewBox="0 0 36 36" aria-hidden="true">${icon2(o)}</svg>
-            <input class="kpw-op__name" data-k="ops.${i}.name" value="${esc(o.name)}" aria-label="Название"><button class="kpw-x" data-del-op="${i}" aria-label="Удалить">×</button></div>
-          <div class="kpw-dims">
-            <label>Ширина, м<input class="input kpw-num" type="number" inputmode="decimal" step="0.1" data-k="ops.${i}.w" value="${o.w}"></label>
-            <label>Высота, м<input class="input kpw-num" type="number" inputmode="decimal" step="0.1" data-k="ops.${i}.h" value="${o.h}"></label>
-            <label>Штук<input class="input kpw-num" type="number" inputmode="numeric" step="1" min="0" data-k="ops.${i}.n" value="${o.n}"></label>
-          </div>
-          <div class="kpw-chips">${KP_OP_PARTS.filter(([k]) => o.kind === 'win' || (k !== 'sill' && k !== 'console')).map(([k, t]) => `
-            <button class="kpw-chip${o[k] ? ' on' : ''}" data-op-part="${i}:${k}">${o[k] ? '✓ ' : ''}${t}</button>`).join('')}
-            ${o.kind === 'win' ? `<button class="kpw-chip${o.arch ? ' on' : ''}" data-op-part="${i}:arch">${o.arch ? '✓ ' : ''}Арка сверху</button>` : ''}</div>
-        </section>`).join('')}
-      <section class="kp-card"><h3>Добавить тип</h3>
-        <div class="kpw-chips">${[['win', 'Окно'], ['big', 'Большое окно'], ['arch', 'Арочное'], ['door', 'Дверь'], ['gate', 'Гараж / ворота']].map(([k, t]) => `
-          <button class="kpw-chip kpw-chip--add" data-add-op="${k}">＋ ${t}</button>`).join('')}</div>
-      </section>
-      <section class="kp-card"><h3>Итого по проёмам</h3><dl class="kpw-sum" id="kpw-ops-sum"></dl></section>`;
+  // === Вид на стену: окна, эркер, фронтон, цоколь, что ставим на окна ===
+  openWall(k) {
+    this.wallK = k;
+    showModal(`<div class="kpw-wall" id="kpw-wall">${this.wallHtml(k)}</div>`);
+    const box = document.getElementById('kpw-wall');
+    box.addEventListener('input', e => this.onWallInput(e));
+    box.addEventListener('change', e => { if (e.target.type === 'checkbox' || e.target.tagName === 'SELECT') this.onWallInput(e, true); });
+    box.addEventListener('click', e => this.onWallClick(e));
   },
 
-  // Шаг 3: смета, запас, условия, контакты
+  wallHtml(k) {
+    const md = this.model, wl = md.walls[k], F = Math.max(1, +md.house.floors || 1);
+    const r = kpWallCalc(md, k, this.spec.materials.base.on);
+    const where = [...Array.from({ length: F }, (_, i) => [String(i + 1), `${i + 1} этаж`]),
+      ...(wl.erker ? [['erker', 'Эркер']] : []), ...(wl.gable ? [['gable', 'Фронтон']] : [])];
+    const numIn = (path, val, label, step = 0.1) => `<label>${label}<input class="input kpw-num" type="number" inputmode="decimal" step="${step}" min="0" data-wk="${path}" value="${val ?? ''}"></label>`;
+    const others = KP_WALL_ORDER.filter(x => x !== k);
+    return `
+      <div class="kpw-wall__head">
+        <div><h3>${KP_WALLS[k]}</h3><small>${kpNum(r.L)} м × ${kpNum(r.H)} м</small></div>
+        <label class="kpw-wall__on"><span>Облицовываем</span><span class="switch"><input type="checkbox" data-wk="on" ${wl.on ? 'checked' : ''}><span></span></span></label>
+      </div>
+      <div class="kpw-elev" id="kpw-elev">${this.elevSvg(k)}</div>
+      ${wl.on ? `
+      <div class="kpw-wall__sec"><h4>Окна и двери</h4>
+        ${wl.ops.map((o, i) => `
+          <div class="kpw-oprow">
+            <div class="kpw-oprow__head"><b>${esc(o.name || KP_OP_TYPES.win.name)}</b>
+              <select class="input kpw-where" data-wk="ops.${i}.where" aria-label="Где">${where.map(([v, t]) => `<option value="${v}"${String(o.where) === v ? ' selected' : ''}>${t}</option>`).join('')}</select>
+              <button class="kpw-x" data-wa="del-op:${i}" aria-label="Удалить">×</button></div>
+            <div class="kpw-dims">${numIn(`ops.${i}.w`, o.w, 'Ширина, м')}${numIn(`ops.${i}.h`, o.h, 'Высота, м')}${numIn(`ops.${i}.n`, o.n, 'Штук', 1)}</div>
+          </div>`).join('') || '<p class="configure-hint">Окон нет — добавьте ниже</p>'}
+        <div class="kpw-chips">${Object.entries(KP_OP_TYPES).map(([t, o]) => `<button class="kpw-chip kpw-chip--add" data-wa="add-op:${t}">＋ ${o.name}</button>`).join('')}</div>
+      </div>
+
+      <div class="kpw-wall__sec"><h4>На окнах этой стены</h4>
+        <div class="kpw-chips">${KP_DECOR.map(([d, t]) => `<button class="kpw-chip${wl.decor?.[d] ? ' on' : ''}" data-wa="decor:${d}">${wl.decor?.[d] ? '✓ ' : ''}${t}</button>`).join('')}</div>
+      </div>
+
+      <div class="kpw-wall__sec"><h4>Эркер</h4>
+        ${wl.erker ? `
+          <div class="kpw-seg">${KP_ERKERS.map(([s, t]) => `<button class="${wl.erker.shape === s ? 'on' : ''}" data-wa="erker-shape:${s}">${t}</button>`).join('')}</div>
+          <div class="kpw-dims">${numIn('erker.w', wl.erker.w, 'Ширина, м')}${numIn('erker.d', wl.erker.d, 'Выступ, м')}${numIn('erker.floors', wl.erker.floors, 'Этажей', 1)}</div>
+          <button class="kpw-link" data-wa="del-erker">Убрать эркер</button>`
+        : '<button class="kpw-chip kpw-chip--add" data-wa="add-erker">＋ Эркер на этой стене</button>'}
+      </div>
+
+      <div class="kpw-wall__sec"><h4>Фронтон <small>треугольник под крышей</small></h4>
+        ${wl.gable ? `
+          <div class="kpw-dims">${numIn('gable.h', wl.gable.h, 'Высота до конька, м')}
+            <label>Карниз по скатам<span class="switch"><input type="checkbox" data-wk="gable.cornice" ${wl.gable.cornice ? 'checked' : ''}><span></span></span></label></div>
+          <p class="configure-hint">Окно во фронтоне: добавьте окно и выберите «Фронтон».</p>
+          <button class="kpw-link" data-wa="del-gable">Убрать фронтон</button>`
+        : '<button class="kpw-chip kpw-chip--add" data-wa="add-gable">＋ Фронтон над стеной</button>'}
+      </div>
+
+      ${this.spec.materials.base.on ? `<div class="kpw-wall__sec"><h4>Цоколь</h4>
+        <div class="kpw-row"><label>Высота у этой стены<small>пусто — как у дома, ${kpNum(md.house.plinth)} м</small></label>
+          <input class="input kpw-num" type="number" inputmode="decimal" step="0.1" min="0" data-wk="plinth" value="${wl.plinth ?? ''}" placeholder="${kpNum(md.house.plinth)}"><span class="kpw-unit">м</span></div>
+      </div>` : ''}
+
+      <div class="kpw-wall__sec"><h4>Итого по стене</h4><dl class="kpw-sum" id="kpw-wall-sum">${this.wallSumHtml(r)}</dl></div>
+
+      <div class="kpw-wall__sec"><h4>Скопировать эту стену</h4>
+        <div class="kpw-chips">${others.map(x => `<button class="kpw-chip" data-wa="copy:${x}">На ${KP_WALLS[x].toLowerCase()}${x === 'front' ? '' : ''}</button>`).join('')}</div>
+        <p class="configure-hint">Окна, эркер, фронтон, цоколь и отметки на окнах станут такими же.</p>
+      </div>` : '<p class="configure-hint kpw-wall__off">Эта стена не попадёт в смету. Включите «Облицовываем», чтобы добавить окна и декор.</p>'}
+      <button class="btn btn-primary btn-full kpw-wall__done" data-wa="done">Готово</button>`;
+  },
+
+  wallSumHtml(r) {
+    const rows = [['Камень стены', r.wall], ['Фронтон', r.gable], ['Эркер', r.erker], ['Цоколь', r.plinth], ['Окна и двери', r.win + r.door + r.doorPlinth]];
+    const dec = KP_DECOR.filter(([d]) => r.q[d] > 0).map(([d, t]) => `<dt>${t}</dt><dd>${kpNum(r.q[d])} ${KP_ITEMS.find(x => x.id === d).unit}</dd>`).join('');
+    return rows.filter(([, v]) => v > 0).map(([t, v]) => `<dt>${t}</dt><dd>${kpNum(v)} м²</dd>`).join('') + dec;
+  },
+
+  // Стена лицом: этажи, цоколь, фронтон, эркер, окна и двери на своих местах
+  elevSvg(k) {
+    const md = this.model, wl = md.walls[k], r = kpWallCalc(md, k, this.spec.materials.base.on);
+    const F = Math.max(1, +md.house.floors || 1), fh = +md.house.floorH || 3, L = Math.max(1, r.L);
+    const gh = wl.gable ? +wl.gable.h || 0 : 0;
+    const W = 320, s = Math.min(280 / L, 190 / (F * fh + gh));
+    const x0 = (W - L * s) / 2, yG = 12 + (F * fh + gh) * s, yT = yG - F * fh * s;
+    const e = wl.erker, ew = e ? Math.min(+e.w || 0, L) * s : 0, ex = x0 + L * s / 2;
+    const ef = e ? Math.min(+e.floors || 1, F) : 0;
+    let out = '';
+    out += `<rect x="${x0}" y="${yT}" width="${L * s}" height="${F * fh * s}" class="kpw-e__wall${wl.on ? '' : ' off'}"/>`;
+    if (r.hb) out += `<rect x="${x0}" y="${yG - r.hb * s}" width="${L * s}" height="${r.hb * s}" class="kpw-e__plinth"/>`;
+    for (let f = 1; f < F; f++) out += `<line x1="${x0}" x2="${x0 + L * s}" y1="${yG - f * fh * s}" y2="${yG - f * fh * s}" class="kpw-e__floor"/>`;
+    if (gh) out += `<path d="M${x0},${yT}L${x0 + L * s},${yT}L${ex},${yT - gh * s}Z" class="kpw-e__gable"/>`;
+    if (e) out += `<rect x="${ex - ew / 2}" y="${yG - ef * fh * s}" width="${ew}" height="${ef * fh * s}" rx="${e.shape === 'round' ? ew / 2.5 : e.shape === 'tri' ? 6 : 1}" class="kpw-e__erker"/>`;
+    // Окна: на каждом этаже поровну по ширине, мимо эркера; в эркере и во фронтоне — свои
+    const shape = (o, cx, yb, cls) => {
+      const w = (+o.w || 0) * s, h = (+o.h || 0) * s, x = cx - w / 2, y = yb - h;
+      if (o.arch && o.kind === 'win') return `<path d="M${x},${yb}L${x},${y + w / 2}A${w / 2},${w / 2} 0 0 1 ${x + w},${y + w / 2}L${x + w},${yb}Z" class="${cls}"/>`;
+      return `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="${cls}"/>`;
+    };
+    // n проёмов по участкам стены: каждому участку — по его длине, внутри — поровну, мимо краёв
+    const spread = (n, segs) => {
+      const lens = segs.map(([a1, b1]) => Math.max(0, b1 - a1)), total = lens.reduce((a, v) => a + v, 0) || 1;
+      const cnt = lens.map(v => Math.floor(n * v / total));
+      for (let left = n - cnt.reduce((a, v) => a + v, 0); left > 0; left--) {
+        const i = lens.map((v, j) => [v / (cnt[j] + 1), j]).sort((a, b) => b[0] - a[0])[0][1];
+        cnt[i]++;
+      }
+      return segs.flatMap(([a1], j) => Array.from({ length: cnt[j] }, (_, i) => a1 + (i + 0.5) * lens[j] / cnt[j]));
+    };
+    for (let f = 1; f <= F; f++) {
+      const list = wl.ops.filter(o => String(o.where) === String(f) || (f === F && +o.where > F)).flatMap(o => Array(Math.min(20, +o.n || 0)).fill(o));
+      const yb = yG - (f - 1) * fh * s;
+      const segs = e && f <= ef ? [[x0, ex - ew / 2], [ex + ew / 2, x0 + L * s]] : [[x0, x0 + L * s]];
+      spread(list.length, segs).forEach((cx, i) => {
+        const o = list[i], door = o.kind === 'door';
+        out += shape(o, cx, door ? yb - (f === 1 ? 0 : 0) : yb - Math.min(0.9, fh - (+o.h || 0)) * s, door ? 'kpw-e__door' : 'kpw-e__win');
+      });
+    }
+    if (e) {
+      const list = wl.ops.filter(o => o.where === 'erker').flatMap(o => Array(Math.min(12, +o.n || 0)).fill(o));
+      const per = Math.ceil(list.length / ef) || 1;
+      for (let f = 1; f <= ef; f++) {
+        const part = list.slice((f - 1) * per, f * per), yb = yG - (f - 1) * fh * s;
+        spread(part.length, [[ex - ew / 2, ex + ew / 2]]).forEach((cx, i) => { out += shape(part[i], cx, yb - Math.min(0.9, fh - (+part[i].h || 0)) * s, 'kpw-e__win'); });
+      }
+    }
+    if (gh) {
+      const list = wl.ops.filter(o => o.where === 'gable').flatMap(o => Array(Math.min(4, +o.n || 0)).fill(o));
+      spread(list.length, [[ex - L * s / 6, ex + L * s / 6]]).forEach((cx, i) => { out += shape(list[i], cx, yT - 0.3 * s, 'kpw-e__win'); });
+    }
+    out += `<line x1="${x0 - 10}" x2="${x0 + L * s + 10}" y1="${yG}" y2="${yG}" class="kpw-e__ground"/>`;
+    out += `<text x="${ex}" y="${yG + 16}" text-anchor="middle">${kpNum(L)} м</text>`;
+    out += `<text x="${x0 - 8}" y="${yG - F * fh * s / 2}" text-anchor="middle" transform="rotate(-90 ${x0 - 8} ${yG - F * fh * s / 2})">${kpNum(F * fh)} м</text>`;
+    if (!wl.on) out += `<text x="${ex}" y="${yG - F * fh * s / 2}" text-anchor="middle" class="kpw-e__offtxt">не облицовываем</text>`;
+    return `<svg viewBox="0 0 ${W} ${yG + 24}" role="img" aria-label="Стена ${KP_WALLS[k]}">${out}</svg>`;
+  },
+
+  onWallInput(e, structural) {
+    const el = e.target, path = el.dataset.wk;
+    if (!path) return;
+    const wl = this.model.walls[this.wallK];
+    let val = el.type === 'checkbox' ? el.checked : el.type === 'number' ? (el.value === '' ? (path === 'plinth' ? null : '') : +el.value) : el.value;
+    const keys = path.split('.');
+    let o = wl;
+    keys.slice(0, -1).forEach(k => { o = o[k]; });
+    o[keys[keys.length - 1]] = val;
+    this.saveSoon();
+    // Включили или выключили стену, сменили «где» у окна — меняется состав окна
+    if (structural && (path === 'on' || path.endsWith('.where') || path === 'gable.cornice')) return this.redrawWall();
+    document.getElementById('kpw-elev').innerHTML = this.elevSvg(this.wallK);
+    const sum = document.getElementById('kpw-wall-sum');
+    if (sum) sum.innerHTML = this.wallSumHtml(kpWallCalc(this.model, this.wallK, this.spec.materials.base.on));
+    this.live();
+  },
+
+  redrawWall() {
+    const box = document.getElementById('kpw-wall');
+    if (!box) return;
+    const sheet = box.closest('.modal-sheet'), y = sheet?.scrollTop || 0;
+    box.innerHTML = this.wallHtml(this.wallK);
+    if (sheet) sheet.scrollTop = y;
+    this.live();
+  },
+
+  onWallClick(e) {
+    const b = e.target.closest('[data-wa]');
+    if (!b) return;
+    const [act, arg] = b.dataset.wa.split(':');
+    const md = this.model, wl = md.walls[this.wallK], F = Math.max(1, +md.house.floors || 1);
+    if (act === 'done') { closeModal(); return this.render(true); }
+    if (act === 'add-op') {
+      // Новое окно — на этаж, где окон меньше всего
+      const count = f => wl.ops.filter(o => String(o.where) === String(f)).reduce((a, o) => a + (+o.n || 0), 0);
+      const floor = arg === 'door' || arg === 'gate' ? 1 : Array.from({ length: F }, (_, i) => i + 1).sort((a, b) => count(a) - count(b))[0];
+      wl.ops.push({ ...KP_OP_TYPES[arg], n: 1, where: String(floor) });
+    }
+    if (act === 'del-op') wl.ops.splice(+arg, 1);
+    if (act === 'decor') wl.decor = { ...wl.decor, [arg]: !wl.decor?.[arg] };
+    if (act === 'add-erker') wl.erker = { shape: 'rect', w: Math.min(3, kpWallLen(md, this.wallK)), d: 1, floors: F };
+    if (act === 'del-erker') { wl.erker = null; wl.ops.forEach(o => { if (o.where === 'erker') o.where = '1'; }); }
+    if (act === 'erker-shape') wl.erker.shape = arg;
+    if (act === 'add-gable') wl.gable = { h: 2.5, cornice: true };
+    if (act === 'del-gable') { wl.gable = null; wl.ops = wl.ops.filter(o => o.where !== 'gable'); }
+    if (act === 'copy') {
+      md.walls[arg] = { ...JSON.parse(JSON.stringify(wl)), on: true };
+      showToast(`Скопировано: ${KP_WALLS[arg].toLowerCase()} стена как ${KP_WALLS[this.wallK].toLowerCase()}`);
+    }
+    this.saveSoon();
+    this.redrawWall();
+  },
+
+  // Шаг 2: смета, запас, условия, контакты
   stepSmeta() {
     const g = kpGeometry(this.model, this.spec.materials.base.on);
     return `
@@ -503,19 +731,15 @@ const KP = {
       <p class="configure-hint">Цены, ваши данные и условия запомнятся для следующих КП.</p>`;
   },
 
-  // Без перерисовки полей — пока прораб печатает: план, углы, итоги по проёмам, сумма внизу
+  // Без перерисовки полей — пока прораб печатает: план, стены, углы, сумма внизу
   live() {
     const t = this.totals(), g = t.ms;
     const plan = document.getElementById('kpw-plan');
-    if (plan) plan.innerHTML = this.planSvg();
+    if (plan) plan.innerHTML = this.planSvg(g);
+    const list = document.getElementById('kpw-wall-list');
+    if (list) list.innerHTML = this.wallListHtml(g);
     const c = document.getElementById('kpw-corners');
     if (c) { c.textContent = g.corners; document.getElementById('kpw-corners-note').textContent = this.cornerNote(g); }
-    const ops = document.getElementById('kpw-ops-sum');
-    if (ops) {
-      const rows = [['Проёмов', `${g.openings} шт`], ['Площадь окон', `${kpNum(g.winArea)} м²`]];
-      KP_OP_PARTS.forEach(([k, name]) => { if (g.q[k] > 0) rows.push([name, `${kpNum(Math.ceil(g.q[k] - 1e-9))} ${KP_ITEMS.find(d => d.id === k).unit}`]); });
-      ops.innerHTML = rows.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('');
-    }
     this.renderTotals(t);
   },
 
@@ -580,7 +804,7 @@ const KP = {
     if (el.dataset.k) {
       this.setPath(el.dataset.k, val);
       // Дом, проёмы, запас и срок меняют количества — пересчитаем, поля не трогаем
-      if (this.step < 3) this.live();
+      if (this.step < 2) this.live();
       else if (/^(stock\.|days)/.test(el.dataset.k)) this.renderRows();
       else this.renderTotals();
       if (el.tagName === 'TEXTAREA') kpGrow(el);
@@ -610,42 +834,27 @@ const KP = {
     return [...t.items, ...t.extras].find(r => r.id === id);
   },
 
-  // Шаги 1–2: стороны, кнопки − / +, эркеры, проёмы. Меняют состав экрана — перерисовка на месте
+  // Шаг «Дом»: стена → вид на стену, кнопки − / +
   onWizardClick(e) {
-    const t = e.target.closest('[data-kp-step], [data-side], [data-inc], [data-dec], [data-add-erker], [data-del-erker], [data-erker-shape], [data-add-op], [data-del-op], [data-op-part]');
+    const t = e.target.closest('[data-kp-step], [data-open-wall], [data-inc], [data-dec]');
     if (!t) return false;
     const md = this.model, d = t.dataset;
-    const done = (redraw) => { this.saveSoon(); redraw ? this.render(true) : this.live(); return true; };
     if (d.kpStep) { this.step = +d.kpStep; this.render(); return true; }
-    if (d.side) {
-      md.house.sides[d.side] = !md.house.sides[d.side];
-      if (!Object.values(md.house.sides).some(Boolean)) md.house.sides[d.side] = true;  // хоть одна сторона
-      return done();
-    }
-    if (d.inc || d.dec) {
-      const path = d.inc || d.dec;
-      const [lo, hi] = { 'house.floors': [1, 5], 'gables.n': [0, 4], 'house.cornersAdj': [-12, 12] }[path] || [0, 99];
-      const cur = +path.split('.').reduce((o, k) => o[k], md) || 0;
-      const next = Math.min(hi, Math.max(lo, cur + (d.inc ? 1 : -1)));
-      this.setPath(path, next);
-      // Фронтоны: поля размеров появляются и пропадают; этажи — эркер не выше дома
-      if (path === 'gables.n' && (next === 0 || cur === 0)) return done(true);
+    if (d.openWall) { this.openWall(d.openWall); return true; }
+    const path = d.inc || d.dec;
+    const [lo, hi] = { 'house.floors': [1, 5], 'house.cornersAdj': [-12, 12] }[path] || [0, 99];
+    const cur = +path.split('.').reduce((o, k) => o[k], md) || 0;
+    const next = Math.min(hi, Math.max(lo, cur + (d.inc ? 1 : -1)));
+    this.setPath(path, next);
+    if (path === 'house.floors') {
+      // Окна выше последнего этажа — на последний
+      KP_WALL_ORDER.forEach(k => md.walls[k].ops.forEach(o => { if (+o.where > next) o.where = String(next); }));
       const out = t.parentElement.querySelector('output');
-      if (out && path !== 'house.cornersAdj') out.textContent = next;
-      return done();
+      if (out) out.textContent = next;
     }
-    if (d.addErker != null) { md.erkers.push({ shape: 'rect', w: 3, d: 1, floors: md.house.floors }); return done(true); }
-    if (d.delErker) { md.erkers.splice(+d.delErker, 1); return done(true); }
-    if (d.erkerShape) { const [i, k] = d.erkerShape.split(':'); md.erkers[+i].shape = k; return done(true); }
-    if (d.addOp) {
-      const parts = Object.fromEntries(KP_OP_PARTS.map(([k]) => [k, md.ops[0]?.[k] ?? k === 'reveals']));
-      const type = KP_OP_TYPES[d.addOp];
-      md.ops.push({ ...parts, ...type, n: 1, ...(type.kind === 'door' ? { sill: false, console: false } : {}) });
-      return done(true);
-    }
-    if (d.delOp) { md.ops.splice(+d.delOp, 1); return done(true); }
-    if (d.opPart) { const [i, k] = d.opPart.split(':'); md.ops[+i][k] = !md.ops[+i][k]; return done(true); }
-    return false;
+    this.saveSoon();
+    this.live();
+    return true;
   },
 
   async onClick(e) {
@@ -784,7 +993,7 @@ const KP = {
       showToast(e.message || 'Не удалось собрать PDF');
     } finally {
       btn.disabled = false;
-      btn.textContent = this.step < 3 ? 'Далее' : 'Создать PDF';
+      btn.textContent = this.step < 2 ? 'Далее — смета' : 'Создать PDF';
     }
   },
 
@@ -817,7 +1026,7 @@ const KP = {
     document.getElementById('kp-back').addEventListener('click', () => openProject(this.projectId, this.variant?.id));
     // Кнопка внизу: «Далее» на шагах 1–2, «Создать PDF» на смете
     document.getElementById('kp-make').addEventListener('click', () => {
-      if (this.step < 3) { this.step++; this.saveSoon(); return this.render(); }
+      if (this.step < 2) { this.step++; this.saveSoon(); return this.render(); }
       this.makePdf();
     });
   },
