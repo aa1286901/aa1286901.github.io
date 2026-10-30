@@ -3642,3 +3642,175 @@ body:has(.screen--kp.active) .bottom-nav {
   object-fit: contain;
   background: #fff;
 }
+
+/* Кнопки под балансом kie.ai */
+.kie__btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.kie__btns .btn {
+  min-height: 44px;
+  padding: 8px;
+  font-size: var(--font-size-sm);
+}
+
+/* Журнал запросов к ИИ */
+.ailog-sum {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.ailog-filter {
+  margin-bottom: var(--spacing-md);
+}
+
+.ailog {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ailog__row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+}
+
+.ailog__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ailog__meta {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.ailog__err {
+  overflow: hidden;
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ailog__pill {
+  flex-shrink: 0;
+  padding: 2px 9px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ailog__pill--ok { background: #e3f3e4; color: #2e7d32; }
+.ailog__pill--err { background: #fde5e4; color: #c62828; }
+.ailog__pill--wait { background: var(--color-accent-light); color: var(--color-accent-dark); }
+
+.ailog-d {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.ailog-d .sheet-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ailog-d__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: var(--font-size-sm);
+}
+
+.ailog-d__row span {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.ailog-d__row b {
+  min-width: 0;
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.ailog-d__row code {
+  font-size: 11px;
+}
+
+.ailog-d__label {
+  margin-top: var(--spacing-sm);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.ailog-d__result img {
+  width: 100%;
+  margin-top: var(--spacing-sm);
+  border-radius: var(--radius-md);
+}
+
+.ailog-d__imgs {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.ailog-d__imgs a {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--color-surface-alt);
+}
+
+.ailog-d__imgs img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ailog-d__imgs span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  min-width: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 11px;
+  text-align: center;
+}
+
+.ailog-d__prompt {
+  margin: 0;
+  padding: 10px;
+  max-height: 260px;
+  overflow: auto;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-alt);
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

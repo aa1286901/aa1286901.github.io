@@ -39,6 +39,8 @@ jobs:
             data/database.json
             data/db.php
             data/ai.php
+            data/ai-log.php
+            data/ai-log.php.lock
             data/db.php.tmp
             data/db.lock
             uploads/originals/**
