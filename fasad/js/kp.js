@@ -131,36 +131,61 @@ const KP = {
       }
       out.push(this.row(def, sub, img, imgKind, ms, prices));
     }
-    return { items: out.filter(r => !r.deleted), ms };
+    return { items: this.order('items', [...out.filter(r => !r.deleted), ...this.customs('custom')]), ms };
+  },
+
+  // Порядок позиций, который выставил прораб (стрелками ↑ ↓)
+  order(section, list) {
+    const ord = this.model.order?.[section] || [];
+    const pos = id => { const i = ord.indexOf(id); return i < 0 ? 1e6 : i; };
+    return list.map((r, i) => [r, i]).sort((a, b) => (pos(a[0].id) - pos(b[0].id)) || (a[1] - b[1])).map(x => x[0]);
+  },
+
+  // Правки прораба поверх позиции: название, подпись, единица, подписи цен, материал из каталога
+  edited(r, o) {
+    const out = { ...r };
+    if (o.name) out.name = o.name;
+    if (o.unit) out.unit = o.unit;
+    if (o.lm) out.lm = o.lm;
+    if (o.lw) out.lw = o.lw;
+    if (o.mat) {
+      const st = o.mat.kind === 'stone' ? this.stones.find(x => x.id === o.mat.id) : null;
+      const v = o.mat.kind === 'product' ? this.catalog.variants[o.mat.id] : null;
+      if (st) { out.img = st.texture; out.imgKind = 'stone'; out.sub = st.name; }
+      if (v) { out.img = v.image; out.imgKind = 'product'; out.sub = `${v.name}${v.size ? ` · ${v.size}` : ''}`; }
+    }
+    if (o.sub != null && o.sub !== '') out.sub = o.sub;
+    return out;
   },
 
   row(def, sub, img, imgKind, ms, prices) {
     const o = this.model.rows[def.id] || {};
     const p = prices[def.id] || {};
     const auto = kpAutoQty(def.id, ms, +this.model.days || 0);
-    return {
-      ...def, name: o.name || def.name, deleted: !!o.deleted, sub: def.sub || sub, img, imgKind,
+    return this.edited({
+      ...def, deleted: !!o.deleted, sub: def.sub || sub, img, imgKind,
       qty: o.manual ? +o.qty || 0 : auto, auto, manual: !!o.manual,
       m: +(o.m ?? p.m ?? def.m) || 0, w: +(o.w ?? p.w ?? def.w) || 0,
       on: o.on ?? !(def.id === 'scaffold' && ms.F < 2),
-    };
+    }, o);
   },
 
   extras(ms) {
     const prices = this.mine.prices || {};
-    return KP_EXTRAS.map(def => this.row(def, def.sub, null, null, ms, prices)).filter(r => !r.deleted);
+    return this.order('extras', [...KP_EXTRAS.map(def => this.row(def, def.sub, null, null, ms, prices)).filter(r => !r.deleted),
+      ...this.customs('customExtras')]);
   },
 
   // Свои позиции прораба: в смете (custom) и в «Дополнительно» (customExtras)
   customs(list = 'custom') {
-    return (this.model[list] || []).map(c => ({ ...c, unit: c.unit || 'шт', qty: +c.qty || 0, m: +c.m || 0, w: +c.w || 0, on: c.on !== false,
-      custom: list, group: list === 'custom' ? 'Другое' : 'Дополнительные работы' }));
+    return (this.model[list] || []).map(c => this.edited({ ...c, sub: '', img: null, unit: c.unit || 'шт', qty: +c.qty || 0, m: +c.m || 0, w: +c.w || 0,
+      on: c.on !== false, custom: list, group: list === 'custom' ? 'Другие позиции' : 'Дополнительные работы' }, c));
   },
 
   totals() {
     const { items, ms } = this.rows();
-    const extras = [...this.extras(ms), ...this.customs('customExtras')];
-    const all = [...items, ...this.customs(), ...extras].filter(r => r.on);
+    const extras = this.extras(ms);
+    const all = [...items, ...extras].filter(r => r.on);
     let mat = 0, work = 0;
     all.forEach(r => { mat += r.qty * r.m; work += r.qty * r.w; });
     const sum = mat + work;
@@ -234,6 +259,7 @@ const KP = {
       <div class="kp-row${r.on ? '' : ' off'}" data-row="${r.id}" data-kind="${kind}">
         <div class="kp-row__head">
           <label class="kp-check"><input type="checkbox" data-f="on" ${r.on ? 'checked' : ''}><span></span></label>
+          ${r.img ? `<img class="kp-row__img${r.imgKind === 'product' ? ' kp-row__img--prod' : ''}" src="${r.img}" alt="">` : ''}
           <div class="kp-row__name"><b>${esc(r.name || 'Без названия')}</b>
             ${r.sub ? `<small>${esc(r.sub)}</small>` : ''}</div>
           <b class="kp-row__sum" data-sum>${kpRub(r.qty * (r.m + r.w))}</b>
@@ -244,7 +270,9 @@ const KP = {
           <label><span>${lw}, ₽</span><input class="input" type="number" inputmode="numeric" data-f="w" value="${r.w}"></label>
         </div>
         <div class="kp-row__tools">
-          <button data-rename>${icon('edit')}Переименовать</button>
+          <button data-edit>${icon('edit')}Изменить</button>
+          <button data-move="-1" aria-label="Выше">↑</button>
+          <button data-move="1" aria-label="Ниже">↓</button>
           <button data-del>${icon('trash')}Удалить</button>
         </div>
       </div>`;
@@ -254,7 +282,7 @@ const KP = {
     // Удалённые позиции можно вернуть одной кнопкой
     const gone = (defs) => defs.filter(d => this.model.rows[d.id]?.deleted).length;
     const restore = (n, kind) => n ? `<button class="kp-restore" data-restore="${kind}">Вернуть удалённые (${n})</button>` : '';
-    document.getElementById('kp-items').innerHTML = [...t.items, ...this.customs()].map(r => this.rowHtml(r, r.custom || 'item')).join('')
+    document.getElementById('kp-items').innerHTML = t.items.map(r => this.rowHtml(r, r.custom || 'item')).join('')
       + restore(gone(KP_ITEMS), 'items');
     document.getElementById('kp-extras').innerHTML = t.extras.map(r => this.rowHtml(r, r.custom || 'extra')).join('')
       + restore(gone(KP_EXTRAS), 'extras');
@@ -306,7 +334,7 @@ const KP = {
 
   findRow(id) {
     const t = this.totals();
-    return [...t.items, ...t.extras, ...this.customs()].find(r => r.id === id);
+    return [...t.items, ...t.extras].find(r => r.id === id);
   },
 
   async onClick(e) {
@@ -319,13 +347,27 @@ const KP = {
       delete this.model.rows[rowEl.dataset.row].manual;
       return changed();
     }
-    if (e.target.closest('[data-rename]') && rowEl) {
-      const r = this.findRow(rowEl.dataset.row);
-      const name = await showPrompt('Название позиции', r?.name || '', 'Сохранить');
-      if (!name) return;
-      if (own) this.model[list].find(x => x.id === rowEl.dataset.row).name = name;
-      else (this.model.rows[rowEl.dataset.row] = this.model.rows[rowEl.dataset.row] || {}).name = name;
+    // Правки позиции хранятся у неё самой (своя позиция) или в model.rows (встроенная)
+    const target = () => own ? this.model[list].find(x => x.id === rowEl.dataset.row)
+      : (this.model.rows[rowEl.dataset.row] = this.model.rows[rowEl.dataset.row] || {});
+    if (e.target.closest('[data-edit]') && rowEl) {
+      const saved = await this.editRow(this.findRow(rowEl.dataset.row), list === 'item' || list === 'custom');
+      if (!saved) return;
+      Object.assign(target(), saved);
       return changed();
+    }
+    const mv = e.target.closest('[data-move]');
+    if (mv && rowEl) {
+      const section = list === 'item' || list === 'custom' ? 'items' : 'extras';
+      const t = this.totals();
+      const ids = (section === 'items' ? t.items : t.extras).map(r => r.id);
+      const i = ids.indexOf(rowEl.dataset.row), j = i + +mv.dataset.move;
+      if (j < 0 || j >= ids.length) return;
+      [ids[i], ids[j]] = [ids[j], ids[i]];
+      this.model.order = { ...(this.model.order || {}), [section]: ids };
+      changed();
+      document.querySelector(`[data-row="${ids[j]}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      return;
     }
     if (e.target.closest('[data-del]') && rowEl) {
       if (own) this.model[list] = this.model[list].filter(c => c.id !== rowEl.dataset.row);
@@ -341,9 +383,55 @@ const KP = {
     if (add) {
       const name = await showPrompt('Новая позиция', '', 'Добавить', add.dataset.add === 'custom' ? 'Например, Сандрики над окнами' : 'Например, Аренда вышки');
       if (!name) return;
-      this.model[add.dataset.add].push({ id: `c${Date.now()}`, name, unit: 'шт', qty: 1, m: 0, w: 0, on: true });
+      this.model[add.dataset.add].push({ id: `c${Date.now()}`, name, unit: 'шт', qty: 1, m: 0, w: 0, on: true,
+        ...(add.dataset.add === 'customExtras' ? { lm: 'Материал', lw: 'Работа' } : {}) });
       changed();
     }
+  },
+
+  // Окно «Изменить позицию»: название, подпись, материал из каталога, единица, как называются цены
+  editRow(r, withMaterial) {
+    const units = ['м²', 'п.м', 'шт', 'м³', 'кг', 'компл', 'рейс', 'объект', 'дн', 'час'];
+    const labels = ['Материал', 'Работа', 'Услуга', 'Расход', 'Доставка', 'Аренда'];
+    const sel = (id, list, cur) => `<select class="input" id="${id}">${[...new Set([cur, ...list])].map(u => `<option${u === cur ? ' selected' : ''}>${esc(u)}</option>`).join('')}</select>`;
+    let mat = null;
+    return new Promise((resolve) => {
+      showModal(`
+        <div class="kp-edit">
+          <h3>Изменить позицию</h3>
+          <label class="kp-field"><span>Название</span><input class="input" id="ke-name" value="${esc(r.name || '')}"></label>
+          <label class="kp-field"><span>Подпись под названием</span><input class="input" id="ke-sub" value="${esc(r.sub || '')}" placeholder="Например, обрезки камня, упаковка"></label>
+          ${withMaterial ? `<div class="kp-field"><span>Материал</span>
+            <button class="kp-mat" id="ke-mat">${r.img ? `<img src="${r.img}" alt="">` : ''}<b>${esc(r.sub || 'Выбрать из каталога')}</b><i>Сменить</i></button></div>` : ''}
+          <div class="kp-grid kp-grid--3">
+            <label class="kp-field"><span>Единица</span>${sel('ke-unit', units, r.unit || 'шт')}</label>
+            <label class="kp-field"><span>Первая цена</span>${sel('ke-lm', labels, r.lm || 'Материал')}</label>
+            <label class="kp-field"><span>Вторая цена</span>${sel('ke-lw', labels, r.lw || 'Работа')}</label>
+          </div>
+          <div class="user-edit__actions">
+            <button class="btn btn-secondary btn-full" id="ke-cancel">Отмена</button>
+            <button class="btn btn-primary btn-full" id="ke-save">Сохранить</button>
+          </div>
+        </div>`);
+      const done = (v) => { closeModal(); resolve(v); };
+      document.getElementById('ke-cancel').addEventListener('click', () => done(null));
+      document.getElementById('ke-mat')?.addEventListener('click', async () => {
+        const picked = await kpPickMaterial(this.stones, this.catalog);
+        if (!picked) return;
+        mat = picked;
+        const b = document.getElementById('ke-mat');
+        b.innerHTML = `<img src="${picked.img}" alt=""><b>${esc(picked.label)}</b><i>Сменить</i>`;
+        document.getElementById('ke-sub').value = picked.label;
+      });
+      document.getElementById('ke-save').addEventListener('click', () => done({
+        name: document.getElementById('ke-name').value.trim() || r.name,
+        sub: document.getElementById('ke-sub').value.trim(),
+        unit: document.getElementById('ke-unit').value,
+        lm: document.getElementById('ke-lm').value,
+        lw: document.getElementById('ke-lw').value,
+        ...(mat ? { mat: { kind: mat.kind, id: mat.id } } : {}),
+      }));
+    });
   },
 
   // Черновик КП у проекта — сохраняется сам
@@ -418,6 +506,39 @@ const KP = {
     document.getElementById('kp-make').addEventListener('click', () => this.makePdf());
   },
 };
+
+// Выбор материала: весь каталог — камень и изделия по разделам. Вернёт { kind, id, img, label } или null
+function kpPickMaterial(stones, catalog) {
+  return new Promise((resolve) => {
+    const tabs = [{ id: 'stone', title: 'Камень' }, ...catalog.sections.map(s => ({ id: s.id, title: s.title }))];
+    const overlay = document.createElement('div');
+    overlay.className = 'kp-pick';
+    overlay.innerHTML = `
+      <div class="kp-pick__head"><b>Материал из каталога</b><button class="viewer__btn" data-close aria-label="Закрыть">✕</button></div>
+      <div class="kp-pick__tabs">${tabs.map((t, i) => `<button data-tab="${t.id}" class="${i ? '' : 'active'}">${esc(t.title)}</button>`).join('')}</div>
+      <div class="kp-pick__grid" id="kp-pick-grid"></div>`;
+    document.body.appendChild(overlay);
+    const grid = overlay.querySelector('#kp-pick-grid');
+    const show = (tab) => {
+      overlay.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+      const items = tab === 'stone'
+        ? stones.map(s => ({ kind: 'stone', id: s.id, img: s.texture, label: s.name }))
+        : (catalog.sections.find(s => s.id === tab)?.items || []).flatMap(it => it.variants.map(v => ({ kind: 'product', id: v.id, img: v.image, label: `${it.name}${v.size ? ` · ${v.size}` : ''}` })));
+      grid.innerHTML = items.map((it, i) => `<button class="kp-pick__item${it.kind === 'product' ? ' prod' : ''}" data-i="${i}"><img src="${it.img}" alt="" loading="lazy"><span>${esc(it.label)}</span></button>`).join('');
+      grid._items = items;
+      grid.scrollTop = 0;
+    };
+    show('stone');
+    const done = (v) => { overlay.remove(); resolve(v); };
+    overlay.addEventListener('click', (e) => {
+      if (e.target.closest('[data-close]')) return done(null);
+      const t = e.target.closest('[data-tab]');
+      if (t) return show(t.dataset.tab);
+      const it = e.target.closest('[data-i]');
+      if (it) done(grid._items[+it.dataset.i]);
+    });
+  });
+}
 
 function kpGrow(el) {
   el.style.height = 'auto';
@@ -518,19 +639,27 @@ async function kpWatermark(src, text, icon) {
     for (let x = -W * 1.4 - (k % 2) * tw / 2; x < W * 1.4; x += tw) g.fillText(text, x, y);
   }
   g.restore();
-  const bh = 64, label = 'Сделано в Fasad AI';
+  // Плашка: одинаковый отступ 10 вокруг иконки, текст по центру по высоте, справа отступ как у иконки + 10
+  const pad = 10, is = 44, bh = is + pad * 2, label = 'Сделано в Fasad AI';
   g.font = '700 26px -apple-system, system-ui, sans-serif';
-  const bw = 64 + 24 + g.measureText(label).width + 26;
-  const bx = W - bw - 22, by = H - bh - 22;
+  const bw = pad + is + 14 + g.measureText(label).width + pad + 12;
+  const bx = W - bw - 24, by = H - bh - 24;
   g.save();
   g.fillStyle = 'rgba(30,26,22,0.72)';
   g.translate(bx, by);
   kpRoundClip(g, bw, bh, bh / 2);
   g.fillRect(0, 0, bw, bh);
   g.restore();
-  if (icon) g.drawImage(icon, bx + 10, by + 8, 48, 48);
+  if (icon) {
+    g.save();
+    g.translate(bx + pad, by + pad);
+    kpRoundClip(g, is, is, is / 2);
+    g.drawImage(icon, 0, 0, is, is);
+    g.restore();
+  }
   g.fillStyle = '#ffffff';
-  g.fillText(label, bx + 70, by + 42);
+  g.textBaseline = 'middle';
+  g.fillText(label, bx + pad + is + 14, by + bh / 2 + 1);
   return c;
 }
 
@@ -629,21 +758,16 @@ async function kpBuildPdf(kp) {
   [['InterR', fr], ['InterS', fs], ['InterB', fb]].forEach(([n, d]) => { pdf.addFileToVFS(`${n}.ttf`, d); pdf.addFont(`${n}.ttf`, n, 'normal'); });
 
   const md = kp.model, pf = md.profile, t = kp.totals();
-  const iconImg = await kpLoadImage('icon-192.png');
+  const iconImg = await kpLoadImage('assets/kp-icon.png');
   const wm = `Fasad AI  ·  ${pf.name}  ·  ${pf.phone}`;
-  const photo = async (src) => kpPicture(await kpWatermark(src, wm, iconImg), KPCW, 265, { r: 16 });
-  const after = kp.variant?.generated_image ? await photo(kp.variant.generated_image) : null;
-  const before = await photo(kp.project.original_image);
   const icon = await kpPicture(iconImg, 30, 30, { r: 8, png: true });
   const iconBig = await kpPicture(iconImg, 92, 92, { r: 24, png: true });
   const qr = await kpPicture('assets/kp-qr.png', 92, 92, { mode: 'contain', fill: '#ffffff', bg: '#ffffff' });
-  const rows = [...t.items, ...kp.customs()].filter(r => r.on);
+  const rows = t.items.filter(r => r.on);
   const extras = t.extras.filter(r => r.on);
-  const thumbs = {}, mthumbs = {};
+  const thumbs = {};
   await Promise.all(rows.map(async r => {
-    const mode = r.imgKind === 'product' ? 'contain' : 'cover';
-    thumbs[r.id] = await kpPicture(r.img, 48, 38, { r: 8, bg: KPC.card, mode });
-    mthumbs[r.id] = await kpPicture(r.img, 64, 50, { r: 9, bg: KPC.card, mode });
+    thumbs[r.id] = await kpPicture(r.img, 48, 38, { r: 8, bg: KPC.card, mode: r.imgKind === 'product' ? 'contain' : 'cover' });
   }));
 
   const d = new KpDraw(pdf);
@@ -688,16 +812,15 @@ async function kpBuildPdf(kp) {
   }
   d.font('r', 13, KPC.muted);
   y += d.text(`${md.client.object || ''} · ${num} от ${date.toLocaleDateString('ru-RU')}`, KPM, y, { w: KPCW }) + 12;
-  d.image(after || before, KPM, y, KPCW, 265);
+  // Сразу было и будет: заказчик видит результат на первом листе
+  const ph = Math.min(236, (KPH - 14 - 78 - 14 - y - 8) / 2);
+  const ph2 = await kpPicture(await kpWatermark(kp.variant?.generated_image || kp.project.original_image, wm, iconImg), KPCW, ph, { r: 16 });
+  const pb2 = await kpPicture(await kpWatermark(kp.project.original_image, wm, iconImg), KPCW, ph, { r: 16 });
+  d.image(ph2, KPM, y, KPCW, ph);
   d.chip('Так будет выглядеть ваш дом', KPM + 10, y + 10);
-  y += 265 + 12;
-  d.card(KPM, y, KPCW, 92);
-  ['Было и будет', 'Материалы', 'Смета по каждой позиции', 'Итог, сроки и оплата'].forEach((s, i) => {
-    const cx = KPM + 16 + (i % 2) * 172, cy = y + 16 + Math.floor(i / 2) * 36;
-    d.badge(i + 1, cx + 11, cy + 11, 11, KPC.gold, 11);
-    d.font('s', 13.5);
-    d.text(s, cx + 30, cy + 2, { w: 136, lh: 1.15 });
-  });
+  y += ph + 8;
+  d.image(pb2, KPM, y, KPCW, ph);
+  d.chip('Сейчас', KPM + 10, y + 10);
   const py = KPH - 14 - 78;
   d.card(KPM, py, KPCW, 78);
   d.badge(initials(pf.name), KPM + 16 + 23, py + 39, 23, KPC.goldD, 17);
@@ -705,40 +828,6 @@ async function kpBuildPdf(kp) {
   d.text(pf.name, KPM + 78, py + 20, { w: KPCW - 94 });
   d.font('r', 12.5, KPC.muted);
   d.text([pf.company, pf.city, pf.exp].filter(Boolean).join(' · '), KPM + 78, py + 42, { w: KPCW - 94 });
-
-  // 2. Было и будет
-  newPage();
-  h2('Было и будет');
-  d.image(before, KPM, y, KPCW, 265);
-  d.chip('Сейчас', KPM + 10, y + 10);
-  y += 275;
-  d.image(after || before, KPM, y, KPCW, 265);
-  d.chip('После облицовки', KPM + 10, y + 10);
-
-  // 3. Материалы (с картинкой, до 6)
-  const mats = rows.filter(r => mthumbs[r.id] && !r.custom).slice(0, 6);
-  if (mats.length) {
-    newPage();
-    h2('Материалы');
-    for (const r of mats) {
-      const tw = KPCW - 24 - 64 - 12;
-      d.font('r', 12);
-      const subH = d.height(r.sub || '', tw, 1.3);
-      const h = Math.max(70, 12 + 14 + 20 + subH + 12);
-      d.card(KPM, y, KPCW, h);
-      d.image(mthumbs[r.id], KPM + 12, y + (h - 50) / 2, 64, 50);
-      const tx = KPM + 12 + 64 + 12;
-      d.font('b', 10.5, KPC.muted);
-      d.text(r.group.toUpperCase(), tx, y + 12, { space: 0.4 });
-      d.font('b', 15);
-      d.text(r.name, tx, y + 26, { w: tw });
-      d.font('r', 12, KPC.sub);
-      d.text(r.sub || '', tx, y + 46, { w: tw, lh: 1.3 });
-      y += h + 10;
-    }
-    d.font('r', 13, '#4a433b');
-    d.text('Натуральный камень дагестанских карьеров: не выгорает, не боится мороза, служит десятилетиями.', KPM, y + 2, { w: KPCW, lh: 1.5 });
-  }
 
   // 4. Смета: карточка на позицию — материал, работа, итог
   const line = (label, calc, sum, yy, size = 13) => {
