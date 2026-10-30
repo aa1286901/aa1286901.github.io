@@ -758,7 +758,7 @@ async function kpBuildPdf(kp) {
   [['InterR', fr], ['InterS', fs], ['InterB', fb]].forEach(([n, d]) => { pdf.addFileToVFS(`${n}.ttf`, d); pdf.addFont(`${n}.ttf`, n, 'normal'); });
 
   const md = kp.model, pf = md.profile, t = kp.totals();
-  const iconImg = await kpLoadImage('assets/kp-icon.png');
+  const iconImg = await kpLoadImage('assets/kp-app-icon.png');
   const wm = `Fasad AI  ·  ${pf.name}  ·  ${pf.phone}`;
   const icon = await kpPicture(iconImg, 30, 30, { r: 8, png: true });
   const iconBig = await kpPicture(iconImg, 92, 92, { r: 24, png: true });
