@@ -25,7 +25,7 @@ const PATTERN_GROUPS = [
   ] },
   { group: 'windows', title: 'Окна', rows: [
     { key: 'frame', title: 'Наличник', sections: ['cornice', 'plinth'], def: /^Карниз К-12$/ },
-    { key: 'windowCornice', title: 'Карниз над окном', sections: ['cornice', 'plinth'] },
+    { key: 'windowCornice', title: 'Сандрик (карниз над окном)', sections: ['cornice', 'plinth'] },
     { key: 'sill', title: 'Подоконник', sections: ['cornice', 'plinth'], def: /^Карниз К-37$/ },
     { key: 'keystone', title: 'Замок над окном', sections: ['keystone'], def: /^Замок простой/ },
     { key: 'console', title: 'Консоли под подоконник', sections: ['console'] },
