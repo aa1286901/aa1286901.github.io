@@ -32,7 +32,7 @@ const AiChoice = {
   costHtml() {
     return `<small class="btn-cost">${this.cost()}${coin('plain')}</small>`;
   },
-  // Переключатель моделей: над кнопкой «Нарисовать фасад» и в «Ещё» рядом с «Перерисовать»
+  // Переключатель моделей: над «Нарисовать фасад» и над «Перерисовать»
   html() {
     const cur = this.get();
     return `<div class="ai-pick__top"><span class="ai-pick__label">${icon('sparkle')}Чем рисовать</span>${Wallet.chip()}</div>
@@ -41,8 +41,6 @@ const AiChoice = {
           <small>${coin('plain')}${m.coins} ${coinsWord(m.coins)} · ${m.note}</small></button>`).join('')}</div>`;
   },
   render() {
-    document.querySelectorAll('.modal-sheet [data-ai-pick]').forEach(box => { box.innerHTML = this.html(); });
-    document.querySelectorAll('.modal-sheet .btn-cost').forEach(el => { el.outerHTML = this.costHtml(); });
     // Цена на кнопках генерации
     if (ProjectPage.project && document.getElementById('project-main')) ProjectPage.renderMain(ProjectPage.variant(ProjectPage.sel));
   },
@@ -228,7 +226,12 @@ const ProjectPage = {
         <small>${AiChoice.wait(v.ai.model)} · можно выйти, картинка сохранится</small></div></div>`;
     } else if (img) {
       ImageFiles.prepare(img, `fasad-${this.project.id}-variant-${this.index(v.id)}.jpg`);  // для «Скачать» и «Отправить»
-      main = `<button class="btn btn-primary btn-full main-btn" data-act="share">${icon('share')}Отправить заказчику</button>`;
+      // Готово: главное — отправить; ниже тот же выбор ИИ с «Перерисовать»
+      main = `<button class="btn btn-primary btn-full main-btn" data-act="share">${icon('share')}Отправить заказчику</button>
+        <div class="main-gen">
+          <div class="ai-pick" data-ai-pick>${AiChoice.html()}</div>
+          <button class="btn btn-secondary btn-full" data-act="generate">${icon('sparkle')}Перерисовать ${AiChoice.costHtml()}</button>
+        </div>`;
     } else {
       // Выбор модели прямо над кнопкой: цена на кнопке меняется вместе с ним
       main = `<div class="main-gen">
@@ -279,26 +282,22 @@ const ProjectPage = {
   openMore() {
     const v = this.variant(this.sel);
     const img = v?.generated_image;
-    const item = (act, ic, text, extra = '', dis = false) => `
-      <button class="sheet-item" data-more="${act}"${dis ? ' disabled' : ''}>${icon(ic)}<b>${text}</b>${extra}</button>`;
+    const item = (act, ic, text) => `
+      <button class="sheet-item" data-more="${act}">${icon(ic)}<b>${text}</b></button>`;
     showModal(`
       <div class="sheet-list sheet-list--compact">
-        ${img ? item('generate', 'sparkle', 'Перерисовать вариант', AiChoice.costHtml(), this.busy(v)) : ''}
         ${img ? item('download', 'download', 'Сохранить в Фото') : ''}
         ${item('kp', 'share', 'Смета и КП заказчику')}
         ${item('new', 'plus', 'Новый вариант')}
         ${item('rename', 'edit', 'Переименовать проект')}
-        ${img ? '<div class="sheet-ai"><div class="ai-pick" data-ai-pick></div></div>' : ''}
         <div class="sheet-sep"></div>
         ${item('delete', 'trash', 'Удалить проект').replace('class="sheet-item"', 'class="sheet-item sheet-item--danger"')}
       </div>`);
-    AiChoice.render();
     document.querySelector('.sheet-list').addEventListener('click', async (e) => {
       const b = e.target.closest('[data-more]');
       if (!b) return;
       closeModal();
       const act = b.dataset.more;
-      if (act === 'generate') this.runGenerate();
       if (act === 'download') saveImage(img, `fasad-${this.project.id}-variant-${this.index(this.sel)}.jpg`);
       if (act === 'kp') KP.open(this.project.id, v?.id);
       if (act === 'new') this.edit(false);
