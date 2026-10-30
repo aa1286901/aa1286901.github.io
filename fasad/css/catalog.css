@@ -1005,6 +1005,28 @@
   color: var(--color-text-secondary);
 }
 
+/* Название проекта на экране «Итог» */
+.spec-name {
+  display: block;
+  margin-bottom: var(--spacing-md);
+}
+
+.spec-name span {
+  display: block;
+  margin: 0 0 6px 4px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.spec-name .input {
+  font-weight: 600;
+}
+
+.spec-name[hidden] {
+  display: none;
+}
+
 #spec-save {
   margin-bottom: 4px;
 }

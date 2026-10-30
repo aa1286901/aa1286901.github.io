@@ -26,6 +26,7 @@ const ProjectFlow = {
       originalPhoto: this.state.originalPhoto,
       design: this.state.design,
       editProject: this.state.editProject,
+      projectName: this.state.projectName,
       step: this.state.step,
       savedAt: Date.now(),
     };
