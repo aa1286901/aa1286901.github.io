@@ -10,8 +10,8 @@ if (!isAdmin(findUser($db, $adminId))) respondError('Нет доступа', 403
 
 $cfg = aiConfig();
 $credits = (float)kieCall($cfg, 'chat/credit');
-// Сколько картинок 2K хватит: столько кредитов kie.ai стоит одна
-$per = ['nano' => 6, 'gpt' => 10];
+// Сколько картинок 1K хватит: столько кредитов kie.ai стоит одна (по прайсу kie.ai)
+$per = ['nano' => 4, 'gpt' => 6];
 respondSuccess([
     'credits' => $credits,
     'usd' => round($credits * 0.005, 2),

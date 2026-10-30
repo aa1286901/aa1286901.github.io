@@ -3,17 +3,18 @@
 // Фото: картинка варианта; «До и после» включает ползунок; нажатие — на весь экран с увеличением.
 
 // Чем рисовать: прораб выбирает сам, выбор запоминается на телефоне.
-// refs — сколько образцов отправлять: GPT Image с образцами изделий не укладывается в время kie.ai
-// и падает с «500 Internal Error», поэтому ему — только камень стен и цоколя, изделия словами
+// refs — сколько образцов отправлять. GPT Image 2.5 (Sunburst и Flare) с полным заданием и образцами изделий
+// на kie.ai падает с «500 Internal Error», GPT Image 1.5 — «Inappropriate content»; GPT Image 2 рисует всё
 const AI_MODELS = [
   { id: 'nano-banana-2-1', name: 'Nano Banana', note: '~30 с', coins: 1, refs: 9, wait: 'обычно 30–60 секунд' },
-  { id: 'gpt-image-2-5-sunburst-image-to-image', name: 'GPT Image 2.5', note: '~1,5 мин', coins: 2, refs: 2, wait: 'обычно 1–2 минуты' },
+  { id: 'gpt-image-2-image-to-image', name: 'GPT Image 2', note: '~2 мин', coins: 2, refs: 9, wait: 'обычно 1–2 минуты' },
 ];
 
 const AiChoice = {
   get() {
     let id = null;
     try { id = localStorage.getItem('fasad-ai-model'); } catch (e) { /* без хранилища — по умолчанию */ }
+    if (id === 'gpt-image-2-5-sunburst-image-to-image') id = 'gpt-image-2-image-to-image';  // кто выбирал GPT 2.5 — теперь GPT 2
     return AI_MODELS.some(m => m.id === id) ? id : AI_MODELS[0].id;
   },
   set(id) {
