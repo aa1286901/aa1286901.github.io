@@ -41,7 +41,8 @@ const AiChoice = {
           <small>${coin('plain')}${m.coins} ${coinsWord(m.coins)} · ${m.note}</small></button>`).join('')}</div>`;
   },
   render() {
-    document.querySelectorAll('.modal [data-ai-pick]').forEach(box => { box.innerHTML = this.html(); });
+    document.querySelectorAll('.modal-sheet [data-ai-pick]').forEach(box => { box.innerHTML = this.html(); });
+    document.querySelectorAll('.modal-sheet .btn-cost').forEach(el => { el.outerHTML = this.costHtml(); });
     // Цена на кнопках генерации
     if (ProjectPage.project && document.getElementById('project-main')) ProjectPage.renderMain(ProjectPage.variant(ProjectPage.sel));
   },
@@ -273,19 +274,22 @@ const ProjectPage = {
     });
   },
 
-  // «Ещё»: редкие действия одним списком
+  // «Ещё»: редкие действия коротким списком, удаление — отдельно и красным
   openMore() {
     const v = this.variant(this.sel);
     const img = v?.generated_image;
-    const item = (act, ic, text, sub = '', dis = false) => `
-      <button class="sheet-item" data-more="${act}"${dis ? ' disabled' : ''}>${icon(ic)}<span><b>${text}</b>${sub ? `<small>${sub}</small>` : ''}</span></button>`;
+    const item = (act, ic, text, extra = '', dis = false) => `
+      <button class="sheet-item" data-more="${act}"${dis ? ' disabled' : ''}>${icon(ic)}<b>${text}</b>${extra}</button>`;
     showModal(`
-      <div class="sheet-list">
-        ${img ? item('generate', 'sparkle', `Перерисовать этот вариант`, `ещё раз тем же камнем · ${AiChoice.cost()} ${coinsWord(AiChoice.cost())}`, this.busy(v)) : ''}
-        ${img ? item('download', 'download', 'Скачать картинку', 'сохранить в галерею телефона') : ''}
-        ${item('new', 'plus', 'Новый вариант', 'другой камень — прежний вариант останется')}
-        ${item('rename', 'edit', 'Переименовать проект', esc(this.project.name || ''))}
+      <div class="sheet-list sheet-list--compact">
+        ${img ? item('generate', 'sparkle', 'Перерисовать вариант', AiChoice.costHtml(), this.busy(v)) : ''}
+        ${img ? item('download', 'download', 'Скачать картинку') : ''}
+        ${item('kp', 'share', 'Смета и КП заказчику')}
+        ${item('new', 'plus', 'Новый вариант')}
+        ${item('rename', 'edit', 'Переименовать проект')}
         ${img ? '<div class="sheet-ai"><div class="ai-pick" data-ai-pick></div></div>' : ''}
+        <div class="sheet-sep"></div>
+        ${item('delete', 'trash', 'Удалить проект').replace('class="sheet-item"', 'class="sheet-item sheet-item--danger"')}
       </div>`);
     AiChoice.render();
     document.querySelector('.sheet-list').addEventListener('click', async (e) => {
@@ -295,6 +299,7 @@ const ProjectPage = {
       const act = b.dataset.more;
       if (act === 'generate') this.runGenerate();
       if (act === 'download') downloadImage(img, `fasad-${this.project.id}-variant-${this.index(this.sel)}.jpg`);
+      if (act === 'kp') KP.open(this.project.id, v?.id);
       if (act === 'new') this.edit(false);
       if (act === 'rename') {
         const name = await showPrompt('Название проекта', this.project.name, 'Сохранить');
@@ -306,6 +311,17 @@ const ProjectPage = {
           showToast('Проект переименован');
         } catch (err) {
           showToast(err.message || 'Не удалось переименовать');
+        }
+      }
+      if (act === 'delete') {
+        const ok = await showConfirm('Удалить проект?', `«${esc(this.project.name || 'Проект')}» и все его варианты удалятся. Это нельзя отменить.`, 'Удалить');
+        if (!ok) return;
+        try {
+          await Api.deleteProject(this.project.id);
+          showToast('Проект удалён');
+          Router.navigateTo('projects');
+        } catch (err) {
+          showToast(err.message || 'Не удалось удалить проект');
         }
       }
     });
