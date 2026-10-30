@@ -13,6 +13,7 @@ const KP_ITEMS = [
   { id: 'baseCornice', group: 'Карнизы', name: 'Плинтус над цоколем', unit: 'п.м', m: 1600, w: 700, part: 'baseCornice' },
   { id: 'dentils', group: 'Карнизы', name: 'Зубцы под карнизом', unit: 'п.м', m: 1200, w: 700, part: 'dentils' },
   { id: 'frame', group: 'Окна и двери', name: 'Наличники', unit: 'п.м', m: 950, w: 600, part: 'frame' },
+  { id: 'windowCornice', group: 'Окна и двери', name: 'Карнизы над окнами', unit: 'п.м', m: 1400, w: 500, part: 'windowCornice' },
   { id: 'sill', group: 'Окна и двери', name: 'Подоконники', unit: 'п.м', m: 1400, w: 500, part: 'sill' },
   { id: 'keystone', group: 'Окна и двери', name: 'Замки над окнами', unit: 'шт', m: 1500, w: 500, part: 'keystone' },
   { id: 'console', group: 'Окна и двери', name: 'Консоли под подоконники', unit: 'шт', m: 1200, w: 400, part: 'console' },
@@ -54,7 +55,7 @@ function kpAutoQty(id, ms, days) {
   return Math.ceil({
     wall: walls, base: plinth, corners: 4 * H,
     topCornice: P, floorCornice: P * (F - 1), baseCornice: P, dentils: P,
-    frame: N * 5.4 + D * 5.1, sill: N * 1.4, keystone: N, console: N * 2, reveals: N * 4.2 + D * 5.1,
+    frame: N * 5.4 + D * 5.1, windowCornice: N * 1.6 + D * 1.3, sill: N * 1.4, keystone: N, console: N * 2, reveals: N * 4.2 + D * 5.1,
     column: 2, capital: 2, balustrade: 6,
     mesh: area, scaffold: F > 1 ? walls : 0, glue: area, delivery: Math.max(1, Math.ceil(area / 120)),
     unload: 1, food: days, trash: 1,

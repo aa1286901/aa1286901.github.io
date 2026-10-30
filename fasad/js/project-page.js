@@ -448,7 +448,7 @@ function openPhotoViewer(shots, title) {
 
 // Подбор любой версии → подбор в три экрана (version 5), чтобы его можно было изменить
 function upgradeDesign(design, stones) {
-  if (design?.version === 5) return JSON.parse(JSON.stringify(design));
+  if (design?.version === 5) return addMissingParts(JSON.parse(JSON.stringify(design)));
   const spec = Configurator.newSpec();
   spec.filled = true;
   Object.values(spec.parts).forEach(p => { p.item = null; });
@@ -488,6 +488,7 @@ const AI_PART_TEXT = {
   baseCornice: 'Plinth moulding: a horizontal band on top of the plinth',
   dentils: 'Dentils (row of small rectangular blocks) right under the crowning cornice',
   frame: 'Window surrounds: a moulded frame around every window',
+  windowCornice: 'Window cornice: a short projecting moulded cornice (hood) above every window, on top of the window surround',
   sill: 'Stone window sill under every window',
   keystone: 'Keystone at the top centre of every window surround',
   console: 'Small consoles (brackets) under every window sill',
