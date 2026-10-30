@@ -294,12 +294,65 @@ const Storage = {
 };
 
 // === Share helper ===
+// Картинки для окна «Поделиться». На iPhone оно открывается только сразу после нажатия —
+// пока файл качается, нажатие «протухает». Поэтому файл готовим заранее, как только картинка на экране
+const ImageFiles = {
+  cache: new Map(),
+  prepare(url, name = 'fasad.jpg') {
+    let entry = this.cache.get(url);
+    if (!entry) {
+      entry = { file: null };
+      entry.promise = fetch(url)
+        .then(r => (r.ok ? r.blob() : Promise.reject(new Error('Картинка не загрузилась'))))
+        .then(b => (entry.file = new File([b], name, { type: b.type || 'image/jpeg' })));
+      entry.promise.catch(() => this.cache.delete(url));
+      this.cache.set(url, entry);
+    }
+    return entry;
+  },
+};
+
+// «Скачать картинку»: на телефоне — окно «Поделиться» с пунктом «Сохранить изображение» (в Фото),
+// а не файл JPG, из которого в приложении с экрана «Домой» не выйти. На компьютере — обычное скачивание
+async function saveImage(url, filename) {
+  if (!navigator.share || !navigator.canShare) return downloadImage(url, filename);
+  const entry = ImageFiles.prepare(url, filename);
+  if (entry.file) return shareImageFile(entry.file, url, filename);
+  // Файл ещё качается — откроем «Поделиться» вторым нажатием
+  showModal(`
+    <div class="save-sheet">
+      <h3 class="sheet-title">Сохранить в Фото</h3>
+      <p class="configure-hint">В открывшемся окне выберите «Сохранить изображение».</p>
+      <button class="btn btn-primary btn-full" id="save-go" disabled>Готовим картинку…</button>
+    </div>`);
+  const file = await entry.promise.catch(() => null);
+  const btn = document.getElementById('save-go');
+  if (!btn) return;
+  if (!file) {
+    closeModal();
+    return showToast('Не удалось загрузить картинку');
+  }
+  btn.disabled = false;
+  btn.textContent = 'Сохранить';
+  btn.addEventListener('click', () => {
+    closeModal();
+    shareImageFile(file, url, filename);
+  });
+}
+
+function shareImageFile(file, url, filename) {
+  if (!navigator.canShare({ files: [file] })) return downloadImage(url, filename);
+  // Без текста: с текстом iPhone прячет «Сохранить изображение»
+  navigator.share({ files: [file] }).catch(e => {
+    if (e.name !== 'AbortError') showToast('Не удалось открыть «Поделиться»');
+  });
+}
+
 async function shareProject(title, imageUrl) {
   if (navigator.share) {
     try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const file = new File([blob], 'fasad-project.png', { type: 'image/png' });
+      const entry = ImageFiles.prepare(imageUrl, 'fasad.jpg');
+      const file = entry.file || await entry.promise;
       await navigator.share({
         title: title,
         text: 'Мой фасад, созданный в Fasad AI',
