@@ -70,6 +70,8 @@ function aiStart($cfg, $originalImage, $prompt, $refs) {
     // Пропорции — как у фото
     $input = ['prompt' => $prompt, $model['images'] => $urls, 'resolution' => $cfg['resolution'], 'aspect_ratio' => 'auto'];
     if (str_starts_with($cfg['model'], 'nano-banana')) $input['output_format'] = 'jpg';
+    // GPT Image с «auto» в 2K падает с Internal Error — даём ему ближайшие пропорции фото явно
+    if (str_starts_with($cfg['model'], 'gpt-image')) $input['aspect_ratio'] = aiAspect(__DIR__ . '/../' . $originalImage);
     $data = kieCall($cfg, 'jobs/createTask', ['model' => $cfg['model'], 'input' => $input]);
     if (empty($data['taskId'])) respondError('Сервис ИИ не принял задачу', 502);
     return [
@@ -79,6 +81,19 @@ function aiStart($cfg, $originalImage, $prompt, $refs) {
         'started_at' => date('Y-m-d H:i:s'),
         'error' => null,
     ];
+}
+
+// Ближайшие к фото пропорции из тех, что GPT Image рисует в 2K
+function aiAspect($file) {
+    $size = @getimagesize($file);
+    if (!$size || !$size[1]) return '4:3';
+    $r = $size[0] / $size[1];
+    $best = '1:1';
+    foreach (['1:1', '3:2', '2:3', '4:3', '3:4', '16:9', '9:16', '21:9'] as $a) {
+        [$w, $h] = explode(':', $a);
+        if (abs(log($r / ($w / $h))) < abs(log($r / (explode(':', $best)[0] / explode(':', $best)[1])))) $best = $a;
+    }
+    return $best;
 }
 
 // Проверить задачу; готовую картинку скачать к себе (kie.ai хранит её всего 14 дней)
