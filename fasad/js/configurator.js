@@ -21,6 +21,7 @@ const PATTERN_GROUPS = [
     { key: 'floorCornice', title: 'Межэтажный карниз', sections: ['cornice', 'plinth'], def: /межэтажный К-26/i },
     { key: 'baseCornice', title: 'Плинтус над цоколем', sections: ['plinth', 'cornice'], def: /^Плинтус П-15/ },
     { key: 'dentils', title: 'Зубцы под карнизом', sections: ['dentil'] },
+    { key: 'corners', title: 'Русты (Пилястры)', sections: ['rust'], def: /^Русты стандартные/ },
   ] },
   { group: 'windows', title: 'Окна', rows: [
     { key: 'frame', title: 'Наличник', sections: ['cornice', 'plinth'], def: /^Карниз К-12$/ },
@@ -28,9 +29,6 @@ const PATTERN_GROUPS = [
     { key: 'sill', title: 'Подоконник', sections: ['cornice', 'plinth'], def: /^Карниз К-37$/ },
     { key: 'keystone', title: 'Замок над окном', sections: ['keystone'], def: /^Замок простой/ },
     { key: 'console', title: 'Консоли под подоконник', sections: ['console'] },
-  ] },
-  { group: 'corners', title: 'Углы дома', rows: [
-    { key: 'corners', title: 'Русты', sections: ['rust'], def: /^Русты стандартные/ },
   ] },
   { group: 'columns', title: 'Колонны и балюстрада', rows: [
     { key: 'column', title: 'Колонна или пилястра', sections: ['column', 'pilaster'], skipTall: true },
