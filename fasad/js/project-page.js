@@ -227,6 +227,7 @@ const ProjectPage = {
       main = `<div class="main-busy"><span class="spinner"></span><div><b>ИИ рисует фасад</b>
         <small>${AiChoice.wait(v.ai.model)} · можно выйти, картинка сохранится</small></div></div>`;
     } else if (img) {
+      ImageFiles.prepare(img, `fasad-${this.project.id}-variant-${this.index(v.id)}.jpg`);  // для «Скачать» и «Отправить»
       main = `<button class="btn btn-primary btn-full main-btn" data-act="share">${icon('share')}Отправить заказчику</button>`;
     } else {
       // Выбор модели прямо над кнопкой: цена на кнопке меняется вместе с ним
@@ -283,7 +284,7 @@ const ProjectPage = {
     showModal(`
       <div class="sheet-list sheet-list--compact">
         ${img ? item('generate', 'sparkle', 'Перерисовать вариант', AiChoice.costHtml(), this.busy(v)) : ''}
-        ${img ? item('download', 'download', 'Скачать картинку') : ''}
+        ${img ? item('download', 'download', 'Сохранить в Фото') : ''}
         ${item('kp', 'share', 'Смета и КП заказчику')}
         ${item('new', 'plus', 'Новый вариант')}
         ${item('rename', 'edit', 'Переименовать проект')}
@@ -298,7 +299,7 @@ const ProjectPage = {
       closeModal();
       const act = b.dataset.more;
       if (act === 'generate') this.runGenerate();
-      if (act === 'download') downloadImage(img, `fasad-${this.project.id}-variant-${this.index(this.sel)}.jpg`);
+      if (act === 'download') saveImage(img, `fasad-${this.project.id}-variant-${this.index(this.sel)}.jpg`);
       if (act === 'kp') KP.open(this.project.id, v?.id);
       if (act === 'new') this.edit(false);
       if (act === 'rename') {
