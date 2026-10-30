@@ -7,7 +7,7 @@
 // на kie.ai падает с «500 Internal Error», GPT Image 1.5 — «Inappropriate content»; GPT Image 2 рисует всё
 const AI_MODELS = [
   { id: 'nano-banana-2-1', name: 'Nano Banana', note: '~30 с', coins: 1, refs: 9, wait: 'обычно 30–60 секунд' },
-  { id: 'gpt-image-2-image-to-image', name: 'GPT Image 2', note: '~2 мин', coins: 2, refs: 9, wait: 'обычно 1–2 минуты' },
+  { id: 'gpt-image-2-image-to-image', name: 'ChatGPT Image', note: '~2 мин', coins: 2, refs: 9, wait: 'обычно 1–2 минуты' },
 ];
 
 const AiChoice = {
@@ -285,8 +285,9 @@ const ProjectPage = {
   openMore() {
     const v = this.variant(this.sel);
     const img = v?.generated_image;
-    const item = (act, ic, text) => `
-      <button class="sheet-item" data-more="${act}">${icon(ic)}<b>${text}</b></button>`;
+    const many = (this.project.variants || []).length > 1;
+    const item = (act, ic, text, danger) => `
+      <button class="sheet-item${danger ? ' sheet-item--danger' : ''}" data-more="${act}">${icon(ic)}<b>${text}</b></button>`;
     showModal(`
       <div class="sheet-list sheet-list--compact">
         ${img ? item('download', 'download', 'Сохранить в Фото') : ''}
@@ -294,7 +295,8 @@ const ProjectPage = {
         ${item('new', 'plus', 'Новый вариант')}
         ${item('rename', 'edit', 'Переименовать проект')}
         <div class="sheet-sep"></div>
-        ${item('delete', 'trash', 'Удалить проект').replace('class="sheet-item"', 'class="sheet-item sheet-item--danger"')}
+        ${many ? item('delete-variant', 'trash', `Удалить вариант ${this.index(this.sel)}`, true) : ''}
+        ${item('delete', 'trash', 'Удалить проект', true)}
       </div>`);
     document.querySelector('.sheet-list').addEventListener('click', async (e) => {
       const b = e.target.closest('[data-more]');
@@ -314,6 +316,21 @@ const ProjectPage = {
           showToast('Проект переименован');
         } catch (err) {
           showToast(err.message || 'Не удалось переименовать');
+        }
+      }
+      if (act === 'delete-variant') {
+        const n = this.index(this.sel);
+        const ok = await showConfirm(`Удалить вариант ${n}?`, 'Подбор камня и картинка этого варианта удалятся, остальные варианты останутся.', 'Удалить');
+        if (!ok) return;
+        try {
+          const res = await Api.projectVariant(this.project.id, 'delete', { variant_id: this.sel });
+          this.project.variants = res.data.variants;
+          const vs = this.project.variants;
+          this.sel = (vs[Math.min(n - 1, vs.length - 1)] || vs[0])?.id;  // соседний вариант
+          this.render();
+          showToast(`Вариант ${n} удалён`);
+        } catch (err) {
+          showToast(err.message || 'Не удалось удалить вариант');
         }
       }
       if (act === 'delete') {

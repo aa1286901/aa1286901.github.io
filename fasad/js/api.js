@@ -84,6 +84,10 @@ const Api = {
     return this.request('./admin/kie.php');
   },
 
+  async adminAiLog() {
+    return this.request('./admin/ai-log.php');
+  },
+
   // Администратор: ключ kie.ai (без key — узнать, какой стоит; с key — проверить и сохранить)
   async adminAiKey(key = null) {
     return key ? this.request('./admin/ai-key.php', { method: 'POST', body: JSON.stringify({ key }) })

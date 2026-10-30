@@ -8,3 +8,6 @@ uploads/generated/*
 !uploads/*/.gitkeep
 # Ключ ИИ — только на хостинге
 data/ai.php
+# Журнал запросов к ИИ — тоже только на хостинге
+data/ai-log.php
+data/ai-log.php.lock

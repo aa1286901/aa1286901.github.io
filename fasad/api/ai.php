@@ -7,6 +7,8 @@
 
 define('AI_CONFIG', DATA_DIR . 'ai.php');
 define('KIE_API', 'https://api.kie.ai/api/v1/');
+define('AI_LOG', DATA_DIR . 'ai-log.php');  // журнал запросов к kie.ai — смотрит администратор
+define('AI_LOG_MAX', 300);
 
 // Модели kie.ai: поле со ссылками на картинки, допустимое число картинок, цена генерации в монетах
 // и разрешение (по умолчанию 1K)
@@ -53,19 +55,29 @@ function kieCall($cfg, $path, $body = null) {
     curl_close($ch);
     $res = is_string($raw) ? json_decode($raw, true) : null;
     if (!is_array($res)) {
-        respondError('Сервис ИИ не отвечает, попробуйте позже', 502);
+        kieFail('Сервис ИИ не отвечает, попробуйте позже', 502, 'нет ответа: ' . mb_substr((string)$raw, 0, 300));
     }
     // Ошибки kie.ai приходят с HTTP 200 и своим кодом внутри
     $code = (int)($res['code'] ?? 0);
-    if ($code === 402) respondError('На балансе kie.ai закончились кредиты', 402);
-    if ($code === 401) respondError('Ключ kie.ai не подходит', 502);
-    if ($code === 429) respondError('Слишком много генераций сразу, попробуйте через минуту', 429);
-    if ($code !== 200) respondError('Сервис ИИ: ' . ($res['msg'] ?? 'ошибка'), 502);
+    $raw = trim($code . ' ' . ($res['msg'] ?? ''));
+    if ($code === 402) kieFail('На балансе kie.ai закончились кредиты', 402, $raw);
+    if ($code === 401) kieFail('Ключ kie.ai не подходит', 502, $raw);
+    if ($code === 429) kieFail('Слишком много генераций сразу, попробуйте через минуту', 429, $raw);
+    if ($code !== 200) kieFail('Сервис ИИ: ' . ($res['msg'] ?? 'ошибка'), 502, $raw);
     return $res['data'] ?? null;
 }
 
-// Поставить задачу: фото проекта + образцы камня и изделий, задание — текстом
-function aiStart($cfg, $originalImage, $prompt, $refs) {
+// Ошибка kie.ai: если в этот момент ставили задачу — записать в журнал, что ответил kie.ai
+function kieFail($message, $status, $raw) {
+    if (!empty($GLOBALS['aiLogStart'])) {
+        aiLog('err_' . uniqid(), $GLOBALS['aiLogStart'] + ['status' => 'start_error', 'response' => $raw, 'finished_at' => date('Y-m-d H:i:s')]);
+    }
+    respondError($message, $status);
+}
+
+// Поставить задачу: фото проекта + образцы камня и изделий, задание — текстом.
+// $meta — кто и в каком проекте рисует, для журнала администратора
+function aiStart($cfg, $originalImage, $prompt, $refs, $meta = []) {
     $base = publicUrl($cfg);
     $model = AI_MODELS[$cfg['model']];
     $urls = array_slice(array_merge([$originalImage], $refs), 0, $model['max']);
@@ -81,13 +93,20 @@ function aiStart($cfg, $originalImage, $prompt, $refs) {
         $input['quality'] = 'high';
         unset($input['resolution']);
     }
+    $started = date('Y-m-d H:i:s');
+    $GLOBALS['aiLogStart'] = $meta + [
+        'at' => $started, 'model' => $cfg['model'], 'resolution' => $input['resolution'] ?? null,
+        'aspect' => $input['aspect_ratio'] ?? null, 'images' => $urls, 'prompt' => $prompt,
+    ];
     $data = kieCall($cfg, 'jobs/createTask', ['model' => $cfg['model'], 'input' => $input]);
-    if (empty($data['taskId'])) respondError('Сервис ИИ не принял задачу', 502);
+    if (empty($data['taskId'])) kieFail('Сервис ИИ не принял задачу', 502, 'нет taskId в ответе');
+    aiLog((string)$data['taskId'], $GLOBALS['aiLogStart'] + ['status' => 'processing']);
+    $GLOBALS['aiLogStart'] = null;
     return [
         'task_id' => (string)$data['taskId'],
         'model' => $cfg['model'],
         'status' => 'processing',
-        'started_at' => date('Y-m-d H:i:s'),
+        'started_at' => $started,
         'error' => null,
     ];
 }
@@ -115,6 +134,7 @@ function aiPoll($cfg, &$variant) {
         $ai['error'] = aiErrorText($data['failMsg'] ?? '');
         // Ответ kie.ai как есть — чтобы по проекту было видно настоящую причину сбоя
         $ai['fail_raw'] = trim(($data['failCode'] ?? '') . ' ' . ($data['failMsg'] ?? ''));
+        aiLogFinish($ai, $data, ['status' => 'failed', 'response' => $ai['fail_raw']]);
         return;
     }
     if ($state !== 'success') {
@@ -122,6 +142,7 @@ function aiPoll($cfg, &$variant) {
         if (time() - strtotime($ai['started_at']) > 600) {
             $ai['status'] = 'failed';
             $ai['error'] = 'ИИ не ответил за 10 минут — попробуйте ещё раз';
+            aiLogFinish($ai, $data, ['status' => 'failed', 'response' => 'нет ответа за 10 минут, состояние: ' . ($state ?: '—')]);
         }
         return;
     }
@@ -131,10 +152,46 @@ function aiPoll($cfg, &$variant) {
     if (!$img) {
         $ai['status'] = 'failed';
         $ai['error'] = 'Не удалось скачать картинку от ИИ';
+        aiLogFinish($ai, $data, ['status' => 'failed', 'response' => 'готово, но картинку не скачали: ' . ($url ?: 'нет ссылки')]);
         return;
     }
     $variant['generated_image'] = $img;
     $ai['status'] = 'done';
+    aiLogFinish($ai, $data, ['status' => 'done', 'response' => 'готово', 'result' => $img]);
+}
+
+// === Журнал запросов к kie.ai ===
+// Последние AI_LOG_MAX задач: кто, какая модель, что отправили (задание, картинки) и что ответил kie.ai.
+// Лежит в data/ai-log.php с той же «заглушкой», что и база: снаружи файл не прочитать.
+
+function aiLogFinish($ai, $data, $fields) {
+    $fields['finished_at'] = date('Y-m-d H:i:s');
+    if (isset($data['creditsConsumed'])) $fields['credits'] = (float)$data['creditsConsumed'];
+    if (isset($data['costTime'])) $fields['cost_ms'] = (int)$data['costTime'];
+    aiLog($ai['task_id'], $fields);
+}
+
+function aiLog($id, $fields) {
+    $lock = fopen(AI_LOG . '.lock', 'c');
+    if ($lock) flock($lock, LOCK_EX);
+    $list = aiLogRead();
+    $i = array_search($id, array_column($list, 'id'), true);
+    if ($i === false) {
+        array_unshift($list, ['id' => $id] + $fields);
+        $list = array_slice($list, 0, AI_LOG_MAX);
+    } else {
+        $list[$i] = array_merge($list[$i], $fields);
+    }
+    @file_put_contents(AI_LOG, DB_GUARD . json_encode($list, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    if ($lock) { flock($lock, LOCK_UN); fclose($lock); }
+}
+
+function aiLogRead() {
+    $raw = @file_get_contents(AI_LOG);
+    if (!is_string($raw) || $raw === '') return [];
+    if (str_starts_with($raw, DB_GUARD)) $raw = substr($raw, strlen(DB_GUARD));
+    $list = json_decode($raw, true);
+    return is_array($list) ? $list : [];
 }
 
 function aiDownload($url) {

@@ -92,7 +92,9 @@ if ($action === 'add') {
     $user = &findUser($db, $userId);
     $charged = walletCharge($user, AI_MODELS[$cfg['model']]['coins']);
     if ($charged === null) respondError('Не хватает монет', 402);
-    $project['variants'][$found]['ai'] = aiStart($cfg, $project['original_image'], $prompt, array_values(array_unique($refs)));
+    $meta = ['user' => $user['email'] ?? '', 'user_name' => $user['name'] ?? '', 'project' => $project['id'],
+        'project_name' => $project['name'] ?? '', 'variant' => $project['variants'][$found]['id']];
+    $project['variants'][$found]['ai'] = aiStart($cfg, $project['original_image'], $prompt, array_values(array_unique($refs)), $meta);
     $project['variants'][$found]['ai']['charged'] = $charged;
     unset($user);
 } elseif ($action === 'poll') {

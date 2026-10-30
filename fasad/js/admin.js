@@ -36,14 +36,18 @@ const AdminScreen = {
         <div class="kie__head">${icon('sparkle')}<span>Баланс ИИ · kie.ai</span>
           <button class="kie__refresh" id="admin-kie-refresh" aria-label="Обновить">↻</button></div>
         <div class="kie__credits"><b>${k.credits.toLocaleString('ru-RU')}</b> кредитов <small>≈ $${k.usd}</small></div>
-        <div class="kie__left${low ? ' kie__left--low' : ''}">Хватит примерно на ${k.left.nano} картинок Nano Banana или ${k.left.gpt} GPT Image</div>
+        <div class="kie__left${low ? ' kie__left--low' : ''}">Хватит примерно на ${k.left.nano} картинок Nano Banana или ${k.left.gpt} ChatGPT Image</div>
         ${low ? '<p class="kie__warn">Пора пополнить: когда кредиты kie.ai кончатся, генерации перестанут проходить даже у пользователей с монетами.</p>' : ''}
-        <a class="btn btn-secondary btn-full kie__top" href="https://kie.ai/" target="_blank" rel="noopener">Пополнить на kie.ai</a>
+        <div class="kie__btns">
+          <button class="btn btn-secondary" data-open-ailog>Журнал запросов</button>
+          <a class="btn btn-secondary" href="https://kie.ai/" target="_blank" rel="noopener">Пополнить</a>
+        </div>
         ${this.keyRow()}`;
     } catch (e) {
       el.innerHTML = `<div class="kie__head">${icon('sparkle')}<span>Баланс ИИ · kie.ai</span>
         <button class="kie__refresh" id="admin-kie-refresh" aria-label="Обновить">↻</button></div>
         <p class="kie__warn">${esc(e.message || 'Не удалось узнать баланс')}</p>
+        <button class="btn btn-secondary btn-full kie__top" data-open-ailog>Журнал запросов</button>
         ${this.keyRow()}`;
     }
     this.loadKey();
@@ -209,6 +213,7 @@ const AdminScreen = {
       if (e.target.closest('#admin-add')) return this.openCreate();
       if (e.target.closest('#admin-kie-refresh')) return this.loadKie();
       if (e.target.closest('#admin-key-change')) return this.changeKey();
+      if (e.target.closest('[data-open-ailog]')) return Router.navigateTo('ailog');
     });
     box.addEventListener('input', e => {
       if (e.target.id !== 'admin-search') return;
@@ -223,4 +228,105 @@ function onScreenAdmin() {
   if (!Auth.isLoggedIn()) return showInlineAuth('admin-content');
   AdminScreen.bind();
   AdminScreen.render();
+}
+
+// === Журнал запросов к ИИ: каждая генерация — что отправили в kie.ai и что он ответил ===
+const AI_LOG_MODELS = { 'nano-banana-2-1': 'Nano Banana', 'gpt-image-2-image-to-image': 'ChatGPT Image' };
+const AI_LOG_STATUS = { processing: ['рисует', 'wait'], done: ['готово', 'ok'], failed: ['ошибка', 'err'], start_error: ['не принят', 'err'] };
+const aiLogFailed = x => x.status === 'failed' || x.status === 'start_error';
+
+const AiLogScreen = {
+  entries: [],
+  onlyErrors: false,
+
+  async render() {
+    const box = document.getElementById('ailog-content');
+    box.innerHTML = '<p class="configure-hint">Загрузка…</p>';
+    try {
+      this.entries = (await Api.adminAiLog()).data.entries;
+      this.draw();
+    } catch (e) {
+      box.innerHTML = `<p class="configure-hint">${esc(e.message || 'Не удалось загрузить журнал')}</p>`;
+    }
+  },
+
+  draw() {
+    const all = this.entries;
+    const d = new Date();
+    const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const day = all.filter(x => (x.at || '').startsWith(today));
+    const credits = day.reduce((a, x) => a + (+x.credits || 0), 0);
+    const list = this.onlyErrors ? all.filter(aiLogFailed) : all;
+    document.getElementById('ailog-content').innerHTML = `
+      <div class="admin-sum ailog-sum">
+        <div class="admin-sum__item"><b>${day.length}</b><span>запросов сегодня</span></div>
+        <div class="admin-sum__item"><b>${day.filter(aiLogFailed).length}</b><span>ошибок сегодня</span></div>
+        <div class="admin-sum__item"><b>${kpNum(credits)}</b><span>кредитов сегодня</span></div>
+      </div>
+      <div class="ai-pick__seg ailog-filter">
+        <button class="${this.onlyErrors ? '' : 'active'}" data-ailog-filter="all"><b>Все · ${all.length}</b></button>
+        <button class="${this.onlyErrors ? 'active' : ''}" data-ailog-filter="err"><b>Ошибки · ${all.filter(aiLogFailed).length}</b></button>
+      </div>
+      <div class="ailog">${list.length ? list.map(x => this.rowHtml(x)).join('') : '<p class="configure-hint">Запросов пока нет. Журнал пишется с момента обновления приложения.</p>'}</div>`;
+  },
+
+  rowHtml(x) {
+    const [label, cls] = AI_LOG_STATUS[x.status] || [x.status, 'wait'];
+    const secs = x.cost_ms ? Math.round(x.cost_ms / 1000) : (x.finished_at && x.at ? Math.round((parseDate(x.finished_at) - parseDate(x.at)) / 1000) : null);
+    return `
+      <button class="ailog__row" data-ailog="${esc(x.id)}">
+        <span class="ailog__top"><b>${esc(AI_LOG_MODELS[x.model] || x.model || '—')}</b><span class="ailog__pill ailog__pill--${cls}">${label}</span></span>
+        <span class="ailog__meta">${esc(formatDateTime(x.at))} · ${esc(x.user_name || x.user || '')}${secs != null ? ` · ${secs} с` : ''}${x.credits ? ` · ${kpNum(x.credits)} кр.` : ''}</span>
+        ${aiLogFailed(x) ? `<span class="ailog__err">${esc(x.response || '')}</span>` : ''}
+      </button>`;
+  },
+
+  open(id) {
+    const x = this.entries.find(e => e.id === id);
+    if (!x) return;
+    const [label, cls] = AI_LOG_STATUS[x.status] || [x.status, 'wait'];
+    const row = (k, v) => (v == null || v === '' ? '' : `<div class="ailog-d__row"><span>${k}</span><b>${v}</b></div>`);
+    showModal(`
+      <div class="ailog-d">
+        <h3 class="sheet-title">${esc(AI_LOG_MODELS[x.model] || x.model)} <span class="ailog__pill ailog__pill--${cls}">${label}</span></h3>
+        ${row('Ответ kie.ai', esc(x.response || (x.status === 'processing' ? 'ещё рисует' : '')))}
+        ${row('Отправлено', esc(formatDateTime(x.at)))}
+        ${row('Завершено', x.finished_at ? esc(formatDateTime(x.finished_at)) : '')}
+        ${row('Время у kie.ai', x.cost_ms ? `${Math.round(x.cost_ms / 1000)} с` : '')}
+        ${row('Кредитов', x.credits != null ? kpNum(x.credits) : '')}
+        ${row('Пользователь', esc([x.user_name, x.user].filter(Boolean).join(' · ')))}
+        ${row('Проект', esc(`${x.project_name || ''} · №${x.project ?? '—'}, вариант ${x.variant ?? '—'}`))}
+        ${row('Модель', esc(x.model || ''))}
+        ${row('Размер', esc([x.resolution, x.aspect].filter(Boolean).join(' · ')))}
+        ${row('ID задачи', `<code>${esc(x.id)}</code>`)}
+        ${x.result ? `<a class="ailog-d__result" href="${esc(x.result)}" target="_blank" rel="noopener"><img src="${esc(x.result)}" alt="Результат"></a>` : ''}
+        <div class="ailog-d__label">Картинки в запросе · ${(x.images || []).length}</div>
+        <div class="ailog-d__imgs">${(x.images || []).map((u, i) => `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="Картинка ${i + 1}" loading="lazy"><span>${i + 1}</span></a>`).join('')}</div>
+        <div class="ailog-d__label">Задание (промпт)</div>
+        <pre class="ailog-d__prompt">${esc(x.prompt || '')}</pre>
+        <button class="btn btn-secondary btn-full" data-ailog-copy>Скопировать задание</button>
+      </div>`);
+    document.querySelector('[data-ailog-copy]').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(x.prompt || ''); showToast('Задание скопировано'); } catch (e) { showToast('Не удалось скопировать'); }
+    });
+  },
+
+  bind() {
+    if (this.bound) return;
+    this.bound = true;
+    document.getElementById('ailog-content').addEventListener('click', e => {
+      const f = e.target.closest('[data-ailog-filter]');
+      if (f) { this.onlyErrors = f.dataset.ailogFilter === 'err'; return this.draw(); }
+      const r = e.target.closest('[data-ailog]');
+      if (r) this.open(r.dataset.ailog);
+    });
+    document.getElementById('ailog-back').addEventListener('click', () => Router.navigateTo('admin'));
+    document.getElementById('ailog-refresh').addEventListener('click', () => this.render());
+  },
+};
+
+function onScreenAilog() {
+  if (!Auth.isLoggedIn()) return showInlineAuth('ailog-content');
+  AiLogScreen.bind();
+  AiLogScreen.render();
 }
