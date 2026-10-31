@@ -230,7 +230,11 @@ const ProjectPage = {
     } else if (img) {
       ImageFiles.prepare(img, `fasad-${this.project.id}-variant-${this.index(v.id)}.jpg`);  // для «Скачать» и «Отправить»
       // Готово: главное — отправить; ниже тот же выбор ИИ с «Перерисовать»
-      main = `<button class="btn btn-primary btn-full main-btn" data-act="share">${icon('share')}Отправить заказчику</button>
+      // Готово: два главных действия — смета для заказчика и сама картинка
+      main = `<div class="main-pair">
+          <button class="btn btn-primary main-btn" data-act="kp">${icon('calc')}Собрать смету</button>
+          <button class="btn main-btn main-btn--ink" data-act="send">${icon('share')}Отправить дизайн</button>
+        </div>
         <div class="main-gen">
           <div class="ai-pick" data-ai-pick>${AiChoice.html()}</div>
           <button class="btn btn-secondary btn-full" data-act="generate">${icon('sparkle')}Перерисовать ${AiChoice.costHtml()}</button>
@@ -379,6 +383,11 @@ const ProjectPage = {
       const act = b.dataset.act;
       if (act === 'generate') { b.disabled = true; this.runGenerate(); }
       if (act === 'share') this.share();
+      if (act === 'kp') KP.open(this.project.id, this.sel);
+      if (act === 'send') {
+        const v = this.variant(this.sel);
+        shareProject(this.project.name, v?.generated_image || this.project.original_image);
+      }
       if (act === 'edit') this.edit(false);
       if (act === 'more') this.openMore();
     });
