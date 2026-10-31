@@ -174,9 +174,9 @@ function aiLogFinish($ai, $data, $fields) {
     $fields['finished_at'] = date('Y-m-d H:i:s');
     if (isset($data['creditsConsumed'])) $fields['credits'] = (float)$data['creditsConsumed'];
     if (isset($data['costTime'])) $fields['cost_ms'] = (int)$data['costTime'];
-    // Ответ kie.ai на проверку задачи целиком; param — это наш же запрос, он уже записан
+    // Ответ kie.ai на проверку задачи целиком; paramJson — это наш же запрос, он уже записан
     $raw = $GLOBALS['kieLastRaw'] ?? $data;
-    if (is_array($raw) && isset($raw['data']['param'])) unset($raw['data']['param']);
+    if (is_array($raw) && is_array($raw['data'] ?? null)) unset($raw['data']['param'], $raw['data']['paramJson']);
     $fields['result_response'] = $raw;
     aiLog($ai['task_id'], $fields);
 }
