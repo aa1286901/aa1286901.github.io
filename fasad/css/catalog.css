@@ -2564,6 +2564,37 @@
   font-size: var(--font-size-lg);
 }
 
+/* Две главные кнопки готового варианта: смета и картинка */
+.main-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-sm);
+}
+
+.main-pair .main-btn {
+  gap: 7px;
+  min-width: 0;
+  padding: 0 8px;
+  font-size: 14.5px;
+  white-space: nowrap;
+}
+
+.main-pair .main-btn .i {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+}
+
+.main-btn--ink {
+  border: 0;
+  background: #2b2621;
+  color: #fff;
+}
+
+.main-btn--ink:active {
+  background: #1d1915;
+}
+
 .main-btn .i {
   width: 22px;
   height: 22px;
