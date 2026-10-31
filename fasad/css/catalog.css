@@ -4021,6 +4021,10 @@ body:has(.screen--kp.active) .bottom-nav {
   gap: 8px;
 }
 
+.kpw-dims--1 {
+  grid-template-columns: 1fr;
+}
+
 .kpw-dims label {
   display: flex;
   flex-direction: column;
@@ -4582,4 +4586,23 @@ body:has(.screen--kp.active) .bottom-nav {
 
 .kph-sub > b {
   font-size: var(--font-size-sm);
+}
+
+.kph-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--color-accent-light);
+  color: var(--color-accent-dark);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.kph-hint .i {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
