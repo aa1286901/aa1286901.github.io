@@ -309,11 +309,11 @@ Object.assign(KP, {
     return `
       <div class="kp-intro">
         <img src="${this.variant?.generated_image || this.project.original_image}" alt="">
-        <div><b>${esc(this.project.name)}</b><small>Нажмите на стену — окна, двери, эркер, фронтон</small></div>
+        <div><b>${esc(this.project.name)}</b><small>${kpNum(g.area)} м² камня на фасаде</small></div>
       </div>
       <section class="kp-card kph-plan-card">
+        <p class="kph-hint">${icon('edit')}Нажмите на стену на плане — откроется её вид: окна, двери, эркер, фронтон</p>
         <div class="kph-plan" id="kpw-plan">${this.planSvg(g)}</div>
-        <div class="kpw-walls" id="kpw-wall-list">${this.wallListHtml(g)}</div>
       </section>
       <section class="kp-card"><h3>Размеры дома</h3>
         ${this.num('house.len', 'Длина', 'фасад и задняя стена')}
@@ -477,7 +477,7 @@ Object.assign(KP, {
   // Окна и двери стены (кроме окон фронтона — они в своём блоке) и расчёт: сколько плитки остаётся
   secOps(k, r) {
     const wl = this.model.walls[k], where = this.wherePlaces(k);
-    const rows = wl.ops.map((o, i) => (o.where === 'gable' ? '' : this.opRow(o, i, where))).join('');
+    const rows = wl.ops.map((o, i) => this.opRow(o, i, where)).join('');
     return `
       ${rows || '<p class="configure-hint">Окон нет — добавьте ниже</p>'}
       <div class="kpw-chips">${Object.entries(KP_OP_TYPES).map(([t, o]) => `<button class="kpw-chip kpw-chip--add" data-wa="add-op:${t}">＋ ${o.name}</button>`).join('')}</div>
@@ -508,8 +508,10 @@ Object.assign(KP, {
     return `
       <div class="kpw-seg">${KP_ERKERS.map(([sh, t]) => `<button class="${wl.erker.shape === sh ? 'on' : ''}" data-wa="erker-shape:${sh}">${t}</button>`).join('')}</div>
       <div class="kpw-dims">${numIn('erker.w', wl.erker.w, 'Ширина, м')}${numIn('erker.d', wl.erker.d, 'Выступ, м')}${numIn('erker.floors', wl.erker.floors, 'Этажей', 1)}</div>
+      <div class="kph-sub"><b>Окна в эркере</b>${wl.ops.map((o, i) => (o.where === 'erker' ? this.opRow(o, i, this.wherePlaces(k)) : '')).join('') || '<p class="configure-hint">Нет</p>'}
+        <button class="kpw-chip kpw-chip--add" data-wa="add-erker-op">＋ Окно в эркере</button></div>
       <div class="kph-calc" id="kph-calc-erker">${this.calcErker(r)}</div>
-      <p class="configure-hint">Эркер считается целиком: ширина + 2 выступа, умноженные на высоту. Стену за эркером не облицовывают — её площадь вычитается. Окна в эркере: в «Окна и двери» выберите «Эркер».</p>
+      <p class="configure-hint">Эркер считается целиком: ширина + 2 выступа, умноженные на высоту. Стену за эркером не облицовывают — её площадь вычитается.</p>
       <button class="kpw-link" data-wa="del-erker">Убрать эркер</button>`;
   },
 
@@ -532,7 +534,7 @@ Object.assign(KP, {
     const numIn = (path, val, label) => `<label>${label}<input class="input kpw-num" type="number" inputmode="decimal" step="0.1" min="0" data-wk="${path}" value="${val ?? ''}"></label>`;
     const wins = wl.ops.map((o, i) => (o.where === 'gable' ? this.opRow(o, i, where) : '')).join('');
     return `
-      <div class="kpw-dims">${numIn('gable.h', wl.gable.h, 'Высота до конька, м')}</div>
+      <div class="kpw-dims kpw-dims--1">${numIn('gable.h', wl.gable.h, 'Высота фронтона до конька, м')}</div>
       <div class="kph-sub"><b>Окна во фронтоне</b>${wins || '<p class="configure-hint">Нет</p>'}
         <button class="kpw-chip kpw-chip--add" data-wa="add-gable-op">＋ Окно во фронтоне</button></div>
       <div class="kpw-row"><label>Венчающий карниз по скатам<small id="kph-slope">${wl.gable.cornice ? `${kpNum(r.slope)} п.м` : 'выключен'}</small></label>
@@ -555,6 +557,8 @@ Object.assign(KP, {
     let o = wl;
     keys.slice(0, -1).forEach(k => { o = o[k]; });
     o[keys[keys.length - 1]] = val;
+    // Окно эркера и фронтона показано дважды — в «Окна и двери» и в своём блоке: вторую копию поля тоже обновим
+    document.querySelectorAll('#kpw-wall [data-wk]').forEach(x => { if (x !== el && x.dataset.wk === path && x.type !== 'checkbox') x.value = el.value; });
     this.saveSoon();
     // Включили стену, перенесли окно во фронтон или из него — меняется состав карточки
     if (structural && (path === 'on' || path.endsWith('.where'))) return this.redrawWall();
@@ -566,6 +570,7 @@ Object.assign(KP, {
     const k = this.wallK, wl = this.model.walls[k];
     const r = kpWallCalc(this.model, k, this.spec.materials.base.on, kpFinish(this.model, this.spec));
     const set = (sel, html) => { const el = document.querySelector(sel); if (el) el.innerHTML = html; };
+    const setAll = (sel, html) => document.querySelectorAll(sel).forEach(el => { el.innerHTML = html; });
     set('#kpw-elev', this.elevSvg(k));
     set('#kph-tiles', this.tilesHtml(r));
     set('#kph-calc-ops', this.calcOps(r));
@@ -577,7 +582,7 @@ Object.assign(KP, {
     set('#kph-slope', wl.gable?.cornice ? `${kpNum(r.slope)} п.м` : 'выключен');
     wl.ops.forEach((o, i) => {
       const a = (+o.w || 0) * (+o.h || 0), n = +o.n || 0;
-      set(`[data-op-area="${i}"]`, `${kpArea(o.w)} × ${kpArea(o.h)} = ${kpArea(a)} м²${n > 1 ? ` × ${n} = <b>${kpArea(a * n)} м²</b>` : ''}`);
+      setAll(`[data-op-area="${i}"]`, `${kpArea(o.w)} × ${kpArea(o.h)} = ${kpArea(a)} м²${n > 1 ? ` × ${n} = <b>${kpArea(a * n)} м²</b>` : ''}`);
     });
     this.live();
   },
@@ -599,6 +604,7 @@ Object.assign(KP, {
     if (act === 'done') { closeModal(); return this.render(true); }
     if (act === 'sec') { this.wallOpen[arg] = !this.wallOpen[arg]; return this.redrawWall(); }
     if (act === 'add-gable-op') wl.ops.push({ ...KP_OP_TYPES.arch, n: 1, where: 'gable' });
+    if (act === 'add-erker-op') wl.ops.push({ ...KP_OP_TYPES.win, n: 1, where: 'erker' });
     if (act === 'add-op') {
       // Новое окно — на этаж, где окон меньше всего; дверь и ворота — на первый
       const count = f => wl.ops.filter(o => String(o.where) === String(f)).reduce((a, o) => a + (+o.n || 0), 0);
