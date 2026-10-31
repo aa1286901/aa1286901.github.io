@@ -312,13 +312,13 @@ Object.assign(KP, {
         <div><b>${esc(this.project.name)}</b><small>${kpNum(g.area)} м² камня на фасаде</small></div>
       </div>
       <section class="kp-card kph-plan-card">
-        <p class="kph-hint">${icon('edit')}Нажмите на стену на плане — откроется её вид: окна, двери, эркер, фронтон</p>
+        <p class="kph-hint">Нажмите на стену на плане — откроется её вид: окна, двери, эркер, фронтон</p>
         <div class="kph-plan" id="kpw-plan">${this.planSvg(g)}</div>
       </section>
       <section class="kp-card"><h3>Размеры дома</h3>
         ${this.num('house.len', 'Длина', 'фасад и задняя стена')}
         ${this.num('house.wid', 'Ширина', 'боковые стены')}
-        ${this.stepper('house.floors', 'Этажей')}
+        ${this.num('house.floors', 'Этажей', '', 'эт', 1)}
         ${this.num('house.floorH', 'Высота этажа', 'от цоколя до межэтажного пояса')}
         ${this.spec.materials.base.on ? this.num('house.plinth', 'Высота цоколя', 'от земли') : ''}
         <p class="kph-height" id="kph-height">${this.heightNote(g)}</p>
