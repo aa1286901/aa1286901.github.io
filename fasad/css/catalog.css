@@ -507,7 +507,7 @@
 .configure-photo {
   display: block;
   width: 100%;
-  max-height: 30vh;
+  max-height: 26vh;
   object-fit: contain;
   border-radius: var(--radius-lg);
   background: #1a1a1a;
@@ -4373,7 +4373,7 @@ body:has(.screen--kp.active) .bottom-nav {
   to { opacity: 1; transform: none; }
 }
 
-.kpw-tab--in {
+.kph-sec__body {
   animation: kpw-fade 0.25s ease both;
 }
 
@@ -4383,7 +4383,7 @@ body:has(.screen--kp.active) .bottom-nav {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .kpw-wall .kpw-elev, .kpw-tab--in { animation: none; }
+  .kpw-wall .kpw-elev, .kph-sec__body { animation: none; }
 }
 
 .kpw-wall__top {
@@ -4421,144 +4421,6 @@ body:has(.screen--kp.active) .bottom-nav {
 .kph-e-mark { fill: #6f6a62; }
 .kph-e-off { fill: #8d877d; font: 600 13px var(--font-family); }
 
-.kpw-tabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
-  padding: 4px;
-  border-radius: 14px;
-  background: var(--color-surface-alt);
-  border: 1px solid var(--color-border);
-}
-
-.kpw-tabs button {
-  padding: 9px 6px;
-  border: 0;
-  border-radius: 10px;
-  background: none;
-  color: var(--color-text-secondary);
-  font: inherit;
-  font-size: var(--font-size-sm);
-  font-weight: 700;
-}
-
-.kpw-tabs button.on {
-  background: var(--color-surface);
-  color: var(--color-accent-dark);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-}
-
-.kpw-tab {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.kph-stones {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-width: none;
-}
-
-.kph-stone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  width: 72px;
-  flex-shrink: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--color-text-secondary);
-  font: inherit;
-}
-
-.kph-stone span {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
-  background-size: cover;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
-}
-
-.kph-stone.on span {
-  box-shadow: 0 0 0 3px var(--color-accent);
-}
-
-.kph-stone small {
-  font-size: 10.5px;
-  line-height: 1.2;
-  text-align: center;
-}
-
-.kph-stone.on small {
-  color: var(--color-accent-dark);
-  font-weight: 700;
-}
-
-.kph-part {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-alt);
-  color: var(--color-text);
-  font: inherit;
-  text-align: left;
-}
-
-.kph-part.off {
-  opacity: 0.65;
-}
-
-.kph-part__img {
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 40px;
-  flex-shrink: 0;
-  overflow: hidden;
-  border-radius: 8px;
-  background: #fff;
-  color: var(--color-text-muted);
-}
-
-.kph-part__img img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.kph-part__txt {
-  display: flex;
-  flex: 1;
-  min-width: 0;
-  flex-direction: column;
-}
-
-.kph-part__txt small,
-.kph-part__txt i {
-  color: var(--color-text-muted);
-  font-size: 11.5px;
-  font-style: normal;
-}
-
-.kph-part__txt b {
-  font-size: var(--font-size-sm);
-}
-
-.kph-part em {
-  color: var(--color-accent-dark);
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 600;
-}
-
 .kp-pick {
   transform: translateY(16px);
   opacity: 0;
@@ -4587,4 +4449,137 @@ body:has(.screen--kp.active) .bottom-nav {
   background: var(--color-surface-alt);
   color: var(--color-text-muted);
   font-size: 22px;
+}
+
+/* Остаток плитки по стене — под рисунком */
+.kph-tiles {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 6px;
+}
+
+.kph-tiles div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 4px 8px;
+  border-radius: 10px;
+  background: var(--color-surface-alt);
+}
+
+.kph-tiles small {
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: 10.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kph-tiles b {
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Выдвижные блоки карточки стены */
+.kph-sec {
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.kph-sec__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+}
+
+.kph-sec__head b {
+  flex: 1;
+  font-size: var(--font-size-base);
+}
+
+.kph-sec__head span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.kph-sec__head i {
+  color: var(--color-text-muted);
+  font-size: 22px;
+  font-style: normal;
+  transition: transform 0.2s;
+}
+
+.kph-sec.open .kph-sec__head i {
+  transform: rotate(90deg);
+}
+
+.kph-sec__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 14px 14px;
+}
+
+.kph-area {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 12.5px;
+}
+
+.kph-area b {
+  color: var(--color-text);
+}
+
+.kph-calc {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--color-accent-light);
+}
+
+.kph-calc div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 10px;
+}
+
+.kph-calc span {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.kph-calc small {
+  grid-column: 1;
+  color: var(--color-text-secondary);
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+
+.kph-calc b {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.kph-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kph-sub > b {
+  font-size: var(--font-size-sm);
 }
