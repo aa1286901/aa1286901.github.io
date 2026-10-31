@@ -331,13 +331,7 @@ Object.assign(KP, {
         ${this.num('house.floors', 'Этажей', '', 'эт', 1)}
         ${this.num('house.floorH', 'Высота этажа', 'от цоколя до межэтажного пояса')}
         ${this.spec.materials.base.on ? this.num('house.plinth', 'Высота цоколя', 'от земли') : ''}
-        <p class="kph-height" id="kph-height">${this.heightNote(g)}</p>
       </section>`;
-  },
-
-  heightNote(g) {
-    const hb = g.H - g.Hm;
-    return `Высота стен ${kpNum(g.H)} м = ${g.F} × ${kpNum(this.model.house.floorH)} м${hb ? ` + цоколь ${kpNum(hb)} м` : ''}`;
   },
 
   wallNote(r) {
@@ -645,7 +639,7 @@ Object.assign(KP, {
     const F = Math.max(1, +md.house.floors || 1), fh = +md.house.floorH || 3, L = Math.max(1, r.L), H = F * fh + r.hb;
     const gh = wl.gable ? Math.max(0, +wl.gable.h || 0) : 0, eave = 0.45, roof = 0.28;
     // Слева — размер высоты, справа — отметки уровней; стена — между ними
-    const W = 340, padL = 34, padR = 42, s = Math.min((W - padL - padR) / (L + 2 * eave), 210 / (H + gh + roof + 0.2));
+    const W = 340, padL = 34, padR = 48, s = Math.min((W - padL - padR) / (L + 2 * eave), 210 / (H + gh + roof + 0.2));
     const x0 = padL + (W - padL - padR - L * s) / 2, xR = x0 + L * s, yG = 14 + (gh + roof + 0.15) * s + H * s, yT = yG - H * s, ex = x0 + L * s / 2;
     const P = fin.parts, hb = r.hb;
     const st = id => this.stone(id);
@@ -812,19 +806,19 @@ Object.assign(KP, {
     g += `<rect x="${x0 - 30}" y="${yG}" width="${L * s + 60}" height="6" fill="url(#${id}-hatch)"/><line x1="${x0 - 30}" x2="${xR + 30}" y1="${yG}" y2="${yG}" class="kph-e-ground"/>`;
     const dy = yG + 20, tick = (x, y) => `<path d="M${x - 4},${y + 4}L${x + 4},${y - 4}" class="kph-e-dim"/>`;
     g += `<line x1="${x0}" x2="${xR}" y1="${dy}" y2="${dy}" class="kph-e-dim"/>${tick(x0, dy)}${tick(xR, dy)}<text x="${ex}" y="${dy - 4}" text-anchor="middle" class="kph-e-txt">${kpNum(L)} м</text>`;
-    const dx = x0 - 22 - eave * s;
-    g += `<line x1="${dx}" x2="${dx}" y1="${yT}" y2="${yG}" class="kph-e-dim"/>${tick(dx, yT)}${tick(dx, yG)}<text x="${dx - 5}" y="${(yT + yG) / 2}" text-anchor="middle" class="kph-e-txt" transform="rotate(-90 ${dx - 5} ${(yT + yG) / 2})">${kpNum(H)} м</text>`;
-    // Отметки: земля, верх цоколя, этажи
-    const levels = [0, ...(hb ? [hb] : []), ...Array.from({ length: F }, (_, i) => hb + (i + 1) * fh)];
-    let lastY = Infinity;
+    // Слева — общая высота от земли до верха (с фронтоном — до конька)
+    const top = H + gh, yTop = yG - top * s, dx = x0 - 22 - eave * s;
+    g += `<line x1="${dx}" x2="${dx}" y1="${yTop}" y2="${yG}" class="kph-e-dim"/>${tick(dx, yTop)}${tick(dx, yG)}<text x="${dx - 5}" y="${(yTop + yG) / 2}" text-anchor="middle" class="kph-e-txt" transform="rotate(-90 ${dx - 5} ${(yTop + yG) / 2})">${kpNum(top)} м</text>`;
+    // Справа — отметки: земля, верх цоколя, каждый этаж, конёк фронтона. Подписи раздвигаются, чтобы не налезать
+    const levels = [0, ...(hb ? [hb] : []), ...Array.from({ length: F }, (_, i) => hb + (i + 1) * fh), ...(gh ? [top] : [])];
+    const lx = xR + eave * s + 6;
+    let labelY = Infinity;
     levels.forEach(v => {
-      const y = yG - v * s, lx = xR + eave * s + 6;
+      const y = yG - v * s, ty = Math.min(y + 3, labelY - 10);
+      labelY = ty;
       g += `<path d="M${lx},${y}l4,-5h-8z" class="kph-e-mark"/>`;
-      // Подписи не налезают друг на друга: близкую к предыдущей пропускаем
-      if (lastY - y >= 14 || v === levels[levels.length - 1]) {
-        g += `<text x="${lx + 6}" y="${y + 3}" class="kph-e-lvl">${v ? '+' : '±'}${v.toFixed(2).replace('.', ',')}</text>`;
-        lastY = y;
-      }
+      if (ty < y + 2) g += `<path d="M${lx + 4},${y - 2}L${lx + 6},${ty - 3}" class="kph-e-dim"/>`;
+      g += `<text x="${lx + 7}" y="${ty}" class="kph-e-lvl">${v ? '+' : '±'}${v.toFixed(2).replace('.', ',')}</text>`;
     });
     if (!wl.on) g += `<text x="${ex}" y="${(yT + yG) / 2}" text-anchor="middle" class="kph-e-off">не облицовываем</text>`;
     return `<svg viewBox="0 0 ${W} ${yG + 30}" role="img" aria-label="Стена ${KP_WALLS[k]} спереди">${defs}${g}</svg>`;
@@ -837,8 +831,6 @@ Object.assign(KP, {
     if (plan) plan.innerHTML = this.planSvg(g);
     const list = document.getElementById('kpw-wall-list');
     if (list) list.innerHTML = this.wallListHtml(g);
-    const hh = document.getElementById('kph-height');
-    if (hh) hh.textContent = this.heightNote(g);
     this.renderTotals(t);
   },
 
