@@ -74,7 +74,7 @@ function kpWallCalc(md, k, baseOn, fin) {
   const L = kpWallLen(md, k), hb = baseOn ? +h.plinth || 0 : 0;
   const r = { k, L, Hm, hb, H: Hm + hb, on: !!wl.on, fin, wall: 0, gable: 0, erker: 0, plinth: 0,
     mainGross: L * Hm, plinthGross: L * hb, win: 0, doorMain: 0, doorPlinth: 0, doorW: 0, erkerWin: 0,
-    erkerMain: 0, erkerPlinth: 0, erkerExtra: 0, erkerCorners: 0, gableGross: 0, gableWin: 0,
+    erkerMain: 0, erkerPlinth: 0, erkerExtra: 0, erkerRun: 0, erkerW: 0, erkerH: 0, erkerCorners: 0, gableGross: 0, gableWin: 0,
     corners: 0, slope: 0, openings: 0, q: {} };
   if (!wl.on) return r;
   const P = fin.parts, add = (id, v) => { if (v > 0) r.q[id] = (r.q[id] || 0) + v; };
@@ -103,7 +103,11 @@ function kpWallCalc(md, k, baseOn, fin) {
   const e = wl.erker;
   if (e) {
     const w = Math.min(+e.w || 0, L), dd = +e.d || 0, eh = Math.min(+e.floors || 1, F) * fh;
-    r.erkerExtra = e.shape === 'rect' ? 2 * dd : e.shape === 'tri' ? 2 * Math.hypot(dd, w / 4) - w / 2 : Math.PI * w / 2 - w;
+    // Развёртка эркера: прямой — ширина + 2 выступа, скошенный — по граням, полукруглый — по дуге
+    r.erkerRun = e.shape === 'rect' ? w + 2 * dd : e.shape === 'tri' ? w / 2 + 2 * Math.hypot(dd, w / 4) : Math.PI * w / 2;
+    r.erkerW = w; r.erkerH = eh;
+    r.erkerExtra = r.erkerRun - w;
+    // Эркер облицовывают целиком, а стену за ним — нет: + развёртка × высота − ширина × высота
     r.erkerMain = r.erkerExtra * eh;
     r.erkerPlinth = r.erkerExtra * hb;
     r.erkerCorners = e.shape === 'round' ? 0 : 2;
@@ -420,7 +424,7 @@ Object.assign(KP, {
       </div>
       ${wl.on ? `
         ${this.secHtml('ops', 'Окна и двери', this.opsNote(r), this.secOps(k, r))}
-        ${this.secHtml('erker', 'Эркер', wl.erker ? `+${kpNum(r.erkerMain + r.erkerPlinth)} м² боковин` : 'нет', this.secErker(k, r))}
+        ${this.secHtml('erker', 'Эркер', wl.erker ? `${kpNum(r.erkerRun * (r.erkerH + r.hb))} м²` : 'нет', this.secErker(k, r))}
         ${this.secHtml('gable', 'Фронтон', wl.gable ? `${kpNum(r.gable)} м²` : 'нет', this.secGable(k, r))}
         <div class="kpw-wall__sec"><h4>Скопировать эту стену</h4>
           <div class="kpw-chips">${KP_WALL_ORDER.filter(x => x !== k).map(x => `<button class="kpw-chip" data-wa="copy:${x}">→ ${KP_WALLS[x]}</button>`).join('')}</div>
@@ -485,13 +489,13 @@ Object.assign(KP, {
     let main = `${n1(r.L)} × ${n1(r.Hm)} = ${n1(r.mainGross)} м²`;
     if (r.win) main += ` − окна ${n1(r.win)}`;
     if (r.doorMain) main += ` − двери ${n1(r.doorMain)}`;
-    if (r.erkerMain) main += ` + эркер ${n1(r.erkerMain)}`;
+    if (r.erkerMain) main += ` + эркер ${n1(r.erkerRun * r.erkerH)} − стена за эркером ${n1(r.erkerW * r.erkerH)}`;
     if (r.erkerWin) main += ` − окна эркера ${n1(r.erkerWin)}`;
     lines.push(`<div><span>Основная плитка</span><small>${main}</small><b>${n1(r.wall)} м²</b></div>`);
     if (r.hb) {
       let base = `${n1(r.L)} × ${n1(r.hb)} = ${n1(r.plinthGross)} м²`;
       if (r.doorPlinth) base += ` − двери ${n1(r.doorPlinth)}`;
-      if (r.erkerPlinth) base += ` + эркер ${n1(r.erkerPlinth)}`;
+      if (r.erkerPlinth) base += ` + эркер ${n1(r.erkerRun * r.hb)} − за эркером ${n1(r.erkerW * r.hb)}`;
       lines.push(`<div><span>Цоколь</span><small>${base}</small><b>${n1(r.plinth)} м²</b></div>`);
     }
     return lines.join('');
@@ -505,15 +509,19 @@ Object.assign(KP, {
       <div class="kpw-seg">${KP_ERKERS.map(([sh, t]) => `<button class="${wl.erker.shape === sh ? 'on' : ''}" data-wa="erker-shape:${sh}">${t}</button>`).join('')}</div>
       <div class="kpw-dims">${numIn('erker.w', wl.erker.w, 'Ширина, м')}${numIn('erker.d', wl.erker.d, 'Выступ, м')}${numIn('erker.floors', wl.erker.floors, 'Этажей', 1)}</div>
       <div class="kph-calc" id="kph-calc-erker">${this.calcErker(r)}</div>
-      <p class="configure-hint">Лицевая сторона эркера уже входит в длину стены — добавляются только боковины. Окна в эркере: в «Окна и двери» выберите «Эркер».</p>
+      <p class="configure-hint">Эркер считается целиком: ширина + 2 выступа, умноженные на высоту. Стену за эркером не облицовывают — её площадь вычитается. Окна в эркере: в «Окна и двери» выберите «Эркер».</p>
       <button class="kpw-link" data-wa="del-erker">Убрать эркер</button>`;
   },
 
   calcErker(r) {
     const n1 = kpNum, e = this.model.walls[r.k].erker || {};
-    const how = e.shape === 'rect' ? `2 × ${n1(e.d)} м` : e.shape === 'tri' ? 'скошенные грани' : 'по дуге';
-    return `<div><span>К основной плитке</span><small>боковины ${how} = ${n1(r.erkerExtra)} м × ${n1(r.Hm ? Math.min(+e.floors || 1, Math.max(1, +this.model.house.floors || 1)) * (+this.model.house.floorH || 0) : 0)} м</small><b>+${n1(r.erkerMain)} м²</b></div>`
-      + (r.hb ? `<div><span>К цоколю</span><small>${n1(r.erkerExtra)} м × ${n1(r.hb)} м</small><b>+${n1(r.erkerPlinth)} м²</b></div>` : '');
+    const run = e.shape === 'rect' ? `(${n1(r.erkerW)} + 2 × ${n1(e.d)})` : e.shape === 'tri' ? 'по граням' : 'по дуге';
+    const row = (t, how, v) => `<div><span>${t}</span><small>${how}</small><b>${v}</b></div>`;
+    let out = row('Эркер', `${run} = ${n1(r.erkerRun)} м × ${n1(r.erkerH)} м`, `${n1(r.erkerRun * r.erkerH)} м²`)
+      + row('Стена за эркером', `${n1(r.erkerW)} × ${n1(r.erkerH)} — закрыта эркером, не облицовывается`, `−${n1(r.erkerW * r.erkerH)} м²`)
+      + row('К основной плитке', 'эркер − стена за ним', `+${n1(r.erkerMain)} м²`);
+    if (r.hb) out += row('Цоколь эркера', `${n1(r.erkerRun)} × ${n1(r.hb)} = ${n1(r.erkerRun * r.hb)} − за эркером ${n1(r.erkerW * r.hb)}`, `+${n1(r.erkerPlinth)} м²`);
+    return out;
   },
 
   // Фронтон: площадь, окна во фронтоне, карниз по скатам
@@ -564,7 +572,7 @@ Object.assign(KP, {
     set('#kph-calc-erker', this.calcErker(r));
     set('#kph-calc-gable', this.calcGable(r));
     set('[data-sec-note="ops"]', this.opsNote(r));
-    set('[data-sec-note="erker"]', wl.erker ? `+${kpNum(r.erkerMain + r.erkerPlinth)} м² боковин` : 'нет');
+    set('[data-sec-note="erker"]', wl.erker ? `${kpNum(r.erkerRun * (r.erkerH + r.hb))} м²` : 'нет');
     set('[data-sec-note="gable"]', wl.gable ? `${kpNum(r.gable)} м²` : 'нет');
     set('#kph-slope', wl.gable?.cornice ? `${kpNum(r.slope)} п.м` : 'выключен');
     wl.ops.forEach((o, i) => {
