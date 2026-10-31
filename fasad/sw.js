@@ -32,6 +32,7 @@ const STATIC_ASSETS = [
   'js/coins.js',
   'js/admin.js',
   'js/kp.js',
+  'js/kp-house.js',
   'js/viewer3d.js',
   'js/catalog.js',
   'js/profile.js',
