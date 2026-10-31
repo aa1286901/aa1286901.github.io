@@ -119,6 +119,9 @@ function kpWallCalc(md, k, baseOn, fin) {
     r.slope = wl.gable.cornice ? 2 * Math.hypot(L / 2, +wl.gable.h || 0) : 0;
   }
   r.wall = Math.max(0, r.mainGross + r.erkerMain - r.win - r.doorMain - r.erkerWin);
+  // Для запаса эркер отдельно от стены: у него свой процент (много резов на углах)
+  r.erkerNet = Math.min(r.wall, Math.max(0, r.erkerMain - r.erkerWin));
+  r.wallOnly = r.wall - r.erkerNet;
   r.plinth = Math.max(0, r.plinthGross + r.erkerPlinth - r.doorPlinth);
   // Русты: угол дома делят две стены — по половине; углы эркера — целиком. Высота — от цоколя до карниза
   const ends = KP_NEIGHBORS[k].filter(n => md.walls[n].on).length * 0.5;
@@ -142,12 +145,13 @@ function kpGeometry(md, baseOn, finOf) {
   const perWall = KP_WALL_ORDER.map(k => kpWallCalc(md, k, baseOn, finOf(k)));
   const on = perWall.filter(w => w.on);
   const sum = f => on.reduce((a, w) => a + w[f], 0);
-  const wallA = sum('wall'), gable = sum('gable'), erkerArea = sum('erker'), plinth = sum('plinth');
+  const wallA = sum('wall'), gable = sum('gable'), erkerArea = sum('erkerNet'), plinth = sum('plinth');
   const area = wallA + gable + erkerArea + plinth;
-  const kw = 1 + (+md.stock.wall || 0) / 100, kh = 1 + (+md.stock.hard || 0) / 100;
+  // Запас на подрезку и бой — свой у стен, эркеров, цоколя и фронтонов
+  const st = md.stock, kw = 1 + (+st.wall || 0) / 100, ke = 1 + (+st.erker || 0) / 100, kb = 1 + (+st.base || 0) / 100, kg = 1 + (+st.gable || 0) / 100;
   const decor = on.reduce((a, w) => a + (w.q.frame || 0) + (w.q.windowCornice || 0) + (w.q.sill || 0), 0);
   const days = Math.max(1, Math.ceil(area / 7 + decor / 12));
-  const order = wallA * kw + (gable + erkerArea) * kh + plinth;
+  const order = (wallA - erkerArea) * kw + erkerArea * ke + gable * kg + plinth * kb;
   const q = {
     column: 2, capital: 2, balustrade: 6,
     mesh: area, glue: area, scaffold: F > 1 ? wallA + gable + erkerArea : 0,
@@ -158,8 +162,8 @@ function kpGeometry(md, baseOn, finOf) {
     scaffold: 'основная плитка и фронтоны от 2 этажей', delivery: `${kpNum(order)} м² с запасом ÷ 120 м² за рейс`,
     food: `срок ${+md.days || days} дн`,
   };
-  return { H, Hm, F, P: sum('L'), walls: wallA, plinth, gable, erkerArea, area, openings: sum('openings'),
-    corners: Math.round(sum('corners')), days, q, how, perWall, kw, kh };
+  return { H, Hm, F, P: sum('L'), walls: wallA - erkerArea, plinth, gable, erkerArea, area, openings: sum('openings'),
+    corners: Math.round(sum('corners')), days, q, how, perWall, kw, ke, kb, kg };
 }
 
 // Прежние КП → стены с облицовкой. Цепочка: периметр → дом → общие окна → стены с отметками → облицовка стен
@@ -215,6 +219,9 @@ function kpUpgradeModel(md, spec, catalog) {
     if (e.shape === 'tri') e.shape = 'rect';
     if (!('rust' in e)) e.rust = !!spec.parts?.corners?.item;
   });
+  // Запас: был общий для фронтонов и эркеров — теперь у каждого свой, у цоколя тоже
+  const st = md.stock || {};
+  md.stock = { wall: st.wall ?? 10, erker: st.erker ?? st.hard ?? 15, base: st.base ?? 10, gable: st.gable ?? st.hard ?? 20 };
   delete md.house.cornersAdj;
   return md;
 }
@@ -255,19 +262,23 @@ Object.assign(KP, {
         const groups = new Map();
         g.perWall.filter(r => r.on && r.q[def.id] > 0).forEach(r => {
           const mat = this.rowMat(def.id, r.fin);
-          const gr = groups.get(mat.key) || { mat, qty: 0, how: [] };
-          gr.qty += r.q[def.id];
-          gr.how.push(`${KP_WALLS[r.k]} ${kpNum(r.q[def.id])}`);
+          const gr = groups.get(mat.key) || { mat, qty: 0, raw: 0, how: [] };
+          // Плитка с запасом: стены и эркер — каждый со своим процентом, цоколь и фронтон — со своим
+          const q = r.q[def.id];
+          gr.raw += q;
+          gr.qty += def.id === 'wall' ? r.wallOnly * g.kw + r.erkerNet * g.ke : def.id === 'base' ? q * g.kb : def.id === 'gable' ? q * g.kg : q;
+          gr.how.push(`${KP_WALLS[r.k]} ${kpNum(q)}`);
           groups.set(mat.key, gr);
         });
         const key0 = this.rowMat(def.id, fin0).key;
-        const k = def.id === 'wall' ? g.kw : def.id === 'gable' || def.id === 'erker' ? g.kh : 1;
-        const pct = def.id === 'wall' ? this.model.stock.wall : k > 1 ? this.model.stock.hard : 0;
+        const st = this.model.stock;
+        const pct = def.id === 'wall' ? `${+st.wall ? ` + запас ${+st.wall}%` : ''}${+st.erker && g.erkerArea ? `, эркеры ${+st.erker}%` : ''}`
+          : def.id === 'base' ? (+st.base ? ` + запас ${+st.base}%` : '') : def.id === 'gable' ? (+st.gable ? ` + запас ${+st.gable}%` : '') : '';
         // Строка с камнем и изделиями подбора — первой, свои варианты стен — следом
         for (const [key, gr] of [...groups].sort((a, b) => (a[0] === key0 ? -1 : b[0] === key0 ? 1 : 0))) {
           const id = key === key0 ? def.id : `${def.id}~${key}`;
-          const how = `${gr.how.join(' + ')} = ${kpNum(gr.qty)}${+pct ? ` + запас ${pct}%` : ''}`;
-          out.push(this.row({ ...def, id, base: def.id }, gr.mat.sub, gr.mat.img, gr.mat.kind, gr.qty * k, how, prices));
+          const how = `${gr.how.join(' + ')} = ${kpNum(gr.raw)}${pct}`;
+          out.push(this.row({ ...def, id, base: def.id }, gr.mat.sub, gr.mat.img, gr.mat.kind, gr.qty, how, prices));
         }
         continue;
       }

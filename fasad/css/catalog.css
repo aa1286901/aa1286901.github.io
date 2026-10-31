@@ -4630,3 +4630,63 @@ body:has(.screen--kp.active) .bottom-nav {
   line-height: 1.4;
   text-align: center;
 }
+
+/* КП: «Ваши данные» в одной карточке с заказчиком */
+.kp-card__h {
+  margin: var(--spacing-md) 0 var(--spacing-sm);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+  font-size: var(--font-size-lg);
+}
+
+.kp-card__h small {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* Площадь и свой запас в одной строке */
+.kp-area-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.kp-area-row__txt {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.kp-area-row__txt small {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.kp-area-row__stock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.kp-area-row__stock .kpw-num {
+  width: 64px;
+}
+
+.kp-area-row__stock i {
+  font-style: normal;
+}
+
+.kp-area-total {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0 var(--spacing-md);
+  font-weight: 700;
+}
