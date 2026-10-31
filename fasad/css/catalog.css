@@ -4690,3 +4690,36 @@ body:has(.screen--kp.active) .bottom-nav {
   margin: 10px 0 var(--spacing-md);
   font-weight: 700;
 }
+
+/* Запас на подрезку — одной строкой над сметой */
+.kp-stock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: var(--spacing-sm);
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--color-surface-alt);
+}
+
+.kp-stock > span {
+  width: 100%;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.kp-stock label {
+  display: flex;
+  flex: 1;
+  min-width: 64px;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--color-text-muted);
+  font-size: 11.5px;
+}
+
+.kp-stock .kpw-num {
+  width: 100%;
+}
