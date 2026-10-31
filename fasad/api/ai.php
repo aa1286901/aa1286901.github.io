@@ -10,11 +10,11 @@ define('KIE_API', 'https://api.kie.ai/api/v1/');
 define('AI_LOG', DATA_DIR . 'ai-log.php');  // журнал запросов к kie.ai — смотрит администратор
 define('AI_LOG_MAX', 300);
 
-// Модели kie.ai: поле со ссылками на картинки, допустимое число картинок, цена генерации в монетах
+// Модели kie.ai: поле со ссылками на картинки, допустимое число картинок (Nano Banana — до 10, GPT Image — до 16), цена генерации в монетах
 // и разрешение (по умолчанию 1K)
 const AI_MODELS = [
-    'nano-banana-2-1' => ['images' => 'image_input', 'max' => 16, 'coins' => 1],
-    'nano-banana-2' => ['images' => 'image_input', 'max' => 16, 'coins' => 1],
+    'nano-banana-2-1' => ['images' => 'image_input', 'max' => 10, 'coins' => 1],
+    'nano-banana-2' => ['images' => 'image_input', 'max' => 10, 'coins' => 1],
     'nano-banana-pro' => ['images' => 'image_input', 'max' => 8, 'coins' => 3],
     'gpt-image-2-5-sunburst-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
     'gpt-image-2-5-flare-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],

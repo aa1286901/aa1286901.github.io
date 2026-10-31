@@ -6,7 +6,7 @@
 // refs — сколько образцов отправлять. GPT Image 2.5 (Sunburst и Flare) с полным заданием и образцами изделий
 // на kie.ai падает с «500 Internal Error», GPT Image 1.5 — «Inappropriate content»; GPT Image 2 рисует всё
 const AI_MODELS = [
-  { id: 'nano-banana-2-1', name: 'Nano Banana', note: '~30 с', coins: 1, refs: 15, wait: 'обычно 30–60 секунд' },
+  { id: 'nano-banana-2-1', name: 'Nano Banana', note: '~30 с', coins: 1, refs: 9, wait: 'обычно 30–60 секунд' },
   { id: 'gpt-image-2-image-to-image', name: 'ChatGPT Image', note: '~2 мин', coins: 2, refs: 15, wait: 'обычно 1–2 минуты' },
 ];
 
