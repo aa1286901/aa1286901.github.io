@@ -4589,20 +4589,13 @@ body:has(.screen--kp.active) .bottom-nav {
 }
 
 .kph-hint {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   margin: 4px 0 0;
-  padding: 10px 12px;
-  border-radius: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
   background: var(--color-accent-light);
   color: var(--color-accent-dark);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-}
-
-.kph-hint .i {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
 }
