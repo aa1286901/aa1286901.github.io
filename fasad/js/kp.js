@@ -75,12 +75,12 @@ const KP = {
     const user = Auth.getUser() || {};
     this.model = Object.assign({
       client: { name: '', object: `частный дом, ${floors} ${floors === 1 ? 'этаж' : floors < 5 ? 'этажа' : 'этажей'}` },
-      stock: { wall: 10, hard: 20 },
+      stock: { wall: 10, erker: 15, base: 10, gable: 20 },
       rows: {}, custom: [], customExtras: [], discount: 0, days: null,
       terms: { ...KP_TERMS, ...(this.mine.terms || {}) },
       profile: { name: this.mine.profile?.name || user.name || '', company: '', phone: '', telegram: '', city: '', exp: '', ...(this.mine.profile || {}) },
     }, saved.data || {});
-    this.model.stock = this.model.stock || { wall: 10, hard: 20 };
+    this.model.stock = this.model.stock || { wall: 10, erker: 15, base: 10, gable: 20 };
     // Дом: в сохранённом КП — свой (прежние форматы переводятся), иначе — по подбору
     if (this.model.house || this.model.dims) kpUpgradeModel(this.model, this.spec, catalog);
     else {
@@ -159,14 +159,25 @@ const KP = {
   // Шаг 2: смета, запас, условия, контакты
   stepSmeta() {
     const g = this.geo();
+    // Площадь и свой запас в одной строке: стены, эркеры, цоколь, фронтоны
+    const area = (id, label, v, stockKey) => `
+      <div class="kp-area-row">
+        <div class="kp-area-row__txt"><b>${label}</b><small id="kpw-a-${id}">${kpNum(v)} м²</small></div>
+        <label class="kp-area-row__stock"><span>запас</span><input class="input kpw-num" type="number" inputmode="decimal" step="1" min="0" data-k="stock.${stockKey}" value="${this.model.stock[stockKey] ?? ''}"><i>%</i></label>
+      </div>`;
     return `
       <section class="kp-card"><h3>Заказчик</h3>
-        <div class="kp-grid">${this.field('client.name', 'Имя заказчика', 'text', 'placeholder="Например, Ахмед Гаджиев"')}${this.field('client.object', 'Объект')}</div>
-      </section>
-      <section class="kp-card"><h3>Площади</h3>
-        <dl class="kpw-sum" id="kpw-areas"></dl>
-        ${this.num('stock.wall', 'Запас: стены', 'подрезка и бой', '%', 1)}
-        ${g.gable + g.erkerArea > 0 ? this.num('stock.hard', 'Запас: фронтоны, эркеры', 'много косых резов', '%', 1) : ''}
+        <div class="kp-grid">
+          ${this.field('client.name', 'Имя', 'text', 'placeholder="Например, Ахмед Гаджиев"')}
+          ${this.field('client.object', 'Объект')}
+          ${this.field('client.city', 'Город', 'text', 'placeholder="Махачкала"')}
+        </div>
+        <h3 class="kp-card__h">Ваши данные <small>видит заказчик · запомнятся</small></h3>
+        <div class="kp-grid">
+          ${this.field('profile.name', 'Имя или бригада', 'text', 'placeholder="Бригада Магомеда"')}
+          ${this.field('profile.phone', 'Телефон', 'tel', 'placeholder="+7 900 000-00-00"')}
+          ${this.field('profile.city', 'Город или опыт', 'text', 'placeholder="Махачкала · 12 лет"')}
+        </div>
       </section>
 
       <section class="kp-card"><h3>Смета <small>материал и работа по каждой позиции</small></h3>
@@ -179,21 +190,18 @@ const KP = {
         <button class="btn btn-ghost btn-full kp-add" data-add="customExtras">＋ Своя позиция</button>
       </section>
 
-      <section class="kp-card"><h3>Условия</h3>
+      <section class="kp-card"><h3>Площади и условия <small>запас — на подрезку и бой</small></h3>
+        ${area('wall', 'Стены', g.walls, 'wall')}
+        ${g.erkerArea ? area('erker', 'Эркеры', g.erkerArea, 'erker') : ''}
+        ${g.plinth ? area('base', 'Цоколь', g.plinth, 'base') : ''}
+        ${g.gable ? area('gable', 'Фронтоны', g.gable, 'gable') : ''}
+        <div class="kp-area-total"><span>Камня на фасад</span><b id="kpw-a-total">${kpNum(g.area)} м²</b></div>
         <div class="kp-grid kp-grid--3">
           ${this.field('discount', 'Скидка, %', 'number', 'inputmode="decimal"')}
           ${this.field('days', 'Срок, дней', 'number', `inputmode="numeric" placeholder="${g.days}"`)}
           ${this.field('terms.valid', 'КП действует', 'number', 'inputmode="numeric"')}
         </div>
         <div class="kp-grid">${this.field('terms.payment', 'Оплата', 'textarea')}${this.field('terms.guarantee', 'Гарантия', 'textarea')}</div>
-      </section>
-
-      <section class="kp-card"><h3>Ваши данные <small>видит заказчик · запомнятся</small></h3>
-        <div class="kp-grid">
-          ${this.field('profile.name', 'Имя')}${this.field('profile.company', 'Бригада или компания', 'text', 'placeholder="Облицовка фасадов камнем"')}
-          ${this.field('profile.phone', 'Телефон', 'tel', 'placeholder="+7 900 000-00-00"')}${this.field('profile.telegram', 'Telegram', 'text', 'placeholder="@username"')}
-          ${this.field('profile.city', 'Город')}${this.field('profile.exp', 'Опыт', 'text', 'placeholder="12 лет"')}
-        </div>
       </section>
       <p class="configure-hint">Цены, ваши данные и условия запомнятся для следующих КП.</p>`;
   },
@@ -236,12 +244,11 @@ const KP = {
   },
 
   renderTotals(t = this.totals()) {
-    const g = t.ms, areas = document.getElementById('kpw-areas');
-    if (areas) {
-      areas.innerHTML = [['Стены', g.walls], ['Фронтоны', g.gable], ['Эркеры', g.erkerArea], ['Цоколь', g.plinth]]
-        .filter(([, v]) => v > 0).map(([a, v]) => `<dt>${a}</dt><dd>${kpNum(v)} м²</dd>`).join('')
-        + `<dt class="big">Камня на фасад</dt><dd class="big">${kpNum(g.area)} м²</dd>`;
-    }
+    const g = t.ms;
+    [['wall', g.walls], ['erker', g.erkerArea], ['base', g.plinth], ['gable', g.gable], ['total', g.area]].forEach(([id, v]) => {
+      const el = document.getElementById(`kpw-a-${id}`);
+      if (el) el.textContent = `${kpNum(v)} м²`;
+    });
     document.getElementById('kp-total').innerHTML = `<small>Под ключ${t.disc ? ` · скидка ${kpRub(t.disc)}` : ''}</small><b>${kpRub(t.total)}</b>`;
   },
 
@@ -769,7 +776,7 @@ async function kpBuildPdf(kp) {
     y += d.text(md.client.name, KPM + lw, y, { w: KPCW - lw });
   }
   d.font('r', 13, KPC.muted);
-  y += d.text(`${md.client.object || ''} · ${num} от ${date.toLocaleDateString('ru-RU')}`, KPM, y, { w: KPCW }) + 12;
+  y += d.text(`${[md.client.object, md.client.city].filter(Boolean).join(', ')} · ${num} от ${date.toLocaleDateString('ru-RU')}`, KPM, y, { w: KPCW }) + 12;
   // Сразу было и будет: заказчик видит результат на первом листе
   const ph = Math.min(236, (KPH - 14 - 78 - 14 - y - 8) / 2);
   const ph2 = await kpPicture(await kpWatermark(kp.variant?.generated_image || kp.project.original_image, wm, iconImg), KPCW, ph, { r: 16 });
@@ -785,7 +792,7 @@ async function kpBuildPdf(kp) {
   d.font('b', 16);
   d.text(pf.name, KPM + 78, py + 20, { w: KPCW - 94 });
   d.font('r', 12.5, KPC.muted);
-  d.text([pf.company, pf.city, pf.exp].filter(Boolean).join(' · '), KPM + 78, py + 42, { w: KPCW - 94 });
+  d.text(pf.city || '', KPM + 78, py + 42, { w: KPCW - 94 });
 
   // 4. Смета: карточка на позицию — материал, работа, итог
   const line = (label, calc, sum, yy, size = 13) => {
@@ -954,12 +961,15 @@ async function kpBuildPdf(kp) {
   d.text(`Позвонить: ${pf.phone}`, KPM, y + 15, { w: KPCW, align: 'center' });
   d.link(KPM, y, KPCW, 48, `tel:${phone}`);
   y += 57;
-  const tg = pf.telegram ? pf.telegram.replace(/^@|https?:\/\/t\.me\//g, '') : '';
-  if (tg) {
+  // «Написать» — в WhatsApp по тому же номеру: 8 900… и 900… → 7900…
+  let wa = phone.replace(/\D/g, '');
+  if (wa.length === 11 && wa[0] === '8') wa = `7${wa.slice(1)}`;
+  if (wa.length === 10) wa = `7${wa}`;
+  if (wa.length >= 11) {
     d.box(KPM, y, KPCW, 48, 14, KPC.card, KPC.line);
     d.font('b', 15);
-    d.text('Написать в Telegram', KPM, y + 15, { w: KPCW, align: 'center' });
-    d.link(KPM, y, KPCW, 48, `https://t.me/${tg}`);
+    d.text('Написать в WhatsApp', KPM, y + 15, { w: KPCW, align: 'center' });
+    d.link(KPM, y, KPCW, 48, `https://wa.me/${wa}`);
   }
 
   // 8. Реклама Fasad AI
