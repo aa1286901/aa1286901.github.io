@@ -14,7 +14,7 @@ const KP_OP_TYPES = {
   door: { name: 'Дверь', kind: 'door', w: 1.0, h: 2.2 },
   gate: { name: 'Ворота / гараж', kind: 'door', w: 2.6, h: 2.3 },
 };
-const KP_ERKERS = [['rect', 'Прямой'], ['tri', 'Скошенный'], ['round', 'Полукруглый']];
+const KP_ERKERS = [['rect', 'Прямой'], ['round', 'Полукруглый']];
 // Изделия облицовки стены — ключи узоров подбора (PATTERN_ROWS)
 const KP_FINISH = [['topCornice', 'Венчающий карниз'], ['dentils', 'Зубцы под карнизом'], ['floorCornice', 'Межэтажный пояс'],
   ['baseCornice', 'Плинтус над цоколем'], ['corners', 'Русты на углах'], ['frame', 'Наличники'], ['windowCornice', 'Сандрики'],
@@ -104,13 +104,14 @@ function kpWallCalc(md, k, baseOn, fin) {
   if (e) {
     const w = Math.min(+e.w || 0, L), dd = +e.d || 0, eh = Math.min(+e.floors || 1, F) * fh;
     // Развёртка эркера: прямой — ширина + 2 выступа, скошенный — по граням, полукруглый — по дуге
-    r.erkerRun = e.shape === 'rect' ? w + 2 * dd : e.shape === 'tri' ? w / 2 + 2 * Math.hypot(dd, w / 4) : Math.PI * w / 2;
+    r.erkerRun = e.shape === 'round' ? Math.PI * w / 2 : w + 2 * dd;
     r.erkerW = w; r.erkerH = eh;
     r.erkerExtra = r.erkerRun - w;
     // Эркер облицовывают целиком, а стену за ним — нет: + развёртка × высота − ширина × высота
     r.erkerMain = r.erkerExtra * eh;
     r.erkerPlinth = r.erkerExtra * hb;
-    r.erkerCorners = e.shape === 'round' ? 0 : 2;
+    // Русты по двум углам выступа — если отметили; у полукруглого углов нет
+    r.erkerCorners = e.shape !== 'round' && e.rust ? 2 : 0;
   }
   if (wl.gable) {
     r.gableGross = L * (+wl.gable.h || 0) / 2;
@@ -121,9 +122,11 @@ function kpWallCalc(md, k, baseOn, fin) {
   r.plinth = Math.max(0, r.plinthGross + r.erkerPlinth - r.doorPlinth);
   // Русты: угол дома делят две стены — по половине; углы эркера — целиком. Высота — от цоколя до карниза
   const ends = KP_NEIGHBORS[k].filter(n => md.walls[n].on).length * 0.5;
-  r.corners = P.corners ? ends + r.erkerCorners : 0;
+  r.corners = (P.corners ? ends : 0) + r.erkerCorners;
+  r.rustErker = r.erkerCorners * r.erkerH;
   Object.assign(r.q, { wall: r.wall, gable: r.gable, base: r.plinth });
-  if (P.corners) add('corners', r.corners * Hm);
+  if (P.corners) add('corners', ends * Hm);
+  add('corners', r.rustErker);
   if (P.topCornice) add('topCornice', L + r.erkerExtra);
   if (P.dentils) add('dentils', L + r.erkerExtra);
   if (P.floorCornice) add('floorCornice', (L + r.erkerExtra) * (F - 1));
@@ -204,6 +207,13 @@ function kpUpgradeModel(md, spec, catalog) {
       else if (!spec.parts?.[key]?.item) wl.finish.parts[key] = kpDefaultItem(key, catalog);
     });
     delete wl.decor;
+  });
+  // Скошенных эркеров больше нет — считаем прямыми; русты по углам эркера — как раньше, если в подборе есть русты
+  KP_WALL_ORDER.forEach(k => {
+    const e = md.walls[k].erker;
+    if (!e) return;
+    if (e.shape === 'tri') e.shape = 'rect';
+    if (!('rust' in e)) e.rust = !!spec.parts?.corners?.item;
   });
   delete md.house.cornersAdj;
   return md;
@@ -371,7 +381,6 @@ Object.assign(KP, {
       const al = ox === 0 ? [1, 0] : [0, 1];
       const p = (u, v) => `${cx + al[0] * u + ox * v},${cy + al[1] * u + oy * v}`;
       const path = e.shape === 'rect' ? `M${p(-ew, 0)}L${p(-ew, dep)}L${p(ew, dep)}L${p(ew, 0)}`
-        : e.shape === 'tri' ? `M${p(-ew, 0)}L${p(-ew / 2, dep)}L${p(ew / 2, dep)}L${p(ew, 0)}`
           : `M${p(-ew, 0)}C${p(-ew, dep * 1.33)} ${p(ew, dep * 1.33)} ${p(ew, 0)}`;
       erk += `<path d="${path}" class="kph-erker" style="stroke:${col(k)}" data-open-wall="${k}"/>`;
     });
@@ -508,6 +517,8 @@ Object.assign(KP, {
     return `
       <div class="kpw-seg">${KP_ERKERS.map(([sh, t]) => `<button class="${wl.erker.shape === sh ? 'on' : ''}" data-wa="erker-shape:${sh}">${t}</button>`).join('')}</div>
       <div class="kpw-dims">${numIn('erker.w', wl.erker.w, 'Ширина, м')}${numIn('erker.d', wl.erker.d, 'Выступ, м')}${numIn('erker.floors', wl.erker.floors, 'Этажей', 1)}</div>
+      ${wl.erker.shape !== 'round' ? `<div class="kpw-row"><label>Русты (пилястры) по углам эркера<small>2 угла на высоту эркера — сразу в смету</small></label>
+        <span class="switch"><input type="checkbox" data-wk="erker.rust" ${wl.erker.rust ? 'checked' : ''}><span></span></span></div>` : ''}
       <div class="kph-sub"><b>Окна в эркере</b>${wl.ops.map((o, i) => (o.where === 'erker' ? this.opRow(o, i, this.wherePlaces(k)) : '')).join('') || '<p class="configure-hint">Нет</p>'}
         <button class="kpw-chip kpw-chip--add" data-wa="add-erker-op">＋ Окно в эркере</button></div>
       <div class="kph-calc" id="kph-calc-erker">${this.calcErker(r)}</div>
@@ -517,11 +528,12 @@ Object.assign(KP, {
 
   calcErker(r) {
     const n1 = kpNum, e = this.model.walls[r.k].erker || {};
-    const run = e.shape === 'rect' ? `(${n1(r.erkerW)} + 2 × ${n1(e.d)})` : e.shape === 'tri' ? 'по граням' : 'по дуге';
+    const run = e.shape === 'round' ? 'по дуге' : `(${n1(r.erkerW)} + 2 × ${n1(e.d)})`;
     const row = (t, how, v) => `<div><span>${t}</span><small>${how}</small><b>${v}</b></div>`;
     let out = row('Эркер', `${run} = ${n1(r.erkerRun)} м × ${n1(r.erkerH)} м`, `${n1(r.erkerRun * r.erkerH)} м²`)
       + row('Стена за эркером', `${n1(r.erkerW)} × ${n1(r.erkerH)} — закрыта эркером, не облицовывается`, `−${n1(r.erkerW * r.erkerH)} м²`)
       + row('К основной плитке', 'эркер − стена за ним', `+${n1(r.erkerMain)} м²`);
+    if (r.erkerCorners) out += row('Русты по углам эркера', `2 угла × ${n1(r.erkerH)} м`, `${n1(r.rustErker)} п.м`);
     if (r.hb) out += row('Цоколь эркера', `${n1(r.erkerRun)} × ${n1(r.hb)} = ${n1(r.erkerRun * r.hb)} − за эркером ${n1(r.erkerW * r.hb)}`, `+${n1(r.erkerPlinth)} м²`);
     return out;
   },
@@ -561,7 +573,7 @@ Object.assign(KP, {
     document.querySelectorAll('#kpw-wall [data-wk]').forEach(x => { if (x !== el && x.dataset.wk === path && x.type !== 'checkbox') x.value = el.value; });
     this.saveSoon();
     // Включили стену, перенесли окно во фронтон или из него — меняется состав карточки
-    if (structural && (path === 'on' || path.endsWith('.where'))) return this.redrawWall();
+    if (structural && (path === 'on' || path.endsWith('.where') || path === 'erker.rust')) return this.redrawWall();
     this.refreshWall();
   },
 
@@ -612,7 +624,7 @@ Object.assign(KP, {
       wl.ops.push({ ...KP_OP_TYPES[arg], n: 1, where: String(floor) });
     }
     if (act === 'del-op') wl.ops.splice(+arg, 1);
-    if (act === 'add-erker') { wl.erker = { shape: 'rect', w: Math.min(3, kpWallLen(md, k)), d: 1, floors: F }; this.wallOpen.erker = true; }
+    if (act === 'add-erker') { wl.erker = { shape: 'rect', w: Math.min(3, kpWallLen(md, k)), d: 1, floors: F, rust: !!this.spec.parts?.corners?.item }; this.wallOpen.erker = true; }
     if (act === 'del-erker') { wl.erker = null; wl.ops.forEach(o => { if (o.where === 'erker') o.where = '1'; }); }
     if (act === 'erker-shape') wl.erker.shape = arg;
     if (act === 'add-gable') { wl.gable = { h: 2.5, cornice: true }; this.wallOpen.gable = true; }
@@ -694,7 +706,7 @@ Object.assign(KP, {
       g += `<rect x="${ex0}" y="${eTop}" width="${ew}" height="${yG - eTop}" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="0.8"/>`;
       if (e.shape === 'round') g += `<rect x="${ex0}" y="${eTop}" width="${ew}" height="${yG - eTop}" fill="url(#${id}-cyl)"/>`;
       else {
-        const side = e.shape === 'tri' ? ew / 4 : Math.min(ew / 6, 0.18 * s);
+        const side = Math.min(ew / 6, 0.18 * s);
         g += `<rect x="${ex0}" y="${eTop}" width="${side}" height="${yG - eTop}" fill="#000" opacity="0.14"/><rect x="${ex0 + ew - side}" y="${eTop}" width="${side}" height="${yG - eTop}" fill="#000" opacity="0.2"/>`;
       }
       g += `<rect x="${ex0 - 0.08 * s}" y="${eTop - 0.18 * s}" width="${ew + 0.16 * s}" height="${0.18 * s}" fill="${partCol('topCornice')}"/><rect x="${ex0 - 0.08 * s}" y="${eTop - 0.18 * s}" width="${ew + 0.16 * s}" height="${0.18 * s}" fill="url(#${id}-band)"/>`;
@@ -712,15 +724,15 @@ Object.assign(KP, {
       }
       if (gh && wl.gable.cornice) g += `<path d="M${x0},${yT}L${ex},${yT - gh * s}L${xR},${yT}" fill="none" stroke="${partCol('topCornice')}" stroke-width="${0.14 * s}" stroke-linejoin="round"/><path d="M${x0},${yT + 0.07 * s}L${ex},${yT - gh * s + 0.07 * s}L${xR},${yT + 0.07 * s}" fill="none" stroke="#000" stroke-opacity="0.16" stroke-width="${0.04 * s}"/>`;
       // Русты на углах: блоки через один — длинный, короткий
-      if (P.corners) {
-        const rs = this.catalog.variants[P.corners.item]?.size, bhR = Math.max(0.2, kpMm(rs, 0) || 0.3) * s, long = Math.max(0.3, kpMm(rs, 1) || 0.45) * s;
+      if (P.corners || r.erkerCorners) {
+        const rs = this.catalog.variants[P.corners?.item]?.size, bhR = Math.max(0.2, kpMm(rs, 0) || 0.3) * s, long = Math.max(0.3, kpMm(rs, 1) || 0.45) * s;
         const ends = KP_NEIGHBORS[k].map((n, i) => (md.walls[n].on ? (i === 0 ? 'L' : 'R') : null)).filter(Boolean);
         const xs = [];
         // Слева — та соседняя стена, что видна слева, если стоять лицом к этой
         const leftN = { front: 'left', back: 'right', left: 'back', right: 'front' }[k], rightN = { front: 'right', back: 'left', left: 'front', right: 'back' }[k];
-        if (md.walls[leftN].on && ends.length) xs.push(['L', x0]);
-        if (md.walls[rightN].on && ends.length) xs.push(['R', xR]);
-        if (e && e.shape !== 'round') xs.push(['L', ex - ew / 2], ['R', ex + ew / 2]);
+        if (P.corners && md.walls[leftN].on && ends.length) xs.push(['L', x0]);
+        if (P.corners && md.walls[rightN].on && ends.length) xs.push(['R', xR]);
+        if (r.erkerCorners) xs.push(['L', ex - ew / 2], ['R', ex + ew / 2]);
         xs.forEach(([side, x]) => {
           const top = x === x0 || x === xR ? yT + (P.topCornice ? bh('topCornice') : 0) : eTop;
           for (let y = yG - hb * s, i = 0; y - bhR > top - 0.5; y -= bhR, i++) {
