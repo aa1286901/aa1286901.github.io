@@ -79,7 +79,7 @@ if ($action === 'add') {
         respondError('Этот вариант уже рисуется');
     }
     $prompt = trim((string)($body['prompt'] ?? ''));
-    if ($prompt === '' || mb_strlen($prompt) > 8000) respondError('Неверное задание для ИИ');
+    if ($prompt === '' || mb_strlen($prompt) > 12000) respondError('Неверное задание для ИИ');
     // Образцы — только картинки самого приложения: фактуры камня и изделия каталога
     $refs = [];
     foreach ((array)($body['refs'] ?? []) as $ref) {

@@ -232,6 +232,18 @@ function onScreenAdmin() {
 
 // === Журнал запросов к ИИ: каждая генерация — что отправили в kie.ai и что он ответил ===
 const AI_LOG_MODELS = { 'nano-banana-2-1': 'Nano Banana', 'gpt-image-2-image-to-image': 'ChatGPT Image' };
+// Запрос или ответ kie.ai целиком — раскрывающимся блоком (старые записи журнала их не хранят)
+function aiLogJson(title, data) {
+  if (data == null || data === '') return '';
+  let text = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+  // resultJson и param kie.ai присылает строкой с JSON внутри — раскрыть для чтения
+  try {
+    const o = typeof data === 'string' ? null : JSON.parse(JSON.stringify(data));
+    if (o?.data?.resultJson) { o.data.resultJson = JSON.parse(o.data.resultJson); text = JSON.stringify(o, null, 2); }
+  } catch (e) { /* оставить как есть */ }
+  return `<details class="ailog-d__json"><summary>${title}</summary><pre class="ailog-d__prompt">${esc(text)}</pre></details>`;
+}
+
 const AI_LOG_STATUS = { processing: ['рисует', 'wait'], done: ['готово', 'ok'], failed: ['ошибка', 'err'], start_error: ['не принят', 'err'] };
 const aiLogFailed = x => x.status === 'failed' || x.status === 'start_error';
 
@@ -305,6 +317,9 @@ const AiLogScreen = {
         <div class="ailog-d__label">Задание (промпт)</div>
         <pre class="ailog-d__prompt">${esc(x.prompt || '')}</pre>
         <button class="btn btn-secondary btn-full" data-ailog-copy>Скопировать задание</button>
+        ${aiLogJson('Запрос в kie.ai (createTask)', x.request)}
+        ${aiLogJson('Ответ kie.ai на запрос', x.start_response)}
+        ${aiLogJson('Ответ kie.ai с результатом (recordInfo)', x.result_response)}
       </div>`);
     document.querySelector('[data-ailog-copy]').addEventListener('click', async () => {
       try { await navigator.clipboard.writeText(x.prompt || ''); showToast('Задание скопировано'); } catch (e) { showToast('Не удалось скопировать'); }

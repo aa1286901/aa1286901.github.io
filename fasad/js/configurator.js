@@ -18,6 +18,7 @@ const TILE_DEFAULTS = {
 const PATTERN_GROUPS = [
   { group: 'cornice', title: 'Карнизы и пояса', rows: [
     { key: 'topCornice', title: 'Венчающий карниз', sections: ['cornice'], def: /венчающий К-11/i },
+    { key: 'gableCornice', title: 'Карниз по фронтону', sections: ['cornice'], def: /венчающий К-11/i },
     { key: 'floorCornice', title: 'Межэтажный карниз', sections: ['cornice', 'plinth'], def: /межэтажный К-26/i },
     { key: 'baseCornice', title: 'Плинтус над цоколем', sections: ['plinth', 'cornice'], def: /^Плинтус П-15/ },
     { key: 'dentils', title: 'Зубцы под карнизом', sections: ['dentil'] },
@@ -57,6 +58,8 @@ const Configurator = {
       // Новый подбор — как стены: какой камень ни выбери для стен, узоры будут из него же
       parts: Object.fromEntries(PATTERN_ROWS.map(r => [r.key, { item: null, stone: 'main' }])),
       building: { floors: null, heightM: null },
+      // Русты и на углах эркеров (в смете и в задании для ИИ)
+      options: { erkerRust: true },
       filled: false,  // модели по умолчанию ещё не подставлены
     };
     if (mainStone) spec.materials.main.stone = mainStone;
@@ -189,6 +192,9 @@ const Configurator = {
             <span class="cfg-choice__text"><small>Материал</small><b>${esc(st?.name)}</b>${stoneNote(part.stone)}</span>
           </button>
         </div>
+        ${r.key === 'corners' && v ? `
+        <label class="cfg-toggle"><span>Русты и на углах эркеров</span>
+          <span class="switch"><input type="checkbox" data-erker-rust ${this.spec.options?.erkerRust !== false ? 'checked' : ''}><span></span></span></label>` : ''}
       </div>`;
   },
 
@@ -332,6 +338,10 @@ const Configurator = {
   },
 
   onChange(e) {
+    if (e.target.matches('[data-erker-rust]')) {
+      this.spec.options = { ...(this.spec.options || {}), erkerRust: e.target.checked };
+      return this.save();
+    }
     if (!e.target.matches('[data-base-on]')) return;
     this.spec.materials.base.on = e.target.checked;
     this.save();
@@ -402,9 +412,9 @@ const PARTS_V3 = [
   { key: 'balustrade', title: 'Балюстрада', icon: 'balustrade', type: 'balustrade' },
 ];
 // Группа камня частей в подборе версии 4
-const V4_GROUPS = { topCornice: 'cornice', floorCornice: 'cornice', baseCornice: 'cornice', dentils: 'cornice', frame: 'windows', windowCornice: 'windows', sill: 'windows',
+const V4_GROUPS = { topCornice: 'cornice', gableCornice: 'cornice', floorCornice: 'cornice', baseCornice: 'cornice', dentils: 'cornice', frame: 'windows', windowCornice: 'windows', sill: 'windows',
   keystone: 'windows', console: 'windows', corners: 'corners', column: 'columns', capital: 'columns', baluster: 'columns', post: 'columns', rail: 'columns', finial: 'columns' };
-const ROW_ICONS = { topCornice: 'cornice', floorCornice: 'cornice', baseCornice: 'plinth', dentils: 'dentil', frame: 'opening', windowCornice: 'cornice', sill: 'opening',
+const ROW_ICONS = { topCornice: 'cornice', gableCornice: 'cornice', floorCornice: 'cornice', baseCornice: 'plinth', dentils: 'dentil', frame: 'opening', windowCornice: 'cornice', sill: 'opening',
   keystone: 'opening', console: 'opening', corners: 'rust', column: 'column', capital: 'column', baluster: 'balustrade', post: 'balustrade', rail: 'balustrade', finial: 'balustrade' };
 
 function tileDetails(part) {

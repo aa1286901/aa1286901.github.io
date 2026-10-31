@@ -6,8 +6,8 @@
 // refs — сколько образцов отправлять. GPT Image 2.5 (Sunburst и Flare) с полным заданием и образцами изделий
 // на kie.ai падает с «500 Internal Error», GPT Image 1.5 — «Inappropriate content»; GPT Image 2 рисует всё
 const AI_MODELS = [
-  { id: 'nano-banana-2-1', name: 'Nano Banana', note: '~30 с', coins: 1, refs: 9, wait: 'обычно 30–60 секунд' },
-  { id: 'gpt-image-2-image-to-image', name: 'ChatGPT Image', note: '~2 мин', coins: 2, refs: 9, wait: 'обычно 1–2 минуты' },
+  { id: 'nano-banana-2-1', name: 'Nano Banana', note: '~30 с', coins: 1, refs: 15, wait: 'обычно 30–60 секунд' },
+  { id: 'gpt-image-2-image-to-image', name: 'ChatGPT Image', note: '~2 мин', coins: 2, refs: 15, wait: 'обычно 1–2 минуты' },
 ];
 
 const AiChoice = {
@@ -530,29 +530,62 @@ function upgradeDesign(design, stones) {
 // Отличия подборов: по каждой части — что было и что стало
 // === Задание для ИИ: фото + образцы камня и изделий, по-английски (так модели понимают точнее) ===
 // Картинка 1 — фото проекта (подставляет сервер), дальше образцы в порядке refs.
+// В задании — всё, что выбрал прораб: камень, формат, толщина, фаска, поверхность, кладка, шов,
+// каждое изделие с размером и своим камнем, русты на эркерах, и чего на фасаде быть не должно.
 const AI_PART_TEXT = {
-  topCornice: 'Crowning cornice along the top of the walls, right under the roof eaves',
-  floorCornice: 'Interfloor cornice: a horizontal band between the floors',
-  baseCornice: 'Plinth moulding: a horizontal band on top of the plinth',
-  dentils: 'Dentils (row of small rectangular blocks) right under the crowning cornice',
-  frame: 'Window surrounds: a moulded frame around every window',
-  windowCornice: 'Window cornice: a short projecting moulded cornice (hood) above every window, on top of the window surround',
-  sill: 'Stone window sill under every window',
-  keystone: 'Keystone at the top centre of every window surround',
-  console: 'Small consoles (brackets) under every window sill',
-  corners: 'Quoins: alternating rusticated stone blocks on every corner of the building',
-  column: 'Columns or pilasters at the entrance',
-  capital: 'Capitals and bases on those columns or pilasters',
-  baluster: 'Balusters of a stone balustrade on the porch or balcony, only if the building has one',
-  post: 'Pedestals of that balustrade',
-  rail: 'Handrail of that balustrade',
-  finial: 'Finials on the balustrade pedestals',
+  topCornice: ['Crowning cornice', 'a continuous projecting cornice along the top of all walls, right under the roof eaves'],
+  gableCornice: ['Gable rake cornice', 'a projecting cornice running along both sloping (raking) edges of every gable, if the building has gables'],
+  floorCornice: ['Interfloor cornice', 'a continuous horizontal band at every floor level, around the whole building including bay windows'],
+  baseCornice: ['Plinth moulding', 'a continuous band on top of the plinth along all walls and bay windows'],
+  dentils: ['Dentils', 'a row of small rectangular blocks right under the crowning cornice'],
+  frame: ['Window surrounds', 'a moulded frame around every window on all floors, including bay-window and gable windows'],
+  windowCornice: ['Window cornices (hoods)', 'a short projecting moulded cornice above every window, on top of the window surround'],
+  sill: ['Window sills', 'a projecting stone sill under every window'],
+  keystone: ['Keystones', 'a keystone at the top centre of every window surround'],
+  console: ['Consoles', 'small consoles (brackets) under every window sill'],
+  corners: ['Quoins (rusticated corner blocks)', 'on every external corner of the building, alternating long and short blocks, from the plinth up to the crowning cornice, slightly projecting from the wall'],
+  column: ['Columns or pilasters', 'at the entrance'],
+  capital: ['Capitals and bases', 'on those columns or pilasters'],
+  baluster: ['Balusters', 'of a stone balustrade on the porch or balcony, only if the building has one'],
+  post: ['Balustrade pedestals', 'of that balustrade'],
+  rail: ['Balustrade handrail', 'of that balustrade'],
+  finial: ['Finials', 'on the balustrade pedestals'],
 };
-const AI_LAYOUT = { running: 'running bond (each row offset by half a tile)', stack: 'stack bond (joints aligned)', random: 'random bond' };
-const AI_JOINT = { light: 'light', grey: 'grey', dark: 'dark' };
+const AI_NOT_USED = {
+  topCornice: 'crowning cornice', gableCornice: 'cornice along the gables', floorCornice: 'interfloor cornice', baseCornice: 'plinth moulding',
+  dentils: 'dentils', frame: 'window surrounds', windowCornice: 'window cornices', sill: 'stone window sills', keystone: 'keystones',
+  console: 'consoles', corners: 'quoins', column: 'columns or pilasters', capital: 'capitals', baluster: 'balustrade', post: 'balustrade pedestals',
+  rail: 'balustrade handrail', finial: 'finials',
+};
+const AI_LAYOUT = { running: 'running bond — each row offset by half a tile', stack: 'stack bond — vertical joints aligned', random: 'random bond — tiles of the row offset irregularly' };
+const AI_JOINT = { light: 'light-coloured', grey: 'grey', dark: 'dark' };
 const AI_SURFACE = { sawn: 'smooth sawn', split: 'rough split (rock-face)' };
+const AI_EDGE = {
+  none: 'square edges without any bevel, tiles sit flush and only thin joints show',
+  chamfer: '45° bevel (chamfer) on all four edges, so every tile is clearly outlined',
+  convex: 'rounded (convex) edges on all four sides',
+  concave: 'concave (cove) edges on all four sides',
+  rabbet: 'stepped rabbet edges — a small step along all four edges',
+};
+const AI_STONE_TYPE = { 'Песчаник': 'sandstone', 'Известняк': 'limestone', 'Доломит': 'dolomite', 'Ракушечник': 'shell limestone (coquina)', 'Сланец': 'slate' };
 
-function aiTask(design, stones, catalog, maxRefs = 9) {
+// Цвет камня словами: картинковые модели плохо понимают код вида #e0d9c5
+function aiColorName(hex) {
+  const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex || '');
+  if (!m) return '';
+  const [r, g, b] = m.slice(1).map(x => parseInt(x, 16) / 255);
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2, d = max - min;
+  const sat = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+  let h = 0;
+  if (d) h = max === r ? 60 * (((g - b) / d) % 6) : max === g ? 60 * ((b - r) / d + 2) : 60 * ((r - g) / d + 4);
+  if (h < 0) h += 360;
+  const tone = l > 0.85 ? 'very light' : l > 0.7 ? 'light' : l > 0.45 ? 'medium' : l > 0.25 ? 'dark' : 'very dark';
+  if (sat < 0.12) return l > 0.85 ? 'off-white' : `${tone} grey`;
+  const hue = h < 15 || h >= 340 ? 'reddish' : h < 35 ? (l > 0.7 ? 'warm beige' : 'brownish') : h < 55 ? (l > 0.75 ? 'creamy' : 'sandy beige') : h < 75 ? 'yellowish' : h < 170 ? 'greenish' : h < 260 ? 'bluish' : 'pinkish';
+  return `${tone} ${hue}`;
+}
+
+function aiTask(design, stones, catalog, maxRefs = 15) {
   const spec = upgradeDesign(design, stones);
   const m = spec.materials;
   const refs = [];
@@ -562,35 +595,74 @@ function aiTask(design, stones, catalog, maxRefs = 9) {
     if (i < 0 && refs.length < maxRefs) { refs.push(path); i = refs.length - 1; }
     return i < 0 ? null : i + 2;  // картинка 1 — фото
   };
+  const told = new Set();  // камень уже описан полностью — дальше только название и номер картинки
   const stone = (id) => {
     const s = stones.find(x => x.id === id);
     if (!s) return 'natural stone';
     const n = ref(s.texture);
-    return `${n ? `the stone shown in image ${n}` : 'natural stone'} ("${s.name}", colour ${s.color})`;
+    if (told.has(id)) return `"${s.name}"${n ? ` (image ${n})` : ''}, same stone as above`;
+    told.add(id);
+    const words = [AI_STONE_TYPE[s.type] || 'natural stone', aiColorName(s.color) && `${aiColorName(s.color)} colour`].filter(Boolean).join(', ');
+    return `"${s.name}", ${words}${n ? `, exactly the stone in image ${n}` : ''}`;
   };
-  const tile = (t) => {
-    const [h, w] = t.format.split('x');
-    return `${AI_SURFACE[t.surface] || 'sawn'} tiles ${h} mm high and ${w} mm long, laid in ${AI_LAYOUT[t.layout] || 'running bond'} with ${AI_JOINT[t.joint] || 'light'} joints`;
+  const tileLines = (t, pad) => {
+    const [h, w] = t.format.split('x').map(Number);
+    const rows = Math.max(1, Math.round(3000 / (h + 4)));
+    return [
+      `${pad}- Tiles: rectangular, ${h} mm high × ${w} mm long × ${t.thickness} mm thick, long side horizontal.`,
+      `${pad}- Face: ${AI_SURFACE[t.surface] || 'smooth sawn'}. Edges: ${AI_EDGE[t.edge] || AI_EDGE.chamfer}.`,
+      `${pad}- Bond: ${AI_LAYOUT[t.layout] || AI_LAYOUT.running}. Joints: thin, 3–5 mm, ${AI_JOINT[t.joint] || 'light-coloured'}.`,
+      `${pad}- Real scale: about ${rows} rows of tiles per 3 m of wall height. Keep this scale on the whole facade.`,
+    ];
   };
-  const lines = [`- Walls: ${stone(m.main.stone)}, ${tile(m.main)}.`];
-  lines.push(m.base.on
-    ? `- Plinth (the lowest band of the walls, from the ground up to the ground-floor level, about 0.6–1 m): ${stone(m.base.stone)}, ${tile(m.base)}.`
-    : '- No separate plinth: the wall stone goes down to the ground.');
+  const spec1 = [
+    '1. WALLS — all wall surfaces above the plinth, including bay windows and gables:',
+    `   - Stone: ${stone(m.main.stone)}.`,
+    ...tileLines(m.main, '   '),
+  ];
+  const spec2 = m.base.on ? [
+    '2. PLINTH — the lowest band of the walls, from the ground up to the ground-floor level (about 0.6–1 m), on all walls and bay windows:',
+    `   - Stone: ${stone(m.base.stone)}.`,
+    ...tileLines(m.base, '   '),
+  ] : ['2. PLINTH: no separate plinth — the wall stone goes down to the ground.'];
+  const decor = [], notUsed = [];
+  const erkerRust = spec.options?.erkerRust !== false;
   PATTERN_ROWS.forEach(r => {
     const part = spec.parts[r.key];
     const v = catalog.variants[part?.item];
-    if (!v) return;
-    const material = stone(resolveStone(spec, part.stone));
+    if (!part) return;  // части не было, когда подбор сохраняли (старый проект) — не пишем ничего
+    if (!v) { notUsed.push(AI_NOT_USED[r.key]); return; }
+    const [name, where] = AI_PART_TEXT[r.key];
+    let place = where;
+    if (r.key === 'corners') place += erkerRust ? '; also on both outer corners of every bay window, if the building has bay windows' : '; do not put quoins on bay windows';
     const n = v.image && ref(v.image.replace('assets/catalog/', 'assets/ai/').replace(/\.webp$/, '.jpg'));
-    lines.push(`- ${AI_PART_TEXT[r.key]}${n ? `, with the shape and profile of the product in image ${n}` : ''}, made of ${material}.`);
+    const dims = String(v.size || '').split('×').length === 3 ? ' (height × length × projection)' : '';
+    const shape = n ? `Profile and shape exactly as the product in image ${n}` : `Classic ${name.toLowerCase()} profile`;
+    decor.push(`   - ${name}: ${place}. ${shape}${v.size ? `, catalogue size ${v.size} mm${dims}` : ''}. Stone: ${stone(resolveStone(spec, part.stone))}.`);
   });
+  const lastImg = refs.length + 1;
   const prompt = [
-    'Image 1 is a photo of a building. Edit this photo: clad the facade in natural stone according to the specification below.',
-    'Keep everything else exactly as in image 1: the same camera angle and framing, the same building shape and proportions, the same number, position and size of windows and doors, the same roof, steps, fence, people, cars, street, sky and lighting. Do not add or remove windows, doors, floors or any objects.',
-    'The other images are only samples of stone texture and product shapes; use the product images for their shape, but always render them in the stone named in the specification.',
-    'Specification:',
-    ...lines,
-    'Result: a photorealistic photo of the same building with a finished natural stone facade, real stone texture and thin joints, the same daylight as in the original photo.',
+    'TASK: Photorealistic editing of a real photo. Image 1 is the original photo of the building. Clad its facade in natural stone exactly according to the SPECIFICATION. This is an edit of image 1, not a new picture and not a redesign.',
+    '',
+    'GEOMETRY — DO NOT CHANGE ANYTHING:',
+    '- Same camera position, angle, lens, framing and crop as image 1.',
+    '- Same building: outline, proportions, number of floors, wall heights, roof shape, roofing material and eaves overhang.',
+    '- Same openings: the exact number, position, size and shape of every window, door, gate and arch. Do not add, remove, move, widen, narrow or merge any opening. Keep window frames, glass, glazing bars and doors exactly as they are.',
+    '- Same projections: bay windows, gables, balconies, porches, steps — same shape and size. Do not invent new ones.',
+    '- Same surroundings: ground, fence, plants, people, cars, street, sky, weather, light and shadows.',
+    '- Stone decor is added only where the SPECIFICATION says, as a thin layer on the existing walls. Decor must never cover glass or change the size of an opening.',
+    '',
+    'REFERENCE IMAGES:',
+    `- ${lastImg > 1 ? `Images 2–${lastImg} are` : 'Any other images are'} reference samples only. Stone images show the colour, grain and surface of the stone. Product images show the shape and profile of a moulding: copy the profile, but render it in the stone named in the SPECIFICATION, not in the colour of the product photo.`,
+    '- Do not copy backgrounds, lighting or scale from the reference images.',
+    '',
+    'SPECIFICATION:',
+    ...spec1,
+    ...spec2,
+    ...(decor.length ? ['3. DECOR — each element made exactly in the stone stated for it:', ...decor] : ['3. DECOR: none — plain stone walls only.']),
+    ...(notUsed.length ? [`4. NOT USED — do not add: ${notUsed.join(', ')}.`] : []),
+    '',
+    'RESULT: a photorealistic daytime photo of the same building after the work is finished: real natural stone texture with slight tone variation between tiles, crisp straight joints, realistic depth and shadows under cornices and mouldings, the same light as in image 1. No text, no watermarks, no new objects.',
   ].join('\n');
   return { prompt, refs };
 }
