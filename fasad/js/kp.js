@@ -41,7 +41,15 @@ const KP_EXTRAS = [
   { id: 'trash', name: 'Вывоз мусора', sub: 'обрезки камня, упаковка', unit: 'объект', m: 0, w: 6000, lw: 'Услуга' },
 ];
 
-const KP_TERMS = { payment: '50% на камень и леса, остаток — по этапам', guarantee: '5 лет на монтаж, камень — на весь срок службы', valid: 14 };
+// Условия работы — что обычно пишут в КП на фасадные работы: начало, оплата, что входит, что нужно от заказчика, гарантия
+const KP_TERMS = {
+  start: 'через 3 дня после аванса',
+  payment: '50% на камень и леса, остаток — по этапам',
+  includes: 'камень, доставка, леса, сетка, клей, монтаж, вывоз мусора',
+  client: 'электричество 220 В, вода, место под камень у дома, подъезд для машины',
+  guarantee: '5 лет на монтаж, камень — на весь срок службы',
+  valid: 14,
+};
 
 const kpRub = (n) => `${Math.round(n || 0).toLocaleString('ru-RU')} ₽`;
 const kpNum = (n) => (Math.round((+n || 0) * 10) / 10).toLocaleString('ru-RU');
@@ -89,6 +97,8 @@ const KP = {
       this.model.walls = kpDefaultWalls(floors);
     }
     this.model.profile = { ...this.model.profile, ...(this.mine.profile || {}) };
+    // Новые пункты условий (начало работ, что входит, от заказчика) — и в сохранённых КП
+    this.model.terms = { ...KP_TERMS, ...(this.mine.terms || {}), ...(this.model.terms || {}) };
     this.model.customExtras = this.model.customExtras || [];
     // Главный экран — дом сверху; смета — по кнопке внизу
     this.step = 1;
@@ -159,12 +169,6 @@ const KP = {
   // Шаг 2: смета, запас, условия, контакты
   stepSmeta() {
     const g = this.geo();
-    // Площадь и свой запас в одной строке: стены, эркеры, цоколь, фронтоны
-    const area = (id, label, v, stockKey) => `
-      <div class="kp-area-row">
-        <div class="kp-area-row__txt"><b>${label}</b><small id="kpw-a-${id}">${kpNum(v)} м²</small></div>
-        <label class="kp-area-row__stock"><span>запас</span><input class="input kpw-num" type="number" inputmode="decimal" step="1" min="0" data-k="stock.${stockKey}" value="${this.model.stock[stockKey] ?? ''}"><i>%</i></label>
-      </div>`;
     return `
       <section class="kp-card"><h3>Заказчик</h3>
         <div class="kp-grid">
@@ -181,6 +185,10 @@ const KP = {
       </section>
 
       <section class="kp-card"><h3>Смета <small>материал и работа по каждой позиции</small></h3>
+        <div class="kp-stock"><span>Запас на подрезку, %</span>
+          ${[['wall', 'стены'], ...(g.erkerArea ? [['erker', 'эркеры']] : []), ...(g.plinth ? [['base', 'цоколь']] : []), ...(g.gable ? [['gable', 'фронтоны']] : [])]
+            .map(([key, t]) => `<label><small>${t}</small><input class="input kpw-num" type="number" inputmode="decimal" step="1" min="0" data-k="stock.${key}" value="${this.model.stock[key] ?? ''}"></label>`).join('')}
+        </div>
         <div id="kp-items"></div>
         <button class="btn btn-ghost btn-full kp-add" data-add="custom">＋ Своя позиция</button>
       </section>
@@ -190,18 +198,19 @@ const KP = {
         <button class="btn btn-ghost btn-full kp-add" data-add="customExtras">＋ Своя позиция</button>
       </section>
 
-      <section class="kp-card"><h3>Площади и условия <small>запас — на подрезку и бой</small></h3>
-        ${area('wall', 'Стены', g.walls, 'wall')}
-        ${g.erkerArea ? area('erker', 'Эркеры', g.erkerArea, 'erker') : ''}
-        ${g.plinth ? area('base', 'Цоколь', g.plinth, 'base') : ''}
-        ${g.gable ? area('gable', 'Фронтоны', g.gable, 'gable') : ''}
-        <div class="kp-area-total"><span>Камня на фасад</span><b id="kpw-a-total">${kpNum(g.area)} м²</b></div>
+      <section class="kp-card"><h3>Условия работы <small>попадут в КП для заказчика</small></h3>
         <div class="kp-grid kp-grid--3">
           ${this.field('discount', 'Скидка, %', 'number', 'inputmode="decimal"')}
           ${this.field('days', 'Срок, дней', 'number', `inputmode="numeric" placeholder="${g.days}"`)}
-          ${this.field('terms.valid', 'КП действует', 'number', 'inputmode="numeric"')}
+          ${this.field('terms.valid', 'КП действует, дн', 'number', 'inputmode="numeric"')}
         </div>
-        <div class="kp-grid">${this.field('terms.payment', 'Оплата', 'textarea')}${this.field('terms.guarantee', 'Гарантия', 'textarea')}</div>
+        <div class="kp-grid">
+          ${this.field('terms.start', 'Начало работ', 'textarea')}
+          ${this.field('terms.payment', 'Оплата', 'textarea')}
+          ${this.field('terms.includes', 'Входит в стоимость', 'textarea')}
+          ${this.field('terms.client', 'От заказчика', 'textarea')}
+          ${this.field('terms.guarantee', 'Гарантия', 'textarea')}
+        </div>
       </section>
       <p class="configure-hint">Цены, ваши данные и условия запомнятся для следующих КП.</p>`;
   },
@@ -941,9 +950,13 @@ async function kpBuildPdf(kp) {
   y += tl.length * 28 + 26;
   const stages = [['Аванс на камень и леса', 0.5], ['После облицовки стен и цоколя', 0.3], ['После сдачи фасада', 0.2]];
   listCard(stages.map(([s, p]) => [`${Math.round(p * 100)}% · ${s}`, kpRub(t.total * p)]), { rh: 40 });
-  const terms = [['Оплата', md.terms.payment || ''], ['Гарантия', md.terms.guarantee || ''], ['Предложение действует', `${+md.terms.valid || 14} дней, до ${valid}`]];
+  const terms = [['Начало работ', md.terms.start], ['Оплата', md.terms.payment], ['Входит в стоимость', md.terms.includes],
+    ['От заказчика', md.terms.client], ['Гарантия', md.terms.guarantee], ['Предложение действует', `${+md.terms.valid || 14} дней, до ${valid}`]]
+    .filter(([, b]) => b);
   d.font('r', 12);
   const th = terms.map(([, b]) => 22 + d.height(b, KPCW - 32, 1.3) + 10);
+  // Условия не влезают под этапы оплаты — на отдельный лист
+  if (y + th.reduce((a, b) => a + b, 0) + 130 > KPH) { newPage(); h2('Условия работы'); }
   d.card(KPM, y, KPCW, th.reduce((a, b) => a + b, 0) + 8);
   let ty = y + 8;
   terms.forEach(([a, b], i) => {
