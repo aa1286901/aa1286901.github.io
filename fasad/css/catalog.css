@@ -649,6 +649,16 @@
   font-weight: 700;
 }
 
+.cfg-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-top: 8px;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
 .cfg-pair {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -4722,4 +4732,15 @@ body:has(.screen--kp.active) .bottom-nav {
 
 .kp-stock .kpw-num {
   width: 100%;
+}
+
+.ailog-d__json {
+  margin-top: var(--spacing-sm);
+}
+
+.ailog-d__json summary {
+  padding: 8px 0;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  cursor: pointer;
 }

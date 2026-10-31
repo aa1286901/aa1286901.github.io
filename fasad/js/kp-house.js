@@ -16,7 +16,7 @@ const KP_OP_TYPES = {
 };
 const KP_ERKERS = [['rect', 'Прямой'], ['round', 'Полукруглый']];
 // Изделия облицовки стены — ключи узоров подбора (PATTERN_ROWS)
-const KP_FINISH = [['topCornice', 'Венчающий карниз'], ['dentils', 'Зубцы под карнизом'], ['floorCornice', 'Межэтажный пояс'],
+const KP_FINISH = [['topCornice', 'Венчающий карниз'], ['gableCornice', 'Карниз по фронтону'], ['dentils', 'Зубцы под карнизом'], ['floorCornice', 'Межэтажный пояс'],
   ['baseCornice', 'Плинтус над цоколем'], ['corners', 'Русты на углах'], ['frame', 'Наличники'], ['windowCornice', 'Сандрики'],
   ['sill', 'Подоконники'], ['keystone', 'Замки'], ['console', 'Консоли']];
 // Позиции сметы, которые считаются по стенам (у каждой стены может быть свой камень и свои изделия)
@@ -217,7 +217,7 @@ function kpUpgradeModel(md, spec, catalog) {
     const e = md.walls[k].erker;
     if (!e) return;
     if (e.shape === 'tri') e.shape = 'rect';
-    if (!('rust' in e)) e.rust = !!spec.parts?.corners?.item;
+    if (!('rust' in e)) e.rust = !!spec.parts?.corners?.item && spec.options?.erkerRust !== false;
   });
   // Запас: был общий для фронтонов и эркеров — теперь у каждого свой, у цоколя тоже
   const st = md.stock || {};
@@ -245,7 +245,8 @@ Object.assign(KP, {
         : `${s.name}${defId === 'reveals' ? ' · пиленый' : ''}`;
       return { key: id, sub, img: s.texture, kind: 'stone' };
     }
-    const p = fin.parts[defId === 'gableCornice' ? 'topCornice' : defId];
+    // Карниз по фронтону: свой узор; в старых подборах его не было — как венчающий
+    const p = defId === 'gableCornice' ? fin.parts.gableCornice || fin.parts.topCornice : fin.parts[defId];
     if (!p) return { key: fin.main, sub: stoneName(fin.main), img: this.stone(fin.main)?.texture, kind: 'stone' };
     const v = this.catalog.variants[p.item];
     return { key: `${p.item}|${p.stone}`, sub: `${v?.name || ''}${v?.size ? ` · ${v.size}` : ''} · ${stoneName(p.stone)}`, img: v?.image, kind: 'product' };
@@ -629,7 +630,7 @@ Object.assign(KP, {
       wl.ops.push({ ...KP_OP_TYPES[arg], n: 1, where: String(floor) });
     }
     if (act === 'del-op') wl.ops.splice(+arg, 1);
-    if (act === 'add-erker') { wl.erker = { shape: 'rect', w: Math.min(3, kpWallLen(md, k)), d: 1, floors: F, rust: !!this.spec.parts?.corners?.item }; this.wallOpen.erker = true; }
+    if (act === 'add-erker') { wl.erker = { shape: 'rect', w: Math.min(3, kpWallLen(md, k)), d: 1, floors: F, rust: !!this.spec.parts?.corners?.item && this.spec.options?.erkerRust !== false }; this.wallOpen.erker = true; }
     if (act === 'del-erker') { wl.erker = null; wl.ops.forEach(o => { if (o.where === 'erker') o.where = '1'; }); }
     if (act === 'erker-shape') wl.erker.shape = arg;
     if (act === 'add-gable') { wl.gable = { h: 2.5, cornice: true }; this.wallOpen.gable = true; }
@@ -727,7 +728,7 @@ Object.assign(KP, {
         const y = yT + (P.topCornice ? bh('topCornice') : 0) + 1, dw = 0.1 * s, gap = 0.1 * s;
         for (let x = x0 + gap; x < xR - dw; x += dw + gap) g += `<rect x="${x}" y="${y}" width="${dw}" height="${0.12 * s}" fill="${partCol('dentils')}"/><rect x="${x}" y="${y}" width="${dw}" height="${0.12 * s}" fill="url(#${id}-band)"/>`;
       }
-      if (gh && wl.gable.cornice) g += `<path d="M${x0},${yT}L${ex},${yT - gh * s}L${xR},${yT}" fill="none" stroke="${partCol('topCornice')}" stroke-width="${0.14 * s}" stroke-linejoin="round"/><path d="M${x0},${yT + 0.07 * s}L${ex},${yT - gh * s + 0.07 * s}L${xR},${yT + 0.07 * s}" fill="none" stroke="#000" stroke-opacity="0.16" stroke-width="${0.04 * s}"/>`;
+      if (gh && wl.gable.cornice) g += `<path d="M${x0},${yT}L${ex},${yT - gh * s}L${xR},${yT}" fill="none" stroke="${partCol(P.gableCornice ? 'gableCornice' : 'topCornice')}" stroke-width="${0.14 * s}" stroke-linejoin="round"/><path d="M${x0},${yT + 0.07 * s}L${ex},${yT - gh * s + 0.07 * s}L${xR},${yT + 0.07 * s}" fill="none" stroke="#000" stroke-opacity="0.16" stroke-width="${0.04 * s}"/>`;
       // Русты на углах: блоки через один — длинный, короткий
       if (P.corners || r.erkerCorners) {
         const rs = this.catalog.variants[P.corners?.item]?.size, bhR = Math.max(0.2, kpMm(rs, 0) || 0.3) * s, long = Math.max(0.3, kpMm(rs, 1) || 0.45) * s;

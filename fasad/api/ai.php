@@ -13,8 +13,8 @@ define('AI_LOG_MAX', 300);
 // Модели kie.ai: поле со ссылками на картинки, допустимое число картинок, цена генерации в монетах
 // и разрешение (по умолчанию 1K)
 const AI_MODELS = [
-    'nano-banana-2-1' => ['images' => 'image_input', 'max' => 10, 'coins' => 1],
-    'nano-banana-2' => ['images' => 'image_input', 'max' => 10, 'coins' => 1],
+    'nano-banana-2-1' => ['images' => 'image_input', 'max' => 16, 'coins' => 1],
+    'nano-banana-2' => ['images' => 'image_input', 'max' => 16, 'coins' => 1],
     'nano-banana-pro' => ['images' => 'image_input', 'max' => 8, 'coins' => 3],
     'gpt-image-2-5-sunburst-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
     'gpt-image-2-5-flare-image-to-image' => ['images' => 'input_urls', 'max' => 16, 'coins' => 2],
@@ -54,6 +54,8 @@ function kieCall($cfg, $path, $body = null) {
     $raw = curl_exec($ch);
     curl_close($ch);
     $res = is_string($raw) ? json_decode($raw, true) : null;
+    // Ответ kie.ai целиком — для журнала администратора
+    $GLOBALS['kieLastRaw'] = is_array($res) ? $res : mb_substr((string)$raw, 0, 2000);
     if (!is_array($res)) {
         kieFail('Сервис ИИ не отвечает, попробуйте позже', 502, 'нет ответа: ' . mb_substr((string)$raw, 0, 300));
     }
@@ -70,7 +72,8 @@ function kieCall($cfg, $path, $body = null) {
 // Ошибка kie.ai: если в этот момент ставили задачу — записать в журнал, что ответил kie.ai
 function kieFail($message, $status, $raw) {
     if (!empty($GLOBALS['aiLogStart'])) {
-        aiLog('err_' . uniqid(), $GLOBALS['aiLogStart'] + ['status' => 'start_error', 'response' => $raw, 'finished_at' => date('Y-m-d H:i:s')]);
+        aiLog('err_' . uniqid(), $GLOBALS['aiLogStart'] + ['status' => 'start_error', 'response' => $raw,
+            'start_response' => $GLOBALS['kieLastRaw'] ?? null, 'finished_at' => date('Y-m-d H:i:s')]);
     }
     respondError($message, $status);
 }
@@ -98,9 +101,12 @@ function aiStart($cfg, $originalImage, $prompt, $refs, $meta = []) {
         'at' => $started, 'model' => $cfg['model'], 'resolution' => $input['resolution'] ?? null,
         'aspect' => $input['aspect_ratio'] ?? null, 'images' => $urls, 'prompt' => $prompt,
     ];
-    $data = kieCall($cfg, 'jobs/createTask', ['model' => $cfg['model'], 'input' => $input]);
+    $request = ['model' => $cfg['model'], 'input' => $input];
+    // Запрос в kie.ai целиком, как ушёл (без ключа)
+    $GLOBALS['aiLogStart']['request'] = $request;
+    $data = kieCall($cfg, 'jobs/createTask', $request);
     if (empty($data['taskId'])) kieFail('Сервис ИИ не принял задачу', 502, 'нет taskId в ответе');
-    aiLog((string)$data['taskId'], $GLOBALS['aiLogStart'] + ['status' => 'processing']);
+    aiLog((string)$data['taskId'], $GLOBALS['aiLogStart'] + ['status' => 'processing', 'start_response' => $GLOBALS['kieLastRaw'] ?? null]);
     $GLOBALS['aiLogStart'] = null;
     return [
         'task_id' => (string)$data['taskId'],
@@ -168,6 +174,10 @@ function aiLogFinish($ai, $data, $fields) {
     $fields['finished_at'] = date('Y-m-d H:i:s');
     if (isset($data['creditsConsumed'])) $fields['credits'] = (float)$data['creditsConsumed'];
     if (isset($data['costTime'])) $fields['cost_ms'] = (int)$data['costTime'];
+    // Ответ kie.ai на проверку задачи целиком; param — это наш же запрос, он уже записан
+    $raw = $GLOBALS['kieLastRaw'] ?? $data;
+    if (is_array($raw) && isset($raw['data']['param'])) unset($raw['data']['param']);
+    $fields['result_response'] = $raw;
     aiLog($ai['task_id'], $fields);
 }
 
