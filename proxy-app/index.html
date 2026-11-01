@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=0.9, viewport-fit=cover, maximum-scale=0.9, user-scalable=no"
+    />
+    <meta name="theme-color" content="#06080f" />
+    <meta
+      name="description"
+      content="ahmedov.proxy - Прокси для Telegram и WhatsApp без блокировок. Быстрые и стабильные прокси-сервера без VPN"
+    />
+    <meta property="og:title" content="ahmedov.proxy" />
+    <meta property="og:description" content="Прокси для Telegram и WhatsApp без блокировок. Быстрые и стабильные прокси-сервера без VPN" />
+    <meta property="og:image" content="https://ahmedov.online/proxy/assets/images/general.png" />
+    <meta property="og:url" content="https://ahmedov.online/proxy/" />
+    <meta property="og:type" content="website" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="./favicon.ico" sizes="any" />
+    <link rel="icon" href="./assets/icons/icon-192.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./assets/icons/icon-192.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link id="app-styles" rel="stylesheet" href="./assets/css/styles.css" />
+    <title>ahmedov.proxy</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      async function resetClientCachesIfRequested() {
+        const params = new URLSearchParams(location.search);
+        if (params.get("reset_cache") !== "1") return;
+        if (!("serviceWorker" in navigator)) return;
+        try {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map((r) => r.unregister()));
+          if ("caches" in window) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map((k) => caches.delete(k)));
+          }
+        } catch {}
+      }
+
+      function loadAppAssets(assetVersion) {
+        const stylesEl = document.getElementById("app-styles");
+        if (stylesEl) {
+          stylesEl.href = `./assets/css/styles.css?v=${encodeURIComponent(assetVersion)}`;
+        }
+
+        const appScript = document.createElement("script");
+        appScript.type = "module";
+        appScript.src = `./assets/js/app.js?v=${encodeURIComponent(assetVersion)}`;
+        document.body.appendChild(appScript);
+      }
+
+      (async () => {
+        const assetVersion = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+        const isLocalHost =
+          location.hostname === "127.0.0.1" ||
+          location.hostname === "localhost";
+        const underProxy =
+          location.pathname === "/proxy" ||
+          location.pathname.startsWith("/proxy/");
+        const webBase = underProxy ? "/proxy" : "";
+        window.AHMEDOV_CONFIG = {
+          apiBase: isLocalHost ? "http://127.0.0.1:8080/api" : `${webBase}/api`,
+          webBase,
+          assetVersion,
+        };
+        await resetClientCachesIfRequested();
+        loadAppAssets(assetVersion);
+      })();
+    </script>
+  </body>
+</html>
