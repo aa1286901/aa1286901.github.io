@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Route all non-existent files/folders to API front controller
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+RewriteRule ^ index.php [L,QSA]

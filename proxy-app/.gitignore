@@ -1,0 +1,5 @@
+# Секреты и живая база — только на хостинге
+.env
+database/*.db
+database/*.db-*
+.DS_Store

@@ -1,0 +1,41 @@
+name: Deploy Proxy to hosting
+
+# Каждый push в master (в том числе после слияния PR) загружает папку proxy-app/
+# на хостинг в /ahmedov.online/proxy/ по FTP. Секреты те же, что у fasad:
+# FTP_SERVER, FTP_USERNAME, FTP_PASSWORD.
+
+on:
+  push:
+    branches: [master]
+    paths: ["proxy-app/**", ".github/workflows/deploy-proxy.yml"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Новое имя кэша сервис-воркера на каждый деплой — телефоны подтянут свежие файлы
+      - name: Stamp cache version
+        run: |
+          V="${GITHUB_SHA::8}"
+          sed -i -E "s/const CACHE = \"[^\"]*\"/const CACHE = \"ahmedov-proxy-$V\"/" proxy-app/sw.js
+          grep "const CACHE =" proxy-app/sw.js
+      - name: Upload proxy-app/ via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          local-dir: proxy-app/
+          server-dir: /ahmedov.online/proxy/
+          # Живые данные на хостинге не трогаем: настройки с ключами и база пользователей
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .env
+            database/app.db
+            database/*.db
+            database/*.db-*

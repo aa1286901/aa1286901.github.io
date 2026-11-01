@@ -1,0 +1,55 @@
+/* Proxy status indicators */
+.proxy-status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+/* Green - reachable */
+.proxy-status-reachable {
+    background-color: #22c55e;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.5);
+}
+
+/* Yellow blinking - unknown/untested */
+.proxy-status-unknown {
+    background-color: #eab308;
+    animation: proxy-blink 1.5s ease-in-out infinite;
+}
+
+@keyframes proxy-blink {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 4px rgba(234, 179, 8, 0.6);
+    }
+    50% {
+        opacity: 0.4;
+        box-shadow: 0 0 2px rgba(234, 179, 8, 0.3);
+    }
+}
+
+/* Red - unreachable */
+.proxy-status-unreachable {
+    background-color: #ef4444;
+    box-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
+}
+
+/* Status text */
+.proxy-status-text {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.proxy-status-text-reachable {
+    color: #22c55e;
+}
+
+.proxy-status-text-unknown {
+    color: #eab308;
+}
+
+.proxy-status-text-unreachable {
+    color: #ef4444;
+}
