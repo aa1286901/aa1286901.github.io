@@ -571,3 +571,7 @@ div.ui-feature { cursor: default; }
 .ui-qr.big img, .ui-qr.big canvas { width: 232px !important; height: 232px !important; }
 
 .ui-ping.checking { animation: ui-pulse 1.2s ease-in-out infinite; }
+
+/* В длинной шторке элементы не сжимаются, а шторка прокручивается */
+.ui-sheet > * { flex-shrink: 0; }
+.ui-hero-chip.off i { background: rgba(255, 255, 255, 0.6); }

@@ -884,6 +884,7 @@ const api = {
   adminUsers: (token) => request("/admin/users", { headers: { Authorization: `Bearer ${token}` } }),
   adminCreateUser: (token, body) => request("/admin/users", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: JSON.stringify(body) }),
   adminUpdateUser: (token, phone, body) => request(`/admin/users/${encodeURIComponent(phone)}`, { method: "PATCH", headers: { Authorization: `Bearer ${token}` }, body: JSON.stringify(body) }),
+  adminVpn: (token, phone, body) => request(`/admin/users/${encodeURIComponent(phone)}/vpn`, { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: JSON.stringify(body) }),
   adminDeleteUser: (token, phone) => request(`/admin/users/${encodeURIComponent(phone)}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }),
   adminProxies: (token, network = "all") => request(`/admin/proxies?network=${encodeURIComponent(network)}`, { headers: { Authorization: `Bearer ${token}` } }),
   adminCreateProxy: (token, body) => request("/admin/proxies", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: JSON.stringify(body) }),
@@ -1744,6 +1745,23 @@ function planCards(plans, selectedId) {
 // UI: экраны клиента
 // ==========================
 
+function homeVpnCard() {
+  const v = userVpn();
+  if (v.active) {
+    const days = Math.max(0, Number(v.daysLeft) || 0);
+    return `<button class="ui-card ui-row-card" data-action="open-tab" data-tab="vpn">
+      <span class="ui-row-icon" style="background:#5E5CE6;">${uiIcon("vpn", 18, 2.1)}</span>
+      <span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:16px;">VPN активен</span><span class="ui-qrow-sub"><span class="ui-dot ${days <= 7 ? "slow" : "ok"}"></span>${days} ${ruPlural(days, "день", "дня", "дней")} · до ${esc(formatDateOnly(v.expiresAt))}</span></span>
+      <span class="ui-chev">${uiIcon("chevron", 14, 2.6)}</span>
+    </button>`;
+  }
+  return `<button class="ui-card ui-row-card" data-action="open-tab" data-tab="vpn" style="background:linear-gradient(140deg, rgba(94,92,230,.18), rgba(10,132,255,.12));">
+      <span class="ui-row-icon" style="background:#5E5CE6;">${uiIcon("vpn", 18, 2.1)}</span>
+      <span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:16px;">${v.expiresAt ? "VPN закончился" : "Подключите VPN"}</span><span class="ui-sub" style="font-size:13px;">Для всех приложений и сайтов · от ${esc(vpnPlans()[0]?.price || "")}</span></span>
+      <span class="ui-btn-sm" style="pointer-events:none;">${v.expiresAt ? "Продлить" : "Подробнее"}</span>
+    </button>`;
+}
+
 function browserLoginBanner() {
   if (isStandaloneMode()) return "";
   let code = "";
@@ -1823,6 +1841,8 @@ function homeScreen() {
       <div class="ui-sec-head"><h2 class="ui-h2">Подключиться в один тап</h2><button class="ui-link" data-action="open-tab" data-tab="telegram">Все</button></div>
       <div class="ui-card ui-list">${quickRow("telegram")}${quickRow("whatsapp")}</div>
     </section>
+
+    ${homeVpnCard()}
 
     <div class="ui-grid2">
       <button class="ui-card ui-tile" data-action="open-tab" data-tab="telegram">
@@ -1944,6 +1964,7 @@ function accountScreen() {
         <div class="ui-row"><span class="ui-row-main"><span class="ui-row-label">Статус</span><span class="ui-row-value ${days <= 7 ? "orange" : "green"}">${days <= 7 ? "Скоро закончится" : "Активна"}</span></span></div>
         <div class="ui-row"><span class="ui-row-main"><span class="ui-row-label">Тариф</span><span class="ui-row-value">${esc(s.type || "—")}</span></span></div>
         <div class="ui-row"><span class="ui-row-main"><span class="ui-row-label">Осталось</span><span class="ui-row-value">${days} ${ruPlural(days, "день", "дня", "дней")}</span></span></div>
+        <button class="ui-row" data-action="open-tab" data-tab="vpn"><span class="ui-row-main"><span class="ui-row-label">VPN</span><span class="ui-row-value ${userVpn().active ? "green" : ""}">${userVpn().active ? `до ${esc(formatDateOnly(userVpn().expiresAt))}` : "не подключён"}</span><span class="ui-chev">${uiIcon("chevron", 14, 2.6)}</span></span></button>
         <button class="ui-row" data-action="extend-subscription" data-plan-id="301"><span class="ui-row-main"><span class="ui-row-label" style="color:var(--ui-accent-text);font-weight:600;">Продлить подписку</span><span class="ui-chev">${uiIcon("chevron", 14, 2.6)}</span></span></button>
       </div>
     </div>
@@ -2343,7 +2364,86 @@ function pwaBlockedScreen() {
 
 const VPN_RENDER_STEP = 60;
 
+function userVpn() {
+  return state.subscription?.vpn || { active: false };
+}
+
+function vpnPlans() {
+  const plans = state.subscription?.vpnPlans || [];
+  return plans.length ? plans : [
+    { id: "vpn90", name: "90 дней", durationDays: 90, durationMonths: 3, price: "290 ₽" },
+    { id: "vpn180", name: "180 дней", durationDays: 180, durationMonths: 6, price: "490 ₽" },
+    { id: "vpn360", name: "360 дней", durationDays: 360, durationMonths: 12, price: "790 ₽" },
+  ];
+}
+
+function vpnBuyText(plan) {
+  const phone = displayPhone(state.user?.phone || "");
+  const renew = userVpn().active;
+  return `Здравствуйте! Хочу ${renew ? "продлить" : "купить"} VPN на ${plan.name} (${plan.price}). Мой номер в ahmedov.proxy: ${phone}`;
+}
+
+function vpnBuyBlock() {
+  const plans = vpnPlans();
+  const selectedId = state.vpnPlanId || plans[1]?.id || plans[0]?.id;
+  const plan = plans.find((p) => p.id === selectedId) || plans[0];
+  const text = encodeURIComponent(vpnBuyText(plan));
+  const base = plans.length ? planPerMonth(plans[0]) : null;
+  return `<div class="ui-plans" role="radiogroup" aria-label="Тариф VPN">${plans.map((p) => {
+      const on = p.id === plan.id;
+      const perMonth = planPerMonth(p);
+      const save = base && perMonth && perMonth < base ? Math.round((1 - perMonth / base) * 100) : 0;
+      return `<button class="ui-plan ${on ? "on" : ""}" role="radio" aria-checked="${on}" data-action="vpn-select-plan" data-plan-id="${esc(p.id)}">
+        <span class="ui-radio">${on ? uiIcon("check", 14, 3.4) : ""}</span>
+        <span class="ui-plan-text">
+          <span class="ui-plan-title">${esc(p.name)}${save ? `<span class="ui-plan-save">−${save}%</span>` : ""}</span>
+          <span class="ui-plan-sub">${perMonth ? `${Math.round(perMonth)} ₽ в месяц` : ""}</span>
+        </span>
+        <span class="ui-plan-price">${esc(p.price)}</span>
+      </button>`;
+    }).join("")}</div>
+    <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;">
+      <strong style="font-size:16px;">Оформить ${esc(plan.name)} за ${esc(plan.price)}</strong>
+      <span class="ui-sub" style="font-size:14px;margin-top:-4px;">Напишите нам — сообщение уже готово. После оплаты VPN включится в приложении.</span>
+      <div class="ui-contacts">
+        <a class="ui-contact tg" href="${SUPPORT_LINKS.telegram}?text=${text}" target="_blank" rel="noopener">Telegram</a>
+        <a class="ui-contact wa" href="${SUPPORT_LINKS.whatsapp}?text=${text}" target="_blank" rel="noopener">WhatsApp</a>
+        <a class="ui-contact max" href="${SUPPORT_LINKS.max}" target="_blank" rel="noopener">MAX</a>
+      </div>
+    </div>`;
+}
+
+function vpnPaywall() {
+  const v = userVpn();
+  const expired = !!v.expiresAt;
+  const perk = (icon, title, text) => `<div class="ui-step"><span class="ui-step-num icon">${uiIcon(icon, 18)}</span><span class="ui-step-text"><b>${title}</b><span>${text}</span></span></div>`;
+  return `<section class="ui-stack">
+    <div style="display:flex;flex-direction:column;gap:2px;padding:0 4px;">
+      <h1 class="ui-h1" style="padding:0;">VPN</h1>
+      <span class="ui-sub" style="font-size:15px;">ahmedov.vpn — для всех приложений и сайтов</span>
+    </div>
+    <article class="ui-hero ${expired ? "warn" : ""}" style="gap:12px;">
+      <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:8px;">
+        <span class="ui-hero-chip off" style="align-self:flex-start;"><i></i>${expired ? "Подписка VPN закончилась" : "Не подключено"}</span>
+        <strong style="font-size:26px;line-height:31px;font-weight:800;letter-spacing:-0.5px;">${expired ? "Продлите VPN, чтобы снова подключаться" : "Свой VPN — в дополнение к прокси"}</strong>
+        <span class="ui-hero-cap">Личная ссылка-подписка: серверы обновляются сами, ничего настраивать не нужно.</span>
+      </div>
+    </article>
+    <div class="ui-card ui-pad ui-steps">
+      ${perk("globe", "Все приложения и сайты", "Instagram, YouTube и другие сервисы — не только мессенджеры.")}
+      ${perk("refresh", "Серверы обновляются сами", "Нерабочие убираются, новые добавляются в подписку.")}
+      ${perk("bolt", "Подключение за минуту", "Приложение Incy и одна кнопка «Добавить».")}
+    </div>
+    <section class="ui-sec">
+      <h2 class="ui-h2" style="padding:0 4px;">Тарифы VPN</h2>
+      ${vpnBuyBlock()}
+    </section>
+  </section>`;
+}
+
 function vpnTabScreen() {
+  const sub = userVpn();
+  if (!sub.active) return vpnPaywall();
   const v = state.vpn;
   const servers = v.filtered || [];
   const shown = v.latencyChecked || v.latencyChecking ? servers.filter((s) => s.online || s.checking) : servers;
@@ -2380,17 +2480,28 @@ function vpnTabScreen() {
   return `<section class="ui-stack">
     <div style="display:flex;flex-direction:column;gap:2px;padding:0 4px;">
       <h1 class="ui-h1" style="padding:0;">VPN</h1>
-      <span class="ui-sub" style="font-size:15px;">ahmedov.vpn · бесплатные серверы из открытых источников</span>
+      <span class="ui-sub" style="font-size:15px;">ahmedov.vpn · ваша личная подписка</span>
     </div>
 
-    <article class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:14px;">
-      <strong style="font-size:17px;">Быстрая установка</strong>
-      <div class="ui-steps">
-        <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Установите приложение Incy</b><span>Бесплатно в App Store.</span></span><a class="ui-btn-sm soft" href="https://apps.apple.com/ru/app/incy/id6756943388" target="_blank" rel="noopener">App Store</a></div>
-        <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Добавьте подписку</b><span>Все серверы появятся в Incy сами.</span></span><a class="ui-btn-sm" href="incy://add/https://ahmedov.online/vpn/sub.php">Добавить</a></div>
-        <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Выберите быстрый сервер</b><span>В Incy нажмите проверку задержки и подключитесь.</span></span></div>
+    <article class="ui-hero ${Number(sub.daysLeft) <= 7 ? "warn" : ""}" style="gap:12px;">
+      <div class="ui-hero-top"><span class="ui-hero-chip"><i></i>${Number(sub.daysLeft) <= 7 ? "VPN скоро закончится" : "VPN активен"}</span></div>
+      <div class="ui-hero-bottom">
+        <div><div class="ui-hero-num" style="font-size:44px;line-height:48px;">${Math.max(0, Number(sub.daysLeft) || 0)}</div><div class="ui-hero-cap">${ruPlural(Number(sub.daysLeft) || 0, "день", "дня", "дней")} · до ${esc(formatDateLong(sub.expiresAt))}</div></div>
+        <button class="ui-hero-btn" data-action="vpn-open-buy">Продлить</button>
       </div>
     </article>
+
+    <article class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:14px;">
+      <strong style="font-size:17px;">Подключение за минуту</strong>
+      <div class="ui-steps">
+        <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Установите приложение Incy</b><span>Бесплатно в App Store.</span></span><a class="ui-btn-sm soft" href="https://apps.apple.com/ru/app/incy/id6756943388" target="_blank" rel="noopener">App Store</a></div>
+        <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Добавьте свою подписку</b><span>Серверы появятся в Incy и будут обновляться сами.</span></span><a class="ui-btn-sm" href="incy://add/${esc(sub.subUrl || "")}">Добавить</a></div>
+        <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Выберите быстрый сервер</b><span>В Incy нажмите проверку задержки и подключитесь.</span></span></div>
+      </div>
+      <button class="ui-btn ghost" style="height:46px;" data-action="vpn-copy-sub" data-url="${esc(sub.subUrl || "")}">${uiIcon(state.vpn.copiedRaw === sub.subUrl ? "check" : "copy", 18)}${state.vpn.copiedRaw === sub.subUrl ? "Ссылка скопирована" : "Скопировать ссылку подписки"}</button>
+      <p class="ui-caption" style="margin:0;">Ссылка личная — не передавайте её другим. Для других VPN-приложений (v2RayTun, Happ, Streisand) добавьте её как подписку.</p>
+    </article>
+    ${state.vpnBuyOpen ? `<section class="ui-sec" id="vpn-buy"><h2 class="ui-h2" style="padding:0 4px;">Продлить VPN</h2>${vpnBuyBlock()}</section>` : ""}
 
     <section class="ui-sec">
       <div class="ui-sec-head"><h2 class="ui-h2">Серверы вручную</h2></div>
@@ -2456,13 +2567,14 @@ function adminUserStatus(u) {
 }
 
 function adminBuckets(users) {
-  const out = { all: users, active: [], soon: [], off: [], fresh: [] };
+  const out = { all: users, active: [], soon: [], off: [], fresh: [], vpn: [] };
   const monthAgo = Date.now() - 30 * 24 * 3600 * 1000;
   users.forEach((u) => {
     const st = adminUserStatus(u).cls;
     if (st === "ok" || st === "slow") out.active.push(u);
     if (st === "slow") out.soon.push(u);
     if (st === "off") out.off.push(u);
+    if (u.vpnActive) out.vpn.push(u);
     const created = Date.parse(String(u.createdAt || "").replace(" ", "T") + "Z");
     if (Number.isFinite(created) && created >= monthAgo) out.fresh.push(u);
   });
@@ -2554,6 +2666,11 @@ function adminOverview() {
       ${tile("off", "Неактивны", b.off.length, "var(--ui-red)", "истекли или отключены")}
     </div>
 
+    <button class="ui-card ui-tile" data-action="admin-users-filter" data-filter="vpn">
+      <span style="display:flex;justify-content:space-between;align-items:center;"><span class="ui-tile-label">VPN подключён</span><span class="ui-sub" style="font-size:13px;">${b.vpn.filter((u) => Number(u.vpnDaysLeft) <= 7).length} скоро закончится</span></span>
+      <span class="ui-tile-value" style="color:#8E8CFF;">${b.vpn.length} <small>из ${b.active.length} активных</small></span>
+    </button>
+
     <button class="ui-card ui-tile" data-action="admin-tab" data-tab="proxies">
       <span style="display:flex;justify-content:space-between;align-items:center;"><span class="ui-tile-label">Серверы в сети</span><span class="ui-sub" style="font-size:13px;">TG ${byNet("telegram")} · WA ${byNet("whatsapp")}</span></span>
       <span class="ui-tile-value">${checking && !online ? `<small>Проверяем…</small>` : `${online} <small>из ${proxies.length}</small>`}</span>
@@ -2585,7 +2702,7 @@ function adminUsersTab() {
   let list = b[filter] || users;
   if (q) list = list.filter((u) => String(u.phone || "").includes(q));
   list = sortAdminUsersByDays(list, a.userSort);
-  const chips = [["all", "Все", users.length], ["active", "Активные", b.active.length], ["soon", "Скоро конец", b.soon.length], ["off", "Неактивны", b.off.length]];
+  const chips = [["all", "Все", users.length], ["active", "Активные", b.active.length], ["soon", "Скоро конец", b.soon.length], ["off", "Неактивны", b.off.length], ["vpn", "С VPN", b.vpn.length]];
 
   const card = (u) => {
     const st = adminUserStatus(u);
@@ -2595,6 +2712,7 @@ function adminUsersTab() {
         <span class="ui-qrow-text">
           <span class="ui-qrow-title">${esc(u.displayPhone)}</span>
           <span class="ui-qrow-sub">${esc(u.subscriptionType || "—")} · до ${esc(formatDateOnly(u.expiresAt))}${Number.isFinite(days) ? ` · ${days} дн.` : ""}</span>
+          ${u.vpnActive ? `<span class="ui-qrow-sub" style="color:#8E8CFF;font-weight:600;">${uiIcon("vpn", 13, 2.2)}VPN до ${esc(formatDateOnly(u.vpnExpiresAt))} · ${esc(u.vpnDaysLeft)} дн.</span>` : ""}
         </span>
         <span class="ui-tag ${st.cls}">${st.text}</span>
       </div>
@@ -2683,6 +2801,31 @@ function adminPromoTab() {
   </section>`;
 }
 
+function adminVpnBlock(u) {
+  if (!u) return "";
+  const active = !!u.vpnActive;
+  const sendText = active && u.vpnUrl
+    ? `Ваш VPN ahmedov.proxy подключён до ${formatDateOnly(u.vpnExpiresAt)}.\n1) Установите приложение Incy: https://apps.apple.com/ru/app/incy/id6756943388\n2) Добавьте вашу личную подписку: ${u.vpnUrl}\nИли откройте вкладку VPN в приложении ahmedov.proxy — там кнопка «Добавить».`
+    : "";
+  return `<div class="ui-card ui-pad" style="background:var(--ui-fill);box-shadow:none;display:flex;flex-direction:column;gap:12px;margin-top:4px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="ui-row-icon" style="background:#5E5CE6;">${uiIcon("vpn", 18, 2.1)}</span>
+      <span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:16px;">VPN</span>
+        <span class="ui-qrow-sub">${active ? `Активен до ${esc(formatDateOnly(u.vpnExpiresAt))} · ${esc(u.vpnDaysLeft)} дн.` : u.vpnExpiresAt ? "Закончился" : "Не подключён"}</span></span>
+    </div>
+    <span class="ui-label" style="padding:0;">${active ? "Продлить на" : "Выдать на"}</span>
+    <div class="ui-chips">${[30, 90, 180, 360].map((d) => `<button class="ui-chip" data-action="admin-vpn" data-mode="add" data-days="${d}" data-phone="${esc(u.phone)}">+${d} дн.</button>`).join("")}</div>
+    ${active ? `<div class="ui-grid2">
+        <a class="ui-btn wa" style="height:46px;font-size:15px;" href="${esc(waLink(u.phone, sendText))}" target="_blank" rel="noopener">${uiIcon("wa", 18, 2.2)}Отправить</a>
+        <button class="ui-btn ghost" style="height:46px;font-size:15px;" data-action="admin-copy" data-text="${esc(u.vpnUrl || "")}">${uiIcon("copy", 16)}Ссылка</button>
+      </div>
+      <div class="ui-grid2">
+        <button class="ui-text-btn" style="height:38px;font-size:14px;" data-action="admin-vpn" data-mode="reset" data-phone="${esc(u.phone)}">Новая ссылка</button>
+        <button class="ui-text-btn red" style="height:38px;font-size:14px;" data-action="admin-vpn" data-mode="off" data-phone="${esc(u.phone)}">Отключить VPN</button>
+      </div>` : ""}
+  </div>`;
+}
+
 function adminSheet() {
   const a = state.admin;
   const kind = a.sheet;
@@ -2718,7 +2861,8 @@ function adminSheet() {
       </div>
       ${sw("admin-user-active", f.is_active, "Доступ включён")}
       <button class="ui-btn" data-action="admin-save-user" ${a.saving ? "disabled" : ""}>${a.saving ? "Сохраняем…" : "Сохранить"}</button>
-      ${exists ? "" : `<p class="ui-caption" style="margin:0;">После сохранения появится код доступа — его можно сразу отправить клиенту в WhatsApp.</p>`}`);
+      ${exists ? "" : `<p class="ui-caption" style="margin:0;">После сохранения появится код доступа — его можно сразу отправить клиенту в WhatsApp.</p>`}
+      ${exists ? adminVpnBlock((a.users || []).find((u) => u.phone === normalizePhone(f.phone))) : ""}`);
   }
 
   if (kind === "invite") {
@@ -2986,8 +3130,10 @@ async function bootstrap() {
       await loadUserProxies(state.activeTab);
     } else if (state.activeTab === "vpn") {
       startSessionHeartbeat();
-      state.vpn.initialized = true;
-      loadVpnServers(state.vpn.selectedSource);
+      if (userVpn().active) {
+        state.vpn.initialized = true;
+        loadVpnServers(state.vpn.selectedSource);
+      }
     } else {
       startSessionHeartbeat();
       ensureHomeProxies();
@@ -3758,7 +3904,7 @@ app.addEventListener("click", async (event) => {
     const inProgress = list.some((x) => x.isChecking);
     if (isNet && !fresh && !inProgress) await loadUserProxies(tab);
     if (tab === "home") ensureHomeProxies();
-    if (tab === "vpn" && !state.vpn.initialized) {
+    if (tab === "vpn" && !state.vpn.initialized && userVpn().active) {
       state.vpn.initialized = true;
       loadVpnServers(state.vpn.selectedSource);
     }
@@ -3793,6 +3939,24 @@ app.addEventListener("click", async (event) => {
         }
       }, 1600);
     }
+    return;
+  }
+
+  if (action === "vpn-select-plan") {
+    return setState({ vpnPlanId: el.dataset.planId });
+  }
+  if (action === "vpn-open-buy") {
+    setState({ vpnBuyOpen: true });
+    requestAnimationFrame(() => document.getElementById("vpn-buy")?.scrollIntoView({ behavior: "smooth" }));
+    return;
+  }
+  if (action === "vpn-copy-sub") {
+    const url = el.dataset.url || "";
+    if (!url) return;
+    try { await navigator.clipboard.writeText(url); } catch { }
+    state.vpn.copiedRaw = url;
+    render();
+    setTimeout(() => { if (state.vpn.copiedRaw === url) { state.vpn.copiedRaw = ""; render(); } }, 1600);
     return;
   }
 
@@ -3853,6 +4017,32 @@ app.addEventListener("click", async (event) => {
   }
   if (action === "admin-form-network") {
     return setAdmin({ proxyForm: { ...state.admin.proxyForm, network: el.dataset.network === "whatsapp" ? "whatsapp" : "telegram" } });
+  }
+  if (action === "admin-vpn") {
+    const phone = el.dataset.phone;
+    const mode = el.dataset.mode;
+    const days = Number(el.dataset.days || 0);
+    if (mode === "off" && !window.confirm(`Отключить VPN у ${displayPhone(phone)}? Ссылка перестанет работать.`)) return;
+    if (mode === "reset" && !window.confirm("Выдать новую ссылку? Старая перестанет работать — клиенту нужно будет добавить новую в Incy.")) return;
+    setAdmin({ saving: true });
+    try {
+      await api.adminVpn(state.token, phone, { mode, days });
+      const msg = mode === "off" ? "VPN отключён." : mode === "reset" ? "Выдана новая ссылка VPN." : `VPN: +${days} дней.`;
+      await loadAdminAll();
+      setAdmin({ message: msg });
+    } catch (e) {
+      setAdmin({ message: e.message || "Не удалось изменить VPN." });
+    } finally {
+      setAdmin({ saving: false });
+    }
+    return;
+  }
+  if (action === "admin-copy") {
+    const text = el.dataset.text || "";
+    if (!text) return;
+    try { await navigator.clipboard.writeText(text); } catch { }
+    setAdmin({ message: "Ссылка скопирована." });
+    return;
   }
   if (action === "admin-extend") {
     const u = state.admin.users.find((x) => String(x.phone) === String(el.dataset.phone));
