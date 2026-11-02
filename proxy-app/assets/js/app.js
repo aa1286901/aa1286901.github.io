@@ -2315,9 +2315,9 @@ function userVpn() {
 function vpnPlans() {
   const plans = state.subscription?.vpnPlans || [];
   return plans.length ? plans : [
-    { id: "vpn90", name: "90 дней", durationDays: 90, durationMonths: 3, price: "290 ₽" },
-    { id: "vpn180", name: "180 дней", durationDays: 180, durationMonths: 6, price: "490 ₽" },
-    { id: "vpn360", name: "360 дней", durationDays: 360, durationMonths: 12, price: "790 ₽" },
+    { id: "vpn90", name: "90 дней", durationDays: 90, durationMonths: 3, price: "390 ₽" },
+    { id: "vpn180", name: "180 дней", durationDays: 180, durationMonths: 6, price: "590 ₽" },
+    { id: "vpn360", name: "360 дней", durationDays: 360, durationMonths: 12, price: "890 ₽" },
   ];
 }
 

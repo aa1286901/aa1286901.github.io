@@ -8,7 +8,7 @@ declare(strict_types=1);
 // Тарифы VPN. Цены можно задать в .env: VPN_PRICE_90, VPN_PRICE_180, VPN_PRICE_360.
 function vpn_plans_payload(): array
 {
-    $defaults = [90 => 290, 180 => 490, 360 => 790];
+    $defaults = [90 => 390, 180 => 590, 360 => 890];
     $plans = [];
     foreach ($defaults as $days => $price) {
         $env = getenv('VPN_PRICE_' . $days);
