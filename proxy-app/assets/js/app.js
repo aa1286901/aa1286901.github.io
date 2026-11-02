@@ -2129,7 +2129,7 @@ function paymentScreen() {
           <div><span>К оплате</span><b style="font-size:18px;">${esc(amountLabel)}</b></div>
         </div>` : ""}
       ${p.ozonEnabled ? `<button class="ui-btn" data-action="ozon-start" data-kind="${useCombo ? "combo" : "proxy"}" ${p.ozonCreating ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${p.ozonCreating ? "Создаём заявку…" : `Оплатить ${esc(amountLabel)} по СБП`}</button>
-        <p class="ui-caption" style="margin:-6px 0 0;text-align:center;">По СБП через Ozon, без комиссии. Сумма — на следующем экране.</p>` : ""}
+        <p class="ui-caption" style="margin:-6px 0 0;text-align:center;">По СБП через Ozon, без комиссии.</p>` : ""}
       ${SHOW_SBP_BUTTON && p.paymentEnabled ? `<button class="ui-btn" data-action="payment-create" ${p.creating ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${p.creating ? "Создаём платёж…" : `Оплатить ${esc(amountLabel)} через СБП`}</button>` : ""}
       <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;">
         <strong style="font-size:16px;">${p.ozonEnabled || (SHOW_SBP_BUTTON && p.paymentEnabled) ? "Или оформим вручную" : "Для оплаты напишите нам"}</strong>
@@ -3163,10 +3163,13 @@ function ozonOrderView(o, inSheet) {
       <span class="ui-amount-num">${esc(o.amountLabel)}</span>
       ${summary}
     </div>
-    <a class="ui-btn" href="${esc(o.payUrl)}" target="_blank" rel="noopener" data-action="ozon-pay-open">${uiIcon("bank", 20, 2.1)}Оплатить ${esc(o.amountLabel)} по СБП</a>
+    <div class="ui-grid2">
+      <button class="ui-btn ghost" style="height:52px;font-size:15px;${inSheet ? "background:var(--ui-card);" : ""}" data-action="ozon-copy-amount" data-amount="${esc(o.amountInput)}">${uiIcon(state.ozonCopied === o.token ? "check" : "copy", 18)}${state.ozonCopied === o.token ? "Скопировано" : "Копировать сумму"}</button>
+      <a class="ui-btn" style="height:52px;font-size:15px;" href="${esc(o.payUrl)}" target="_blank" rel="noopener" data-action="ozon-pay-open">${uiIcon("bank", 18, 2.1)}Оплатить</a>
+    </div>
     <div class="ui-card ui-pad ui-steps" style="${flat}">
-      <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Нажмите «Оплатить»</b><span>Откроется страница Ozon — проверьте сумму ${esc(o.amountLabel)} и выберите свой банк.</span></span></div>
-      <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Подтвердите платёж в банке</b><span>Получатель — Ozon Банк, перевод по СБП без комиссии.</span></span></div>
+      <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Нажмите «Оплатить»</b><span>Откроется страница Ozon. Введите сумму <b style="color:var(--ui-text);">${esc(o.amountLabel)}</b> — её можно вставить кнопкой «Копировать сумму».</span></span></div>
+      <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Выберите банк и подтвердите платёж</b><span>Перевод по СБП без комиссии.</span></span></div>
       <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Вернитесь сюда</b><span>И нажмите «Я оплатил(а)» — мы сразу получим уведомление.</span></span></div>
     </div>
     <button class="ui-btn ${state.ozonPayOpened === o.token ? "" : "ghost"}" data-action="ozon-claim" data-token="${esc(o.token)}" ${state.ozonClaiming ? "disabled" : ""}>${uiIcon("check", 18, 2.6)}${state.ozonClaiming ? "Отправляем…" : "Я оплатил(а)"}</button>
@@ -4022,6 +4025,17 @@ app.addEventListener("click", async (event) => {
     setState({ refCopied: true });
     showToast(action === "ref-share" ? "Текст со ссылкой скопирован — отправьте другу" : "Ссылка скопирована");
     setTimeout(() => setState({ refCopied: false }), 1800);
+    return;
+  }
+  if (action === "ozon-copy-amount") {
+    const amount = el.dataset.amount || "";
+    try { await navigator.clipboard.writeText(amount); } catch {
+      const ta = document.createElement("textarea"); ta.value = amount; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch { } ta.remove();
+    }
+    const tok = ozonCurrent()?.token || "";
+    setState({ ozonCopied: tok });
+    showToast(`Сумма ${amount} ₽ скопирована`);
+    setTimeout(() => { if (state.ozonCopied === tok) setState({ ozonCopied: "" }); }, 1800);
     return;
   }
   if (action === "ozon-pay-open") {
