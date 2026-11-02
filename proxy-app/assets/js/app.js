@@ -1374,12 +1374,59 @@ function ensureHomeProxies() {
   });
 }
 
-function contactButtons() {
+// Кнопки связи. msg — какое сообщение подставить: текст собирается в момент нажатия.
+function contactButtons(msg = "") {
+  const attrs = (ch) => (msg ? `data-action="contact" data-ch="${ch}" data-msg="${msg}"` : "");
   return `<div class="ui-contacts">
-    <a class="ui-contact tg" href="${SUPPORT_LINKS.telegram}" target="_blank" rel="noopener">Telegram</a>
-    <a class="ui-contact wa" href="${SUPPORT_LINKS.whatsapp}" target="_blank" rel="noopener">WhatsApp</a>
-    <a class="ui-contact max" href="${SUPPORT_LINKS.max}" target="_blank" rel="noopener">MAX</a>
+    <a class="ui-contact tg" href="${SUPPORT_LINKS.telegram}" target="_blank" rel="noopener" ${attrs("tg")}>Telegram</a>
+    <a class="ui-contact wa" href="${SUPPORT_LINKS.whatsapp}" target="_blank" rel="noopener" ${attrs("wa")}>WhatsApp</a>
+    <a class="ui-contact max" href="${SUPPORT_LINKS.max}" target="_blank" rel="noopener" ${attrs("max")}>MAX</a>
   </div>`;
+}
+
+function messageFor(key) {
+  const hello = "Здравствуйте!";
+  const phoneOf = (raw) => {
+    const d = normalizePhone(raw || "");
+    return d ? displayPhone(d) : "";
+  };
+  if (key === "join") return `${hello} Хочу подключить прокси ahmedov.proxy для Telegram и WhatsApp. Подскажите, как оплатить?`;
+  if (key === "code") {
+    const ph = phoneOf(state.pendingPhone || state.phoneInput);
+    return `${hello} Подскажите код доступа к ahmedov.proxy.${ph ? ` Мой номер: ${ph}` : ""}`;
+  }
+  if (key === "support") {
+    const ph = phoneOf(state.user?.phone);
+    return `${hello} Нужна помощь с подключением ahmedov.proxy.${ph ? ` Мой номер: ${ph}` : ""}`;
+  }
+  if (key === "pay") {
+    const pp = state.paymentPage;
+    const plans = pp.plans || [];
+    const plan = plans.find((x) => Number(x.id) === Number(pp.selectedPlanId)) || plans[0];
+    const price = pp.promoData ? (pp.promoData.priceLabel || `${pp.promoData.amount} ₽`) : plan?.price;
+    const ph = phoneOf(pp.phoneInput);
+    return `${hello} Хочу оплатить прокси ahmedov.proxy${plan ? ` на ${plan.name}` : ""}${price ? ` (${price})` : ""}.${ph ? ` Мой номер: ${ph}.` : ""}${pp.promoData?.code ? ` Промокод: ${pp.promoData.code}.` : ""}`;
+  }
+  if (key === "overlay") {
+    const o = state.plansOverlay;
+    const plans = o.plans || [];
+    const plan = plans.find((x) => Number(x.id) === Number(o.selectedPlanId)) || plans[0];
+    const ph = phoneOf(state.user?.phone || state.pendingPhone);
+    return `${hello} Хочу продлить прокси ahmedov.proxy${plan ? ` на ${plan.name} (${plan.price})` : ""}.${ph ? ` Мой номер: ${ph}.` : ""}`;
+  }
+  if (key === "vpn") {
+    const plans = vpnPlans();
+    const plan = plans.find((x) => x.id === (state.vpnPlanId || plans[1]?.id || plans[0]?.id)) || plans[0];
+    return plan ? vpnBuyText(plan) : `${hello} Хочу подключить VPN ahmedov.proxy.`;
+  }
+  return "";
+}
+
+function showToast(text) {
+  state.toast = text;
+  render();
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => { state.toast = ""; render(); }, 2800);
 }
 
 
@@ -1489,7 +1536,7 @@ function demoSheet() {
       </div>
       <button class="ui-btn" data-action="extend-subscription" data-plan-id="302">Выбрать тариф</button>
       <span class="ui-label" style="text-align:center;">Или напишите нам</span>
-      ${contactButtons()}
+      ${contactButtons("join")}
       <button class="ui-text-btn" data-action="demo-close">Продолжить смотреть</button>
     </article>
   </div>`;
@@ -1612,7 +1659,7 @@ function homeScreen() {
         <strong style="font-size:17px;">Поддержка</strong>
         <span class="ui-sub" style="font-size:14px;">Поможем подключиться — напишите в удобный мессенджер.</span>
       </div>
-      ${contactButtons()}
+      ${contactButtons("support")}
     </article>
   </section>`;
 }
@@ -1757,7 +1804,7 @@ function authScreen() {
         <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;text-align:left;">
           <strong style="font-size:15px;">Не знаете код?</strong>
           <span class="ui-sub" style="font-size:14px;margin-top:-4px;">Напишите нам свой номер — пришлём код.</span>
-          ${contactButtons()}
+          ${contactButtons("code")}
         </div>
       </div>
     </section>`;
@@ -1784,7 +1831,7 @@ function authScreen() {
     </div>
     <div class="ui-auth-foot">
       <span class="ui-sub" style="font-size:15px;">Нет подписки? Напишите нам</span>
-      <div style="width:100%;">${contactButtons()}</div>
+      <div style="width:100%;">${contactButtons("join")}</div>
       <p class="ui-legal-note" style="margin:4px 0 0;">Продолжая, вы принимаете <button type="button" data-action="open-legal" data-legal-type="agreement">Пользовательское соглашение</button></p>
     </div>
   </section>`;
@@ -1942,7 +1989,7 @@ function paymentScreen() {
       <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;">
         <strong style="font-size:16px;">${SHOW_SBP_BUTTON && p.paymentEnabled ? "Или оформим вручную" : "Для оплаты напишите нам"}</strong>
         <span class="ui-sub" style="font-size:14px;margin-top:-4px;">Пришлите номер телефона и выбранный тариф — оформим подписку.</span>
-        ${contactButtons()}
+        ${contactButtons("pay")}
       </div>
       <p class="ui-legal-note" style="margin:0;">Продолжая, вы соглашаетесь с <button type="button" data-action="open-legal" data-legal-type="offer">офертой</button>, <button type="button" data-action="open-legal" data-legal-type="privacy">политикой конфиденциальности</button> и <button type="button" data-action="open-legal" data-legal-type="agreement">пользовательским соглашением</button>.</p>`;
   }
@@ -1984,7 +2031,7 @@ function plansOverlay() {
           </div>`
       : `<button class="ui-btn overlay-pay" data-action="start-payment" ${!paymentEnabled || !selectedPlan ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${state.plansOverlay.paymentLoading ? "Создаём платёж…" : `Оплатить${selectedPlan ? " " + esc(selectedPlan.price) : ""} через СБП`}</button>`}
       ${!paymentEnabled ? `<div class="ui-msg info">Оплата картой пока недоступна — напишите нам, оформим вручную.</div>` : ""}
-      ${contactButtons()}
+      ${contactButtons("overlay")}
     </article>
   </div>`;
 }
@@ -2076,7 +2123,7 @@ function landingScreen() {
 
     <article class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:12px;">
       <strong style="font-size:17px;">Остались вопросы?</strong>
-      ${contactButtons()}
+      ${contactButtons("join")}
     </article>
   </section>`;
 }
@@ -2138,7 +2185,6 @@ function vpnBuyBlock() {
   const plans = vpnPlans();
   const selectedId = state.vpnPlanId || plans[1]?.id || plans[0]?.id;
   const plan = plans.find((p) => p.id === selectedId) || plans[0];
-  const text = encodeURIComponent(vpnBuyText(plan));
   const base = plans.length ? planPerMonth(plans[0]) : null;
   return `<div class="ui-plans" role="radiogroup" aria-label="Тариф VPN">${plans.map((p) => {
       const on = p.id === plan.id;
@@ -2156,11 +2202,7 @@ function vpnBuyBlock() {
     <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;">
       <strong style="font-size:16px;">Оформить ${esc(plan.name)} за ${esc(plan.price)}</strong>
       <span class="ui-sub" style="font-size:14px;margin-top:-4px;">Напишите нам — сообщение уже готово. После оплаты VPN включится в приложении.</span>
-      <div class="ui-contacts">
-        <a class="ui-contact tg" href="${SUPPORT_LINKS.telegram}?text=${text}" target="_blank" rel="noopener">Telegram</a>
-        <a class="ui-contact wa" href="${SUPPORT_LINKS.whatsapp}?text=${text}" target="_blank" rel="noopener">WhatsApp</a>
-        <a class="ui-contact max" href="${SUPPORT_LINKS.max}" target="_blank" rel="noopener">MAX</a>
-      </div>
+      ${contactButtons("vpn")}
     </div>`;
 }
 
@@ -2778,7 +2820,7 @@ function render() {
   app.classList.toggle("ui", uiMode);
 
   if (state.demo && !isPaymentRoute()) body = demoBanner() + body;
-  app.innerHTML = body + demoSheet() + (state.role === "admin" && state.token ? adminSheet() : "") + legalModal() + installGuideModal() + (isPaymentRoute() ? "" : plansOverlay()) + (state.proxyConnectModal?.open ? proxyConnectModal(state.proxyConnectModal.connectUrl, state.proxyConnectModal.network) : "");
+  app.innerHTML = body + (state.toast ? `<div class="ui-toast-float" role="status">${esc(state.toast)}</div>` : "") + demoSheet() + (state.role === "admin" && state.token ? adminSheet() : "") + legalModal() + installGuideModal() + (isPaymentRoute() ? "" : plansOverlay()) + (state.proxyConnectModal?.open ? proxyConnectModal(state.proxyConnectModal.connectUrl, state.proxyConnectModal.network) : "");
 
 
   // Генерация QR-кода для прокси
@@ -3309,7 +3351,34 @@ app.addEventListener("click", async (event) => {
   const el = event.target.closest("[data-action]");
   if (!el) return;
   const action = el.dataset.action;
-  if (state.pwaBlocked && !["show-install-guide", "hide-install-guide", "open-payment-page", "go-app-route", "demo-enter"].includes(action)) return;
+  if (state.pwaBlocked && !["show-install-guide", "hide-install-guide", "open-payment-page", "go-app-route", "demo-enter", "contact"].includes(action)) return;
+
+  if (action === "contact") {
+    const text = messageFor(el.dataset.msg || "");
+    const ch = el.dataset.ch;
+    if (!text) return;
+    if (ch === "max") {
+      const fallbackCopy = () => {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); } catch { }
+        ta.remove();
+      };
+      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).catch(fallbackCopy);
+      else fallbackCopy();
+      showToast("Текст скопирован — вставьте его в чат MAX");
+      return;
+    }
+    event.preventDefault();
+    const base = ch === "wa" ? SUPPORT_LINKS.whatsapp : SUPPORT_LINKS.telegram;
+    window.open(`${base}?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+    return;
+  }
 
   if (action === "demo-enter") {
     event.preventDefault();
