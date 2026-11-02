@@ -75,7 +75,7 @@ html.ui-mode body::after { display: none; }
 
 #app.ui {
   max-width: 520px;
-  padding: calc(env(safe-area-inset-top, 0px) + 18px) 16px calc(env(safe-area-inset-bottom, 0px) + 112px);
+  padding: calc(env(safe-area-inset-top, 0px) + 18px) 16px calc(env(safe-area-inset-bottom, 0px) + 92px);
   box-sizing: border-box;
   color: var(--ui-text);
 }
@@ -186,7 +186,7 @@ html.ui-mode body::after { display: none; }
 
 /* Tab bar */
 .ui-tabbar {
-  position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: max(10px, calc(env(safe-area-inset-bottom, 0px) - 8px));
   width: calc(100% - 48px); max-width: 440px; height: 64px; border-radius: 32px; padding: 6px; z-index: 50;
   background: var(--ui-glass); border: 1px solid var(--ui-border);
   -webkit-backdrop-filter: blur(24px) saturate(1.6); backdrop-filter: blur(24px) saturate(1.6);
@@ -435,4 +435,20 @@ html.ui-mode body::after { display: none; }
   border: 0;
   border-radius: 14px;
   box-shadow: none;
+}
+
+/* Полоса под часами и батареей: контент при прокрутке уходит под неё, а не под цифры */
+#app.ui::before {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 60;
+  background: var(--ui-bg);
+  opacity: 0.92;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  pointer-events: none;
 }

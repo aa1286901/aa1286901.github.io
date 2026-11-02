@@ -2261,7 +2261,7 @@ function pickBestProxy(items) {
 
 function proxyStatus(p) {
   if (!p) return { cls: "", text: "" };
-  if (p.isChecking) return { cls: "checking", text: "проверяем…" };
+  if (p.isChecking && !p.lastCheckedAt) return { cls: "checking", text: "проверяем…" };
   const ms = Number(p.ping);
   const msText = Number.isFinite(ms) && ms > 0 ? `${Math.round(ms)} мс` : "в сети";
   if (p.isReachable && !p.isUnstable) return { cls: "ok", text: msText };
@@ -2981,7 +2981,11 @@ async function loadUserProxies(tab) {
     if (userProxyRunIds[tab] !== runId) return;
 
     const initialItems = initial.proxies || [];
-    const pending = markProxiesPending(initialItems);
+    const previous = new Map((state.proxies[tab] || []).filter((x) => x.lastCheckedAt).map((x) => [`${x.host}:${x.port}`, x]));
+    const pending = markProxiesPending(initialItems).map((item) => {
+      const prev = previous.get(`${item.host}:${item.port}`);
+      return prev ? { ...item, ping: prev.ping, isReachable: prev.isReachable, isUnstable: prev.isUnstable, lastCheckedAt: prev.lastCheckedAt } : item;
+    });
     setState({ proxies: { ...state.proxies, [tab]: pending } });
     void runUserClientPing(tab, runId, pending);
   } catch (e) {
@@ -3712,7 +3716,10 @@ app.addEventListener("click", async (event) => {
     setState(isNet ? { activeTab: tab, lastNetwork: tab } : { activeTab: tab });
     localStorage.setItem(TAB_KEY, tab);
     window.scrollTo(0, 0);
-    if (isNet) await loadUserProxies(tab);
+    const list = isNet ? state.proxies[tab] || [] : [];
+    const fresh = list.length && list.every((x) => x.lastCheckedAt && Date.now() - Date.parse(x.lastCheckedAt) < 60 * 1000);
+    const inProgress = list.some((x) => x.isChecking);
+    if (isNet && !fresh && !inProgress) await loadUserProxies(tab);
     if (tab === "home") ensureHomeProxies();
     if (tab === "vpn" && !state.vpn.initialized) {
       state.vpn.initialized = true;
