@@ -14,6 +14,8 @@ const app = document.getElementById("app");
 
 const state = {
   pwaBlocked: false,
+  demo: false,
+  demoSheet: false,
   booting: true,
   token: localStorage.getItem(TOKEN_KEY) || "",
   role: "user",
@@ -1341,6 +1343,7 @@ function splitProxyName(name) {
 }
 
 function proxyKeyOf(p) {
+  if (p?.demo) return `demo:${p.name || ""}`;
   return `${p?.host || ""}:${p?.port || ""}`;
 }
 
@@ -1407,6 +1410,90 @@ function planCards(plans, selectedId) {
 // ==========================
 // UI: экраны клиента
 // ==========================
+
+// ==========================
+// Демо-режим: кабинет без входа, только названия серверов
+// ==========================
+
+const DEMO_KEY = "ahmedov_demo";
+
+function proxyHostLine(p) {
+  return p?.demo ? "Адрес откроется после оплаты" : `${p?.host || ""}:${p?.port || ""}`;
+}
+
+function demoLock(href) {
+  return state.demo ? 'href="#" data-action="demo-locked"' : `href="${esc(href)}"`;
+}
+
+async function enterDemo() {
+  setState({ booting: true });
+  let data = {};
+  try {
+    data = await request("/demo");
+  } catch {
+    data = {};
+  }
+  const now = new Date().toISOString();
+  const expires = new Date(Date.now() + 90 * 86400000).toISOString().slice(0, 19).replace("T", " ");
+  const mapProxies = (list) => (list || []).map((x) => ({
+    name: x.name, isRecommended: !!x.isRecommended, host: "", port: "", connectUrl: "demo", demo: true,
+    isChecking: false, isReachable: true, isUnstable: false, ping: null, lastCheckedAt: now,
+  }));
+  try { sessionStorage.setItem(DEMO_KEY, "1"); } catch { }
+  setState({
+    demo: true,
+    booting: false,
+    pwaBlocked: false,
+    role: "user",
+    user: { phone: "9000000000", displayPhone: "+7 900 000 00 00" },
+    subscription: {
+      type: "90 дней", daysLeft: 90, expiresAt: expires,
+      vpn: { active: true, daysLeft: 90, expiresAt: expires, subUrl: null },
+      vpnPlans: data.vpnPlans || [],
+    },
+    proxies: { telegram: mapProxies(data.proxies?.telegram), whatsapp: mapProxies(data.proxies?.whatsapp) },
+    vpnList: { loading: false, loaded: true, servers: data.vpnServers || [], total: Number(data.vpnTotal) || 0, error: "", tab: "" },
+    activeTab: "home",
+    demoSheet: false,
+  });
+  window.scrollTo(0, 0);
+}
+
+function demoBanner() {
+  if (!state.demo) return "";
+  return `<div class="ui-card ui-pad ui-demo-banner">
+    <div style="display:flex;gap:10px;align-items:flex-start;">
+      <span class="ui-row-icon" style="background:#FF9F0A;">${uiIcon("info", 18, 2.1)}</span>
+      <span style="display:flex;flex-direction:column;gap:2px;">
+        <strong style="font-size:15px;">Демо-версия кабинета</strong>
+        <span class="ui-sub" style="font-size:13px;line-height:18px;">Так всё выглядит после оплаты. Цифры — для примера, подключение откроется после покупки.</span>
+      </span>
+    </div>
+    <div class="ui-grid2">
+      <button class="ui-btn" style="height:44px;font-size:15px;" data-action="extend-subscription" data-plan-id="302">Купить доступ</button>
+      <button class="ui-btn ghost" style="height:44px;font-size:15px;" data-action="demo-exit">Выйти из демо</button>
+    </div>
+  </div>`;
+}
+
+function demoSheet() {
+  if (!state.demo || !state.demoSheet) return "";
+  return `<div class="ui-layer" data-action="demo-close">
+    <article class="ui-sheet" data-action="demo-sheet-card" role="dialog" aria-label="Демо-версия">
+      <span class="ui-grabber" aria-hidden="true"></span>
+      <div class="ui-sheet-head">
+        <button class="ui-sheet-close" data-action="demo-close" aria-label="Закрыть">${uiIcon("close", 14, 3)}</button>
+        <span class="ui-lock" style="width:64px;height:64px;border-radius:20px;">${uiIcon("lock", 30)}</span>
+        <h2 class="ui-sheet-title">Это демо-версия</h2>
+        <span class="ui-sub" style="font-size:15px;line-height:21px;">Подключение к серверам открывается после оплаты. Выберите тариф — пришлём код доступа, и кабинет станет вашим.</span>
+      </div>
+      <button class="ui-btn" data-action="extend-subscription" data-plan-id="302">Выбрать тариф</button>
+      <span class="ui-label" style="text-align:center;">Или напишите нам</span>
+      ${contactButtons()}
+      <button class="ui-text-btn" data-action="demo-close">Продолжить смотреть</button>
+    </article>
+  </div>`;
+}
 
 function homeVpnCard() {
   const v = userVpn();
@@ -1546,7 +1633,7 @@ function serversScreen(network) {
     return `<button class="ui-server" data-action="open-proxy-connect" data-connect-url="${esc(p.connectUrl)}" data-network="${esc(network)}" data-proxy-key="${esc(proxyKeyOf(p))}">
       <span class="ui-cc">${esc(parts.cc || (isTg ? "TG" : "WA"))}</span>
       <span class="ui-server-main">
-        <span class="ui-server-text"><span class="ui-server-name">${esc(parts.name)}</span><span class="ui-server-host">${esc(p.host)}:${esc(p.port)}</span></span>
+        <span class="ui-server-text"><span class="ui-server-name">${esc(parts.name)}</span><span class="ui-server-host">${esc(proxyHostLine(p))}</span></span>
         <span class="ui-ping ${st.cls}">${esc(st.text)}</span>
       </span>
     </button>`;
@@ -1561,7 +1648,7 @@ function serversScreen(network) {
       <span class="ui-best-head"><span class="ui-kicker">${best.isRecommended ? "Рекомендуем" : "Лучший сейчас"}</span>${best.isRecommended ? `<span class="ui-badge">by ahmedov</span>` : ""}</span>
       <span class="ui-best-body">
         <span class="ui-cc">${esc(parts.cc || (isTg ? "TG" : "WA"))}</span>
-        <span class="ui-server-text"><span class="ui-best-name">${esc(parts.name)}</span><span class="ui-server-host">${esc(best.host)}:${esc(best.port)}</span></span>
+        <span class="ui-server-text"><span class="ui-best-name">${esc(parts.name)}</span><span class="ui-server-host">${esc(proxyHostLine(best))}</span></span>
         ${st.cls === "ok" && Number.isFinite(ms) && ms > 0 ? `<span class="ui-best-ms"><b>${Math.round(ms)}</b><span>мс</span></span>` : `<span class="ui-ping ${st.cls}">${esc(st.text)}</span>`}
       </span>
     </button>`;
@@ -1693,6 +1780,7 @@ function authScreen() {
       <div class="ui-field"><span class="ui-field-prefix">+7</span><input id="auth-phone" type="tel" inputmode="numeric" autocomplete="tel-national" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="900 123 45 67" value="${esc(state.phoneInput)}" data-input="phone-input" /></div>
       <div class="ui-hint">${esc(state.hint || "")}</div>
       <button class="ui-btn" data-action="submit-auth" ${state.loadingAuth ? "disabled" : ""}>${state.loadingAuth ? "Проверяем…" : "Продолжить"}</button>
+      <button class="ui-btn ghost" style="height:50px;font-size:16px;" data-action="demo-enter">${uiIcon("info", 18)}Посмотреть демо-версию</button>
     </div>
     <div class="ui-auth-foot">
       <span class="ui-sub" style="font-size:15px;">Нет подписки? Напишите нам</span>
@@ -1950,6 +2038,7 @@ function landingScreen() {
         <span class="ui-hero-cap">Быстрые и стабильные прокси-серверы. Подключение в одно касание.</span>
       </div>
       <button class="ui-hero-btn" style="position:relative;z-index:1;height:50px;border-radius:16px;font-size:17px;" data-action="go-app-route">Подключить сейчас</button>
+      <button class="ui-hero-btn" style="position:relative;z-index:1;height:46px;border-radius:16px;font-size:16px;background:rgba(255,255,255,.18);color:#FFFFFF !important;" data-action="demo-enter">Посмотреть демо кабинета</button>
     </article>
 
     <div class="ui-grid3">
@@ -2232,8 +2321,8 @@ function vpnTabScreen() {
         <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Включите VPN</b><span>Лучший сервер выберется автоматически.</span></span></div>
       </div>
       <div class="ui-grid2">
-        <a class="ui-btn" style="height:50px;font-size:16px;" href="happ://add/${esc(sub.subUrl || "")}">Добавить в Happ</a>
-        <a class="ui-btn" style="height:50px;font-size:16px;" href="incy://add/${esc(sub.subUrl || "")}">Добавить в Incy</a>
+        <a class="ui-btn" style="height:50px;font-size:16px;" ${demoLock(`happ://add/${sub.subUrl || ""}`)}>Добавить в Happ</a>
+        <a class="ui-btn" style="height:50px;font-size:16px;" ${demoLock(`incy://add/${sub.subUrl || ""}`)}>Добавить в Incy</a>
       </div>
       <a class="ui-btn ghost" style="height:44px;font-size:14px;" href="https://apps.apple.com/ru/app/incy/id6756943388" target="_blank" rel="noopener">Скачать Incy в App Store</a>
       <button class="ui-btn ghost" style="height:46px;" data-action="vpn-copy-sub" data-url="${esc(sub.subUrl || "")}">${uiIcon(copied ? "check" : "copy", 18)}${copied ? "Ссылка скопирована" : "Скопировать ссылку подписки"}</button>
@@ -2661,7 +2750,7 @@ function render() {
     body = `<div class="ui-stack">${Array.from({ length: 4 })
       .map(() => `<div class="ui-skel" style="height:96px;"></div>`)
       .join("")}</div>`;
-  } else if (!state.token || !state.user || (state.role !== "admin" && !state.subscription)) {
+  } else if (!state.demo && (!state.token || !state.user || (state.role !== "admin" && !state.subscription))) {
     body = authScreen();
   } else if (state.role === "admin") {
     body = adminScreen();
@@ -2688,7 +2777,8 @@ function render() {
   document.documentElement.classList.toggle("ui-mode", uiMode);
   app.classList.toggle("ui", uiMode);
 
-  app.innerHTML = body + (state.role === "admin" && state.token ? adminSheet() : "") + legalModal() + installGuideModal() + (isPaymentRoute() ? "" : plansOverlay()) + (state.proxyConnectModal?.open ? proxyConnectModal(state.proxyConnectModal.connectUrl, state.proxyConnectModal.network) : "");
+  if (state.demo && !isPaymentRoute()) body = demoBanner() + body;
+  app.innerHTML = body + demoSheet() + (state.role === "admin" && state.token ? adminSheet() : "") + legalModal() + installGuideModal() + (isPaymentRoute() ? "" : plansOverlay()) + (state.proxyConnectModal?.open ? proxyConnectModal(state.proxyConnectModal.connectUrl, state.proxyConnectModal.network) : "");
 
 
   // Генерация QR-кода для прокси
@@ -2800,6 +2890,14 @@ async function bootstrap() {
   }
 
   if (!state.token) {
+    const params = new URLSearchParams(location.search);
+    let demoSaved = false;
+    try { demoSaved = sessionStorage.getItem(DEMO_KEY) === "1"; } catch { }
+    if (params.get("demo") === "1" || demoSaved) {
+      if (params.has("demo")) history.replaceState({}, "", appPath());
+      await enterDemo();
+      return;
+    }
     setState({ booting: false });
     await restorePendingPaymentOverlay();
     return;
@@ -2912,6 +3010,10 @@ function logout(options = {}) {
     .filter((k) => k.includes("ahmedov_proxy"))
     .forEach((k) => localStorage.removeItem(k));
   state.booting = false;
+  state.demo = false;
+  state.demoSheet = false;
+  try { sessionStorage.removeItem(DEMO_KEY); } catch { }
+  state.vpnList = { loading: false, loaded: false, servers: [], total: 0, error: "", tab: "" };
   state.token = "";
   state.role = "user";
   state.user = null;
@@ -3207,7 +3309,33 @@ app.addEventListener("click", async (event) => {
   const el = event.target.closest("[data-action]");
   if (!el) return;
   const action = el.dataset.action;
-  if (state.pwaBlocked && !["show-install-guide", "hide-install-guide", "open-payment-page", "go-app-route"].includes(action)) return;
+  if (state.pwaBlocked && !["show-install-guide", "hide-install-guide", "open-payment-page", "go-app-route", "demo-enter"].includes(action)) return;
+
+  if (action === "demo-enter") {
+    event.preventDefault();
+    if (state.pwaBlocked || isPaymentRoute()) {
+      location.assign(`${appPath()}?demo=1`);
+      return;
+    }
+    await enterDemo();
+    return;
+  }
+  if (state.demo) {
+    if (["open-proxy-connect", "vpn-copy-sub", "demo-locked"].includes(action)) {
+      event.preventDefault();
+      return setState({ demoSheet: true });
+    }
+    if (action === "demo-close") {
+      if (!event.target.closest('[data-action="demo-close"]') && event.target.closest('[data-action="demo-sheet-card"]')) return;
+      return setState({ demoSheet: false });
+    }
+    if (action === "demo-exit" || action === "logout") return logout();
+    if (action === "extend-subscription") {
+      openPaymentPage({ planId: Number(el.dataset.planId || 302) || 302 });
+      return;
+    }
+    if (action === "refresh-proxies") return;
+  }
 
   if (action === "close-overlay") {
     const clickedCloseButton = !!event.target.closest('[data-action="close-overlay"]');
