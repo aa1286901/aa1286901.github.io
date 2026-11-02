@@ -166,37 +166,27 @@ function appHomePath() {
   return appPath();
 }
 
+const LINK_CODE_KEY = "ahmedov_link_code";
+
+// Вход по ссылке вида /app?phone=9001234567&invite=12345678
 async function tryAutoLoginFromUrl() {
   const params = new URLSearchParams(location.search);
-  const invite = params.get('invite');
-  const phone = params.get('phone');
+  const invite = String(params.get("invite") || "").replace(/\D/g, "");
+  const phone = normalizePhone(params.get("phone") || "");
+  if (!invite || !phone) return { status: "none" };
 
-  if (!invite || !phone) {
-    return false;
-  }
-
+  history.replaceState({}, "", appPath());
   try {
     const response = await api.loginByInvite(phone, invite);
-    if (response.token) {
-      history.replaceState({}, "", appPath());
+    if (response?.token) {
       localStorage.setItem(TOKEN_KEY, response.token);
-      setState({
-        token: response.token,
-        role: response.role,
-        user: response.user,
-        subscription: response.subscription,
-        phoneInput: "",
-        inviteInput: "",
-        authStep: "phone",
-        hint: "",
-        loadingAuth: false,
-      });
-      return true;
+      try { sessionStorage.setItem(LINK_CODE_KEY, invite); } catch { }
+      return { status: "ok" };
     }
+    return { status: "fail", phone, invite, message: "Не удалось войти по ссылке. Проверьте код и нажмите «Войти»." };
   } catch (e) {
-    console.warn('Auto-login failed:', e);
+    return { status: "fail", phone, invite, message: e?.message || "Не удалось войти по ссылке." };
   }
-  return false;
 }
 
 function paymentPath() {
@@ -1754,6 +1744,22 @@ function planCards(plans, selectedId) {
 // UI: экраны клиента
 // ==========================
 
+function browserLoginBanner() {
+  if (isStandaloneMode()) return "";
+  let code = "";
+  try { code = sessionStorage.getItem(LINK_CODE_KEY) || ""; } catch { }
+  return `<article class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <span class="ui-row-icon" style="background:var(--ui-accent-btn);">${uiIcon("download", 18, 2.1)}</span>
+        <span style="display:flex;flex-direction:column;gap:3px;">
+          <strong style="font-size:16px;">Вы вошли в браузере</strong>
+          <span class="ui-sub" style="font-size:14px;line-height:19px;">Добавьте приложение на экран «Домой»${code ? ` и войдите там с кодом <b style="color:var(--ui-text);letter-spacing:.08em;">${esc(code)}</b>` : ""} — так удобнее подключаться.</span>
+        </span>
+      </div>
+      <button class="ui-btn ghost" style="height:46px;" data-action="show-install-guide">Как установить</button>
+    </article>`;
+}
+
 function homeScreen() {
   const phone = displayPhone(state.user?.phone || "");
   const s = state.subscription || {};
@@ -1810,6 +1816,8 @@ function homeScreen() {
         <button class="ui-hero-btn" data-action="extend-subscription" data-plan-id="301">Продлить</button>
       </div>
     </article>
+
+    ${browserLoginBanner()}
 
     <section class="ui-sec">
       <div class="ui-sec-head"><h2 class="ui-h2">Подключиться в один тап</h2><button class="ui-link" data-action="open-tab" data-tab="telegram">Все</button></div>
@@ -2933,15 +2941,27 @@ async function bootstrap() {
     return;
   }
 
-  if (!state.token) {
-    // Try auto-login from URL parameters
-    const autoLoginSuccess = await tryAutoLoginFromUrl();
-    if (autoLoginSuccess) {
-      // Reload to apply new state
-      location.reload();
-      return;
-    }
+  const linkLogin = await tryAutoLoginFromUrl();
+  if (linkLogin.status === "ok") {
+    location.reload();
+    return;
+  }
+  if (linkLogin.status === "fail") {
+    // Показываем экран кода с уже подставленными номером и кодом и причиной ошибки
+    localStorage.removeItem(TOKEN_KEY);
+    state.token = "";
+    setState({
+      booting: false,
+      authStep: "invite",
+      pendingPhone: linkLogin.phone,
+      phoneInput: formatPhoneInput(linkLogin.phone),
+      inviteInput: linkLogin.invite,
+      hint: linkLogin.message,
+    });
+    return;
+  }
 
+  if (!state.token) {
     setState({ booting: false });
     await restorePendingPaymentOverlay();
     return;
