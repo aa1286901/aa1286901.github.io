@@ -2198,7 +2198,8 @@ function vpnServerListSection(locked) {
     </div>
     <div class="ui-card ui-servers">
       ${active.note ? `<div class="ui-caption" style="padding:12px 14px 10px;border-bottom:1px solid var(--ui-sep);">${esc(active.note)}</div>` : ""}
-      ${rows}
+      <div class="ui-vpn-scroll">${rows}</div>
+      ${active.items.length > 5 ? `<div class="ui-caption" style="padding:8px 14px;border-top:1px solid var(--ui-sep);text-align:center;">Листайте список — ${active.items.length} ${ruPlural(active.items.length, "сервер", "сервера", "серверов")}</div>` : ""}
     </div>
     <p class="ui-caption" style="margin:0;">${locked ? "Все эти серверы появятся в вашем приложении сразу после оплаты." : "Список обновляется сам — в приложении просто обновите подписку."}</p>
   </section>`;

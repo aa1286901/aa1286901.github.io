@@ -587,3 +587,11 @@ div.ui-feature { cursor: default; }
 .ui-stepper .ui-field { height: 48px; border-radius: 14px; box-shadow: none; }
 .ui-stepper .ui-field input { text-align: center; padding: 0 6px; font-size: 18px; font-weight: 700; }
 .ui-sheet > .ui-stepper button { background: var(--ui-fill); }
+
+/* Список серверов VPN: видно около 5 строк, остальное прокручивается внутри блока */
+.ui-vpn-scroll {
+  max-height: 318px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
