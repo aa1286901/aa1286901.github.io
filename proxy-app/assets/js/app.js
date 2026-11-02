@@ -2492,9 +2492,9 @@ function adminBuckets(users) {
     if (st === "slow") out.soon.push(u);
     if (st === "off") out.off.push(u);
     if (u.vpnActive) out.vpn.push(u);
-    // Ушедшие: подписка закончилась за последние 90 дней
+    // Ушедшие: подписка закончилась (до года назад)
     const left = Number(u.daysLeft);
-    if (st === "off" && Number.isFinite(left) && left <= 0 && left >= -90) {
+    if (st === "off" && Number.isFinite(left) && left <= 0 && left >= -365) {
       out.lapsed.push(u);
       const wb = Date.parse(String(u.winbackAt || "").replace(" ", "T") + "Z");
       if (!Number.isFinite(wb) || Date.now() - wb > 14 * 24 * 3600 * 1000) out.winbackDue.push(u);
@@ -2516,6 +2516,12 @@ function reminderText(u) {
 }
 
 const WINBACK_PROMO_KEY = "ahmedov_winback_promo";
+// Промокод предлагаем только тем, кто не платит долго (от 2 месяцев)
+const WINBACK_PROMO_AFTER_DAYS = 60;
+
+function winbackGetsPromo(u) {
+  return Math.abs(Number(u.daysLeft) || 0) >= WINBACK_PROMO_AFTER_DAYS;
+}
 
 function winbackPromo() {
   if (typeof state.admin.winbackPromo !== "string") {
@@ -2527,7 +2533,7 @@ function winbackPromo() {
 
 function winbackText(u) {
   const ago = Math.abs(Number(u.daysLeft) || 0);
-  const promo = winbackPromo();
+  const promo = winbackGetsPromo(u) ? winbackPromo() : null;
   const url = new URL(paymentPath(), location.origin);
   url.searchParams.set("phone", u.phone);
   if (promo) url.searchParams.set("promo", promo.code);
@@ -2666,18 +2672,19 @@ function adminUsersTab() {
   list = sortAdminUsersByDays(list, a.userSort);
   const chips = [["all", "Все", users.length], ["active", "Активные", b.active.length], ["soon", "Скоро конец", b.soon.length], ["off", "Неактивны", b.off.length], ["lapsed", "Ушли", b.lapsed.length], ["vpn", "С VPN", b.vpn.length]];
 
-  if (filter === "lapsed") list = list.slice().sort((x, y) => (x.winbackAt ? 1 : 0) - (y.winbackAt ? 1 : 0) || Number(y.daysLeft) - Number(x.daysLeft));
+  // Дольше всех не платят — наверху; кому уже писали — внизу
+  if (filter === "lapsed") list = list.slice().sort((x, y) => (x.winbackAt ? 1 : 0) - (y.winbackAt ? 1 : 0) || Number(x.daysLeft) - Number(y.daysLeft));
   const isWinback = filter === "lapsed";
   const promoOn = winbackPromo();
   const winbackPanel = isWinback ? `<div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;">
       <strong style="font-size:16px;">Вернуть ушедших</strong>
-      <span class="ui-sub" style="font-size:13px;margin-top:-4px;">Клиенты, у которых подписка закончилась за последние 90 дней. Зелёная кнопка откроет WhatsApp с готовым сообщением и ссылкой на оплату. Кому уже писали — отмечено, они внизу списка.</span>
-      <span class="ui-label">Скидка в сообщении</span>
+      <span class="ui-sub" style="font-size:13px;margin-top:-4px;">Наверху — кто дольше всех не платит. Зелёная кнопка откроет WhatsApp с готовым сообщением и ссылкой на оплату. Кому уже писали — отмечено, они внизу списка.</span>
+      <span class="ui-label">Промокод для тех, кто не платит 2 месяца и дольше</span>
       <div class="ui-chips" style="flex-wrap:wrap;">
         <button class="ui-chip ${!promoOn ? "on" : ""}" data-action="admin-winback-promo" data-code="">Без промокода</button>
         ${(a.promoCodes || []).filter((p) => p.is_active).map((p) => `<button class="ui-chip ${promoOn && promoOn.code === p.code ? "on" : ""}" data-action="admin-winback-promo" data-code="${esc(p.code)}">${esc(p.code)} · ${esc(p.price_label || `${p.discount_amount} ₽`)}</button>`).join("")}
       </div>
-      ${(a.promoCodes || []).some((p) => p.is_active) ? "" : `<span class="ui-caption" style="margin:0;">Чтобы предложить скидку, создайте промокод во вкладке «Промо».</span>`}
+      ${(a.promoCodes || []).some((p) => p.is_active) ? `<span class="ui-caption" style="margin:0;">Тем, кто ушёл недавно, придёт обычное напоминание без скидки.</span>` : `<span class="ui-caption" style="margin:0;">Чтобы предложить скидку, создайте промокод во вкладке «Промо».</span>`}
     </div>` : "";
 
   const card = (u) => {
@@ -2688,7 +2695,8 @@ function adminUsersTab() {
         <span class="ui-qrow-text">
           <span class="ui-qrow-title">${esc(u.displayPhone)}</span>
           <span class="ui-qrow-sub">${esc(u.subscriptionType || "—")} · до ${esc(formatDateOnly(u.expiresAt))}${Number.isFinite(days) ? ` · ${days} дн.` : ""}</span>
-          ${isWinback ? `<span class="ui-qrow-sub" style="${u.winbackAt ? "color:var(--ui-green-text);font-weight:600;" : ""}">${u.winbackAt ? `Писали ${esc(adminTime(u.winbackAt))}` : `Закончилась ${Math.abs(days)} ${ruPlural(Math.abs(days), "день", "дня", "дней")} назад · ещё не писали`}</span>` : ""}
+          ${isWinback ? `<span class="ui-qrow-sub" style="${u.winbackAt ? "color:var(--ui-green-text);font-weight:600;" : ""}">${u.winbackAt ? `Писали ${esc(adminTime(u.winbackAt))}` : `Не платит ${Math.abs(days)} ${ruPlural(Math.abs(days), "день", "дня", "дней")} · ещё не писали`}</span>
+          ${winbackGetsPromo(u) && promoOn ? `<span class="ui-qrow-sub" style="color:var(--ui-orange-text);font-weight:600;">${uiIcon("tag", 13, 2.2)}В сообщении промокод ${esc(promoOn.code)}</span>` : ""}` : ""}
           ${u.vpnActive ? `<span class="ui-qrow-sub" style="color:#8E8CFF;font-weight:600;">${uiIcon("vpn", 13, 2.2)}VPN до ${esc(formatDateOnly(u.vpnExpiresAt))} · ${esc(u.vpnDaysLeft)} дн.</span>` : ""}
         </span>
         <span class="ui-tag ${st.cls}">${st.text}</span>
