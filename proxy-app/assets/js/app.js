@@ -2552,7 +2552,7 @@ function authScreen() {
 
   return `<section class="ui-auth">
     <div class="ui-auth-hero">
-      <span class="ui-logo">${uiIcon("shield", 46, 1.7)}</span>
+      <img class="ui-logo" src="./assets/icons/icon-512.svg" alt="ahmedov.proxy" width="92" height="92" />
       <div style="display:flex;flex-direction:column;gap:8px;">
         <h1 class="ui-auth-title">ahmedov.proxy</h1>
         <p class="ui-auth-text">Telegram и WhatsApp работают<br>без блокировок и без VPN</p>
@@ -2673,7 +2673,7 @@ function paymentScreen() {
     : p.promoData ? (p.promoData.priceLabel || `${p.promoData.amount} ₽`) : selectedPlan?.price || "";
 
   const top = `<div style="display:flex;align-items:center;gap:12px;">
-      <span class="ui-logo" style="width:44px;height:44px;border-radius:14px;box-shadow:none;">${uiIcon("shield", 24, 1.8)}</span>
+      <img class="ui-logo sm" src="./assets/icons/icon-512.svg" alt="ahmedov.proxy" width="48" height="48" />
       <div style="display:flex;flex-direction:column;"><strong style="font-size:17px;">ahmedov.proxy</strong><span class="ui-sub" style="font-size:13px;">Оплата подписки</span></div>
     </div>`;
 
