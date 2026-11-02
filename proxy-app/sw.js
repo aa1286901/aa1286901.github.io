@@ -70,3 +70,36 @@ if (isCodeAsset) {
     }),
   );
 });
+
+// Push-уведомления администратору (новые оплаты)
+self.addEventListener("push", (event) => {
+  let data = {};
+  try { data = event.data ? event.data.json() : {}; } catch { data = { body: event.data ? event.data.text() : "" }; }
+  const title = data.title || "ahmedov.proxy";
+  event.waitUntil(Promise.all([
+    self.registration.showNotification(title, {
+      body: data.body || "",
+      tag: data.tag || "payments",
+      icon: `${BASE_PATH}assets/icons/icon-192.svg`,
+      badge: `${BASE_PATH}assets/icons/icon-192.svg`,
+      data: { url: `${BASE_PATH}${data.url || ""}` },
+    }),
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => list.forEach((c) => c.postMessage({ type: "push", data }))),
+  ]));
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || BASE_PATH;
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      for (const c of list) {
+        if ("focus" in c) {
+          c.postMessage({ type: "open-payments" });
+          return c.focus();
+        }
+      }
+      return self.clients.openWindow(url);
+    }),
+  );
+});

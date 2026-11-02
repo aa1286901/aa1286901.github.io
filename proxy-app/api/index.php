@@ -8,6 +8,7 @@ require_once __DIR__ . '/jwt.php';
 require_once __DIR__ . '/payment/platega.php';
 require_once __DIR__ . '/vpn.php';
 require_once __DIR__ . '/ozon.php';
+require_once __DIR__ . '/webpush.php';
 
 function array_keys_recursive(array $array): array
 {
@@ -1011,6 +1012,7 @@ if (preg_match('#^/api/admin/users/([^/]+)/vpn$#', $uri, $vpnAdminMatch) === 1 &
 }
 
 ozon_handle_routes($uri, $method);
+push_handle_routes($uri, $method);
 
 if ($uri === '/api/plans' && $method === 'GET') {
     json_response(array_merge(plans_payload(), [
