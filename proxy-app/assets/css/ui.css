@@ -630,3 +630,8 @@ div.ui-feature { cursor: default; }
 .ui-details .ui-contacts { padding: 0 16px 16px; }
 .ui-qr-box { display: flex; justify-content: center; padding: 4px 16px 18px; }
 .ui-qr-box img, .ui-qr-box canvas { background: #fff; padding: 10px; border-radius: 14px; }
+
+/* Приведи друга */
+.ui-ref-stat { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px; border-radius: 14px; background: var(--ui-fill); }
+.ui-ref-stat b { font-size: 20px; font-weight: 800; }
+.ui-ref-stat span { font-size: 12px; color: var(--ui-sub); text-align: center; }

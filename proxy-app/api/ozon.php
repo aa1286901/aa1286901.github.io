@@ -52,6 +52,9 @@ function ensure_ozon_schema(): void
     if (!in_array('claimed_at', $cols, true)) {
         $pdo->exec('ALTER TABLE ozon_orders ADD COLUMN claimed_at TEXT DEFAULT NULL');
     }
+    if (!in_array('ref_code', $cols, true)) {
+        $pdo->exec('ALTER TABLE ozon_orders ADD COLUMN ref_code TEXT DEFAULT NULL');
+    }
     if (!in_array('sbp_url', $cols, true)) {
         $pdo->exec('ALTER TABLE ozon_orders ADD COLUMN sbp_url TEXT DEFAULT NULL');
         $pdo->exec('ALTER TABLE ozon_orders ADD COLUMN sbp_at TEXT DEFAULT NULL');
@@ -121,7 +124,7 @@ function ozon_order_public(array $o, bool $withCode = false): array
     return $data;
 }
 
-function ozon_create_order(string $phone, string $kind, string $planId, ?string $promoCode, ?string $payer = null): array
+function ozon_create_order(string $phone, string $kind, string $planId, ?string $promoCode, ?string $payer = null, ?string $ref = null): array
 {
     ensure_ozon_schema();
     if ($kind === 'vpn') {
@@ -171,7 +174,19 @@ function ozon_create_order(string $phone, string $kind, string $planId, ?string 
     $same = db()->prepare("SELECT * FROM ozon_orders WHERE status = 'pending' AND phone = :phone AND kind = :kind AND plan_id = :plan
         AND COALESCE(promo_code, '') = :promo AND created_at >= datetime('now', :ttl) ORDER BY id DESC LIMIT 1");
     $same->execute([':phone' => $phone, ':kind' => $kind, ':plan' => $planId, ':promo' => (string) $promoCode, ':ttl' => '-' . OZON_ORDER_TTL_HOURS . ' hours']);
+    // Реферальный код: только для прокси/комплекта и только чужой
+    $refCode = null;
+    if ($ref !== null && $kind !== 'vpn') {
+        $inviter = ref_inviter_by_code($ref);
+        if ($inviter && $inviter !== $phone) {
+            $refCode = ref_clean_code($ref);
+        }
+    }
     if ($existing = $same->fetch()) {
+        if ($refCode && empty($existing['ref_code'])) {
+            db()->prepare('UPDATE ozon_orders SET ref_code = :r WHERE id = :id')->execute([':r' => $refCode, ':id' => $existing['id']]);
+            return ozon_find_order((string) $existing['token']);
+        }
         return $existing;
     }
     $count = db()->prepare("SELECT COUNT(*) FROM ozon_orders WHERE status = 'pending' AND phone = :phone AND created_at >= datetime('now', '-24 hours')");
@@ -181,11 +196,11 @@ function ozon_create_order(string $phone, string $kind, string $planId, ?string 
     }
 
     $token = bin2hex(random_bytes(12));
-    $stmt = db()->prepare('INSERT INTO ozon_orders (token, phone, kind, plan_id, plan_name, days, amount_kop, promo_code, payer)
-        VALUES (:token, :phone, :kind, :plan_id, :plan_name, :days, :amount, :promo, :payer)');
+    $stmt = db()->prepare('INSERT INTO ozon_orders (token, phone, kind, plan_id, plan_name, days, amount_kop, promo_code, payer, ref_code)
+        VALUES (:token, :phone, :kind, :plan_id, :plan_name, :days, :amount, :promo, :payer, :ref)');
     $stmt->execute([
         ':token' => $token, ':phone' => $phone, ':kind' => $kind, ':plan_id' => $planId,
-        ':plan_name' => $name, ':days' => $days, ':amount' => $baseRub * 100, ':promo' => $promoCode, ':payer' => $payer,
+        ':plan_name' => $name, ':days' => $days, ':amount' => $baseRub * 100, ':promo' => $promoCode, ':payer' => $payer, ':ref' => $refCode,
     ]);
     return ozon_find_order($token);
 }
@@ -198,6 +213,7 @@ function ozon_fulfill(array $order, string $by): array
     }
     $phone = normalize_phone((string) $order['phone']);
     $inviteCode = null;
+    $wasNew = find_user($phone) === null;
     if ((string) $order['kind'] === 'vpn') {
         vpn_update_user($phone, 'add', (int) $order['days']);
     } else {
@@ -220,7 +236,9 @@ function ozon_fulfill(array $order, string $by): array
     $stmt = db()->prepare("UPDATE ozon_orders SET status = 'paid', paid_at = CURRENT_TIMESTAMP, confirmed_by = :by,
         invite_code = :code WHERE id = :id");
     $stmt->execute([':by' => $by, ':code' => $inviteCode, ':id' => $order['id']]);
-    return ozon_find_order((string) $order['token']);
+    $paid = ozon_find_order((string) $order['token']);
+    ref_after_paid_order($paid, $wasNew);
+    return $paid;
 }
 
 function ozon_admin_payload(): array
@@ -234,6 +252,15 @@ function ozon_admin_payload(): array
             $pub = ozon_order_public($o);
             $pub['id'] = (int) $o['id'];
             $pub['confirmedBy'] = $o['confirmed_by'] ?? null;
+            // Кто получит +дни за эту оплату
+            $u = find_user((string) $o['phone']);
+            $refPhone = null;
+            if ((string) $o['kind'] !== 'vpn') {
+                $st = db()->prepare('SELECT referred_by FROM users WHERE phone = :p');
+                $st->execute([':p' => (string) $o['phone']]);
+                $refPhone = $u ? ((string) ($st->fetchColumn() ?: '') ?: null) : (!empty($o['ref_code']) ? ref_inviter_by_code((string) $o['ref_code']) : null);
+            }
+            $pub['refFrom'] = $refPhone ? display_phone($refPhone) : null;
             $pub['promoCode'] = $o['promo_code'] ?? null;
             return $pub;
         }, $orders),
@@ -265,7 +292,7 @@ function ozon_handle_routes(string $uri, string $method): void
             json_response(['message' => 'Укажите корректный номер телефона'], 422);
         }
         $payer = trim((string) ($data['payer'] ?? '')) !== '' ? ozon_clean_payer((string) $data['payer']) : null;
-        $order = ozon_create_order($phone, $kind, (string) ($data['plan_id'] ?? ''), isset($data['promoCode']) ? (string) $data['promoCode'] : null, $payer);
+        $order = ozon_create_order($phone, $kind, (string) ($data['plan_id'] ?? ''), isset($data['promoCode']) ? (string) $data['promoCode'] : null, $payer, isset($data['ref']) ? (string) $data['ref'] : null);
         json_response(['order' => ozon_order_public($order)], 201);
     }
 
