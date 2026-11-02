@@ -575,3 +575,15 @@ div.ui-feature { cursor: default; }
 /* В длинной шторке элементы не сжимаются, а шторка прокручивается */
 .ui-sheet > * { flex-shrink: 0; }
 .ui-hero-chip.off i { background: rgba(255, 255, 255, 0.6); }
+
+/* Горизонтальные вкладки-чипы с прокруткой */
+.ui-tabs-scroll { display: flex; gap: 8px; overflow-x: auto; margin: 0 -16px; padding: 0 16px 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.ui-tabs-scroll::-webkit-scrollbar { display: none; }
+.ui-tabs-scroll .ui-chip { flex-shrink: 0; white-space: nowrap; }
+
+/* Поле количества дней с кнопками −/+ */
+.ui-stepper { display: grid; grid-template-columns: 52px 52px minmax(0, 1fr) 52px 52px; gap: 6px; align-items: center; }
+.ui-stepper button { height: 48px; border: 0; border-radius: 14px; background: var(--ui-card); color: var(--ui-text); font-size: 15px; font-weight: 700; cursor: pointer; }
+.ui-stepper .ui-field { height: 48px; border-radius: 14px; box-shadow: none; }
+.ui-stepper .ui-field input { text-align: center; padding: 0 6px; font-size: 18px; font-weight: 700; }
+.ui-sheet > .ui-stepper button { background: var(--ui-fill); }
