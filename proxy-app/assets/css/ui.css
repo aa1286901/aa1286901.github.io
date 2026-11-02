@@ -595,3 +595,6 @@ div.ui-feature { cursor: default; }
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
+
+/* Плашка демо-режима */
+.ui-demo-banner { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; border-color: rgba(255, 159, 10, 0.35); }

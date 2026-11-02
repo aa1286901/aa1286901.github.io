@@ -936,6 +936,33 @@ if (preg_match('#^/api/vpn/sub/([A-Za-z0-9]+)$#', $uri, $vpnMatch) === 1 && $met
     vpn_serve_subscription((string) $vpnMatch[1]);
 }
 
+// Демо-режим кабинета: только названия серверов — без адресов, ключей и ссылок.
+if ($uri === '/api/demo' && $method === 'GET') {
+    $stmt = db()->query(
+        'SELECT network, name, COALESCE(is_recommended, 0) AS is_recommended
+         FROM proxies
+         WHERE is_active = 1
+         ORDER BY CASE WHEN COALESCE(is_recommended, 0) = 1 THEN 0 ELSE 1 END ASC, sort_order ASC, id ASC'
+    );
+    $proxies = ['telegram' => [], 'whatsapp' => []];
+    foreach ($stmt->fetchAll() as $row) {
+        $net = (string) $row['network'];
+        if (!isset($proxies[$net])) {
+            continue;
+        }
+        $proxies[$net][] = ['name' => (string) $row['name'], 'isRecommended' => ((int) $row['is_recommended']) === 1];
+    }
+    $vpnServers = vpn_server_list();
+    $vpnTotal = count(array_filter($vpnServers, static fn (array $s): bool => !$s['group'] && !$s['auto']));
+    json_response([
+        'proxies' => $proxies,
+        'vpnServers' => $vpnServers,
+        'vpnTotal' => $vpnTotal,
+        'plans' => plans_payload()['plans'] ?? [],
+        'vpnPlans' => vpn_plans_payload(),
+    ]);
+}
+
 if ($uri === '/api/vpn/servers' && $method === 'GET') {
     $auth = require_auth();
     if ((string) ($auth['role'] ?? 'user') !== 'admin') {
