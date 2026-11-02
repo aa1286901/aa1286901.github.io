@@ -324,6 +324,9 @@ html.ui-mode body::after { display: none; }
 }
 .ui-field input::placeholder { color: var(--ui-sub); font-weight: 500; }
 .ui-field.code input { text-align: center; padding: 0 14px; font-size: 26px; letter-spacing: 0.35em; font-variant-numeric: tabular-nums; }
+.ui-field.text input { padding: 0 16px; font-size: 18px; }
+.ui-card .ui-field.text { box-shadow: none; background: var(--ui-fill); border-color: transparent; }
+.ui-card .ui-field.text:focus-within { border-color: var(--ui-accent); }
 .ui-btn {
   height: 58px; border-radius: 20px; border: 0; background: var(--ui-accent-btn); color: #FFFFFF !important; cursor: pointer;
   font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; width: 100%;
