@@ -2601,6 +2601,7 @@ function adminOverview() {
   return `<section class="ui-stack">
     <header class="ui-top">
       <div class="ui-top-text"><span class="ui-sub">${greetingText()}</span><span class="ui-brand">Админка</span></div>
+      <button class="ui-iconbtn" data-action="admin-push-bell" aria-label="${a.push?.on ? "Проверить push-уведомление" : "Включить push-уведомления"}" style="position:relative;" ${a.saving ? "disabled" : ""}>${uiIcon("bell", 20)}${a.push?.on ? `<span style="position:absolute;top:9px;right:9px;width:8px;height:8px;border-radius:50%;background:#34C759;"></span>` : ""}</button>
       <button class="ui-iconbtn" data-action="toggle-theme" aria-label="${isDark ? "Светлая тема" : "Тёмная тема"}">${uiIcon(isDark ? "sun" : "moon", 20)}</button>
       <button class="ui-iconbtn" data-action="logout" aria-label="Выйти">${uiIcon("logout", 20)}</button>
     </header>
@@ -4373,6 +4374,24 @@ app.addEventListener("click", async (event) => {
     window.scrollTo(0, 0);
     if (tab === "proxies") await refreshAdminProxies();
     if (tab === "payments") await loadAdminOzon();
+    return;
+  }
+  if (action === "admin-push-bell") {
+    if (!pushSupported()) return setAdmin({ message: "Push на iPhone работает, только если админка открыта с экрана «Домой» (Поделиться → На экран «Домой»)." });
+    if (!state.admin.push?.on) {
+      await adminPushEnable();
+      return;
+    }
+    setAdmin({ saving: true });
+    try {
+      const r = await request("/admin/push/test", { method: "POST", headers: { Authorization: `Bearer ${state.token}` } });
+      setAdmin({ message: r.sent ? `Тестовое уведомление отправлено (устройств: ${r.sent}). Если не пришло — проверьте Настройки iPhone → Уведомления.` : "Не удалось отправить. Нажмите колокольчик ещё раз, чтобы подключить уведомления заново." });
+      if (!r.sent) setAdmin({ push: { ...state.admin.push, on: false } });
+    } catch (e) {
+      setAdmin({ message: e.message || "Не получилось." });
+    } finally {
+      setAdmin({ saving: false });
+    }
     return;
   }
   if (action === "admin-push-enable") {
