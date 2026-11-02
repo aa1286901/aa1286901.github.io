@@ -328,6 +328,8 @@ function paymentRouteStateFromUrl() {
     planId: Number(params.get("plan") || 0) || null,
     token: String(params.get("token") || "").trim(),
     message: String(params.get("message") || "").trim(),
+    vpn: params.get("vpn") === "1",
+    promo: String(params.get("promo") || "").trim(),
   };
 }
 
@@ -354,6 +356,7 @@ function openPaymentPage(options = {}) {
   if (phone) url.searchParams.set("phone", phone);
   if (planId > 0) url.searchParams.set("plan", String(planId));
   if (message) url.searchParams.set("message", message);
+  if (options.vpn) url.searchParams.set("vpn", "1");
   location.assign(url.toString());
 }
 
@@ -366,6 +369,7 @@ async function loadPublicPlansPayload() {
       banks: payload?.banks || [],
       paymentEnabled: !!payload?.paymentEnabled,
       ozonEnabled: !!payload?.ozonEnabled,
+      comboPlans: payload?.comboPlans || [],
     };
   } catch {
     return {
@@ -496,6 +500,8 @@ async function loadPaymentPage() {
     supportUrl: plansData.supportUrl,
     paymentEnabled: plansData.paymentEnabled,
     ozonEnabled: plansData.ozonEnabled,
+    comboPlans: plansData.comboPlans || [],
+    withVpn: !!routeState.vpn,
     creating: false,
     checking: false,
     payment,
@@ -507,6 +513,11 @@ async function loadPaymentPage() {
   });
 
   void ozonResume();
+
+  if (routeState.promo && !token) {
+    state.paymentPage.promoCode = routeState.promo;
+    await paymentApplyPromo();
+  }
 
   if (token) {
     replacePaymentUrl({
@@ -1413,6 +1424,8 @@ function messageFor(key) {
     const plan = plans.find((x) => Number(x.id) === Number(pp.selectedPlanId)) || plans[0];
     const price = pp.promoData ? (pp.promoData.priceLabel || `${pp.promoData.amount} ₽`) : plan?.price;
     const ph = phoneOf(pp.phoneInput);
+    const combo = pp.withVpn && !pp.promoData ? comboFor(pp.comboPlans, plan?.id) : null;
+    if (combo) return `${hello} Хочу оплатить комплект прокси + VPN ahmedov.proxy на ${combo.durationDays} дней (${combo.price}).${ph ? ` Мой номер: ${ph}.` : ""}`;
     return `${hello} Хочу оплатить прокси ahmedov.proxy${plan ? ` на ${plan.name}` : ""}${price ? ` (${price})` : ""}.${ph ? ` Мой номер: ${ph}.` : ""}${pp.promoData?.code ? ` Промокод: ${pp.promoData.code}.` : ""}`;
   }
   if (key === "overlay") {
@@ -1424,7 +1437,7 @@ function messageFor(key) {
   }
   if (key === "pay-ozon") {
     const o = ozonCurrent();
-    return `${hello} Я оплатил(а) через Ozon${o ? `: ${o.amountLabel}, ${o.kind === "vpn" ? o.planName : `прокси ${o.planName}`}. Мой номер: ${o.displayPhone}${o.payer ? `, перевод от ${o.payer.replace(/\.$/, "")}` : ""}` : ""}. Чек прикрепляю.`;
+    return `${hello} Я оплатил(а) через Ozon${o ? `: ${o.amountLabel}, ${o.kind === "proxy" ? `прокси ${o.planName}` : o.planName}. Мой номер: ${o.displayPhone}${o.payer ? `, перевод от ${o.payer.replace(/\.$/, "")}` : ""}` : ""}. Чек прикрепляю.`;
   }
   if (key === "vpn") {
     const plans = vpnPlans();
@@ -1447,6 +1460,34 @@ function planPerMonth(plan) {
   const months = Number(plan?.durationMonths || 0) || Math.round(Number(plan?.durationDays || 0) / 30);
   if (!amount || !months) return null;
   return amount / months;
+}
+
+async function paymentApplyPromo() {
+  const code = String(state.paymentPage.promoCode || "").trim();
+  if (!code) {
+    setPaymentPage({ promoMessage: "Введите промокод для проверки." });
+    return;
+  }
+  setPaymentPage({ promoChecking: true, promoMessage: "" });
+  try {
+    const res = await api.promoCheck(code);
+    const promo = res?.promo || null;
+    if (!promo) throw new Error("Промокод недействителен.");
+    setPaymentPage({ promoChecking: false, promoData: promo, promoMessage: `Промокод действителен: ${promo.priceLabel || (promo.amount + ' ₽')}`, selectedPlanId: Number(promo.planId), withVpn: false });
+  } catch (e) {
+    // Normalize error messages for client display
+    const status = e?.status || (e?.payload?.status) || null;
+    let message = 'Промокод недействителен.';
+    if (status === 404) message = 'Промокод недействителен.';
+    else if (e?.payload?.message) message = String(e.payload.message || message);
+    else if (e?.message && String(e.message).toLowerCase().includes('promo')) message = 'Промокод недействителен.';
+    else if (e?.message) message = String(e.message);
+    setPaymentPage({ promoChecking: false, promoData: null, promoMessage: message });
+  }
+}
+
+function comboFor(plans, planId) {
+  return (plans || []).find((c) => Number(c.planId) === Number(planId)) || null;
 }
 
 function planCards(plans, selectedId) {
@@ -1942,9 +1983,11 @@ function paymentScreen() {
   const selectedPlan = planOptions.find((plan) => Number(plan.id) === Number(p.selectedPlanId)) || planOptions[0] || null;
   const waitingMode = !!p.payment?.token;
   const fulfilled = !!p.fulfillment;
+  const combo = p.ozonEnabled && !p.promoData ? comboFor(p.comboPlans, selectedPlan?.id) : null;
+  const useCombo = !!(combo && p.withVpn);
   const amountLabel = p.payment?.amount
     ? `${p.payment.amount} ₽`
-    : p.promoData ? (p.promoData.priceLabel || `${p.promoData.amount} ₽`) : selectedPlan?.price || "";
+    : p.promoData ? (p.promoData.priceLabel || `${p.promoData.amount} ₽`) : useCombo ? combo.price : selectedPlan?.price || "";
 
   const top = `<div style="display:flex;align-items:center;gap:12px;">
       <img class="ui-logo sm" src="./assets/icons/icon-512.svg" alt="ahmedov.proxy" width="48" height="48" />
@@ -1987,6 +2030,14 @@ function paymentScreen() {
           <button class="ui-text-btn red" data-action="cancel-pending-payment">Отменить</button>
         </div>` : ""}
       ${!p.promoData ? `<div class="ui-sec" style="gap:8px;"><span class="ui-label">Тариф</span>${planCards(planOptions, selectedPlan?.id)}</div>` : ""}
+      ${combo ? `<label class="ui-card ui-combo ${useCombo ? "on" : ""}">
+          <span class="ui-row-icon" style="background:#5E5CE6;">${uiIcon("vpn", 18, 2.1)}</span>
+          <span class="ui-qrow-text">
+            <span class="ui-qrow-title" style="font-size:16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">Добавить VPN<span class="ui-plan-save">−${esc(combo.save)} ₽</span></span>
+            <span class="ui-sub" style="font-size:13px;">Прокси + VPN на ${esc(combo.durationDays)} дней — <b style="color:var(--ui-text);">${esc(combo.price)}</b> вместо <s>${esc(combo.fullPrice)}</s>. Instagram, YouTube и все сайты.</span>
+          </span>
+          <input type="checkbox" class="ui-switch" data-action="payment-toggle-vpn" ${useCombo ? "checked" : ""} aria-label="Добавить VPN" />
+        </label>` : ""}
       <div class="ui-card ui-promo">
         <span class="ui-sub" style="display:flex;">${uiIcon("tag", 20)}</span>
         <label for="pay-promo" style="position:absolute;left:-9999px;">Промокод</label>
@@ -1996,11 +2047,11 @@ function paymentScreen() {
       ${p.promoData ? `<div class="ui-msg ok">Промокод ${esc(p.promoData.code)} применён · ${esc(p.promoData.priceLabel || `${p.promoData.amount || 0} ₽`)}${p.promoData.name ? " · " + esc(p.promoData.name) : ""}</div>` : ""}
       ${!p.promoData && p.promoMessage ? `<div class="ui-msg err">${esc(p.promoMessage)}</div>` : ""}
       ${selectedPlan ? `<div class="ui-card ui-kv">
-          <div><span>Тариф</span><b>${esc(p.promoData?.name || selectedPlan.name)}</b></div>
+          <div><span>Тариф</span><b>${esc(useCombo ? combo.name : (p.promoData?.name || selectedPlan.name))}</b></div>
           <div><span>К оплате</span><b style="font-size:18px;">${esc(amountLabel)}</b></div>
         </div>` : ""}
       ${p.ozonEnabled ? `${ozonPayerField("pay-payer")}
-        <button class="ui-btn" data-action="ozon-start" data-kind="proxy" ${p.ozonCreating ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${p.ozonCreating ? "Создаём заявку…" : `Перейти к оплате ${esc(amountLabel)}`}</button>
+        <button class="ui-btn" data-action="ozon-start" data-kind="${useCombo ? "combo" : "proxy"}" ${p.ozonCreating ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${p.ozonCreating ? "Создаём заявку…" : `Перейти к оплате ${esc(amountLabel)}`}</button>
         <p class="ui-caption" style="margin:-6px 0 0;text-align:center;">По СБП через Ozon, без комиссии. Подтверждаем обычно за 10–15 минут.</p>` : ""}
       ${SHOW_SBP_BUTTON && p.paymentEnabled ? `<button class="ui-btn" data-action="payment-create" ${p.creating ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${p.creating ? "Создаём платёж…" : `Оплатить ${esc(amountLabel)} через СБП`}</button>` : ""}
       <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;">
@@ -2226,6 +2277,23 @@ function vpnBuyBlock() {
     </div>`;
 }
 
+function vpnComboOffer() {
+  const combos = state.subscription?.comboPlans || [];
+  if (!combos.length) return "";
+  const best = combos[combos.length - 1];
+  return `<article class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:12px;border:1.5px solid rgba(94,92,230,.45);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="ui-row-icon" style="background:#5E5CE6;">${uiIcon("vpn", 18, 2.1)}</span>
+        <span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:17px;">Выгоднее вместе</span><span class="ui-sub" style="font-size:13px;">Продлите прокси и VPN одной оплатой</span></span>
+      </div>
+      <div class="ui-card ui-kv" style="box-shadow:none;background:var(--ui-fill);">
+        ${combos.map((c) => `<div><span>${esc(c.durationDays)} дней</span><b>${esc(c.price)} <s class="ui-sub" style="font-weight:500;font-size:13px;">${esc(c.fullPrice)}</s></b></div>`).join("")}
+      </div>
+      <button class="ui-btn" style="background:#5E5CE6;" data-action="open-combo" data-plan-id="${esc(best.planId)}">Прокси + VPN — экономия до ${esc(best.save)} ₽</button>
+      <span class="ui-caption" style="margin:0;text-align:center;">Дни прибавятся к текущей подписке прокси.</span>
+    </article>`;
+}
+
 function vpnPaywall() {
   const v = userVpn();
   const expired = !!v.expiresAt;
@@ -2249,6 +2317,7 @@ function vpnPaywall() {
       ${perk("bolt", "Подключение за минуту", "Приложение Happ или Incy и одна кнопка «Добавить».")}
     </div>
     ${vpnServerListSection(true)}
+    ${vpnComboOffer()}
     <section class="ui-sec">
       <h2 class="ui-h2" style="padding:0 4px;">Тарифы VPN</h2>
       ${vpnBuyBlock()}
@@ -2415,7 +2484,7 @@ function adminUserStatus(u) {
 }
 
 function adminBuckets(users) {
-  const out = { all: users, active: [], soon: [], off: [], fresh: [], vpn: [] };
+  const out = { all: users, active: [], soon: [], off: [], fresh: [], vpn: [], lapsed: [], winbackDue: [] };
   const monthAgo = Date.now() - 30 * 24 * 3600 * 1000;
   users.forEach((u) => {
     const st = adminUserStatus(u).cls;
@@ -2423,6 +2492,13 @@ function adminBuckets(users) {
     if (st === "slow") out.soon.push(u);
     if (st === "off") out.off.push(u);
     if (u.vpnActive) out.vpn.push(u);
+    // Ушедшие: подписка закончилась за последние 90 дней
+    const left = Number(u.daysLeft);
+    if (st === "off" && Number.isFinite(left) && left <= 0 && left >= -90) {
+      out.lapsed.push(u);
+      const wb = Date.parse(String(u.winbackAt || "").replace(" ", "T") + "Z");
+      if (!Number.isFinite(wb) || Date.now() - wb > 14 * 24 * 3600 * 1000) out.winbackDue.push(u);
+    }
     const created = Date.parse(String(u.createdAt || "").replace(" ", "T") + "Z");
     if (Number.isFinite(created) && created >= monthAgo) out.fresh.push(u);
   });
@@ -2437,6 +2513,29 @@ function reminderText(u) {
   const date = formatDateOnly(u.expiresAt);
   const payUrl = `${location.origin}${paymentPath()}?phone=${u.phone}`;
   return `Здравствуйте! Ваша подписка ahmedov.proxy заканчивается ${date}. Продлить можно здесь: ${payUrl}`;
+}
+
+const WINBACK_PROMO_KEY = "ahmedov_winback_promo";
+
+function winbackPromo() {
+  if (typeof state.admin.winbackPromo !== "string") {
+    try { state.admin.winbackPromo = localStorage.getItem(WINBACK_PROMO_KEY) || ""; } catch { state.admin.winbackPromo = ""; }
+  }
+  const code = state.admin.winbackPromo;
+  return code ? (state.admin.promoCodes || []).find((p) => p.is_active && String(p.code) === code) || null : null;
+}
+
+function winbackText(u) {
+  const ago = Math.abs(Number(u.daysLeft) || 0);
+  const promo = winbackPromo();
+  const url = new URL(paymentPath(), location.origin);
+  url.searchParams.set("phone", u.phone);
+  if (promo) url.searchParams.set("promo", promo.code);
+  const when = ago <= 1 ? "недавно закончилась" : `закончилась ${ago} ${ruPlural(ago, "день", "дня", "дней")} назад`;
+  const offer = promo
+    ? `Для вас скидка: прокси${({ 301: " на 90 дней", 302: " на 180 дней", 303: " на 360 дней" })[Number(promo.plan_id)] || ""} всего за ${promo.price_label || `${promo.discount_amount} ₽`} по промокоду ${promo.code} — он уже в ссылке.`
+    : "Можно продлить прокси, а со скидкой — сразу вместе с VPN для всех сайтов и приложений.";
+  return `Здравствуйте! Ваша подписка ahmedov.proxy ${when}. Будем рады вернуть вас! ${offer}\nОплатить: ${url.toString()}\nЕсли что-то не устроило — напишите, поможем.`;
 }
 
 function accessText(phone10, code) {
@@ -2523,6 +2622,12 @@ function adminOverview() {
       </button>` : "";
     })()}
 
+    ${b.winbackDue.length ? `<button class="ui-card ui-row-card" data-action="admin-users-filter" data-filter="lapsed">
+        <span class="ui-row-icon" style="background:#FF375F;">${uiIcon("refresh", 18, 2.2)}</span>
+        <span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:16px;">Вернуть клиентов: ${b.winbackDue.length}</span><span class="ui-sub" style="font-size:13px;">Подписка закончилась, ещё не писали — сообщение готово</span></span>
+        <span class="ui-chev">${uiIcon("chevron", 14, 2.6)}</span>
+      </button>` : ""}
+
     <button class="ui-card ui-tile" data-action="admin-users-filter" data-filter="vpn">
       <span style="display:flex;justify-content:space-between;align-items:center;"><span class="ui-tile-label">VPN подключён</span><span class="ui-sub" style="font-size:13px;">${b.vpn.filter((u) => Number(u.vpnDaysLeft) <= 7).length} скоро закончится</span></span>
       <span class="ui-tile-value" style="color:#8E8CFF;">${b.vpn.length} <small>из ${b.active.length} активных</small></span>
@@ -2559,7 +2664,21 @@ function adminUsersTab() {
   let list = b[filter] || users;
   if (q) list = list.filter((u) => String(u.phone || "").includes(q));
   list = sortAdminUsersByDays(list, a.userSort);
-  const chips = [["all", "Все", users.length], ["active", "Активные", b.active.length], ["soon", "Скоро конец", b.soon.length], ["off", "Неактивны", b.off.length], ["vpn", "С VPN", b.vpn.length]];
+  const chips = [["all", "Все", users.length], ["active", "Активные", b.active.length], ["soon", "Скоро конец", b.soon.length], ["off", "Неактивны", b.off.length], ["lapsed", "Ушли", b.lapsed.length], ["vpn", "С VPN", b.vpn.length]];
+
+  if (filter === "lapsed") list = list.slice().sort((x, y) => (x.winbackAt ? 1 : 0) - (y.winbackAt ? 1 : 0) || Number(y.daysLeft) - Number(x.daysLeft));
+  const isWinback = filter === "lapsed";
+  const promoOn = winbackPromo();
+  const winbackPanel = isWinback ? `<div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;">
+      <strong style="font-size:16px;">Вернуть ушедших</strong>
+      <span class="ui-sub" style="font-size:13px;margin-top:-4px;">Клиенты, у которых подписка закончилась за последние 90 дней. Зелёная кнопка откроет WhatsApp с готовым сообщением и ссылкой на оплату. Кому уже писали — отмечено, они внизу списка.</span>
+      <span class="ui-label">Скидка в сообщении</span>
+      <div class="ui-chips" style="flex-wrap:wrap;">
+        <button class="ui-chip ${!promoOn ? "on" : ""}" data-action="admin-winback-promo" data-code="">Без промокода</button>
+        ${(a.promoCodes || []).filter((p) => p.is_active).map((p) => `<button class="ui-chip ${promoOn && promoOn.code === p.code ? "on" : ""}" data-action="admin-winback-promo" data-code="${esc(p.code)}">${esc(p.code)} · ${esc(p.price_label || `${p.discount_amount} ₽`)}</button>`).join("")}
+      </div>
+      ${(a.promoCodes || []).some((p) => p.is_active) ? "" : `<span class="ui-caption" style="margin:0;">Чтобы предложить скидку, создайте промокод во вкладке «Промо».</span>`}
+    </div>` : "";
 
   const card = (u) => {
     const st = adminUserStatus(u);
@@ -2569,13 +2688,16 @@ function adminUsersTab() {
         <span class="ui-qrow-text">
           <span class="ui-qrow-title">${esc(u.displayPhone)}</span>
           <span class="ui-qrow-sub">${esc(u.subscriptionType || "—")} · до ${esc(formatDateOnly(u.expiresAt))}${Number.isFinite(days) ? ` · ${days} дн.` : ""}</span>
+          ${isWinback ? `<span class="ui-qrow-sub" style="${u.winbackAt ? "color:var(--ui-green-text);font-weight:600;" : ""}">${u.winbackAt ? `Писали ${esc(adminTime(u.winbackAt))}` : `Закончилась ${Math.abs(days)} ${ruPlural(Math.abs(days), "день", "дня", "дней")} назад · ещё не писали`}</span>` : ""}
           ${u.vpnActive ? `<span class="ui-qrow-sub" style="color:#8E8CFF;font-weight:600;">${uiIcon("vpn", 13, 2.2)}VPN до ${esc(formatDateOnly(u.vpnExpiresAt))} · ${esc(u.vpnDaysLeft)} дн.</span>` : ""}
         </span>
         <span class="ui-tag ${st.cls}">${st.text}</span>
       </div>
       <div class="ui-admin-actions">
         ${u.inviteCode ? `<button class="ui-code-chip" data-action="copy-invite" data-code="${esc(u.inviteCode)}" aria-label="Скопировать код">${uiIcon("copy", 14)}${esc(u.inviteCode)}</button>` : `<span class="ui-sub" style="font-size:13px;flex:1;">Кода нет</span>`}
-        <a class="ui-mini-icon wa" href="${esc(waLink(u.phone, u.inviteCode ? accessText(u.phone, u.inviteCode) : reminderText(u)))}" target="_blank" rel="noopener" aria-label="Написать в WhatsApp">${uiIcon("wa", 18, 2.2)}</a>
+        ${isWinback
+          ? `<a class="ui-mini-icon wa" href="${esc(waLink(u.phone, winbackText(u)))}" target="_blank" rel="noopener" data-action="admin-winback-sent" data-phone="${esc(u.phone)}" aria-label="Написать «вернитесь» в WhatsApp">${uiIcon("wa", 18, 2.2)}</a>`
+          : `<a class="ui-mini-icon wa" href="${esc(waLink(u.phone, u.inviteCode ? accessText(u.phone, u.inviteCode) : reminderText(u)))}" target="_blank" rel="noopener" aria-label="Написать в WhatsApp">${uiIcon("wa", 18, 2.2)}</a>`}
         <button class="ui-mini-icon" data-action="admin-edit-user" data-phone="${esc(u.phone)}" aria-label="Изменить">${uiIcon("edit", 18)}</button>
         <button class="ui-mini-icon danger" data-action="admin-delete-user" data-phone="${esc(u.phone)}" aria-label="Удалить">${uiIcon("trash", 18)}</button>
       </div>
@@ -2590,6 +2712,7 @@ function adminUsersTab() {
       <button class="ui-iconbtn" style="width:48px;height:48px;border-radius:16px;" data-action="admin-user-sort" aria-label="${a.userSort === "asc" ? "Сначала меньше дней" : "Сначала больше дней"}">${uiIcon(a.userSort === "asc" ? "chevron" : "chevron", 18, 2.4).replace("<svg", `<svg style="transform:rotate(${a.userSort === "asc" ? 90 : -90}deg)"`)}</button>
     </div>
     <div class="ui-chips">${chips.map(([id, label, n]) => `<button class="ui-chip ${filter === id ? "on" : ""}" data-action="admin-users-filter" data-filter="${id}">${label} · ${n}</button>`).join("")}</div>
+    ${winbackPanel}
     ${a.loading && !users.length
       ? Array.from({ length: 4 }).map(() => `<div class="ui-skel" style="height:110px;"></div>`).join("")
       : list.length ? list.map(card).join("") : `<div class="ui-card ui-empty">Никого не нашли.</div>`}
@@ -2898,7 +3021,7 @@ async function ozonStart(kind, planId) {
     const p = state.paymentPage;
     body.phone = normalizePhone(p.phoneInput);
     if (!body.phone) return setPaymentPage({ error: "Укажите номер телефона, на который оформить подписку." });
-    if (p.promoData?.code) body.promoCode = p.promoData.code;
+    if (kind === "proxy" && p.promoData?.code) body.promoCode = p.promoData.code;
   }
   if (isPaymentRoute()) setPaymentPage({ ozonCreating: true, error: "" });
   else setState({ ozonCreating: true });
@@ -2925,7 +3048,7 @@ async function ozonResume() {
       ozonSaveToken("");
       return;
     }
-    if (isPaymentRoute() ? order.kind !== "proxy" : order.kind !== "vpn") return;
+    if (isPaymentRoute() ? order.kind === "vpn" : order.kind !== "vpn") return;
     ozonSetOrder(order);
     if (order.status === "pending") ozonStartPolling(token);
     else ozonSaveToken("");
@@ -2946,6 +3069,7 @@ function ozonOrderView(o, inSheet) {
            <button class="ui-btn" data-action="ozon-close">Готово</button>`
       : o.inviteCode
         ? `<div class="ui-card ui-amount" style="padding:16px;"><span class="ui-sub" style="font-size:15px;">Ваш код доступа</span><span class="ui-invite-code">${esc(o.inviteCode)}</span></div>
+             ${o.kind === "combo" ? `<p class="ui-caption" style="margin:0;text-align:center;">VPN тоже подключён — в приложении откройте вкладку VPN.</p>` : ""}
              <button class="ui-btn" data-action="go-app-home" data-invite="${esc(o.inviteCode)}" data-phone="${esc(o.phone)}">Открыть приложение</button>`
         : `<p class="ui-caption" style="margin:0;text-align:center;">Подписка продлена — откройте приложение.</p>
              <button class="ui-btn" data-action="go-app-route">Открыть приложение</button>`}`;
@@ -3037,7 +3161,8 @@ function adminPaymentsTab() {
   const pending = orders.filter((o) => o.status === "pending").sort((x, y) => (y.claimedAt ? 1 : 0) - (x.claimedAt ? 1 : 0));
   const claimedCount = pending.filter((o) => o.claimedAt).length;
   const paid = orders.filter((o) => o.status === "paid");
-  const kindTag = (o) => o.kind === "vpn" ? `<span class="ui-badge" style="background:rgba(94,92,230,.2);color:#8E8CFF;">VPN</span>` : `<span class="ui-badge">Прокси</span>`;
+  const kindTag = (o) => o.kind === "vpn" ? `<span class="ui-badge" style="background:rgba(94,92,230,.2);color:#8E8CFF;">VPN</span>`
+    : o.kind === "combo" ? `<span class="ui-badge" style="background:rgba(94,92,230,.2);color:#8E8CFF;">Прокси + VPN</span>` : `<span class="ui-badge">Прокси</span>`;
 
   const pendingCards = pending.map((o) => `<article class="ui-card ui-pad ui-admin-card">
       <div class="ui-admin-card-top">
@@ -3715,8 +3840,16 @@ app.addEventListener("click", async (event) => {
     if (action === "refresh-proxies") return;
   }
 
+  if (action === "open-combo") {
+    openPaymentPage({ phone: state.user?.phone || "", planId: Number(el.dataset.planId) || 0, vpn: true });
+    return;
+  }
+  if (action === "payment-toggle-vpn") {
+    setPaymentPage({ withVpn: !!el.checked });
+    return;
+  }
   if (action === "ozon-start") {
-    const kind = el.dataset.kind === "vpn" ? "vpn" : "proxy";
+    const kind = ["vpn", "combo"].includes(el.dataset.kind) ? el.dataset.kind : "proxy";
     const planId = kind === "vpn" ? el.dataset.planId : (state.paymentPage.selectedPlanId || state.paymentPage.plans?.[0]?.id);
     await ozonStart(kind, planId);
     return;
@@ -3918,26 +4051,7 @@ app.addEventListener("click", async (event) => {
   }
 
   if (action === "payment-check-promo") {
-    const code = String(state.paymentPage.promoCode || "").trim();
-    if (!code) {
-      return setPaymentPage({ promoMessage: "Введите промокод для проверки." });
-    }
-    setPaymentPage({ promoChecking: true, promoMessage: "" });
-    try {
-      const res = await api.promoCheck(code);
-      const promo = res?.promo || null;
-      if (!promo) throw new Error("Промокод недействителен.");
-      setPaymentPage({ promoChecking: false, promoData: promo, promoMessage: `Промокод действителен: ${promo.priceLabel || (promo.amount + ' ₽')}`, selectedPlanId: Number(promo.planId) });
-    } catch (e) {
-      // Normalize error messages for client display
-      const status = e?.status || (e?.payload?.status) || null;
-      let message = 'Промокод недействителен.';
-      if (status === 404) message = 'Промокод недействителен.';
-      else if (e?.payload?.message) message = String(e.payload.message || message);
-      else if (e?.message && String(e.message).toLowerCase().includes('promo')) message = 'Промокод недействителен.';
-      else if (e?.message) message = String(e.message);
-      setPaymentPage({ promoChecking: false, promoData: null, promoMessage: message });
-    }
+    await paymentApplyPromo();
     return;
   }
 
@@ -4208,6 +4322,19 @@ app.addEventListener("click", async (event) => {
     } finally {
       setAdmin({ saving: false });
     }
+    return;
+  }
+  if (action === "admin-winback-promo") {
+    const code = el.dataset.code || "";
+    try { localStorage.setItem(WINBACK_PROMO_KEY, code); } catch { }
+    return setAdmin({ winbackPromo: code });
+  }
+  if (action === "admin-winback-sent") {
+    // ссылка откроется сама; отмечаем, что написали
+    const phone = el.dataset.phone;
+    const stamp = new Date().toISOString().slice(0, 19).replace("T", " ");
+    setTimeout(() => setAdmin({ users: (state.admin.users || []).map((u) => (u.phone === phone ? { ...u, winbackAt: stamp } : u)) }), 400);
+    request(`/admin/users/${encodeURIComponent(phone)}/winback`, { method: "POST", headers: { Authorization: `Bearer ${state.token}` } }).catch(() => { });
     return;
   }
   if (action === "admin-users-filter") {

@@ -24,6 +24,49 @@ function vpn_plans_payload(): array
     return $plans;
 }
 
+// Комплект «Прокси + VPN» на тот же срок со скидкой. Цены — COMBO_PRICE_90/180/360 в .env.
+function combo_plans_payload(): array
+{
+    $defaults = [90 => 690, 180 => 990, 360 => 1490];
+    $vpnByDays = [];
+    foreach (vpn_plans_payload() as $v) {
+        $vpnByDays[(int) $v['durationDays']] = (int) preg_replace('/\D+/', '', (string) $v['price']);
+    }
+    $out = [];
+    foreach (plans_payload()['plans'] as $plan) {
+        $days = (int) ($plan['durationDays'] ?? 0);
+        if (!isset($defaults[$days], $vpnByDays[$days])) {
+            continue;
+        }
+        $env = getenv('COMBO_PRICE_' . $days);
+        $price = ($env !== false && trim((string) $env) !== '') ? (int) preg_replace('/\D+/', '', (string) $env) : $defaults[$days];
+        $full = plan_price_amount($plan) + $vpnByDays[$days];
+        if ($price <= 0 || $price >= $full) {
+            continue;
+        }
+        $out[] = [
+            'planId' => (int) $plan['id'],
+            'name' => 'Прокси + VPN · ' . $days . ' дней',
+            'durationDays' => $days,
+            'amount' => $price,
+            'price' => $price . ' ₽',
+            'fullPrice' => $full . ' ₽',
+            'save' => $full - $price,
+        ];
+    }
+    return $out;
+}
+
+function combo_plan_by_id(int $planId): ?array
+{
+    foreach (combo_plans_payload() as $c) {
+        if ($c['planId'] === $planId) {
+            return $c;
+        }
+    }
+    return null;
+}
+
 function vpn_upstream_url(): string
 {
     $url = trim((string) (getenv('VPN_UPSTREAM_URL') ?: ''));
@@ -50,6 +93,10 @@ function ensure_vpn_schema(): void
         $pdo->exec('ALTER TABLE users ADD COLUMN vpn_token TEXT DEFAULT NULL');
     }
     $pdo->exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_vpn_token ON users(vpn_token)');
+    // Когда администратор последний раз писал ушедшему клиенту (возврат клиентов)
+    if (!isset($columns['winback_at'])) {
+        $pdo->exec('ALTER TABLE users ADD COLUMN winback_at TEXT DEFAULT NULL');
+    }
 }
 
 function vpn_public_base(): string

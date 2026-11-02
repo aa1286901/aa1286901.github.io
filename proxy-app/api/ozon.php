@@ -125,6 +125,15 @@ function ozon_create_order(string $phone, string $kind, string $planId, ?string 
         $days = (int) $plan['durationDays'];
         $name = 'VPN · ' . $plan['name'];
         $promoCode = null;
+    } elseif ($kind === 'combo') {
+        $combo = combo_plan_by_id((int) $planId);
+        if (!$combo) {
+            json_response(['message' => 'Комплект не найден'], 422);
+        }
+        $baseRub = (int) $combo['amount'];
+        $days = (int) $combo['durationDays'];
+        $name = (string) $combo['name'];
+        $promoCode = null;
     } else {
         $promo = $promoCode ? promo_code_data($promoCode) : null;
         if ($promo && !empty($promo['amount'])) {
@@ -180,6 +189,7 @@ function ozon_fulfill(array $order, string $by): array
     if ((string) $order['kind'] === 'vpn') {
         vpn_update_user($phone, 'add', (int) $order['days']);
     } else {
+        // proxy и combo: продлеваем прокси (combo — ещё и VPN ниже)
         $existing = find_user($phone);
         $saved = save_user([
             'phone' => $phone,
@@ -191,6 +201,9 @@ function ozon_fulfill(array $order, string $by): array
         ]);
         $fresh = find_user($phone);
         $inviteCode = (string) ($saved['inviteCode'] ?? ($fresh['invite_code'] ?? ''));
+        if ((string) $order['kind'] === 'combo') {
+            vpn_update_user($phone, 'add', (int) $order['days']);
+        }
     }
     $stmt = db()->prepare("UPDATE ozon_orders SET status = 'paid', paid_at = CURRENT_TIMESTAMP, confirmed_by = :by,
         invite_code = :code WHERE id = :id");
@@ -227,7 +240,8 @@ function ozon_handle_routes(string $uri, string $method): void
             json_response(['message' => 'Оплата через Ozon сейчас отключена'], 403);
         }
         $data = read_json_body();
-        $kind = ((string) ($data['kind'] ?? 'proxy')) === 'vpn' ? 'vpn' : 'proxy';
+        $kind = (string) ($data['kind'] ?? 'proxy');
+        $kind = in_array($kind, ['vpn', 'combo'], true) ? $kind : 'proxy';
         if ($kind === 'vpn') {
             $auth = require_auth();
             $user = require_active_subscription_user($auth);
@@ -249,7 +263,7 @@ function ozon_handle_routes(string $uri, string $method): void
             json_response(['message' => 'Заявка не найдена'], 404);
         }
         $payload = ['order' => ozon_order_public($order, true)];
-        if ((string) $order['status'] === 'paid' && (string) $order['kind'] === 'proxy') {
+        if ((string) $order['status'] === 'paid' && (string) $order['kind'] !== 'vpn') {
             $user = find_user((string) $order['phone']);
             if ($user) {
                 $payload['subscription'] = user_subscription_payload($user);
