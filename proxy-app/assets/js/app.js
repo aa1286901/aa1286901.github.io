@@ -5,6 +5,8 @@ const TAB_KEY = "ahmedov_proxy_tab";
 const PAYMENT_PENDING_KEY = "ahmedov_proxy_pending_payment";
 const VPN_UPDATE_URL = "https://ahmedov.online/vpn/update.php";
 const REQUIRE_PWA = true;
+// Кнопка «Оплатить через СБП» на странице оплаты. Сейчас оплата идёт через поддержку.
+const SHOW_SBP_BUTTON = false;
 
 // VPN Sources Configuration
 const VPN_SOURCES = {
@@ -37,6 +39,8 @@ const state = {
   user: null,
   subscription: null,
   activeTab: localStorage.getItem(TAB_KEY) || "home",
+  lastNetwork: localStorage.getItem(TAB_KEY) === "whatsapp" ? "whatsapp" : "telegram",
+  serverFilter: "all",
   phoneInput: "",
   pendingPhone: "",
   inviteInput: "",
@@ -80,7 +84,7 @@ const state = {
     latencyChecked: false,
     qrModal: { open: false, raw: "" },
   },
-  proxyConnectModal: { open: false, connectUrl: "", network: "" },
+  proxyConnectModal: { open: false, connectUrl: "", network: "", proxyKey: "", copied: false },
   admin: {
     section: "users",
     users: [],
@@ -279,22 +283,6 @@ const LEGAL_DOCUMENTS = {
   },
 };
 
-function legalModal() {
-  const modal = state.paymentPage.legalModal;
-  if (!modal.open || !modal.type) return "";
-  const documentData = LEGAL_DOCUMENTS[modal.type] || null;
-  if (!documentData) return "";
-  return `<div class="legal-modal-overlay" data-action="close-legal">
-    <article class="legal-modal-card">
-      <button class="legal-modal-close" data-action="close-legal">×</button>
-      <h2 class="legal-modal-header">${esc(documentData.title)}</h2>
-      <div class="legal-modal-body">${documentData.body}</div>
-      <div class="legal-modal-actions">
-        <button class="mini-btn legal-modal-dismiss" data-action="close-legal">Закрыть</button>
-      </div>
-    </article>
-  </div>`;
-}
 
 // SVG helpers for PWA install modal
 function pwaSafariSVG() {
@@ -1246,90 +1234,6 @@ async function runAdminClientPing(runId, sourceItems) {
   setAdmin({ proxies: next });
 }
 
-function homeScreen() {
-  const phone = displayPhone(state.user?.phone || "");
-  const s = state.subscription || { daysLeft: 0, type: "-" };
-  return `
-  <section class="stack">
-    ${header("")}
-    <article class="card p3 profile-card">
-      <h2 class="profile-phone">${esc(phone)}</h2>
-      <div class="grid-2 stat-grid">
-        <div class="card p3 stat-card">
-          <div class="muted stat-label">Осталось подписки</div>
-          <strong class="stat-value">${esc(s.daysLeft)} дн.</strong>
-        </div>
-        <div class="card p3 stat-card">
-          <div class="muted stat-label">Ваш тариф</div>
-          <strong class="stat-value">${esc(s.type)}</strong>
-        </div>
-      </div>
-    </article>
-    <article class="grid-2 service-grid" style="grid-template-columns: repeat(1, minmax(0, 1fr));">
-      <div>
-        
-      </div>
-      <div style="display:grid;gap:8px;align-items:center;">
-        <button class="btn btn-primary" data-action="extend-subscription" data-plan-id="301" style="box-shadow: none;">Продлить подписку</button>
-      </div>
-    </article>
-    <div class="card p3 proxy-quick-connect" aria-hidden="false">
-      <div class="pqc-center">
-        <div class="pqc-title">Подключите прокси в один клик</div>
-        <div class="pqc-sub muted">Выберите приложение, чтобы он работал без VPN.</div>
-      </div>
-      <div class="proxy-arrows" aria-hidden="true">
-    </div>
-    </div>
-    <div class="grid-2 service-grid">
-      <button class="card p4 center service-tile mini-btn" data-action="open-tab" data-tab="telegram">
-        <div class="service-icon tg">
-          <i class="fa-brands fa-telegram"></i>
-        </div>
-        <div class="service-name">Telegram Proxy</div>
-        <div class="muted service-sub">MTProto</div>
-      </button>
-      <button class="card p4 center service-tile mini-btn" data-action="open-tab" data-tab="whatsapp">
-        <div class="service-icon wa">
-          <i class="fa-brands fa-whatsapp"></i>
-        </div>
-        <div class="service-name">WhatsApp Proxy</div>
-        <div class="muted service-sub">SOCKS5</div>
-      </button>
-    </div>
-    <article class="card p3 features-card">
-      ${[
-      ["⚡", "Сверхбыстрые", "Низкая задержка, EU серверы"],
-      ["🛡", "100% Приватность", "Без логов, без отслеживания"],
-      ["◷", "24/7 Онлайн", "Гарантия 99.9% работы"],
-    ]
-      .map(
-        (x, i) => `<div class="feature-row${i ? " feature-border" : ""}">
-            <div class="feature-badge">${x[0]}</div>
-            <div><strong>${x[1]}</strong><div class="muted">${x[2]}</div></div>
-          </div>`
-      )
-      .join("")}
-    </article>
-    <a class="card p3 support-card vpn-card mini-btn" data-action="open-tab" data-tab="vpn" style="display:none">
-      <div class="support-icon vpn-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
-      <div>
-        <div class="vpn-card-head"><strong>ahmedov.vpn</strong> <span class="vpn-card-badge">FREE</span></div>
-        <div class="muted">VLESS • Shadowsocks • Trojan</div>
-      </div>
-      <div class="muted support-arrow">›</div>
-    </a>
-    <a href="https://wa.me/79634150424" target="_blank" class="card p3 support-card">
-      <div class="support-icon"><i class="fa-solid fa-headset"></i></div>
-      <div>
-        <strong>Поддержка</strong>
-        <div class="muted">Поможем с подключением</div>
-      </div>
-      <div class="muted support-arrow">›</div>
-    </a>
-    <button class="btn btn-logout" data-action="logout">Выйти из аккаунта</button>
-  </section>`;
-}
 
 function freeVpnScreen() {
   return `<section class="stack free-vpn-screen">
@@ -1551,67 +1455,6 @@ function vpnQrModal(rawUrl) {
   </div>`;
 }
 
-function proxyConnectModal(connectUrl, network) {
-  if (!connectUrl) return "";
-
-  const isTg = network === "telegram";
-  const networkLabel = isTg ? "Telegram" : "WhatsApp";
-
-  let waUrl = connectUrl;
-  let waBusinessUrl = connectUrl;
-
-  if (!isTg && (connectUrl.startsWith("http://") || connectUrl.startsWith("https://"))) {
-    try {
-      const url = new URL(connectUrl);
-      const queryString = url.search; // ?text=...
-      const params = url.searchParams;
-
-      if (params.get("phone")) {
-        // Если есть phone — используем wa.me с номером
-        const phone = params.get("phone");
-        const text = params.get("text");
-        waUrl = `https://wa.me/${phone}${text ? '?text=' + encodeURIComponent(text) : ''}`;
-        waBusinessUrl = `whatsapp-smb://proxy${text ? '?text=' + encodeURIComponent(text) : ''}`;
-      } else if (queryString) {
-        // Иначе используем query параметры как есть
-        waUrl = `https://wa.me/proxy${queryString}`;
-        waBusinessUrl = `whatsapp-smb://proxy${queryString}`;
-      }
-    } catch (e) {
-      // используем connectUrl как есть
-    }
-  }
-
-  let buttonsHtml = "";
-
-  if (isTg) {
-    buttonsHtml = `
-      <a href="${esc(connectUrl)}" target="_blank" class="btn-proxy-connect tg-btn">
-        <i class="fa-brands fa-telegram"></i> Открыть в Telegram
-      </a>`;
-  } else {
-    buttonsHtml = `
-      <a href="${esc(waUrl)}" target="_blank" class="btn-proxy-connect wa-btn">
-        <i class="fa-brands fa-whatsapp"></i> Открыть в WhatsApp
-      </a>
-      <a href="${esc(waBusinessUrl)}" target="_blank" class="btn-proxy-connect wab-btn">
-         Открыть в WhatsApp Business (iPhone)
-      </a>`;
-  }
-
-  return `<div class="proxy-connect-overlay" data-action="close-proxy-connect">
-    <article class="proxy-connect-card" data-action="proxy-connect-card">
-      <button class="proxy-connect-close" data-action="close-proxy-connect">×</button>
-      <h3 class="proxy-connect-title">Подключение к прокси</h3>
-      <p class="proxy-connect-sub">${networkLabel} прокси сервер</p>
-      <div id="proxy-connect-qr-container"></div>
-      <div class="proxy-connect-url">${esc(connectUrl)}</div>
-      <div class="proxy-connect-buttons">
-        ${buttonsHtml}
-      </div>
-    </article>
-  </div>`;
-}
 
 function installGuideModal() {
   if (!state.installGuideOpen) return "";
@@ -1753,83 +1596,6 @@ function pwaBlockedScreen() {
   </section>`;
 }
 
-function serversScreen(network) {
-  const isTg = network === "telegram";
-  const title = isTg ? "telegram.proxy" : "whatsApp.proxy";
-  const subtitle = isTg ? "Список серверов Telegram" : "Список серверов WhatsApp";
-  const icon = isTg ? "fa-brands fa-telegram" : "fa-brands fa-whatsapp";
-  const tone = isTg ? "tg" : "wa";
-  const items = sortClientProxies(state.proxies[network] || []);
-
-  // Find recommended server first (isRecommended = true), otherwise use best by ping
-  const recommended = items.find(p => p.isRecommended);
-  let best = recommended || null;
-
-  if (!best) {
-    // No recommended, find best by ping
-    const reachable = (items || []).filter((p) => p.isReachable && Number.isFinite(Number(p.ping)));
-    if (reachable.length > 0) {
-      const stable = reachable.filter((p) => !p.isUnstable);
-      const source = stable.length > 0 ? stable : reachable;
-      best = source.reduce((a, b) => (Number(a.ping || Infinity) <= Number(b.ping || Infinity) ? a : b));
-    }
-  }
-
-  // If we have a best server, move it to the top of the list for emphasis
-  let ordered = items.slice();
-  let bestKey = null;
-  if (best) {
-    bestKey = `${best.host}:${best.port}`;
-    ordered = [best].concat(items.filter((p) => `${p.host}:${p.port}` !== bestKey));
-  }
-
-  const cards = state.loadingProxyTab
-    ? Array.from({ length: 4 })
-      .map(() => `<div class="card skeleton"></div>`)
-      .join("")
-    : ordered
-      .map(
-        (p) => {
-          const isRecommended = !!p.isRecommended;
-          return `<button class="card proxy-card" href="${esc(toAppConnectUrl(network, p.connectUrl))}" data-action="open-proxy-connect" data-connect-url="${esc(p.connectUrl)}" data-network="${esc(network)}" data-proxy-key="${esc(p.host + ':' + p.port)}">
-            <div class="proxy-ping" style="display: none">
-              <span class="dot ${p.isChecking ? "checking" : p.isUnstable ? "unstable" : p.isReachable ? tone : "unstable"}"></span>
-              ${p.isChecking
-              ? `<span class="muted">...</span>`
-              : p.isReachable
-                ? `<span class="ping-num">${esc(p.ping)} ms</span>`
-                : ``
-            }
-            </div>
-            <div>
-              <div class="proxy-name" style="font-weight:700;">${esc(p.name)}</div>
-              <div class="muted proxy-host" style="font-size:12px;">${esc(p.host)}:${esc(p.port)}</div>
-            </div>
-            ${isRecommended ? `<span class="pill" style="background:var(--primary-gradient);color:#000;font-weight:800;">by ahmedov</span>` : ''}
-          </button>`;
-        }
-      )
-      .join("");
-
-  // removed the large card-style hint; we render a compact badge below the header
-  const topHint = '';
-  return `<section class="stack" data-best-key="${esc(bestKey || '')}" data-best-tone="${isTg ? 'tg' : 'wa'}" style="position:relative;">
-    <header class="header">
-      <div class="brand-icon network-brand ${tone}"><i class="${icon}"></i></div>
-      <div class="header-title"><h1>${title}</h1></div>
-    </header>
-    ${/* compact badge inserted instead of the card block */ ''}
-        ${best ? `` : ''}
-    <article class="card p3" style="background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));">
-      <div class="muted" style="font-size: 9px; margin: 0; text-align: center; line-height: 1.5;">
-        <div class="best-badge">Нажмите чтобы подключиться к прокси серверу</div>
-        <div style="margin-top: 4px; color: var(--warning);">Даже если нет зелёного индикатора — прокси может работать в приложении. Показанный пинг — оценка с сервера и может отличаться от реального.</div>
-      </div>
-    </article>
-    ${cards}
-    ${best ? `` : ''}
-  </section>`;
-}
 
 function adminUsersSection() {
   const a = state.admin;
@@ -2037,48 +1803,6 @@ function adminScreen() {
   </section>`;
 }
 
-function authScreen() {
-  const invite = state.authStep === "invite";
-  return `
-  <section class="stack">
-    ${header("")}
-    <article class="card p4 stack auth-card">
-      ${invite
-      ? `<h2 class="auth-title invite">Введите invite-код</h2>
-             <div class="muted auth-sub">Введите одноразовый код, который вы получили при оплате или активации подписки.</div>
-             <div class="muted auth-sub" style="margin-top:10px;font-size:12px;">
-               Если вы не знаете invite-код — свяжитесь с администратором:
-             </div>
-             <div style="margin-top: 12px; display: grid; gap: 8px; align-items: center; grid-template-columns: repeat(3, minmax(0, 1fr));">
-               <a href="https://t.me/ahmedov_ml" target="_blank" class="btn btn-primary" style="background:linear-gradient(180deg, rgba(97,183,255,0.9), rgba(60,150,230,0.9));border:none;display:flex;align-items:center;justify-content:center;gap:8px;">
-                 <i class="fa-brands fa-telegram"></i> <span>Telegram</span>
-               </a>
-               <a href="https://wa.me/79634150424" target="_blank" class="btn btn-primary" style="background:linear-gradient(180deg, rgba(37,211,102,0.9), rgba(30,180,80,0.9));border:none;display:flex;align-items:center;justify-content:center;gap:8px;">
-                 <i class="fa-brands fa-whatsapp"></i> <span>WhatsApp</span>
-               </a>
-               <a href="https://max.ru/u/f9LHodD0cOLBq3KUwiAyCSuy5O0b_WLBftdzJEXvScaVD9z-wuBEgQLxHoE" target="_blank" class="btn btn-primary" style="background:linear-gradient(180deg, rgba(150,100,255,0.9), rgba(120,80,230,0.9));border:none;display:flex;align-items:center;justify-content:center;gap:8px;">
-                 <i class="fa-solid fa-comment-dots"></i> <span>MAX</span>
-               </a>
-             </div>
-             <div class="muted auth-hint" style="margin-top:10px;font-size:11px;">Напишите номер телефона и уточните ваш invite-код</div>`
-      : `<h2 class="auth-title">Премиум доступ к <span class="telegram-color">Telegram</span> и <span class="whatsapp-color">WhatsApp</span> прокси серверам</h2>
-             <div class="auth-features">
-               <span class="auth-chip"><i>⚡</i>Быстрая скорость</span>
-               <span class="auth-chip"><i>🔷</i>100% приватность</span>
-               <span class="auth-chip"><i>🌐</i>Надежные серверы</span>
-             </div>
-             <div class="muted auth-sub"></div>`
-    }
-      ${invite
-      ? `<input type="tel" inputmode="numeric" autocomplete="one-time-code" placeholder="12345678" value="${esc(state.inviteInput)}" data-input="invite-input" class="invite-input" style="letter-spacing:.12em;" />`
-      : `<label class="input-row"><span>+7</span><input type="tel" inputmode="numeric" autocomplete="tel-national" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="900 123 45 67" value="${esc(state.phoneInput)}" data-input="phone-input" /></label>`
-    }
-      <button class="btn btn-primary" data-action="submit-auth">${state.loadingAuth ? "Проверяем..." : invite ? "Войти" : "Продолжить"}</button>
-      ${invite ? `<button class="mini-btn" data-action="back-phone">Изменить номер</button>` : ``}
-      ${!invite ? `<div class="muted auth-hint">${esc(state.hint)}</div>` : ``}
-    </article>
-  </section>`;
-}
 
 function header(subtitle) {
   return `<header class="header">
@@ -2087,200 +1811,8 @@ function header(subtitle) {
     </header>`;
 }
 
-function paymentScreen() {
-  const p = state.paymentPage;
-  const planOptions = p.plans || [];
-  const selectedPlan = planOptions.find((plan) => Number(plan.id) === Number(p.selectedPlanId)) || planOptions[0] || null;
-  const waitingMode = !!p.payment?.token;
-  const fulfilled = !!p.fulfillment;
 
-  return `<section class="stack payment-page">
-    ${header("Страница оплаты")}
-    <article class="card p4 stack payment-shell">
-      <div class="payment-hero">
-        <div class="payment-kicker">Оплата доступа</div>
-        <h2 class="payment-title">${fulfilled ? "Оплата подтверждена" : waitingMode ? "Ожидаем оплату" : "Выберите тариф и оплатите доступ"}</h2>
-        <p class="muted payment-sub">${fulfilled ? "Доступ уже выдан автоматически. Используйте invite-код для входа." : waitingMode ? "После оплаты страница сама дождется подтверждения платежа и покажет данные для входа." : "Оплатите Telegram / WhatsApp прокси, после подтверждения система сама выдаст доступ."}</p>
-      </div>
 
-      ${fulfilled
-      ? `<div class="payment-success card p3">
-              <div class="payment-success-row"><span>Номер</span><strong>${esc(p.fulfillment.user?.displayPhone || displayPhone(p.fulfillment.user?.phone || ""))}</strong></div>
-              <div class="payment-success-row"><span>Тариф</span><strong>${esc(p.fulfillment.subscription?.type || selectedPlan?.name || "-")}</strong></div>
-              <div class="payment-success-row"><span>Invite-код</span><strong class="payment-invite">${esc(p.fulfillment.inviteCode || "—")}</strong></div>
-              <div class="muted payment-final-note">Invite-код одноразовый. Введите его при входе в приложение.</div>
-              <button class="btn btn-primary payment-open-app" data-action="go-app-home" data-invite="${esc(p.fulfillment.inviteCode || "")}" data-phone="${esc(p.fulfillment.user?.phone || "")}"><i class="fa-solid fa-mobile-screen-button"></i><span>Открыть приложение</span></button>
-            </div>`
-      : waitingMode
-        ? `<div class="payment-waiting card p3">
-                <div class="payment-success-row"><span>Номер</span><strong>${esc(displayPhone(normalizePhone(p.phoneInput)))}</strong></div>
-                <div class="payment-success-row"><span>Тариф</span><strong>${esc(selectedPlan?.name || "-")}</strong></div>
-                  <div class="payment-success-row"><span>Сумма</span><strong>${esc(p.payment?.amount ? (p.payment.amount + ' ₽') : (p.promoData ? (p.promoData.priceLabel || (p.promoData.amount + ' ₽')) : selectedPlan?.price || ''))}</strong></div>
-                <div class="overlay-waiting-state">
-                  <span class="overlay-waiting-spinner"></span>
-                  <div>
-                    <strong>Ожидаем оплату</strong>
-                    <div class="muted plan-benefits">Клиент переведен на страницу СБП. После оплаты вернитесь на сайт, проверка выполняется автоматически.</div>
-                  </div>
-                </div>
-                <div style="margin-top:10px;display:flex;gap:8px;flex-direction:column;">
-                  <button class="btn btn-primary overlay-waiting-open" data-action="open-payment-link" data-href="${esc(p.payment?.qrUrl || '')}"><span>Открыть ссылку для оплаты</span></button>
-                  <div class="muted" style="text-align:center;font-size:12px;">Если автоматический переход не произошёл — нажмите кнопку выше</div>
-                </div>
-                <div class="payment-status-line">${p.checking ? "Проверяем статус оплаты..." : "Проверка платежа выполняется автоматически."}</div>
-                <div style="margin-top:8px;display:flex;justify-content:center;gap:8px;">
-                  <button class="mini-btn tiny-cancel" data-action="cancel-waiting-payment" data-token="${esc(p.payment?.token || '')}">Отменить платёж</button>
-                </div>
-              </div>`
-        : `<label class="input-row payment-phone-row"><span>+7</span><input type="tel" inputmode="numeric" autocomplete="tel-national" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="900 123 45 67" value="${esc(p.phoneInput)}" data-input="payment-phone" /></label>
-              <div class="payment-promo-row" style="margin-top:8px;">
-                <div class="input-row"><input placeholder="Промокод (необязательно)" value="${esc(p.promoCode || '')}" data-input="payment-promo" /></div>
-                <div style="margin-top:6px;display:flex;gap:8px;align-items:center;">
-                  <button class="mini-btn" data-action="payment-check-promo">${p.promoChecking ? "Проверяем..." : "Проверить промокод"}</button>
-                </div>
-                <div style="margin-top:8px;">
-                  ${p.promoData ? `<div class="promo-badge">Промокод действителен: ${esc(p.promoData.code)} · ${esc(p.promoData.priceLabel || `${p.promoData.amount || 0} ₽`)}${p.promoData.name ? ' · ' + esc(p.promoData.name) : ''}</div>` : ""}
-                  ${!p.promoData && p.promoMessage ? `<div class="promo-error">${esc(p.promoMessage)}</div>` : ""}
-                </div>
-              </div>
-              ${p.pendingPayment
-          ? `<div class="payment-pending card p3">
-                     <div class="payment-success-row"><span>Предыдущий платёж</span><strong>${esc(`${p.pendingPayment.amount || 0} ₽`)}</strong></div>
-                     <div class="payment-success-row"><span>Тариф</span><strong>${esc(selectedPlan?.name || "-")}</strong></div>
-                     <div class="muted payment-note">${esc(p.pendingNote)}</div>
-                     <div class="payment-pending-actions">
-                       <button class="btn btn-primary" data-action="continue-pending-payment">Продолжить предыдущий платёж</button>
-                       <button class="mini-btn" data-action="cancel-pending-payment">Отменить</button>
-                     </div>
-                   </div>`
-          : ""}
-               ${!p.promoData ? `<div class="overlay-plans payment-plan-list">
-                     ${planOptions
-            .map(
-              (plan) => `<button class="card p3 plan-row plan-choice ${Number(p.selectedPlanId) === Number(plan.id) ? "active" : ""}" data-action="select-plan" data-plan-id="${esc(plan.id)}">
-                           <div class="plan-choice-radio"><span></span></div>
-                           <div class="plan-choice-copy">
-                             <div class="plan-head"><strong>${esc(plan.name)}</strong><strong>${esc(plan.price)}</strong></div>
-                             <div class="muted plan-benefits">${esc((plan.benefits || []).join(" · "))}</div>
-                           </div>
-                         </button>`
-            )
-            .join("")}
-                   </div>` : ""}
-               ${selectedPlan
-          ? `<div class="overlay-summary card p3">
-                       <div class="overlay-summary-row"><span>Выбран тариф</span><strong>${esc(selectedPlan.name)}</strong></div>
-                       <div class="overlay-summary-row"><span>Сумма к оплате</span><strong>${esc(p.promoData ? (p.promoData.priceLabel || (p.promoData.amount + ' ₽')) : selectedPlan.price)}</strong></div>
-                     </div>`
-          : ""
-        }
-               <div style="margin-top: 16px; text-align: center;">
-                <div style="margin-bottom: 12px; font-weight: 600; font-size: 15px;">Для оплаты свяжитесь с поддержкой:</div>
-                <div style="display: grid; flex-direction: column; gap: 10px; align-items: center; grid-template-columns: repeat(3, minmax(0, 1fr));">
-                  <a href="https://wa.me/79634150424" target="_blank" class="btn btn-primary" style="background: linear-gradient(180deg, rgba(37, 211, 102, 0.9), rgba(30, 180, 80, 0.9)); border: none; display: grid;">
-                    <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i> WhatsApp
-                  </a>
-                  <a href="https://t.me/ahmedov_ml" target="_blank" class="btn btn-primary" style="background: linear-gradient(180deg, rgba(97, 183, 255, 0.9), rgba(60, 150, 230, 0.9)); border: none; display: grid;">
-                    <i class="fa-brands fa-telegram" style="font-size: 18px;"></i> Telegram
-                  </a>
-                  <a href="https://max.ru/u/f9LHodD0cOLBq3KUwiAyCSuy5O0b_WLBftdzJEXvScaVD9z-wuBEgQLxHoE" target="_blank" class="btn btn-primary" style="background: linear-gradient(180deg, rgba(150, 100, 255, 0.9), rgba(120, 80, 230, 0.9)); border: none; display: grid;">
-                    <i class="fa-solid fa-comment-dots" style="font-size: 18px;"></i> MAX
-                  </a>
-                </div>
-                <div class="payment-note" style="margin-top: 12px; font-size: 12px; color: var(--muted);">
-                  Напишите номер телефона и выбранный тариф — мы оформим подписку вручную.
-                </div>
-              </div>
-              <div class="payment-legal-note" style="margin-top: 20px;">Нажимая кнопки связи, вы соглашаетесь с <button type="button" class="link-btn" data-action="open-legal" data-legal-type="offer">офертой</button>, <button type="button" class="link-btn" data-action="open-legal" data-legal-type="privacy">политикой конфиденциальности</button> и <button type="button" class="link-btn" data-action="open-legal" data-legal-type="agreement">пользовательским соглашением</button>.</div>`
-    }
-
-      ${p.error ? `<div class="overlay-error">${esc(p.error)}</div>` : ""}
-      ${p.message && !fulfilled ? `<div class="muted payment-page-message">${esc(p.message)}</div>` : ""}
-      <a href="${esc(p.supportUrl)}" target="_blank" class="overlay-support">Связаться с поддержкой</a>
-    </article>
-  </section>`;
-}
-
-function plansOverlay() {
-  if (!state.plansOverlay.open) return "";
-  const plans = state.plansOverlay.plans || [];
-  const selectedPlanId = state.plansOverlay.selectedPlanId ?? plans?.[0]?.id ?? null;
-  const selectedPlan = plans.find((p) => Number(p.id) === Number(selectedPlanId)) || plans[0] || null;
-  const payment = state.plansOverlay.payment;
-  const paymentEnabled = !!state.plansOverlay.paymentEnabled;
-  const waitingMode = !!payment?.token;
-  return `<div class="overlay" data-action="close-overlay">
-    <article class="overlay-card">
-      <button class="mini-btn overlay-close" data-action="close-overlay">×</button>
-      <div class="overlay-title"><span class="overlay-alert">!</span><strong>Подписка не активна</strong></div>
-      <p class="muted overlay-sub">${esc(state.plansOverlay.message)}</p>
-      ${!waitingMode
-      ? `<div class="overlay-plans">
-              ${plans
-        .map(
-          (p) => `<button class="card p3 plan-row plan-choice ${Number(selectedPlanId) === Number(p.id) ? "active" : ""}" data-action="select-plan" data-plan-id="${esc(p.id)}">
-                    <div class="plan-choice-radio"><span></span></div>
-                    <div class="plan-choice-copy">
-                      <div class="plan-head"><strong>${esc(p.name)}</strong><strong>${esc(p.price)}</strong></div>
-                      <div class="muted plan-benefits">${esc((p.benefits || []).join(" · "))}</div>
-                    </div>
-                  </button>`
-        )
-        .join("")}
-            </div>`
-      : ""
-    }
-      ${!waitingMode && selectedPlan
-      ? `<div class="overlay-summary card p3">
-              <div class="overlay-summary-row"><span>Выбран тариф</span><strong>${esc(selectedPlan.name)}</strong></div>
-              <div class="overlay-summary-row"><span>Сумма к оплате</span><strong>${esc(p.promoData ? (p.promoData.priceLabel || (p.promoData.amount + ' ₽')) : selectedPlan.price)}</strong></div>
-            </div>`
-      : ""
-    }
-      ${state.plansOverlay.paymentError
-      ? `<div class="overlay-error">${esc(state.plansOverlay.paymentError)}</div>`
-      : ""
-    }
-      ${payment?.qrUrl
-      ? `<div class="overlay-payment-result card p3">
-              <div class="overlay-summary-row"><span>${payment?.status === "paid" ? "Оплата произведена" : "Ожидаем оплату"}</span><strong>${esc(payment.amount)} ₽</strong></div>
-              <div class="overlay-waiting-state">
-                <span class="overlay-waiting-spinner"></span>
-                <div>
-                  <strong>${payment?.status === "paid" ? "Оплата подтверждена" : "Ожидаем оплату"}</strong>
-                  <div class="muted plan-benefits">${payment?.status === "paid" ? "Платеж подтвержден. Доступ будет активирован после проверки." : "Откроется страница оплаты СБП. После оплаты вернитесь на сайт, модалка продолжит проверку автоматически."}</div>
-                </div>
-              </div>
-              ${payment?.status === "paid" ? `<div class="overlay-paid-badge"><i class="fa-solid fa-circle-check"></i><span>Оплата подтверждена</span></div>` : `<div class="overlay-status-note">${state.plansOverlay.statusLoading ? "Проверяем статус оплаты..." : "Проверка оплаты выполняется автоматически."}</div>`}
-            </div>`
-      : `<button class="btn btn-primary overlay-pay" data-action="start-payment" ${!paymentEnabled || !selectedPlan ? "disabled" : ""}><i class="fa-solid fa-building-un"></i><span>${state.plansOverlay.paymentLoading ? "Создаём платёж..." : "Оплатить по СБП"}</span></button>`
-    }
-      ${!paymentEnabled
-      ? `<div class="overlay-error">Платёжный модуль пока не настроен на сервере.</div>`
-      : ""
-    }
-      <a href="${esc(state.plansOverlay.supportUrl)}" target="_blank" class="overlay-support">Связаться с поддержкой</a>
-    </article>
-  </div>`;
-}
-
-function bottomBar() {
-  const t = state.activeTab;
-  return `<nav class="bottom-bar" role="tablist" aria-label="Главная навигация">
-    <button class="tab-btn ${t === "telegram" ? "active-tg" : ""}" data-action="open-tab" data-tab="telegram" aria-label="Telegram" role="tab">
-      <div class="tab-item"><i class="fa-brands fa-telegram"></i><span class="tab-label">Telegram</span></div>
-    </button>
-    <button class="tab-btn home ${t === "home" ? "active-home" : ""}" data-action="open-tab" data-tab="home" aria-label="Главная" role="tab">
-      <div class="tab-item"><i class="fa-solid fa-house"></i><span class="tab-label">Главная</span></div>
-    </button>
-    <button class="tab-btn ${t === "whatsapp" ? "active-wa" : ""}" data-action="open-tab" data-tab="whatsapp" aria-label="WhatsApp" role="tab">
-      <div class="tab-item"><i class="fa-brands fa-whatsapp"></i><span class="tab-label">WhatsApp</span></div>
-    </button>
-    <button class="tab-btn ${t === "vpn" ? "active-vpn" : ""}" data-action="open-tab" style="display: none;" data-tab="vpn" aria-label="VPN" role="tab">
-      <div class="tab-item"><i class="fa-solid fa-shield-halved"></i><span class="tab-label">VPN</span></div>
-    </button>
-  </nav>`;
-}
 
 // ==========================
 // VPN FUNCTIONS
@@ -2598,6 +2130,650 @@ function delay(ms) {
 // END VPN FUNCTIONS
 // ==========================
 
+// ==========================
+// UI: тема, иконки, помощники
+// ==========================
+
+const THEME_KEY = "ahmedov_theme";
+const SUPPORT_LINKS = {
+  telegram: "https://t.me/ahmedov_ml",
+  whatsapp: "https://wa.me/79634150424",
+  max: "https://max.ru/u/f9LHodD0cOLBq3KUwiAyCSuy5O0b_WLBftdzJEXvScaVD9z-wuBEgQLxHoE",
+};
+
+function themeChoice() {
+  try {
+    const v = localStorage.getItem(THEME_KEY);
+    return v === "light" || v === "dark" ? v : "auto";
+  } catch {
+    return "auto";
+  }
+}
+
+function resolvedTheme() {
+  const c = themeChoice();
+  if (c !== "auto") return c;
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+}
+
+function applyTheme() {
+  const t = resolvedTheme();
+  document.documentElement.dataset.theme = t;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute("content", t === "light" ? "#F2F3F7" : "#0A0A0D");
+}
+
+function setThemeChoice(choice) {
+  try {
+    if (choice === "auto") localStorage.removeItem(THEME_KEY);
+    else localStorage.setItem(THEME_KEY, choice);
+  } catch { }
+  applyTheme();
+  render();
+}
+
+applyTheme();
+if (window.matchMedia) {
+  const mq = window.matchMedia("(prefers-color-scheme: light)");
+  const onSchemeChange = () => { if (themeChoice() === "auto") { applyTheme(); render(); } };
+  if (mq.addEventListener) mq.addEventListener("change", onSchemeChange);
+  else if (mq.addListener) mq.addListener(onSchemeChange);
+}
+
+const UI_ICON_PATHS = {
+  tg: '<path d="M21 4 3 11l6 2 2 6 3-4 5 4z" fill="currentColor" stroke="none"/>',
+  wa: '<path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12z"/>',
+  home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  homeFill: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/>',
+  servers: '<rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/>',
+  serversFill: '<rect x="3" y="4" width="18" height="7" rx="2" fill="currentColor"/><rect x="3" y="13" width="18" height="7" rx="2" fill="currentColor"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  userFill: '<circle cx="12" cy="8" r="4.2" fill="currentColor" stroke="none"/><path d="M3.8 21c1.4-4.3 4.6-6.4 8.2-6.4s6.8 2.1 8.2 6.4z" fill="currentColor" stroke="none"/>',
+  sun: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+  moon: '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/>',
+  chevron: '<path d="m9 6 6 6-6 6"/>',
+  back: '<path d="m15 6-6 6 6 6"/>',
+  close: '<path d="M6 6l12 12M18 6 6 18"/>',
+  copy: '<rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  shield: '<path d="M12 3 5 6v5c0 4.5 3 8.5 7 10 4-1.5 7-5.5 7-10V6z"/><path d="m9 12 2 2 4-4"/>',
+  lock: '<rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  chat: '<path d="M4 5h16v11H9l-5 4z"/>',
+  doc: '<path d="M7 3h8l4 4v14H7zM10 12h6M10 16h6"/>',
+  calendar: '<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>',
+  bank: '<path d="M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/>',
+  tag: '<path d="M3 12V5a2 2 0 0 1 2-2h7l9 9-9 9z"/><circle cx="8" cy="8" r="1.4"/>',
+  refresh: '<path d="M20 11a8 8 0 0 0-14.6-4.6L3 9M4 13a8 8 0 0 0 14.6 4.6L21 15M3 4v5h5M21 20v-5h-5"/>',
+};
+
+function uiIcon(name, size = 22, strokeWidth = 1.9) {
+  const body = UI_ICON_PATHS[name] || "";
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+}
+
+function ruPlural(n, one, few, many) {
+  const a = Math.abs(Number(n)) % 100;
+  const b = a % 10;
+  if (a > 10 && a < 20) return many;
+  if (b > 1 && b < 5) return few;
+  if (b === 1) return one;
+  return many;
+}
+
+const RU_MONTHS_GEN = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+
+function formatDateLong(value) {
+  const m = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return "";
+  return `${Number(m[3])} ${RU_MONTHS_GEN[Number(m[2]) - 1] || ""} ${m[1]}`;
+}
+
+function greetingText() {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 12) return "Доброе утро";
+  if (h >= 12 && h < 18) return "Добрый день";
+  if (h >= 18 && h < 23) return "Добрый вечер";
+  return "Доброй ночи";
+}
+
+function splitProxyName(name) {
+  const s = String(name || "").trim();
+  const m = s.match(/^([\u{1F1E6}-\u{1F1FF}]{2})\s*/u);
+  if (!m) return { cc: "", name: s };
+  const cc = [...m[1]].map((ch) => String.fromCharCode(ch.codePointAt(0) - 0x1F1E6 + 65)).join("");
+  return { cc, name: s.slice(m[0].length) || s };
+}
+
+function proxyKeyOf(p) {
+  return `${p?.host || ""}:${p?.port || ""}`;
+}
+
+function pickBestProxy(items) {
+  const list = items || [];
+  const recommended = list.find((p) => p.isRecommended);
+  if (recommended) return recommended;
+  const reachable = list.filter((p) => p.isReachable && Number.isFinite(Number(p.ping)));
+  if (!reachable.length) return null;
+  const stable = reachable.filter((p) => !p.isUnstable);
+  const source = stable.length ? stable : reachable;
+  return source.reduce((a, b) => (Number(a.ping) <= Number(b.ping) ? a : b));
+}
+
+function proxyStatus(p) {
+  if (!p) return { cls: "", text: "" };
+  if (p.isChecking) return { cls: "checking", text: "проверяем…" };
+  const ms = Number(p.ping);
+  const msText = Number.isFinite(ms) && ms > 0 ? `${Math.round(ms)} мс` : "в сети";
+  if (p.isReachable && !p.isUnstable) return { cls: "ok", text: msText };
+  if (p.isReachable) return { cls: "slow", text: msText };
+  return { cls: "off", text: "нет ответа" };
+}
+
+function ensureHomeProxies() {
+  ["telegram", "whatsapp"].forEach((net) => {
+    if (!(state.proxies[net] || []).length) void loadUserProxies(net);
+  });
+}
+
+function contactButtons() {
+  return `<div class="ui-contacts">
+    <a class="ui-contact tg" href="${SUPPORT_LINKS.telegram}" target="_blank" rel="noopener">Telegram</a>
+    <a class="ui-contact wa" href="${SUPPORT_LINKS.whatsapp}" target="_blank" rel="noopener">WhatsApp</a>
+    <a class="ui-contact max" href="${SUPPORT_LINKS.max}" target="_blank" rel="noopener">MAX</a>
+  </div>`;
+}
+
+function isClientUiScreen() {
+  if (isPaymentRoute()) return true;
+  if (state.pwaBlocked) return false;
+  if (state.booting) return true;
+  if (!state.token || !state.user || (state.role !== "admin" && !state.subscription)) return true;
+  if (state.role === "admin") return false;
+  return state.activeTab !== "vpn" && state.activeTab !== "free-vpn";
+}
+
+function planPerMonth(plan) {
+  const amount = Number(String(plan?.price || "").replace(/\D+/g, ""));
+  const months = Number(plan?.durationMonths || 0) || Math.round(Number(plan?.durationDays || 0) / 30);
+  if (!amount || !months) return null;
+  return amount / months;
+}
+
+function planCards(plans, selectedId) {
+  const base = plans.length ? planPerMonth(plans[0]) : null;
+  return `<div class="ui-plans" role="radiogroup" aria-label="Тариф">${plans.map((plan) => {
+    const on = Number(selectedId) === Number(plan.id);
+    const perMonth = planPerMonth(plan);
+    const save = base && perMonth && perMonth < base ? Math.round((1 - perMonth / base) * 100) : 0;
+    return `<button class="ui-plan ${on ? "on" : ""}" role="radio" aria-checked="${on}" data-action="select-plan" data-plan-id="${esc(plan.id)}">
+      <span class="ui-radio">${on ? uiIcon("check", 14, 3.4) : ""}</span>
+      <span class="ui-plan-text">
+        <span class="ui-plan-title">${esc(plan.name)}${save ? `<span class="ui-plan-save">−${save}%</span>` : ""}</span>
+        <span class="ui-plan-sub">${perMonth ? `${Math.round(perMonth)} ₽ в месяц` : esc((plan.benefits || []).join(" · "))}</span>
+      </span>
+      <span class="ui-plan-price">${esc(plan.price)}</span>
+    </button>`;
+  }).join("")}</div>`;
+}
+
+// ==========================
+// UI: экраны клиента
+// ==========================
+
+function homeScreen() {
+  const phone = displayPhone(state.user?.phone || "");
+  const s = state.subscription || {};
+  const days = Math.max(0, Number(s.daysLeft) || 0);
+  const soon = days <= 7;
+  const expires = formatDateLong(s.expiresAt);
+  const isDark = resolvedTheme() === "dark";
+
+  const all = [...(state.proxies.telegram || []), ...(state.proxies.whatsapp || [])];
+  const checked = all.filter((p) => !p.isChecking);
+  const online = checked.filter((p) => p.isReachable).length;
+  const pct = all.length ? Math.round((online / all.length) * 100) : 0;
+  const stillChecking = all.some((p) => p.isChecking);
+
+  const quickRow = (net) => {
+    const isTg = net === "telegram";
+    const items = state.proxies[net] || [];
+    const best = pickBestProxy(items);
+    const checking = items.some((p) => p.isChecking);
+    const st = proxyStatus(best);
+    const sub = best
+      ? `<span class="ui-dot ${st.cls}"></span>${esc(splitProxyName(best.name).name)} · ${esc(st.text)}`
+      : checking || !items.length
+        ? `<span class="ui-dot checking"></span>Ищем лучший сервер…`
+        : `<span class="ui-dot"></span>Откройте список серверов`;
+    const btn = best
+      ? `<button class="ui-btn-sm" data-action="open-proxy-connect" data-connect-url="${esc(best.connectUrl)}" data-network="${net}" data-proxy-key="${esc(proxyKeyOf(best))}">Подключить</button>`
+      : `<button class="ui-btn-sm soft" data-action="open-tab" data-tab="${net}">Список</button>`;
+    return `<div class="ui-qrow">
+      <span class="ui-app-icon ${isTg ? "tg" : "wa"}">${uiIcon(isTg ? "tg" : "wa", 22, 2.1)}</span>
+      <span class="ui-qrow-text"><span class="ui-qrow-title">${isTg ? "Telegram" : "WhatsApp"}</span><span class="ui-qrow-sub">${sub}</span></span>
+      ${btn}
+    </div>`;
+  };
+
+  return `<section class="ui-stack">
+    <header class="ui-top">
+      <div class="ui-top-text"><span class="ui-sub">${greetingText()}</span><span class="ui-brand">ahmedov.proxy</span></div>
+      <button class="ui-iconbtn" data-action="toggle-theme" aria-label="${isDark ? "Светлая тема" : "Тёмная тема"}">${uiIcon(isDark ? "sun" : "moon", 20)}</button>
+      <button class="ui-iconbtn accent" data-action="open-tab" data-tab="account" aria-label="Аккаунт">${uiIcon("userFill", 20)}</button>
+    </header>
+
+    <article class="ui-hero ${soon ? "warn" : ""}">
+      <div class="ui-hero-top">
+        <span class="ui-hero-chip"><i></i>${soon ? "Скоро закончится" : "Подписка активна"}</span>
+        <span class="ui-hero-phone">${esc(phone)}</span>
+      </div>
+      <div class="ui-hero-bottom">
+        <div>
+          <div class="ui-hero-num">${days}</div>
+          <div class="ui-hero-cap">${ruPlural(days, "день", "дня", "дней")} осталось</div>
+          ${expires ? `<div class="ui-hero-cap" style="opacity:.8;font-size:14px;">до ${esc(expires)}</div>` : ""}
+        </div>
+        <button class="ui-hero-btn" data-action="extend-subscription" data-plan-id="301">Продлить</button>
+      </div>
+    </article>
+
+    <section class="ui-sec">
+      <div class="ui-sec-head"><h2 class="ui-h2">Подключиться в один тап</h2><button class="ui-link" data-action="open-tab" data-tab="telegram">Все</button></div>
+      <div class="ui-card ui-list">${quickRow("telegram")}${quickRow("whatsapp")}</div>
+    </section>
+
+    <div class="ui-grid2">
+      <button class="ui-card ui-tile" data-action="open-tab" data-tab="telegram">
+        <span class="ui-tile-label">Серверы</span>
+        <span class="ui-tile-value">${!all.length || (stillChecking && !online) ? `<small>Проверяем…</small>` : `${online} <small>из ${all.length} в сети</small>`}</span>
+        <span class="ui-bar" aria-hidden="true"><span style="width:${stillChecking && !online ? 0 : pct}%"></span></span>
+      </button>
+      <button class="ui-card ui-tile" data-action="extend-subscription" data-plan-id="301">
+        <span class="ui-tile-label">Тариф</span>
+        <span class="ui-tile-value">${esc(s.type || "—")}</span>
+        <span class="ui-sub" style="font-size:13px;">Telegram + WhatsApp</span>
+      </button>
+    </div>
+
+    <article class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <strong style="font-size:17px;">Поддержка</strong>
+        <span class="ui-sub" style="font-size:14px;">Поможем подключиться — напишите в удобный мессенджер.</span>
+      </div>
+      ${contactButtons()}
+    </article>
+  </section>`;
+}
+
+function serversScreen(network) {
+  const isTg = network === "telegram";
+  const filter = state.serverFilter === "ok" ? "ok" : "all";
+  const items = sortClientProxies(state.proxies[network] || []);
+  const best = pickBestProxy(items);
+  const bestKey = best ? proxyKeyOf(best) : "";
+  let rows = items.filter((p) => proxyKeyOf(p) !== bestKey);
+  if (filter === "ok") rows = rows.filter((p) => p.isReachable || p.isChecking);
+  const okCount = items.filter((p) => p.isReachable).length;
+
+  const serverRow = (p) => {
+    const parts = splitProxyName(p.name);
+    const st = proxyStatus(p);
+    return `<button class="ui-server" data-action="open-proxy-connect" data-connect-url="${esc(p.connectUrl)}" data-network="${esc(network)}" data-proxy-key="${esc(proxyKeyOf(p))}">
+      <span class="ui-cc">${esc(parts.cc || (isTg ? "TG" : "WA"))}</span>
+      <span class="ui-server-main">
+        <span class="ui-server-text"><span class="ui-server-name">${esc(parts.name)}</span><span class="ui-server-host">${esc(p.host)}:${esc(p.port)}</span></span>
+        <span class="ui-ping ${st.cls}">${esc(st.text)}</span>
+      </span>
+    </button>`;
+  };
+
+  let bestCard = "";
+  if (best) {
+    const parts = splitProxyName(best.name);
+    const st = proxyStatus(best);
+    const ms = Number(best.ping);
+    bestCard = `<button class="ui-card ui-best" data-action="open-proxy-connect" data-connect-url="${esc(best.connectUrl)}" data-network="${esc(network)}" data-proxy-key="${esc(bestKey)}">
+      <span class="ui-best-head"><span class="ui-kicker">${best.isRecommended ? "Рекомендуем" : "Лучший сейчас"}</span>${best.isRecommended ? `<span class="ui-badge">by ahmedov</span>` : ""}</span>
+      <span class="ui-best-body">
+        <span class="ui-cc">${esc(parts.cc || (isTg ? "TG" : "WA"))}</span>
+        <span class="ui-server-text"><span class="ui-best-name">${esc(parts.name)}</span><span class="ui-server-host">${esc(best.host)}:${esc(best.port)}</span></span>
+        ${st.cls === "ok" && Number.isFinite(ms) && ms > 0 ? `<span class="ui-best-ms"><b>${Math.round(ms)}</b><span>мс</span></span>` : `<span class="ui-ping ${st.cls}">${esc(st.text)}</span>`}
+      </span>
+    </button>`;
+  }
+
+  const listHtml = state.loadingProxyTab && !items.length
+    ? Array.from({ length: 5 }).map(() => `<div class="ui-skel"></div>`).join("")
+    : rows.length
+      ? `<div class="ui-card ui-servers">${rows.map(serverRow).join("")}</div>`
+      : !best ? `<div class="ui-card ui-empty">Серверов пока нет. Загляните чуть позже или напишите в поддержку.</div>` : "";
+
+  return `<section class="ui-stack">
+    <h1 class="ui-h1">Серверы</h1>
+    <div class="ui-seg" role="tablist" aria-label="Мессенджер">
+      <button class="${isTg ? "on" : ""}" role="tab" aria-selected="${isTg}" data-action="open-tab" data-tab="telegram"><span class="ui-seg-ico tg">${uiIcon("tg", 12)}</span>Telegram</button>
+      <button class="${!isTg ? "on" : ""}" role="tab" aria-selected="${!isTg}" data-action="open-tab" data-tab="whatsapp"><span class="ui-seg-ico wa">${uiIcon("wa", 12, 2.8)}</span>WhatsApp</button>
+    </div>
+    <div class="ui-chips">
+      <button class="ui-chip ${filter === "all" ? "on" : ""}" data-action="server-filter" data-filter="all">Все · ${items.length}</button>
+      <button class="ui-chip ${filter === "ok" ? "on" : ""}" data-action="server-filter" data-filter="ok">Работают · ${okCount}</button>
+      <button class="ui-chip" data-action="refresh-proxies" data-network="${esc(network)}" aria-label="Проверить заново" style="display:inline-flex;align-items:center;gap:6px;">${uiIcon("refresh", 15, 2.2)}Обновить</button>
+    </div>
+    ${bestCard}
+    ${listHtml}
+    <p class="ui-caption" style="margin:0;">Нажмите на сервер, чтобы подключиться. Пинг — оценка с вашего телефона: даже без зелёной метки прокси может работать.</p>
+  </section>`;
+}
+
+function accountScreen() {
+  const phone = displayPhone(state.user?.phone || "");
+  const s = state.subscription || {};
+  const days = Math.max(0, Number(s.daysLeft) || 0);
+  const choice = themeChoice();
+  const themes = [["auto", "Авто"], ["light", "Светлая"], ["dark", "Тёмная"]];
+  const supportRow = (href, color, icon, label) => `<a class="ui-row" href="${href}" target="_blank" rel="noopener">
+      <span class="ui-row-icon" style="background:${color}">${uiIcon(icon, 17, 2.1)}</span>
+      <span class="ui-row-main"><span class="ui-row-label">${label}</span><span class="ui-chev">${uiIcon("chevron", 14, 2.6)}</span></span>
+    </a>`;
+
+  return `<section class="ui-stack">
+    <h1 class="ui-h1">Аккаунт</h1>
+
+    <div class="ui-card ui-profile">
+      <span class="ui-avatar">${uiIcon("userFill", 28)}</span>
+      <span class="ui-profile-text">
+        <span class="ui-profile-phone">${esc(phone)}</span>
+        <span class="ui-profile-sub">Подписка до ${esc(formatDateOnly(s.expiresAt))}</span>
+      </span>
+    </div>
+
+    <div class="ui-sec" style="gap:8px;">
+      <span class="ui-label">Оформление</span>
+      <div class="ui-themes" role="radiogroup" aria-label="Тема">
+        ${themes.map(([id, label]) => `<button class="ui-theme ${choice === id ? "on" : ""}" role="radio" aria-checked="${choice === id}" data-action="set-theme" data-theme="${id}">
+          <span class="ui-theme-prev ${id}" aria-hidden="true"><i></i><i></i></span>${label}
+        </button>`).join("")}
+      </div>
+    </div>
+
+    <div class="ui-sec" style="gap:8px;">
+      <span class="ui-label">Подписка</span>
+      <div class="ui-card ui-group">
+        <div class="ui-row"><span class="ui-row-main"><span class="ui-row-label">Статус</span><span class="ui-row-value ${days <= 7 ? "orange" : "green"}">${days <= 7 ? "Скоро закончится" : "Активна"}</span></span></div>
+        <div class="ui-row"><span class="ui-row-main"><span class="ui-row-label">Тариф</span><span class="ui-row-value">${esc(s.type || "—")}</span></span></div>
+        <div class="ui-row"><span class="ui-row-main"><span class="ui-row-label">Осталось</span><span class="ui-row-value">${days} ${ruPlural(days, "день", "дня", "дней")}</span></span></div>
+        <button class="ui-row" data-action="extend-subscription" data-plan-id="301"><span class="ui-row-main"><span class="ui-row-label" style="color:var(--ui-accent-text);font-weight:600;">Продлить подписку</span><span class="ui-chev">${uiIcon("chevron", 14, 2.6)}</span></span></button>
+      </div>
+    </div>
+
+    <div class="ui-sec" style="gap:8px;">
+      <span class="ui-label">Поддержка</span>
+      <div class="ui-card ui-group">
+        ${supportRow(SUPPORT_LINKS.telegram, "#2AABEE", "tg", "Написать в Telegram")}
+        ${supportRow(SUPPORT_LINKS.whatsapp, "#25D366", "wa", "Написать в WhatsApp")}
+        ${supportRow(SUPPORT_LINKS.max, "#8E6CF0", "chat", "Написать в MAX")}
+        <button class="ui-row" data-action="open-legal" data-legal-type="agreement">
+          <span class="ui-row-icon" style="background:#8E8E93">${uiIcon("doc", 17, 2.1)}</span>
+          <span class="ui-row-main"><span class="ui-row-label">Пользовательское соглашение</span><span class="ui-chev">${uiIcon("chevron", 14, 2.6)}</span></span>
+        </button>
+      </div>
+    </div>
+
+    <button class="ui-logout" data-action="logout">Выйти из аккаунта</button>
+  </section>`;
+}
+
+function authScreen() {
+  const invite = state.authStep === "invite";
+  if (invite) {
+    return `<section class="ui-auth">
+      <button class="ui-iconbtn ui-back" data-action="back-phone" aria-label="Назад">${uiIcon("back", 20, 2.3)}</button>
+      <div style="margin-top:26px;display:flex;flex-direction:column;gap:10px;">
+        <span class="ui-lock">${uiIcon("lock", 28)}</span>
+        <h1 class="ui-auth-title" style="margin-top:6px;">Код доступа</h1>
+        <p class="ui-auth-text" style="font-size:16px;">8 цифр — приходят после оплаты или их выдаёт администратор.</p>
+        <span class="ui-phone-chip">${esc(displayPhone(state.pendingPhone))}<button data-action="back-phone">Изменить</button></span>
+      </div>
+      <div class="ui-form" style="margin-top:26px;">
+        <label class="ui-label" for="invite-code">Код доступа</label>
+        <div class="ui-field code"><input id="invite-code" type="tel" inputmode="numeric" autocomplete="one-time-code" placeholder="00000000" maxlength="8" value="${esc(state.inviteInput)}" data-input="invite-input" /></div>
+        <div class="ui-hint">${esc(state.hint && state.hint !== "Введите одноразовый invite-код." ? state.hint : "")}</div>
+        <button class="ui-btn" data-action="submit-auth" ${state.loadingAuth ? "disabled" : ""}>${state.loadingAuth ? "Проверяем…" : "Войти"}</button>
+      </div>
+      <div class="ui-auth-foot" style="align-items:stretch;">
+        <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;text-align:left;">
+          <strong style="font-size:15px;">Не знаете код?</strong>
+          <span class="ui-sub" style="font-size:14px;margin-top:-4px;">Напишите нам свой номер — пришлём код.</span>
+          ${contactButtons()}
+        </div>
+      </div>
+    </section>`;
+  }
+
+  return `<section class="ui-auth">
+    <div class="ui-auth-hero">
+      <span class="ui-logo">${uiIcon("shield", 46, 1.7)}</span>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <h1 class="ui-auth-title">ahmedov.proxy</h1>
+        <p class="ui-auth-text">Telegram и WhatsApp работают<br>без блокировок и без VPN</p>
+      </div>
+      <div class="ui-auth-pills">
+        <span class="ui-auth-pill"><span class="ui-seg-ico tg">${uiIcon("tg", 11)}</span>Telegram</span>
+        <span class="ui-auth-pill"><span class="ui-seg-ico wa">${uiIcon("wa", 11, 2.8)}</span>WhatsApp</span>
+      </div>
+    </div>
+    <div class="ui-form">
+      <label class="ui-label" for="auth-phone">Номер телефона</label>
+      <div class="ui-field"><span class="ui-field-prefix">+7</span><input id="auth-phone" type="tel" inputmode="numeric" autocomplete="tel-national" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="900 123 45 67" value="${esc(state.phoneInput)}" data-input="phone-input" /></div>
+      <div class="ui-hint">${esc(state.hint || "")}</div>
+      <button class="ui-btn" data-action="submit-auth" ${state.loadingAuth ? "disabled" : ""}>${state.loadingAuth ? "Проверяем…" : "Продолжить"}</button>
+    </div>
+    <div class="ui-auth-foot">
+      <span class="ui-sub" style="font-size:15px;">Нет подписки? Напишите нам</span>
+      <div style="width:100%;">${contactButtons()}</div>
+      <p class="ui-legal-note" style="margin:4px 0 0;">Продолжая, вы принимаете <button type="button" data-action="open-legal" data-legal-type="agreement">Пользовательское соглашение</button></p>
+    </div>
+  </section>`;
+}
+
+function bottomBar() {
+  const t = state.activeTab;
+  const onServers = t === "telegram" || t === "whatsapp";
+  const net = state.lastNetwork === "whatsapp" ? "whatsapp" : "telegram";
+  return `<nav class="ui-tabbar" role="tablist" aria-label="Главная навигация">
+    <button class="ui-tab ${t === "home" ? "active" : ""}" role="tab" aria-selected="${t === "home"}" data-action="open-tab" data-tab="home">${uiIcon(t === "home" ? "homeFill" : "home")}Главная</button>
+    <button class="ui-tab ${onServers ? "active" : ""}" role="tab" aria-selected="${onServers}" data-action="open-tab" data-tab="${net}">${uiIcon(onServers ? "serversFill" : "servers")}Серверы</button>
+    <button class="ui-tab ${t === "account" ? "active" : ""}" role="tab" aria-selected="${t === "account"}" data-action="open-tab" data-tab="account">${uiIcon(t === "account" ? "userFill" : "user")}Аккаунт</button>
+  </nav>`;
+}
+
+function proxyConnectModal(connectUrl, network) {
+  if (!connectUrl) return "";
+  const isTg = network === "telegram";
+  const key = state.proxyConnectModal?.proxyKey || "";
+  const proxy = (state.proxies[network] || []).find((p) => proxyKeyOf(p) === key) || null;
+  const parts = splitProxyName(proxy?.name || (isTg ? "Telegram прокси" : "WhatsApp прокси"));
+  const st = proxyStatus(proxy);
+
+  let waUrl = connectUrl;
+  let waBusinessUrl = connectUrl;
+  if (!isTg && (connectUrl.startsWith("http://") || connectUrl.startsWith("https://"))) {
+    try {
+      const url = new URL(connectUrl);
+      const queryString = url.search;
+      const params = url.searchParams;
+      if (params.get("phone")) {
+        const phone = params.get("phone");
+        const text = params.get("text");
+        waUrl = `https://wa.me/${phone}${text ? "?text=" + encodeURIComponent(text) : ""}`;
+        waBusinessUrl = `whatsapp-smb://proxy${text ? "?text=" + encodeURIComponent(text) : ""}`;
+      } else if (queryString) {
+        waUrl = `https://wa.me/proxy${queryString}`;
+        waBusinessUrl = `whatsapp-smb://proxy${queryString}`;
+      }
+    } catch (e) {
+      // используем ссылку как есть
+    }
+  }
+
+  const buttons = isTg
+    ? `<a class="ui-btn tg" href="${esc(connectUrl)}" target="_blank" rel="noopener">${uiIcon("tg", 20)}Подключить в Telegram</a>`
+    : `<a class="ui-btn wa" href="${esc(waUrl)}" target="_blank" rel="noopener">${uiIcon("wa", 20, 2.2)}Подключить в WhatsApp</a>
+       <a class="ui-btn ghost" href="${esc(waBusinessUrl)}" target="_blank" rel="noopener">WhatsApp Business (iPhone)</a>`;
+
+  return `<div class="ui-layer" data-action="close-proxy-connect">
+    <article class="ui-sheet" data-action="proxy-connect-card" role="dialog" aria-label="Подключение к серверу">
+      <span class="ui-grabber" aria-hidden="true"></span>
+      <div class="ui-sheet-head">
+        <button class="ui-sheet-close" data-action="close-proxy-connect" aria-label="Закрыть">${uiIcon("close", 14, 3)}</button>
+        <span class="ui-sheet-icon ${isTg ? "tg" : "wa"}">${uiIcon(isTg ? "tg" : "wa", 38, 2)}</span>
+        <h2 class="ui-sheet-title">${esc(parts.name)}</h2>
+        <span class="ui-tags">
+          ${proxy ? `<span class="ui-tag ${st.cls}"><span class="ui-dot ${st.cls}"></span>${st.cls === "ok" ? "Работает" : st.cls === "slow" ? "Нестабильно" : st.cls === "checking" ? "Проверяем" : "Нет ответа"}${st.cls === "ok" || st.cls === "slow" ? ` · ${esc(st.text)}` : ""}</span>` : ""}
+          <span class="ui-tag">${isTg ? "MTProto" : "SOCKS5"}</span>
+        </span>
+      </div>
+      ${buttons}
+      <button class="ui-btn ghost" data-action="copy-proxy-link" data-url="${esc(connectUrl)}">${uiIcon(state.proxyConnectModal?.copied ? "check" : "copy", 18)}${state.proxyConnectModal?.copied ? "Скопировано" : "Скопировать ссылку"}</button>
+      <div class="ui-qr-box">
+        <div class="ui-qr" id="proxy-connect-qr-container" role="img" aria-label="QR-код ссылки на прокси"></div>
+        <span class="ui-qr-text"><b>На другом устройстве</b><span>Наведите камеру телефона на код — ${isTg ? "Telegram" : "WhatsApp"} предложит подключить прокси.</span></span>
+      </div>
+      ${proxy ? `<div class="ui-sheet-foot"><span>${esc(proxy.host)}</span><span>порт ${esc(proxy.port)}</span></div>` : ""}
+    </article>
+  </div>`;
+}
+
+function legalModal() {
+  const modal = state.paymentPage.legalModal;
+  if (!modal.open || !modal.type) return "";
+  const documentData = LEGAL_DOCUMENTS[modal.type] || null;
+  if (!documentData) return "";
+  return `<div class="ui-layer" data-action="close-legal">
+    <article class="ui-sheet" data-action="legal-card" role="dialog" aria-label="${esc(documentData.title)}">
+      <span class="ui-grabber" aria-hidden="true"></span>
+      <div class="ui-sheet-head" style="align-items:flex-start;text-align:left;padding-right:40px;">
+        <button class="ui-sheet-close" data-action="close-legal" aria-label="Закрыть">${uiIcon("close", 14, 3)}</button>
+        <h2 class="ui-sheet-title" style="font-size:21px;line-height:27px;">${esc(documentData.title)}</h2>
+      </div>
+      <div class="ui-legal-body">${documentData.body}</div>
+      <button class="ui-btn ghost" data-action="close-legal">Закрыть</button>
+    </article>
+  </div>`;
+}
+
+function paymentScreen() {
+  const p = state.paymentPage;
+  const planOptions = p.plans || [];
+  const selectedPlan = planOptions.find((plan) => Number(plan.id) === Number(p.selectedPlanId)) || planOptions[0] || null;
+  const waitingMode = !!p.payment?.token;
+  const fulfilled = !!p.fulfillment;
+  const amountLabel = p.payment?.amount
+    ? `${p.payment.amount} ₽`
+    : p.promoData ? (p.promoData.priceLabel || `${p.promoData.amount} ₽`) : selectedPlan?.price || "";
+
+  const top = `<div style="display:flex;align-items:center;gap:12px;">
+      <span class="ui-logo" style="width:44px;height:44px;border-radius:14px;box-shadow:none;">${uiIcon("shield", 24, 1.8)}</span>
+      <div style="display:flex;flex-direction:column;"><strong style="font-size:17px;">ahmedov.proxy</strong><span class="ui-sub" style="font-size:13px;">Оплата подписки</span></div>
+    </div>`;
+
+  let body = "";
+  if (fulfilled) {
+    body = `<article class="ui-card ui-amount">
+        <span class="ui-status-chip ok">${uiIcon("check", 15, 3)}Оплата подтверждена</span>
+        <span class="ui-sub" style="font-size:15px;margin-top:6px;">Ваш код доступа</span>
+        <span class="ui-invite-code">${esc(p.fulfillment.inviteCode || "—")}</span>
+      </article>
+      <div class="ui-card ui-kv">
+        <div><span>Номер</span><b>${esc(p.fulfillment.user?.displayPhone || displayPhone(p.fulfillment.user?.phone || ""))}</b></div>
+        <div><span>Тариф</span><b>${esc(p.fulfillment.subscription?.type || selectedPlan?.name || "-")}</b></div>
+      </div>
+      <p class="ui-caption" style="margin:0;">Код подставится сам, когда вы откроете приложение. Сохраните его на всякий случай.</p>
+      <button class="ui-btn" data-action="go-app-home" data-invite="${esc(p.fulfillment.inviteCode || "")}" data-phone="${esc(p.fulfillment.user?.phone || "")}">Открыть приложение</button>`;
+  } else if (waitingMode) {
+    body = `<article class="ui-card ui-amount">
+        <span class="ui-status-chip"><span class="ui-spin"></span>Ждём оплату</span>
+        <span class="ui-amount-num" style="margin-top:6px;">${esc(amountLabel)}</span>
+        <span class="ui-sub" style="font-size:15px;">${esc(selectedPlan?.name || "")} · ${esc(displayPhone(normalizePhone(p.phoneInput)))}</span>
+      </article>
+      <button class="ui-btn" data-action="open-payment-link" data-href="${esc(p.payment?.qrUrl || "")}">${uiIcon("bank", 20, 2.1)}Открыть страницу оплаты СБП</button>
+      <p class="ui-caption" style="margin:0;text-align:center;">${p.checking ? "Проверяем статус оплаты…" : "После оплаты вернитесь сюда — статус обновится сам."}</p>
+      <button class="ui-text-btn red" data-action="cancel-waiting-payment" data-token="${esc(p.payment?.token || "")}">Отменить платёж</button>`;
+  } else {
+    body = `<div class="ui-form" style="margin-top:0;">
+        <label class="ui-label" for="pay-phone">Номер телефона</label>
+        <div class="ui-field"><span class="ui-field-prefix">+7</span><input id="pay-phone" type="tel" inputmode="numeric" autocomplete="tel-national" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="900 123 45 67" value="${esc(p.phoneInput)}" data-input="payment-phone" /></div>
+      </div>
+      ${p.pendingPayment ? `<div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;">
+          <strong>Есть незавершённый платёж · ${esc(`${p.pendingPayment.amount || 0} ₽`)}</strong>
+          <span class="ui-sub" style="font-size:14px;">${esc(p.pendingNote)}</span>
+          <button class="ui-btn" style="height:50px;" data-action="continue-pending-payment">Продолжить платёж</button>
+          <button class="ui-text-btn red" data-action="cancel-pending-payment">Отменить</button>
+        </div>` : ""}
+      ${!p.promoData ? `<div class="ui-sec" style="gap:8px;"><span class="ui-label">Тариф</span>${planCards(planOptions, selectedPlan?.id)}</div>` : ""}
+      <div class="ui-card ui-promo">
+        <span class="ui-sub" style="display:flex;">${uiIcon("tag", 20)}</span>
+        <label for="pay-promo" style="position:absolute;left:-9999px;">Промокод</label>
+        <input id="pay-promo" placeholder="Промокод" value="${esc(p.promoCode || "")}" data-input="payment-promo" />
+        <button class="ui-btn-sm soft" data-action="payment-check-promo">${p.promoChecking ? "Проверяем…" : "Применить"}</button>
+      </div>
+      ${p.promoData ? `<div class="ui-msg ok">Промокод ${esc(p.promoData.code)} применён · ${esc(p.promoData.priceLabel || `${p.promoData.amount || 0} ₽`)}${p.promoData.name ? " · " + esc(p.promoData.name) : ""}</div>` : ""}
+      ${!p.promoData && p.promoMessage ? `<div class="ui-msg err">${esc(p.promoMessage)}</div>` : ""}
+      ${selectedPlan ? `<div class="ui-card ui-kv">
+          <div><span>Тариф</span><b>${esc(p.promoData?.name || selectedPlan.name)}</b></div>
+          <div><span>К оплате</span><b style="font-size:18px;">${esc(amountLabel)}</b></div>
+        </div>` : ""}
+      ${SHOW_SBP_BUTTON && p.paymentEnabled ? `<button class="ui-btn" data-action="payment-create" ${p.creating ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${p.creating ? "Создаём платёж…" : `Оплатить ${esc(amountLabel)} через СБП`}</button>` : ""}
+      <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;">
+        <strong style="font-size:16px;">${SHOW_SBP_BUTTON && p.paymentEnabled ? "Или оформим вручную" : "Для оплаты напишите нам"}</strong>
+        <span class="ui-sub" style="font-size:14px;margin-top:-4px;">Пришлите номер телефона и выбранный тариф — оформим подписку.</span>
+        ${contactButtons()}
+      </div>
+      <p class="ui-legal-note" style="margin:0;">Продолжая, вы соглашаетесь с <button type="button" data-action="open-legal" data-legal-type="offer">офертой</button>, <button type="button" data-action="open-legal" data-legal-type="privacy">политикой конфиденциальности</button> и <button type="button" data-action="open-legal" data-legal-type="agreement">пользовательским соглашением</button>.</p>`;
+  }
+
+  return `<section class="ui-stack">
+    ${top}
+    <h1 class="ui-h1" style="padding:0;">${fulfilled ? "Готово!" : waitingMode ? "Оплата" : "Подписка"}</h1>
+    ${p.error ? `<div class="ui-msg err">${esc(p.error)}</div>` : ""}
+    ${p.message && !fulfilled ? `<div class="ui-msg info">${esc(p.message)}</div>` : ""}
+    ${body}
+  </section>`;
+}
+
+function plansOverlay() {
+  if (!state.plansOverlay.open) return "";
+  const plans = state.plansOverlay.plans || [];
+  const selectedPlanId = state.plansOverlay.selectedPlanId ?? plans?.[0]?.id ?? null;
+  const selectedPlan = plans.find((x) => Number(x.id) === Number(selectedPlanId)) || plans[0] || null;
+  const payment = state.plansOverlay.payment;
+  const paymentEnabled = !!state.plansOverlay.paymentEnabled;
+  const waitingMode = !!payment?.token;
+  const paid = payment?.status === "paid";
+
+  return `<div class="ui-layer" data-action="close-overlay">
+    <article class="ui-sheet overlay-card" role="dialog" aria-label="Подписка не активна">
+      <span class="ui-grabber" aria-hidden="true"></span>
+      <div class="ui-sheet-head" style="align-items:flex-start;text-align:left;padding-right:40px;">
+        <button class="ui-sheet-close" data-action="close-overlay" aria-label="Закрыть">${uiIcon("close", 14, 3)}</button>
+        <h2 class="ui-sheet-title">Подписка не активна</h2>
+        <span class="ui-sub" style="font-size:15px;">${esc(state.plansOverlay.message || "Выберите тариф, чтобы продолжить.")}</span>
+      </div>
+      ${!waitingMode ? planCards(plans, selectedPlan?.id) : ""}
+      ${state.plansOverlay.paymentError ? `<div class="ui-msg err">${esc(state.plansOverlay.paymentError)}</div>` : ""}
+      ${payment?.qrUrl
+      ? `<div class="ui-card ui-amount" style="padding:18px;">
+            <span class="ui-status-chip ${paid ? "ok" : ""}">${paid ? uiIcon("check", 15, 3) : `<span class="ui-spin"></span>`}${paid ? "Оплата подтверждена" : "Ждём оплату"}</span>
+            <span class="ui-amount-num" style="font-size:40px;line-height:46px;">${esc(payment.amount)} ₽</span>
+            <span class="ui-sub" style="font-size:14px;">${paid ? "Доступ активируется после проверки." : state.plansOverlay.statusLoading ? "Проверяем статус оплаты…" : "После оплаты вернитесь сюда — статус обновится сам."}</span>
+          </div>`
+      : `<button class="ui-btn overlay-pay" data-action="start-payment" ${!paymentEnabled || !selectedPlan ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${state.plansOverlay.paymentLoading ? "Создаём платёж…" : `Оплатить${selectedPlan ? " " + esc(selectedPlan.price) : ""} через СБП`}</button>`}
+      ${!paymentEnabled ? `<div class="ui-msg info">Оплата картой пока недоступна — напишите нам, оформим вручную.</div>` : ""}
+      ${contactButtons()}
+    </article>
+  </div>`;
+}
+
 function render() {
   const active = document.activeElement;
   const activeInputKey = active?.dataset?.input || "";
@@ -2610,8 +2786,8 @@ function render() {
   } else if (state.pwaBlocked) {
     body = pwaBlockedScreen();
   } else if (state.booting) {
-    body = `<div class="stack">${Array.from({ length: 4 })
-      .map(() => `<div class="card skeleton"></div>`)
+    body = `<div class="ui-stack">${Array.from({ length: 4 })
+      .map(() => `<div class="ui-skel" style="height:96px;"></div>`)
       .join("")}</div>`;
   } else if (!state.token || !state.user || (state.role !== "admin" && !state.subscription)) {
     body = authScreen();
@@ -2620,6 +2796,9 @@ function render() {
   } else {
     if (state.activeTab === "home") {
       body = homeScreen();
+      body += bottomBar();
+    } else if (state.activeTab === "account") {
+      body = accountScreen();
       body += bottomBar();
     } else if (state.activeTab === "vpn") {
       body = vpnTabScreen();
@@ -2632,7 +2811,11 @@ function render() {
     }
   }
 
-  app.innerHTML = body + (isPaymentRoute() ? legalModal() : "") + installGuideModal() + (isPaymentRoute() ? "" : plansOverlay()) + (state.vpn.qrModal.open ? vpnQrModal(state.vpn.qrModal.raw) : "") + (state.proxyConnectModal?.open ? proxyConnectModal(state.proxyConnectModal.connectUrl, state.proxyConnectModal.network) : "");
+  const uiMode = isClientUiScreen();
+  document.documentElement.classList.toggle("ui-mode", uiMode);
+  app.classList.toggle("ui", uiMode);
+
+  app.innerHTML = body + legalModal() + installGuideModal() + (isPaymentRoute() ? "" : plansOverlay()) + (state.vpn.qrModal.open ? vpnQrModal(state.vpn.qrModal.raw) : "") + (state.proxyConnectModal?.open ? proxyConnectModal(state.proxyConnectModal.connectUrl, state.proxyConnectModal.network) : "");
 
   // Генерация QR-кода после рендера
   if (state.vpn.qrModal.open && state.vpn.qrModal.raw) {
@@ -2660,10 +2843,10 @@ function render() {
         container.innerHTML = "";
         new QRCode(container, {
           text: state.proxyConnectModal.connectUrl,
-          width: 220,
-          height: 220,
-          colorDark: "#ffffff",
-          colorLight: "#1a1a2e",
+          width: 208,
+          height: 208,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.M
         });
       }
@@ -2777,6 +2960,7 @@ async function bootstrap() {
       loadVpnServers(state.vpn.selectedSource);
     } else {
       startSessionHeartbeat();
+      ensureHomeProxies();
     }
   } catch (e) {
     if (e?.status === 401) {
@@ -2895,7 +3079,7 @@ async function submitAuth() {
           authStep: "invite",
           pendingPhone: phone,
           inviteInput: "",
-          hint: payload.inviteAvailable ? "Введите invite-код из админки." : "Для номера пока нет invite-кода. Запросите код у админа.",
+          hint: payload.inviteAvailable ? "" : "Для этого номера пока нет кода — напишите нам, пришлём.",
           loadingAuth: false,
         });
         return;
@@ -2913,6 +3097,7 @@ async function submitAuth() {
         await loadAdminAll();
       } else {
         startSessionHeartbeat();
+        ensureHomeProxies();
       }
     } catch (e) {
       if (flow !== authFlowId) return;
@@ -2947,6 +3132,7 @@ async function submitAuth() {
       hint: "Доступ активирован.",
     });
     startSessionHeartbeat();
+    ensureHomeProxies();
   } catch (e) {
     if (flow !== authFlowId) return;
     setState({ loadingAuth: false, hint: e.message || "Неверный invite-код." });
@@ -3150,7 +3336,7 @@ app.addEventListener("click", async (event) => {
   if (action === "close-proxy-connect") {
     const clickedCloseButton = !!event.target.closest('[data-action="close-proxy-connect"]');
     if (!clickedCloseButton && event.target.closest('[data-action="proxy-connect-card"]')) return;
-    return setState({ proxyConnectModal: { open: false, connectUrl: "", network: "" } });
+    return setState({ proxyConnectModal: { open: false, connectUrl: "", network: "", proxyKey: "", copied: false } });
   }
 
   if (action === "close-legal") {
@@ -3167,8 +3353,36 @@ app.addEventListener("click", async (event) => {
     const connectUrl = el.dataset.connectUrl;
     const proxyNetwork = el.dataset.network || state.activeTab || "whatsapp";
     if (connectUrl) {
-      setState({ proxyConnectModal: { open: true, connectUrl, network: proxyNetwork } });
+      setState({ proxyConnectModal: { open: true, connectUrl, network: proxyNetwork, proxyKey: el.dataset.proxyKey || "", copied: false } });
     }
+    return;
+  }
+  if (action === "copy-proxy-link") {
+    const url = el.dataset.url || state.proxyConnectModal?.connectUrl || "";
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = url;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch { }
+      ta.remove();
+    }
+    setState({ proxyConnectModal: { ...state.proxyConnectModal, copied: true } });
+    setTimeout(() => {
+      if (state.proxyConnectModal?.open && state.proxyConnectModal.copied) {
+        setState({ proxyConnectModal: { ...state.proxyConnectModal, copied: false } });
+      }
+    }, 1800);
+    return;
+  }
+  if (action === "toggle-theme") return setThemeChoice(resolvedTheme() === "dark" ? "light" : "dark");
+  if (action === "set-theme") return setThemeChoice(el.dataset.theme || "auto");
+  if (action === "server-filter") return setState({ serverFilter: el.dataset.filter === "ok" ? "ok" : "all" });
+  if (action === "refresh-proxies") {
+    const net = el.dataset.network === "whatsapp" ? "whatsapp" : "telegram";
+    await loadUserProxies(net);
     return;
   }
   if (action === "back-phone") return setState({ authStep: "phone", inviteInput: "", pendingPhone: "", hint: "Введите номер телефона." });
@@ -3494,9 +3708,12 @@ app.addEventListener("click", async (event) => {
     if (tab === "free-vpn") {
       refreshVpnSubscription();
     }
-    setState({ activeTab: tab });
+    const isNet = ["telegram", "whatsapp"].includes(tab);
+    setState(isNet ? { activeTab: tab, lastNetwork: tab } : { activeTab: tab });
     localStorage.setItem(TAB_KEY, tab);
-    if (["telegram", "whatsapp"].includes(tab)) await loadUserProxies(tab);
+    window.scrollTo(0, 0);
+    if (isNet) await loadUserProxies(tab);
+    if (tab === "home") ensureHomeProxies();
     if (tab === "vpn" && !state.vpn.initialized) {
       state.vpn.initialized = true;
       loadVpnServers(state.vpn.selectedSource);

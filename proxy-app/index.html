@@ -33,6 +33,18 @@
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link id="app-styles" rel="stylesheet" href="./assets/css/styles.css" />
+    <link id="app-ui-styles" rel="stylesheet" href="./assets/css/ui.css" />
+    <script>
+      (function () {
+        var t = "auto";
+        try { t = localStorage.getItem("ahmedov_theme") || "auto"; } catch (e) {}
+        if (t !== "light" && t !== "dark") {
+          t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
+        document.documentElement.setAttribute("data-theme", t);
+        document.documentElement.classList.add("ui-mode");
+      })();
+    </script>
     <title>ahmedov.proxy</title>
   </head>
   <body>
@@ -56,6 +68,10 @@
         const stylesEl = document.getElementById("app-styles");
         if (stylesEl) {
           stylesEl.href = `./assets/css/styles.css?v=${encodeURIComponent(assetVersion)}`;
+        }
+        const uiStylesEl = document.getElementById("app-ui-styles");
+        if (uiStylesEl) {
+          uiStylesEl.href = `./assets/css/ui.css?v=${encodeURIComponent(assetVersion)}`;
         }
 
         const appScript = document.createElement("script");
