@@ -329,6 +329,7 @@ function paymentRouteStateFromUrl() {
     token: String(params.get("token") || "").trim(),
     message: String(params.get("message") || "").trim(),
     vpn: params.get("vpn") === "1",
+    ref: String(params.get("ref") || "").trim(),
     promo: String(params.get("promo") || "").trim(),
   };
 }
@@ -513,6 +514,12 @@ async function loadPaymentPage() {
   });
 
   void ozonResume();
+
+  if (routeState.ref) refRemember(routeState.ref);
+  const refCode = refSaved();
+  if (refCode) {
+    request(`/ref/check?code=${encodeURIComponent(refCode)}`).then((r) => setPaymentPage({ refValid: !!r.valid })).catch(() => { });
+  }
 
   if (routeState.promo && !token) {
     state.paymentPage.promoCode = routeState.promo;
@@ -1312,6 +1319,8 @@ const UI_ICON_PATHS = {
   close: '<path d="M6 6l12 12M18 6 6 18"/>',
   copy: '<rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  gift: '<rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8S10.5 3.5 8 4.5 9 8 12 8zM12 8s1.5-4.5 4-3.5S15 8 12 8z"/>',
+  share: '<path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   bell: '<path d="M6 9a6 6 0 1 1 12 0c0 5 2 6.5 2 6.5H4S6 14 6 9z"/><path d="M10 19a2 2 0 0 0 4 0"/>',
   shield: '<path d="M12 3 5 6v5c0 4.5 3 8.5 7 10 4-1.5 7-5.5 7-10V6z"/><path d="m9 12 2 2 4-4"/>',
@@ -1485,6 +1494,69 @@ async function paymentApplyPromo() {
     else if (e?.message) message = String(e.message);
     setPaymentPage({ promoChecking: false, promoData: null, promoMessage: message });
   }
+}
+
+// ==========================
+// «Приведи друга»
+// ==========================
+const REF_KEY = "ahmedov_ref";
+
+function refSaved() {
+  try {
+    const v = JSON.parse(localStorage.getItem(REF_KEY) || "null");
+    if (v && v.code && Date.now() - Number(v.ts || 0) < 30 * 24 * 3600 * 1000) return v.code;
+  } catch { }
+  return "";
+}
+
+function refRemember(code) {
+  const c = String(code || "").replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+  if (!c) return;
+  try { localStorage.setItem(REF_KEY, JSON.stringify({ code: c, ts: Date.now() })); } catch { }
+}
+
+function userReferral() {
+  return state.subscription?.referral || null;
+}
+
+function refShareText(r) {
+  return `Пользуюсь ahmedov.proxy — Telegram и WhatsApp работают без перебоев. Подключайся по моей ссылке: ${r.link}`;
+}
+
+function referralSection() {
+  const r = userReferral();
+  if (!r || !r.link) return "";
+  const copied = state.refCopied;
+  return `<div class="ui-sec" style="gap:8px;" id="referral">
+      <span class="ui-label">Приведи друга</span>
+      <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="ui-row-icon" style="background:#FF9F0A;width:40px;height:40px;border-radius:12px;">${uiIcon("gift", 20, 2.1)}</span>
+          <span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:17px;">+${esc(r.rewardDays)} дней за каждую оплату друга</span><span class="ui-sub" style="font-size:13px;white-space:normal;">Друг покупает подписку по вашей ссылке — вам +${esc(r.rewardDays)} дней. И так при каждом его продлении.</span></span>
+        </div>
+        <button class="ui-code-chip" style="width:100%;letter-spacing:0;font-size:14px;font-weight:600;height:auto;padding:12px 14px;justify-content:center;word-break:break-all;" data-action="ref-copy">${uiIcon(copied ? "check" : "copy", 16)}${esc(r.link.replace(/^https?:\/\//, ""))}</button>
+        <div class="ui-grid2">
+          <button class="ui-btn" style="height:48px;font-size:16px;" data-action="ref-share">${uiIcon("share", 18, 2.1)}Поделиться</button>
+          <button class="ui-btn ghost" style="height:48px;font-size:16px;" data-action="ref-copy">${copied ? "Скопировано" : "Копировать"}</button>
+        </div>
+        <div class="ui-grid3" style="gap:8px;">
+          <div class="ui-ref-stat"><b>${esc(r.friends)}</b><span>друзей</span></div>
+          <div class="ui-ref-stat"><b>${esc(r.payments)}</b><span>оплат</span></div>
+          <div class="ui-ref-stat"><b style="color:var(--ui-green-text);">+${esc(r.daysEarned)}</b><span>дней получено</span></div>
+        </div>
+        ${(r.history || []).length ? `<div class="ui-card ui-list" style="box-shadow:none;background:var(--ui-fill);">${r.history.slice(0, 6).map((h) => `<div class="ui-qrow" style="min-height:50px;"><span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:15px;">${esc(h.friend)}</span><span class="ui-qrow-sub">оплатил ${esc(formatDateOnly(h.at))}</span></span><span class="ui-badge" style="background:rgba(52,199,89,.16);color:var(--ui-green-text);">+${esc(h.days)} дн.</span></div>`).join("")}</div>` : ""}
+      </div>
+    </div>`;
+}
+
+function homeReferralCard() {
+  const r = userReferral();
+  if (!r || !r.link) return "";
+  return `<button class="ui-card ui-row-card" data-action="open-referral">
+      <span class="ui-row-icon" style="background:#FF9F0A;">${uiIcon("gift", 18, 2.1)}</span>
+      <span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:16px;">Приведи друга — +${esc(r.rewardDays)} дней</span><span class="ui-sub" style="font-size:13px;">${r.daysEarned ? `Вы уже получили +${esc(r.daysEarned)} дней` : "За каждую оплату друга по вашей ссылке"}</span></span>
+      <span class="ui-chev">${uiIcon("chevron", 14, 2.6)}</span>
+    </button>`;
 }
 
 function comboFor(plans, planId) {
@@ -1695,6 +1767,8 @@ function homeScreen() {
 
     ${homeVpnCard()}
 
+    ${homeReferralCard()}
+
     <div class="ui-grid2">
       <button class="ui-card ui-tile" data-action="open-tab" data-tab="telegram">
         <span class="ui-tile-label">Серверы</span>
@@ -1819,6 +1893,8 @@ function accountScreen() {
         <button class="ui-row" data-action="extend-subscription" data-plan-id="301"><span class="ui-row-main"><span class="ui-row-label" style="color:var(--ui-accent-text);font-weight:600;">Продлить подписку</span><span class="ui-chev">${uiIcon("chevron", 14, 2.6)}</span></span></button>
       </div>
     </div>
+
+    ${referralSection()}
 
     <div class="ui-sec" style="gap:8px;">
       <span class="ui-label">Поддержка</span>
@@ -2030,6 +2106,7 @@ function paymentScreen() {
           <button class="ui-btn" style="height:50px;" data-action="continue-pending-payment">Продолжить платёж</button>
           <button class="ui-text-btn red" data-action="cancel-pending-payment">Отменить</button>
         </div>` : ""}
+      ${p.refValid ? `<div class="ui-msg ok" style="display:flex;align-items:center;gap:8px;">${uiIcon("gift", 18, 2.1)}Вас пригласил друг — добро пожаловать!</div>` : ""}
       ${!p.promoData ? `<div class="ui-sec" style="gap:8px;"><span class="ui-label">Тариф</span>${planCards(planOptions, selectedPlan?.id)}</div>` : ""}
       ${combo ? `<label class="ui-card ui-combo ${useCombo ? "on" : ""}">
           <span class="ui-row-icon" style="background:#5E5CE6;">${uiIcon("vpn", 18, 2.1)}</span>
@@ -2052,7 +2129,7 @@ function paymentScreen() {
           <div><span>К оплате</span><b style="font-size:18px;">${esc(amountLabel)}</b></div>
         </div>` : ""}
       ${p.ozonEnabled ? `<button class="ui-btn" data-action="ozon-start" data-kind="${useCombo ? "combo" : "proxy"}" ${p.ozonCreating ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${p.ozonCreating ? "Создаём заявку…" : `Оплатить ${esc(amountLabel)} по СБП`}</button>
-        <p class="ui-caption" style="margin:-6px 0 0;text-align:center;">Через приложение вашего банка, без комиссии. Сумма подставится сама.</p>` : ""}
+        <p class="ui-caption" style="margin:-6px 0 0;text-align:center;">По СБП через Ozon, без комиссии. Сумма — на следующем экране.</p>` : ""}
       ${SHOW_SBP_BUTTON && p.paymentEnabled ? `<button class="ui-btn" data-action="payment-create" ${p.creating ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${p.creating ? "Создаём платёж…" : `Оплатить ${esc(amountLabel)} через СБП`}</button>` : ""}
       <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;">
         <strong style="font-size:16px;">${p.ozonEnabled || (SHOW_SBP_BUTTON && p.paymentEnabled) ? "Или оформим вручную" : "Для оплаты напишите нам"}</strong>
@@ -2608,7 +2685,7 @@ function adminOverview() {
     ${adminMessage()}
 
     <div class="ui-grid2">
-      ${tile("all", "Клиентов", users.length, "var(--ui-text)", `+${b.fresh.length} за 30 дней`)}
+      ${tile("all", "Клиентов", users.length, "var(--ui-text)", `+${b.fresh.length} за 30 дней${b.fresh.filter((u) => u.referredBy).length ? ` · ${b.fresh.filter((u) => u.referredBy).length} по приглашению` : ""}`)}
       ${tile("active", "Активных", b.active.length, "var(--ui-green-text)", users.length ? `${Math.round((b.active.length / users.length) * 100)}% от всех` : "—")}
       ${tile("soon", "Скоро конец", b.soon.length, "var(--ui-orange-text)", "7 дней и меньше")}
       ${tile("off", "Неактивны", b.off.length, "var(--ui-red)", "истекли или отключены")}
@@ -2691,6 +2768,7 @@ function adminUsersTab() {
           <span class="ui-qrow-sub">${esc(u.subscriptionType || "—")} · до ${esc(formatDateOnly(u.expiresAt))}${Number.isFinite(days) ? ` · ${days} дн.` : ""}</span>
           ${isWinback ? `<span class="ui-qrow-sub" style="${u.winbackAt ? "color:var(--ui-green-text);font-weight:600;" : ""}">${u.winbackAt ? `Писали ${esc(adminTime(u.winbackAt))}` : `Не платит ${Math.abs(days)} ${ruPlural(Math.abs(days), "день", "дня", "дней")} · ещё не писали`}</span>
           ${promoOn ? `<span class="ui-qrow-sub" style="color:var(--ui-orange-text);font-weight:600;">${uiIcon("tag", 13, 2.2)}В сообщении промокод ${esc(promoOn.code)}</span>` : ""}` : ""}
+          ${u.refFriends || u.referredBy ? `<span class="ui-qrow-sub" style="color:#FF9F0A;font-weight:600;">${uiIcon("gift", 13, 2.2)}${u.refFriends ? `Привёл друзей: ${esc(u.refFriends)} · получил +${esc(u.refDays)} дн.` : ""}${u.refFriends && u.referredBy ? " · " : ""}${u.referredBy ? `пришёл от ${esc(u.referredBy)}` : ""}</span>` : ""}
           ${u.vpnActive ? `<span class="ui-qrow-sub" style="color:#8E8CFF;font-weight:600;">${uiIcon("vpn", 13, 2.2)}VPN до ${esc(formatDateOnly(u.vpnExpiresAt))} · ${esc(u.vpnDaysLeft)} дн.</span>` : ""}
         </span>
         <span class="ui-tag ${st.cls}">${st.text}</span>
@@ -3001,6 +3079,7 @@ async function ozonStart(kind, planId) {
     body.phone = normalizePhone(p.phoneInput);
     if (!body.phone) return setPaymentPage({ error: "Укажите номер телефона, на который оформить подписку." });
     if (kind === "proxy" && p.promoData?.code) body.promoCode = p.promoData.code;
+    if (refSaved()) body.ref = refSaved();
   }
   if (isPaymentRoute()) setPaymentPage({ ozonCreating: true, error: "" });
   else setState({ ozonCreating: true });
@@ -3237,6 +3316,7 @@ function adminPaymentsTab() {
           <span class="ui-qrow-title" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">${esc(o.amountLabel)} ${kindTag(o)}</span>
           <span class="ui-qrow-sub" style="white-space:normal;"><b style="color:var(--ui-text);">${esc(o.displayPhone)}</b> · ${esc(o.planName)}${o.payer ? ` · от ${esc(o.payer)}` : ""}${o.promoCode ? ` · промокод ${esc(o.promoCode)}` : ""}</span>
           <span class="ui-qrow-sub">${o.claimedAt ? `<span style="color:var(--ui-orange-text);font-weight:600;">Клиент оплатил · ${esc(adminTime(o.claimedAt))}</span>` : `Заявка создана ${esc(adminTime(o.createdAt))} · ещё не оплачено`}</span>
+          ${o.refFrom ? `<span class="ui-qrow-sub" style="color:#FF9F0A;font-weight:600;">${uiIcon("gift", 13, 2.2)}По приглашению от ${esc(o.refFrom)} — ему +дни</span>` : ""}
         </span>
       </div>
       <div class="ui-admin-actions">
@@ -3921,6 +4001,27 @@ app.addEventListener("click", async (event) => {
     const kind = ["vpn", "combo"].includes(el.dataset.kind) ? el.dataset.kind : "proxy";
     const planId = kind === "vpn" ? el.dataset.planId : (state.paymentPage.selectedPlanId || state.paymentPage.plans?.[0]?.id);
     await ozonStart(kind, planId);
+    return;
+  }
+  if (action === "open-referral") {
+    setState({ activeTab: "account" });
+    setTimeout(() => document.getElementById("referral")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+    return;
+  }
+  if (action === "ref-copy" || action === "ref-share") {
+    const r = userReferral();
+    if (!r?.link) return;
+    if (action === "ref-share" && navigator.share) {
+      try { await navigator.share({ text: refShareText(r) }); } catch { }
+      return;
+    }
+    const text = action === "ref-share" ? refShareText(r) : r.link;
+    try { await navigator.clipboard.writeText(text); } catch {
+      const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch { } ta.remove();
+    }
+    setState({ refCopied: true });
+    showToast(action === "ref-share" ? "Текст со ссылкой скопирован — отправьте другу" : "Ссылка скопирована");
+    setTimeout(() => setState({ refCopied: false }), 1800);
     return;
   }
   if (action === "ozon-pay-open") {

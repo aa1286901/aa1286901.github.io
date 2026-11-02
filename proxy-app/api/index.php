@@ -9,6 +9,7 @@ require_once __DIR__ . '/payment/platega.php';
 require_once __DIR__ . '/vpn.php';
 require_once __DIR__ . '/ozon.php';
 require_once __DIR__ . '/webpush.php';
+require_once __DIR__ . '/referral.php';
 
 function array_keys_recursive(array $array): array
 {
@@ -31,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 ensure_vpn_schema();
+ensure_ref_schema();
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
@@ -473,6 +475,7 @@ function user_subscription_payload(array $user): array
         'vpn' => vpn_payload((string) ($user['phone'] ?? '')),
         'vpnPlans' => vpn_plans_payload(),
         'comboPlans' => combo_plans_payload(),
+        'referral' => ref_payload((string) ($user['phone'] ?? '')),
     ];
 }
 
@@ -798,6 +801,7 @@ function map_user_admin_row(array $row): array
         'inviteUsedAt' => $row['invite_used_at'] ?? null,
         'createdAt' => (string) ($row['created_at'] ?? ''),
         'winbackAt' => $row['winback_at'] ?? null,
+        'referredBy' => !empty($row['referred_by']) ? display_phone((string) $row['referred_by']) : null,
         'vpnExpiresAt' => $row['vpn_expires_at'] ?? null,
         'vpnDaysLeft' => vpn_days_left($row['vpn_expires_at'] ?? null),
         'vpnActive' => vpn_is_active($row['vpn_expires_at'] ?? null),
@@ -1011,6 +1015,7 @@ if (preg_match('#^/api/admin/users/([^/]+)/vpn$#', $uri, $vpnAdminMatch) === 1 &
     json_response(['message' => 'VPN updated', 'user' => map_user_admin_row(find_user($vpnPhone))]);
 }
 
+ref_handle_routes($uri, $method);
 ozon_handle_routes($uri, $method);
 push_handle_routes($uri, $method);
 
@@ -1422,12 +1427,17 @@ if ($uri === '/api/admin/users' && $method === 'GET') {
     $stmt = db()->query(
         'SELECT id, phone, subscription_type, expires_at, is_active, COALESCE(balance, 0) AS balance,
                 invite_code, invite_code_hash, invite_issued_at, invite_used_at, created_at,
-                vpn_expires_at, vpn_token, winback_at
+                vpn_expires_at, vpn_token, winback_at, referred_by
          FROM users
          ORDER BY datetime(created_at) DESC, id DESC'
     );
-    $users = array_map(static function (array $row): array {
-        return map_user_admin_row($row);
+    $refStats = ref_admin_stats();
+    $users = array_map(static function (array $row) use ($refStats): array {
+        $u = map_user_admin_row($row);
+        $st = $refStats[(string) $row['phone']] ?? [];
+        $u['refFriends'] = (int) ($st['friends'] ?? 0);
+        $u['refDays'] = (int) ($st['days'] ?? 0);
+        return $u;
     }, $stmt->fetchAll());
 
     json_response(['users' => $users]);
