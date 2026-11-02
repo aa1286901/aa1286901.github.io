@@ -6,6 +6,7 @@ require_once __DIR__ . '/http.php';
 require_once __DIR__ . '/database.php';
 require_once __DIR__ . '/jwt.php';
 require_once __DIR__ . '/payment/platega.php';
+require_once __DIR__ . '/vpn.php';
 
 function array_keys_recursive(array $array): array
 {
@@ -26,6 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
     exit;
 }
+
+ensure_vpn_schema();
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
@@ -442,7 +445,8 @@ function find_user(string $phone): ?array
 {
     $stmt = db()->prepare(
         'SELECT id, phone, subscription_type, expires_at, is_active, COALESCE(balance, 0) AS balance,
-                invite_code, invite_code_hash, invite_issued_at, invite_used_at, created_at
+                invite_code, invite_code_hash, invite_issued_at, invite_used_at, created_at,
+                vpn_expires_at, vpn_token
          FROM users
          WHERE phone = :phone
          LIMIT 1'
@@ -464,6 +468,8 @@ function user_subscription_payload(array $user): array
         'expiresAt' => $user['expires_at'],
         'daysLeft' => $daysLeft,
         'supportUrl' => config()['support_url'],
+        'vpn' => vpn_payload((string) ($user['phone'] ?? '')),
+        'vpnPlans' => vpn_plans_payload(),
     ];
 }
 
@@ -788,6 +794,12 @@ function map_user_admin_row(array $row): array
         'inviteIssuedAt' => $row['invite_issued_at'] ?? null,
         'inviteUsedAt' => $row['invite_used_at'] ?? null,
         'createdAt' => (string) ($row['created_at'] ?? ''),
+        'vpnExpiresAt' => $row['vpn_expires_at'] ?? null,
+        'vpnDaysLeft' => vpn_days_left($row['vpn_expires_at'] ?? null),
+        'vpnActive' => vpn_is_active($row['vpn_expires_at'] ?? null),
+        'vpnUrl' => (vpn_is_active($row['vpn_expires_at'] ?? null) && !empty($row['vpn_token']))
+            ? vpn_public_base() . '/api/vpn/sub/' . $row['vpn_token']
+            : null,
     ];
 }
 
@@ -920,8 +932,39 @@ if ($uri === '/api/health' && $method === 'GET') {
     json_response(['status' => 'ok']);
 }
 
+if (preg_match('#^/api/vpn/sub/([A-Za-z0-9]+)$#', $uri, $vpnMatch) === 1 && $method === 'GET') {
+    vpn_serve_subscription((string) $vpnMatch[1]);
+}
+
+if (preg_match('#^/api/admin/users/([^/]+)/vpn$#', $uri, $vpnAdminMatch) === 1 && $method === 'POST') {
+    require_admin();
+    $vpnPhone = normalize_phone(urldecode((string) $vpnAdminMatch[1]));
+    if ($vpnPhone === '' || !find_user($vpnPhone)) {
+        json_response(['message' => 'Клиент не найден'], 404);
+    }
+    $data = read_json_body();
+    $mode = (string) ($data['mode'] ?? 'add');
+    if (!in_array($mode, ['set', 'add', 'off', 'reset'], true)) {
+        json_response(['message' => 'Invalid mode'], 422);
+    }
+    if ($mode === 'reset') {
+        $current = vpn_row_fields($vpnPhone);
+        $active = vpn_is_active($current['vpn_expires_at'] ?? null);
+        vpn_update_user($vpnPhone, $active ? 'add' : 'off', 0, true);
+        if ($active) {
+            // 'add' с 0 днями прибавил бы день — возвращаем прежний срок
+            db()->prepare('UPDATE users SET vpn_expires_at = :exp WHERE phone = :phone')
+                ->execute([':exp' => $current['vpn_expires_at'], ':phone' => $vpnPhone]);
+        }
+    } else {
+        vpn_update_user($vpnPhone, $mode, (int) ($data['days'] ?? 0));
+    }
+    json_response(['message' => 'VPN updated', 'user' => map_user_admin_row(find_user($vpnPhone))]);
+}
+
 if ($uri === '/api/plans' && $method === 'GET') {
     json_response(array_merge(plans_payload(), [
+        'vpnPlans' => vpn_plans_payload(),
         'banks' => payment_banks_payload(),
         'paymentEnabled' => payment_configured(),
     ]));
@@ -1324,7 +1367,8 @@ if ($uri === '/api/admin/users' && $method === 'GET') {
 
     $stmt = db()->query(
         'SELECT id, phone, subscription_type, expires_at, is_active, COALESCE(balance, 0) AS balance,
-                invite_code, invite_code_hash, invite_issued_at, invite_used_at, created_at
+                invite_code, invite_code_hash, invite_issued_at, invite_used_at, created_at,
+                vpn_expires_at, vpn_token
          FROM users
          ORDER BY datetime(created_at) DESC, id DESC'
     );
