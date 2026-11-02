@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 // Оплата по СБП через QR Ozon с ручным подтверждением.
-// Клиент открывает страницу Ozon с суммой заявки, платит,
+// Клиент открывает страницу Ozon, вводит сумму заявки, платит,
 // нажимает «Я оплатил(а)» — администратору приходит push-уведомление, он подтверждает
 // заявку в админке, и доступ выдаётся автоматически.
 
@@ -66,15 +66,6 @@ function ozon_money(int $kop): string
     return number_format($kop / 100, $kop % 100 === 0 ? 0 : 2, ',', ' ') . ' ₽';
 }
 
-// Ссылка Ozon с суммой: страница Ozon понимает параметр amount (в копейках; OZON_AMOUNT_UNIT=rub — в рублях)
-function ozon_pay_url_for(int $amountKop): string
-{
-    $unit = strtolower(trim((string) (getenv('OZON_AMOUNT_UNIT') ?: 'kop')));
-    $value = $unit === 'rub' ? (string) intdiv($amountKop, 100) : (string) $amountKop;
-    $url = ozon_pay_url();
-    return $url . (strpos($url, '?') === false ? '?' : '&') . 'amount=' . $value;
-}
-
 // Имя отправителя, как его покажет банк: «Иван И.», «Мария Петровна К.»
 function ozon_clean_payer(string $raw): string
 {
@@ -112,7 +103,7 @@ function ozon_order_public(array $o, bool $withCode = false): array
         'payer' => $o['payer'] ?? null,
         'claimedAt' => $o['claimed_at'] ?? null,
         'status' => $status,
-        'payUrl' => ozon_pay_url_for((int) $o['amount_kop']),
+        'payUrl' => ozon_pay_url(),
         'phone' => (string) $o['phone'],
         'displayPhone' => display_phone((string) $o['phone']),
         'createdAt' => (string) $o['created_at'],
