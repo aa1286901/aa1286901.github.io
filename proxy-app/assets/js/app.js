@@ -3,29 +3,10 @@ const WEB_BASE = window.AHMEDOV_CONFIG?.webBase || "";
 const TOKEN_KEY = "ahmedov_proxy_jwt";
 const TAB_KEY = "ahmedov_proxy_tab";
 const PAYMENT_PENDING_KEY = "ahmedov_proxy_pending_payment";
-const VPN_UPDATE_URL = "https://ahmedov.online/vpn/update.php";
 const REQUIRE_PWA = true;
 // Кнопка «Оплатить через СБП» на странице оплаты. Сейчас оплата идёт через поддержку.
 const SHOW_SBP_BUTTON = false;
 
-// VPN Sources Configuration
-const VPN_SOURCES = {
-  vless: {
-    name: "Черные списки",
-    url: "https://raw.githack.com/igareck/vpn-configs-for-russia/main/BLACK_VLESS_RUS_mobile.txt",
-    protocol: "vless"
-  },
-  trojan: {
-    name: "CIDR-Подписки",
-    url: "https://raw.githack.com/igareck/vpn-configs-for-russia/main/WHITE-CIDR-RU-checked.txt",
-    protocol: "vless"
-  },
-  shadowsocks: {
-    name: "Белые списки",
-    url: "https://raw.githack.com/igareck/vpn-configs-for-russia/main/Vless-Reality-White-Lists-Rus-Mobile.txt",
-    protocol: "vless"
-  }
-};
 
 let isTyping = false;
 
@@ -72,18 +53,8 @@ const state = {
   plansOverlay: { open: false, message: "", plans: [], supportUrl: "#", banks: [], paymentEnabled: false, selectedPlanId: null, selectedBankId: "sber", payment: null, paymentError: "", paymentLoading: false, statusLoading: false },
   proxies: { telegram: [], whatsapp: [] },
   loadingProxyTab: false,
-  vpn: {
-    selectedSource: "vless",
-    servers: [],
-    filtered: [],
-    loading: false,
-    checking: 0,
-    online: 0,
-    initialized: false,
-    latencyChecking: false,
-    latencyChecked: false,
-    qrModal: { open: false, raw: "" },
-  },
+  vpn: { copiedRaw: "" },
+  vpnList: { loading: false, loaded: false, servers: [], total: 0, error: "", expanded: false },
   proxyConnectModal: { open: false, connectUrl: "", network: "", proxyKey: "", copied: false },
   admin: {
     tab: "overview",
@@ -143,16 +114,6 @@ let sessionHeartbeatTimer = null;
 let sessionHeartbeatInFlight = false;
 let paymentStatusPollTimer = null;
 
-function refreshVpnSubscription() {
-  fetch(VPN_UPDATE_URL, {
-    method: "GET",
-    mode: "no-cors",
-    cache: "no-store",
-    keepalive: true,
-  }).catch((error) => {
-    console.warn("VPN subscription update failed:", error);
-  });
-}
 
 function landingPath() {
   return WEB_BASE || "/";
@@ -1250,314 +1211,16 @@ async function runAdminClientPing(runId, sourceItems) {
 // VPN FUNCTIONS
 // ==========================
 
-function parseVlessConfig(line) {
-  try {
-    const url = new URL(line);
-    if (url.protocol !== "vless:") return null;
 
-    const name = decodeURIComponent(url.hash.replace("#", "")) || "Unknown";
-    const host = url.hostname;
-    const port = url.port || "443";
-    const security = url.searchParams.get("security") || "tls";
-    const type = url.searchParams.get("type") || "tcp";
-    const sni = url.searchParams.get("sni") || host;
 
-    return {
-      raw: line,
-      name,
-      host,
-      port,
-      security,
-      type,
-      sni,
-      ping: null,
-      checking: true,
-      online: false,
-      country: detectCountryFromName(name),
-      protocol: "vless"
-    };
-  } catch {
-    return null;
-  }
-}
 
-function parseShadowsocksConfig(line) {
-  try {
-    // Format: ss://base64(method:password@host:port)#name or ss://method:password@host:port#name
-    let urlStr = line.replace("ss://", "");
-    const hashIndex = urlStr.indexOf("#");
-    let name = "";
 
-    if (hashIndex !== -1) {
-      name = decodeURIComponent(urlStr.slice(hashIndex + 1));
-      urlStr = urlStr.slice(0, hashIndex);
-    }
 
-    let decoded = urlStr;
 
-    // Try base64 decoding
-    try {
-      // Check if the whole thing before @ is base64
-      const atIndex = urlStr.indexOf("@");
-      if (atIndex !== -1) {
-        const b64Part = urlStr.slice(0, atIndex);
-        const rest = urlStr.slice(atIndex);
-        // Check if it looks like base64 (no : in decoded means it's probably base64)
-        if (!b64Part.includes(":") && b64Part.length > 0) {
-          const decodedB64 = atob(b64Part);
-          if (decodedB64.includes(":")) {
-            decoded = decodedB64 + rest;
-          }
-        }
-      } else {
-        // Try decoding entire string
-        const decodedB64 = atob(urlStr);
-        if (decodedB64.includes("@")) {
-          decoded = decodedB64;
-        }
-      }
-    } catch {
-      // Not base64, use as-is
-    }
 
-    const match = decoded.match(/([^:@]+):([^@]+)@([^:]+):(\d+)/);
-    if (!match) return null;
 
-    const [, method, password, host, port] = match;
 
-    return {
-      raw: line,
-      name: name || `${host}:${port}`,
-      host,
-      port,
-      method,
-      password,
-      ping: null,
-      checking: true,
-      online: false,
-      country: detectCountryFromName(name),
-      protocol: "ss",
-      security: method,
-      type: "tcp"
-    };
-  } catch {
-    return null;
-  }
-}
 
-function parseTrojanConfig(line) {
-  try {
-    const url = new URL(line);
-    if (url.protocol !== "trojan:") return null;
-
-    const name = decodeURIComponent(url.hash.replace("#", "")) || "Unknown";
-    const host = url.hostname;
-    const port = url.port || "443";
-    const security = url.searchParams.get("security") || "tls";
-    const type = url.searchParams.get("type") || "tcp";
-    const sni = url.searchParams.get("sni") || host;
-
-    return {
-      raw: line,
-      name,
-      host,
-      port,
-      security,
-      type,
-      sni,
-      ping: null,
-      checking: true,
-      online: false,
-      country: detectCountryFromName(name),
-      protocol: "trojan"
-    };
-  } catch {
-    return null;
-  }
-}
-
-function detectCountryFromName(name) {
-  const n = (name || "").toLowerCase();
-
-  if (n.includes("german") || n.includes("deutsch") || n.includes("de ")) return "🇩🇪";
-  if (n.includes("nether") || n.includes("nl ") || n.includes("amsterdam")) return "🇳🇱";
-  if (n.includes("france") || n.includes("fr ") || n.includes("paris")) return "🇫🇷";
-  if (n.includes("finland") || n.includes("fi ") || n.includes("helsinki")) return "🇫🇮";
-  if (n.includes("russia") || n.includes("ru ") || n.includes("moscow")) return "🇷🇺";
-  if (n.includes("usa") || n.includes("us ") || n.includes("america")) return "🇺🇸";
-  if (n.includes("uk ") || n.includes("gb ") || n.includes("london")) return "🇬🇧";
-  if (n.includes("turkey") || n.includes("tr ") || n.includes("istanbul")) return "🇹🇷";
-  if (n.includes("singapore") || n.includes("sg ") || n.includes("singapur")) return "🇸🇬";
-  if (n.includes("japan") || n.includes("jp ") || n.includes("tokyo")) return "🇯🇵";
-  if (n.includes("poland") || n.includes("pl ") || n.includes("warsaw")) return "🇵🇱";
-  if (n.includes("sweden") || n.includes("se ") || n.includes("stockholm")) return "🇸🇪";
-  if (n.includes("norway") || n.includes("no ") || n.includes("oslo")) return "🇳🇴";
-  if (n.includes("spain") || n.includes("es ") || n.includes("madrid")) return "🇪🇸";
-  if (n.includes("italy") || n.includes("it ") || n.includes("rome")) return "🇮🇹";
-  if (n.includes("ukraine") || n.includes("ua ") || n.includes("kiev")) return "🇺🇦";
-  if (n.includes("korea") || n.includes("kr ") || n.includes("seoul")) return "🇰🇷";
-  if (n.includes("india") || n.includes("in ") || n.includes("mumbai")) return "🇮🇳";
-  if (n.includes("brazil") || n.includes("br ") || n.includes("saopaulo")) return "🇧🇷";
-  if (n.includes("canada") || n.includes("ca ") || n.includes("toronto")) return "🇨🇦";
-  if (n.includes("australia") || n.includes("au ") || n.includes("sydney")) return "🇦🇺";
-
-  return "🌍";
-}
-
-async function checkVpnServerLatency(server) {
-  const start = performance.now();
-
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3000);
-
-    await fetch(`https://${server.host}:${server.port}/`, {
-      mode: "no-cors",
-      cache: "no-store",
-      signal: controller.signal
-    });
-
-    clearTimeout(timeout);
-    const end = performance.now();
-
-    server.ping = Math.floor(end - start);
-    server.online = true;
-  } catch {
-    server.ping = 999;
-    server.online = false;
-  }
-
-  server.checking = false;
-  updateVpnStats();
-  renderVpnServers();
-}
-
-async function loadVpnServers(sourceKey) {
-  const v = state.vpn;
-  const source = VPN_SOURCES[sourceKey];
-
-  if (!source) return;
-
-  v.loading = true;
-  v.selectedSource = sourceKey;
-  v.servers = [];
-  v.filtered = [];
-  v.checking = 0;
-  v.online = 0;
-  v.latencyChecking = false;
-  v.latencyChecked = false;
-  v.limit = VPN_RENDER_STEP;
-
-  render();
-
-  try {
-    const response = await fetch(source.url);
-    const text = await response.text();
-    const lines = text.split("\n").map(l => l.trim()).filter(l => l);
-
-    const parsed = [];
-
-    for (const line of lines) {
-      let config = null;
-
-      // Парсим все протоколы из каждого источника
-      if (line.startsWith("vless://")) {
-        config = parseVlessConfig(line);
-      } else if (line.startsWith("ss://")) {
-        config = parseShadowsocksConfig(line);
-      } else if (line.startsWith("trojan://")) {
-        config = parseTrojanConfig(line);
-      }
-
-      if (config) {
-        parsed.push(config);
-      }
-    }
-
-    // Удаляем дубликаты по host:port (оставляем первый встреченный)
-    const uniqueServers = new Map();
-    for (const server of parsed) {
-      const key = `${server.host}:${server.port}`;
-      if (!uniqueServers.has(key)) {
-        uniqueServers.set(key, server);
-      }
-    }
-    const deduped = Array.from(uniqueServers.values());
-
-    // Сортируем по алфавиту по умолчанию
-    deduped.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "ru"));
-
-    v.servers = deduped;
-    v.filtered = deduped.slice();
-    v.loading = false;
-    updateVpnStats();
-
-    render();
-    // НЕ вызываем startVpnLatencyChecks() — проверка только по кнопке
-
-  } catch (e) {
-    console.error("Failed to load VPN servers:", e);
-    v.loading = false;
-    v.servers = [];
-    v.filtered = [];
-    render();
-  }
-}
-
-async function startVpnLatencyChecks() {
-  const v = state.vpn;
-
-  v.latencyChecking = true;
-  render();
-
-  for (const server of v.servers) {
-    if (!v.servers.includes(server)) break;
-    checkVpnServerLatency(server);
-    await delay(150);
-  }
-
-  // После завершения всех проверок
-  v.latencyChecking = false;
-  v.latencyChecked = true;
-  renderVpnServers();
-}
-
-function updateVpnStats() {
-  const v = state.vpn;
-  v.checking = v.servers.filter(s => s.checking).length;
-  v.online = v.servers.filter(s => s.online).length;
-}
-
-function renderVpnServers() {
-  const v = state.vpn;
-
-  // Если пинг проверен — сортируем по пингу (сначала меньший)
-  if (v.latencyChecked) {
-    v.filtered.sort((a, b) => {
-      // Сначала online, потом offline
-      if (a.online !== b.online) return a.online ? -1 : 1;
-      // Потом по пингу
-      const aPing = Number.isFinite(Number(a.ping)) ? Number(a.ping) : Infinity;
-      const bPing = Number.isFinite(Number(b.ping)) ? Number(b.ping) : Infinity;
-      return aPing - bPing;
-    });
-  }
-  // Иначе оставляем алфавитную сортировку (установленную в loadVpnServers)
-
-  render();
-}
-
-function copyVpnConfig(raw) {
-  navigator.clipboard.writeText(raw).then(() => {
-    // Could show toast notification here
-  }).catch(err => {
-    console.error("Failed to copy:", err);
-  });
-}
-
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 // ==========================
 // END VPN FUNCTIONS
@@ -2362,7 +2025,6 @@ function pwaBlockedScreen() {
   return landingScreen();
 }
 
-const VPN_RENDER_STEP = 60;
 
 function userVpn() {
   return state.subscription?.vpn || { active: false };
@@ -2432,8 +2094,9 @@ function vpnPaywall() {
     <div class="ui-card ui-pad ui-steps">
       ${perk("globe", "Все приложения и сайты", "Instagram, YouTube и другие сервисы — не только мессенджеры.")}
       ${perk("refresh", "Серверы обновляются сами", "Нерабочие убираются, новые добавляются в подписку.")}
-      ${perk("bolt", "Подключение за минуту", "Приложение Incy и одна кнопка «Добавить».")}
+      ${perk("bolt", "Подключение за минуту", "Приложение Happ или Incy и одна кнопка «Добавить».")}
     </div>
+    ${vpnServerListSection(true)}
     <section class="ui-sec">
       <h2 class="ui-h2" style="padding:0 4px;">Тарифы VPN</h2>
       ${vpnBuyBlock()}
@@ -2441,52 +2104,102 @@ function vpnPaywall() {
   </section>`;
 }
 
+
+async function loadVpnList(force = false) {
+  const l = state.vpnList;
+  if (!state.token || l.loading || (l.loaded && !force)) return;
+  setState({ vpnList: { ...l, loading: true, error: "" } });
+  try {
+    const data = await request("/vpn/servers", { headers: { Authorization: `Bearer ${state.token}` } });
+    setState({ vpnList: { ...state.vpnList, loading: false, loaded: true, servers: data.servers || [], total: Number(data.total) || 0 } });
+  } catch (e) {
+    setState({ vpnList: { ...state.vpnList, loading: false, error: e.message || "Не удалось загрузить список серверов." } });
+  }
+}
+
+const VPN_LIST_PREVIEW = 14;
+
+function vpnProtocolLabel(s) {
+  const p = String(s.protocol || "").toLowerCase();
+  if (p === "hysteria" || p === "hysteria2") return "Hysteria2";
+  if (p === "vless") return s.network && s.network !== "tcp" ? `VLESS · ${s.network}` : "VLESS";
+  if (p === "vmess") return "VMess";
+  if (p === "trojan") return "Trojan";
+  if (p === "shadowsocks" || p === "ss") return "Shadowsocks";
+  return p.toUpperCase();
+}
+
+function vpnServerListSection(locked) {
+  const l = state.vpnList;
+  if (l.loading && !l.loaded) {
+    return `<section class="ui-sec"><h2 class="ui-h2" style="padding:0 4px;">Серверы</h2>${Array.from({ length: 5 }).map(() => `<div class="ui-skel"></div>`).join("")}</section>`;
+  }
+  if (l.error && !l.servers.length) {
+    return `<section class="ui-sec"><h2 class="ui-h2" style="padding:0 4px;">Серверы</h2><div class="ui-card ui-empty">${esc(l.error)}<br><button class="ui-link" data-action="vpn-list-reload" style="margin-top:8px;">Повторить</button></div></section>`;
+  }
+  if (!l.servers.length) return "";
+
+  const countries = new Set(l.servers.filter((s) => !s.group && s.cc && s.cc !== "EU").map((s) => s.cc)).size;
+  const all = l.servers;
+  let shown = all;
+  if (!l.expanded) {
+    let count = 0;
+    shown = [];
+    for (const s of all) {
+      if (!s.group) count += 1;
+      if (count > VPN_LIST_PREVIEW) break;
+      shown.push(s);
+    }
+  }
+
+  const blocks = [];
+  let rows = [];
+  const flush = () => {
+    if (rows.length) blocks.push(`<div class="ui-card ui-servers">${rows.join("")}</div>`);
+    rows = [];
+  };
+  shown.forEach((s) => {
+    if (s.group) {
+      flush();
+      blocks.push(`<div class="ui-label" style="padding:6px 6px 0;">${esc(s.name)}</div>`);
+      return;
+    }
+    rows.push(`<div class="ui-vpn-row">
+      <span class="ui-cc">${esc(s.cc || "VPN")}</span>
+      <span class="ui-server-text">
+        <span class="ui-server-name">${esc(s.name)}</span>
+        <span class="ui-server-host">${esc(vpnProtocolLabel(s))}</span>
+      </span>
+      ${s.auto ? `<span class="ui-badge">Авто</span>` : ""}
+      ${locked ? `<span class="ui-chev" aria-label="Доступно после оплаты">${uiIcon("lock", 16, 2)}</span>` : `<span class="ui-dot ok" aria-hidden="true"></span>`}
+    </div>`);
+  });
+  flush();
+
+  const hidden = all.filter((s) => !s.group).length - shown.filter((s) => !s.group).length;
+  return `<section class="ui-sec">
+    <div class="ui-sec-head"><h2 class="ui-h2">Серверы</h2><span class="ui-sub" style="font-size:14px;">${l.total} серверов · ${countries} стран</span></div>
+    ${blocks.join("")}
+    ${hidden > 0 ? `<button class="ui-btn ghost" style="height:46px;" data-action="vpn-list-more">Показать все (ещё ${hidden})</button>` : ""}
+    <p class="ui-caption" style="margin:0;">${locked ? "Все эти серверы появятся в вашем приложении сразу после оплаты." : "Список обновляется сам — в приложении просто обновите подписку."}</p>
+  </section>`;
+}
+
 function vpnTabScreen() {
   const sub = userVpn();
   if (!sub.active) return vpnPaywall();
-  const v = state.vpn;
-  const servers = v.filtered || [];
-  const shown = v.latencyChecked || v.latencyChecking ? servers.filter((s) => s.online || s.checking) : servers;
-  const limit = v.limit || VPN_RENDER_STEP;
-  const visible = shown.slice(0, limit);
-
-  const pingPill = (s) => {
-    if (s.checking) return `<span class="ui-ping checking">проверяем…</span>`;
-    if (!v.latencyChecked || s.ping === null || s.ping === undefined) return "";
-    if (!s.online) return `<span class="ui-ping">нет ответа</span>`;
-    return `<span class="ui-ping ${s.ping < 180 ? "ok" : "slow"}">${esc(s.ping)} мс</span>`;
-  };
-
-  const rows = v.loading
-    ? Array.from({ length: 5 }).map(() => `<div class="ui-skel"></div>`).join("")
-    : !visible.length
-      ? `<div class="ui-card ui-empty">Нет доступных серверов. Выберите другой список.</div>`
-      : `<div class="ui-card ui-servers">${visible.map((s) => {
-        const parts = splitProxyName(s.name);
-        const tag = s.protocol === "ss" ? (s.method || "ss") : `${s.security || "tls"} · ${s.type || "tcp"}`;
-        const copied = v.copiedRaw === s.raw;
-        return `<div class="ui-vpn-row">
-          <span class="ui-cc">${esc(parts.cc || String(s.protocol || "").slice(0, 2).toUpperCase())}</span>
-          <span class="ui-server-text">
-            <span class="ui-server-name">${esc(parts.name)}</span>
-            <span class="ui-server-host">${esc(String(s.protocol || "").toUpperCase())} · ${esc(tag)}</span>
-          </span>
-          ${pingPill(s)}
-          <button class="ui-mini-icon" data-action="vpn-show-qr" data-raw="${esc(s.raw)}" aria-label="QR-код">${uiIcon("qr", 18)}</button>
-          <button class="ui-mini-icon ${copied ? "on" : ""}" data-action="vpn-copy-config" data-raw="${esc(s.raw)}" aria-label="Скопировать конфиг">${uiIcon(copied ? "check" : "copy", 18)}</button>
-        </div>`;
-      }).join("")}</div>`;
-
+  const days = Math.max(0, Number(sub.daysLeft) || 0);
+  const copied = state.vpn.copiedRaw === sub.subUrl;
   return `<section class="ui-stack">
     <div style="display:flex;flex-direction:column;gap:2px;padding:0 4px;">
       <h1 class="ui-h1" style="padding:0;">VPN</h1>
       <span class="ui-sub" style="font-size:15px;">ahmedov.vpn · ваша личная подписка</span>
     </div>
 
-    <article class="ui-hero ${Number(sub.daysLeft) <= 7 ? "warn" : ""}" style="gap:12px;">
-      <div class="ui-hero-top"><span class="ui-hero-chip"><i></i>${Number(sub.daysLeft) <= 7 ? "VPN скоро закончится" : "VPN активен"}</span></div>
+    <article class="ui-hero ${days <= 7 ? "warn" : ""}" style="gap:12px;">
+      <div class="ui-hero-top"><span class="ui-hero-chip"><i></i>${days <= 7 ? "VPN скоро закончится" : "VPN активен"}</span></div>
       <div class="ui-hero-bottom">
-        <div><div class="ui-hero-num" style="font-size:44px;line-height:48px;">${Math.max(0, Number(sub.daysLeft) || 0)}</div><div class="ui-hero-cap">${ruPlural(Number(sub.daysLeft) || 0, "день", "дня", "дней")} · до ${esc(formatDateLong(sub.expiresAt))}</div></div>
+        <div><div class="ui-hero-num" style="font-size:44px;line-height:48px;">${days}</div><div class="ui-hero-cap">${ruPlural(days, "день", "дня", "дней")} · до ${esc(formatDateLong(sub.expiresAt))}</div></div>
         <button class="ui-hero-btn" data-action="vpn-open-buy">Продлить</button>
       </div>
     </article>
@@ -2494,41 +2207,20 @@ function vpnTabScreen() {
     <article class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:14px;">
       <strong style="font-size:17px;">Подключение за минуту</strong>
       <div class="ui-steps">
-        <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Установите приложение Incy</b><span>Бесплатно в App Store.</span></span><a class="ui-btn-sm soft" href="https://apps.apple.com/ru/app/incy/id6756943388" target="_blank" rel="noopener">App Store</a></div>
-        <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Добавьте свою подписку</b><span>Серверы появятся в Incy и будут обновляться сами.</span></span><a class="ui-btn-sm" href="incy://add/${esc(sub.subUrl || "")}">Добавить</a></div>
-        <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Выберите быстрый сервер</b><span>В Incy нажмите проверку задержки и подключитесь.</span></span></div>
-      </div>
-      <button class="ui-btn ghost" style="height:46px;" data-action="vpn-copy-sub" data-url="${esc(sub.subUrl || "")}">${uiIcon(state.vpn.copiedRaw === sub.subUrl ? "check" : "copy", 18)}${state.vpn.copiedRaw === sub.subUrl ? "Ссылка скопирована" : "Скопировать ссылку подписки"}</button>
-      <p class="ui-caption" style="margin:0;">Ссылка личная — не передавайте её другим. Для других VPN-приложений (v2RayTun, Happ, Streisand) добавьте её как подписку.</p>
-    </article>
-    ${state.vpnBuyOpen ? `<section class="ui-sec" id="vpn-buy"><h2 class="ui-h2" style="padding:0 4px;">Продлить VPN</h2>${vpnBuyBlock()}</section>` : ""}
-
-    <section class="ui-sec">
-      <div class="ui-sec-head"><h2 class="ui-h2">Серверы вручную</h2></div>
-      <div class="ui-chips">
-        ${Object.entries(VPN_SOURCES).map(([key, src]) => `<button class="ui-chip ${v.selectedSource === key ? "on" : ""}" data-action="vpn-select-source" data-source="${esc(key)}">${esc(src.name)}</button>`).join("")}
+        <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Установите Happ или Incy</b><span>Бесплатно в App Store и Google Play.</span></span></div>
+        <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Добавьте свою подписку</b><span>Нажмите кнопку своего приложения ниже.</span></span></div>
+        <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Включите VPN</b><span>Лучший сервер выберется автоматически.</span></span></div>
       </div>
       <div class="ui-grid2">
-        <div class="ui-card ui-tile" style="cursor:default;"><span class="ui-tile-label">Серверов</span><span class="ui-tile-value">${v.loading ? "…" : esc(servers.length)}</span></div>
-        <div class="ui-card ui-tile" style="cursor:default;"><span class="ui-tile-label">Доступны</span><span class="ui-tile-value" style="color:var(--ui-green-text);">${v.latencyChecked || v.latencyChecking ? esc(v.online) : "—"}</span></div>
+        <a class="ui-btn" style="height:50px;font-size:16px;" href="happ://add/${esc(sub.subUrl || "")}">Добавить в Happ</a>
+        <a class="ui-btn" style="height:50px;font-size:16px;" href="incy://add/${esc(sub.subUrl || "")}">Добавить в Incy</a>
       </div>
-      <button class="ui-btn ${v.latencyChecked ? "ghost" : ""}" data-action="vpn-check-latency" ${v.latencyChecking || v.latencyChecked || v.loading ? "disabled" : ""}>
-        ${v.latencyChecking ? `<span class="ui-spin"></span>Проверяем пинг…` : v.latencyChecked ? `${uiIcon("check", 18)}Пинг проверен` : `${uiIcon("bolt", 18)}Проверить пинг`}
-      </button>
-      ${rows}
-      ${shown.length > visible.length ? `<button class="ui-btn ghost" data-action="vpn-show-more">Показать ещё (${shown.length - visible.length})</button>` : ""}
-    </section>
-
-    <details class="ui-card ui-details">
-      <summary>Чёрный и белый список — в чём разница?</summary>
-      <p><b>Чёрный список</b> — серверы, которые обходят блокировки сайтов и сервисов. Германия, Нидерланды, США и другие.</p>
-      <p><b>Белый список</b> — для сетей, где открыт только разрешённый список сайтов: мобильный интернет, общественный Wi‑Fi, корпоративные сети.</p>
-    </details>
-    <details class="ui-card ui-details">
-      <summary>Важно знать</summary>
-      <p>Серверы берутся из открытых источников и постоянно меняются. Если сервер не работает — обновите подписку в Incy.</p>
-      <p>Мы не гарантируем скорость и стабильность. Мы не храним логи и не отслеживаем активность.</p>
-    </details>
+      <a class="ui-btn ghost" style="height:44px;font-size:14px;" href="https://apps.apple.com/ru/app/incy/id6756943388" target="_blank" rel="noopener">Скачать Incy в App Store</a>
+      <button class="ui-btn ghost" style="height:46px;" data-action="vpn-copy-sub" data-url="${esc(sub.subUrl || "")}">${uiIcon(copied ? "check" : "copy", 18)}${copied ? "Ссылка скопирована" : "Скопировать ссылку подписки"}</button>
+      <p class="ui-caption" style="margin:0;">Ссылка личная — не передавайте её другим. Когда подписка закончится, в приложении появится сообщение «Подписка окончена».</p>
+    </article>
+    ${state.vpnBuyOpen ? `<section class="ui-sec" id="vpn-buy"><h2 class="ui-h2" style="padding:0 4px;">Продлить VPN</h2>${vpnBuyBlock()}</section>` : ""}
+    ${vpnServerListSection(false)}
   </section>`;
 }
 
@@ -2536,21 +2228,6 @@ function freeVpnScreen() {
   return vpnTabScreen();
 }
 
-function vpnQrModal(rawUrl) {
-  if (!rawUrl) return "";
-  return `<div class="ui-layer" data-action="vpn-hide-qr">
-    <article class="ui-sheet" data-action="vpn-qr-card" role="dialog" aria-label="QR-код сервера">
-      <span class="ui-grabber" aria-hidden="true"></span>
-      <div class="ui-sheet-head">
-        <button class="ui-sheet-close" data-action="vpn-hide-qr" aria-label="Закрыть">${uiIcon("close", 14, 3)}</button>
-        <h2 class="ui-sheet-title">QR-код сервера</h2>
-        <span class="ui-sub" style="font-size:15px;">Отсканируйте в приложении Incy или другом VPN-клиенте.</span>
-      </div>
-      <div style="display:flex;justify-content:center;"><div class="ui-qr big" id="vpn-qr-container" role="img" aria-label="QR-код конфигурации"></div></div>
-      <button class="ui-btn ghost" data-action="vpn-copy-config" data-raw="${esc(rawUrl)}">${uiIcon(state.vpn.copiedRaw === rawUrl ? "check" : "copy", 18)}${state.vpn.copiedRaw === rawUrl ? "Скопировано" : "Скопировать конфиг"}</button>
-    </article>
-  </div>`;
-}
 
 // ==========================
 // UI: админка
@@ -2805,7 +2482,7 @@ function adminVpnBlock(u) {
   if (!u) return "";
   const active = !!u.vpnActive;
   const sendText = active && u.vpnUrl
-    ? `Ваш VPN ahmedov.proxy подключён до ${formatDateOnly(u.vpnExpiresAt)}.\n1) Установите приложение Incy: https://apps.apple.com/ru/app/incy/id6756943388\n2) Добавьте вашу личную подписку: ${u.vpnUrl}\nИли откройте вкладку VPN в приложении ahmedov.proxy — там кнопка «Добавить».`
+    ? `Ваш VPN ahmedov.proxy подключён до ${formatDateOnly(u.vpnExpiresAt)}.\n1) Установите приложение Happ или Incy (App Store / Google Play)\n2) Добавьте вашу личную подписку: ${u.vpnUrl}\nИли откройте вкладку VPN в приложении ahmedov.proxy — там кнопки «Добавить в Happ» и «Добавить в Incy».`
     : "";
   return `<div class="ui-card ui-pad" style="background:var(--ui-fill);box-shadow:none;display:flex;flex-direction:column;gap:12px;margin-top:4px;">
     <div style="display:flex;align-items:center;gap:10px;">
@@ -2977,25 +2654,8 @@ function render() {
   document.documentElement.classList.toggle("ui-mode", uiMode);
   app.classList.toggle("ui", uiMode);
 
-  app.innerHTML = body + (state.role === "admin" && state.token ? adminSheet() : "") + legalModal() + installGuideModal() + (isPaymentRoute() ? "" : plansOverlay()) + (state.vpn.qrModal.open ? vpnQrModal(state.vpn.qrModal.raw) : "") + (state.proxyConnectModal?.open ? proxyConnectModal(state.proxyConnectModal.connectUrl, state.proxyConnectModal.network) : "");
+  app.innerHTML = body + (state.role === "admin" && state.token ? adminSheet() : "") + legalModal() + installGuideModal() + (isPaymentRoute() ? "" : plansOverlay()) + (state.proxyConnectModal?.open ? proxyConnectModal(state.proxyConnectModal.connectUrl, state.proxyConnectModal.network) : "");
 
-  // Генерация QR-кода после рендера
-  if (state.vpn.qrModal.open && state.vpn.qrModal.raw) {
-    requestAnimationFrame(() => {
-      const container = document.getElementById("vpn-qr-container");
-      if (container && typeof QRCode !== "undefined") {
-        container.innerHTML = "";
-        new QRCode(container, {
-          text: state.vpn.qrModal.raw,
-          width: 232,
-          height: 232,
-          colorDark: "#000000",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.M
-        });
-      }
-    });
-  }
 
   // Генерация QR-кода для прокси
   if (state.proxyConnectModal?.open && state.proxyConnectModal.connectUrl) {
@@ -3130,10 +2790,7 @@ async function bootstrap() {
       await loadUserProxies(state.activeTab);
     } else if (state.activeTab === "vpn") {
       startSessionHeartbeat();
-      if (userVpn().active) {
-        state.vpn.initialized = true;
-        loadVpnServers(state.vpn.selectedSource);
-      }
+      void loadVpnList();
     } else {
       startSessionHeartbeat();
       ensureHomeProxies();
@@ -3892,9 +3549,7 @@ app.addEventListener("click", async (event) => {
 
   if (action === "open-tab") {
     const tab = el.dataset.tab;
-    if (tab === "free-vpn" || tab === "vpn") {
-      refreshVpnSubscription();
-    }
+
     const isNet = ["telegram", "whatsapp"].includes(tab);
     setState(isNet ? { activeTab: tab, lastNetwork: tab } : { activeTab: tab });
     localStorage.setItem(TAB_KEY, tab);
@@ -3904,44 +3559,15 @@ app.addEventListener("click", async (event) => {
     const inProgress = list.some((x) => x.isChecking);
     if (isNet && !fresh && !inProgress) await loadUserProxies(tab);
     if (tab === "home") ensureHomeProxies();
-    if (tab === "vpn" && !state.vpn.initialized && userVpn().active) {
-      state.vpn.initialized = true;
-      loadVpnServers(state.vpn.selectedSource);
-    }
+    if (tab === "vpn" || tab === "free-vpn") void loadVpnList();
     return;
   }
 
-  if (action === "vpn-select-source") {
-    const source = el.dataset.source;
-    if (source && VPN_SOURCES[source]) {
-      loadVpnServers(source);
-    }
-    return;
-  }
 
-  if (action === "vpn-check-latency") {
-    if (!state.vpn.latencyChecking && !state.vpn.latencyChecked) {
-      startVpnLatencyChecks();
-    }
-    return;
-  }
 
-  if (action === "vpn-copy-config") {
-    const raw = el.dataset.raw;
-    if (raw) {
-      copyVpnConfig(raw);
-      state.vpn.copiedRaw = raw;
-      render();
-      setTimeout(() => {
-        if (state.vpn.copiedRaw === raw) {
-          state.vpn.copiedRaw = "";
-          render();
-        }
-      }, 1600);
-    }
-    return;
-  }
 
+  if (action === "vpn-list-more") return setState({ vpnList: { ...state.vpnList, expanded: true } });
+  if (action === "vpn-list-reload") return loadVpnList(true);
   if (action === "vpn-select-plan") {
     return setState({ vpnPlanId: el.dataset.planId });
   }
@@ -3960,28 +3586,8 @@ app.addEventListener("click", async (event) => {
     return;
   }
 
-  if (action === "vpn-show-more") {
-    state.vpn.limit = (state.vpn.limit || VPN_RENDER_STEP) + VPN_RENDER_STEP;
-    render();
-    return;
-  }
 
-  if (action === "vpn-show-qr") {
-    const raw = el.dataset.raw;
-    if (raw) {
-      state.vpn.qrModal = { open: true, raw };
-      render();
-    }
-    return;
-  }
 
-  if (action === "vpn-hide-qr") {
-    const clickedQrButton = !!event.target.closest('[data-action="vpn-hide-qr"]');
-    if (!clickedQrButton && event.target.closest('[data-action="vpn-qr-card"]')) return;
-    state.vpn.qrModal = { open: false, raw: "" };
-    render();
-    return;
-  }
 
   if (state.role !== "admin") return;
 

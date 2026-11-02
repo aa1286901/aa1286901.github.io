@@ -27,7 +27,7 @@ function vpn_plans_payload(): array
 function vpn_upstream_url(): string
 {
     $url = trim((string) (getenv('VPN_UPSTREAM_URL') ?: ''));
-    return $url !== '' ? $url : 'https://ahmedov.online/vpn/sub.php';
+    return $url !== '' ? $url : 'https://ahmedov.online/vpn/';
 }
 
 function ensure_vpn_schema(): void
@@ -142,11 +142,15 @@ function vpn_update_user(string $phone, string $mode, int $days = 0, bool $reset
 
 function vpn_fetch_upstream(): array
 {
-    $cacheFile = dirname(__DIR__) . '/database/vpn_sub_cache.json';
+    static $memo = null;
+    if ($memo !== null) {
+        return $memo;
+    }
+    $cacheFile = dirname(__DIR__) . '/database/vpn_upstream_cache.json';
     if (is_file($cacheFile) && (time() - (int) filemtime($cacheFile)) < 600) {
         $cached = json_decode((string) file_get_contents($cacheFile), true);
-        if (is_array($cached) && !empty($cached['body'])) {
-            return $cached;
+        if (is_array($cached) && !empty($cached['body']) && ($cached['url'] ?? '') === vpn_upstream_url()) {
+            return $memo = $cached;
         }
     }
 
@@ -180,17 +184,49 @@ function vpn_fetch_upstream(): array
         }
     }
 
-    $data = ['body' => $body, 'headers' => $headers];
+    $data = ['url' => vpn_upstream_url(), 'body' => $body, 'headers' => $headers];
     if ($body !== '') {
         @file_put_contents($cacheFile, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     } elseif (is_file($cacheFile)) {
         // Источник недоступен — отдаём последнюю сохранённую версию
         $cached = json_decode((string) file_get_contents($cacheFile), true);
-        if (is_array($cached)) {
-            return $cached;
+        if (is_array($cached) && ($cached['url'] ?? '') === vpn_upstream_url()) {
+            return $memo = $cached;
         }
     }
-    return $data;
+    return $memo = $data;
+}
+
+// Заголовки источника, которые понимают Happ / Incy / v2RayTun — передаём клиенту как есть.
+const VPN_PASS_HEADERS = [
+    'profile-update-interval', 'subscription-auto-update-enable', 'subscription-auto-update-open-enable',
+    'subscription-autoconnect', 'subscription-autoconnect-type', 'subscriptions-collapse', 'hide-settings',
+    'support-url', 'profile-web-page-url', 'routing', 'announce', 'x-brand',
+];
+
+function vpn_stub_body(string $message): string
+{
+    // Одна «пустая» запись: приложение покажет её название в списке серверов, трафик никуда не пойдёт.
+    return json_encode([[
+        'remarks' => $message,
+        'log' => ['loglevel' => 'none'],
+        'outbounds' => [
+            ['tag' => 'proxy', 'protocol' => 'blackhole', 'settings' => new stdClass()],
+        ],
+    ]], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+}
+
+function vpn_send_stub(string $title, string $message, int $expireTs): never
+{
+    header('Content-Type: application/json; charset=utf-8');
+    header('Profile-Title: base64:' . base64_encode($title));
+    header('Profile-Update-Interval: 1');
+    header('Announce: base64:' . base64_encode($message));
+    header('Support-Url: https://t.me/ahmedov_ml');
+    header('Profile-Web-Page-Url: https://ahmedov.online/proxy/app');
+    header('Subscription-Userinfo: upload=0; download=0; total=0; expire=' . max(0, $expireTs));
+    echo vpn_stub_body($message);
+    exit;
 }
 
 function vpn_serve_subscription(string $token): never
@@ -204,34 +240,106 @@ function vpn_serve_subscription(string $token): never
         $user = $stmt->fetch() ?: null;
     }
 
+    $title = 'VPN | ahmedov.proxy';
     if (!$user) {
-        http_response_code(404);
-        header('Content-Type: text/plain; charset=utf-8');
-        echo 'Подписка не найдена';
-        exit;
+        vpn_send_stub($title, '⛔ Подписка не найдена — откройте вкладку VPN в ahmedov.proxy', 0);
     }
+    $expireTs = !empty($user['vpn_expires_at']) ? (new DateTimeImmutable((string) $user['vpn_expires_at']))->getTimestamp() : 0;
     if (!vpn_is_active($user['vpn_expires_at'] ?? null)) {
-        http_response_code(403);
-        header('Content-Type: text/plain; charset=utf-8');
-        echo 'Подписка VPN закончилась. Продлите её в приложении ahmedov.proxy';
-        exit;
+        vpn_send_stub($title, '⛔ Подписка VPN окончена — продлите в приложении ahmedov.proxy', $expireTs);
     }
 
     $upstream = vpn_fetch_upstream();
     if (($upstream['body'] ?? '') === '') {
-        http_response_code(503);
-        header('Content-Type: text/plain; charset=utf-8');
-        echo 'Список серверов временно недоступен, попробуйте обновить подписку позже';
-        exit;
+        vpn_send_stub($title, '⏳ Список серверов обновляется — обновите подписку через минуту', $expireTs);
     }
 
-    $expireTs = (new DateTimeImmutable((string) $user['vpn_expires_at']))->getTimestamp();
-    $title = '⚡ Ahmedov VPN';
-    header('Content-Type: text/plain; charset=utf-8');
-    header('Profile-Title: base64:' . base64_encode($title));
-    header('Profile-Update-Interval: 1');
-    header('Subscription-Userinfo: upload=0; download=0; total=0; expire=' . $expireTs);
+    $headers = $upstream['headers'] ?? [];
+    header('Content-Type: ' . ($headers['content-type'] ?? 'text/plain; charset=utf-8'));
+    foreach (VPN_PASS_HEADERS as $name) {
+        if (isset($headers[$name]) && $headers[$name] !== '') {
+            header($name . ': ' . $headers[$name]);
+        }
+    }
+    header('Profile-Title: ' . ($headers['profile-title'] ?? ('base64:' . base64_encode($title))));
     header("Content-Disposition: inline; filename*=utf-8''" . rawurlencode($title));
+    header('Subscription-Userinfo: upload=0; download=0; total=0; expire=' . $expireTs);
     echo $upstream['body'];
     exit;
+}
+
+// Список серверов для вкладки VPN: только названия, без ключей и адресов.
+function vpn_server_list(): array
+{
+    $upstream = vpn_fetch_upstream();
+    $body = trim((string) ($upstream['body'] ?? ''));
+    $items = [];
+    if ($body === '') {
+        return $items;
+    }
+
+    $decoded = json_decode($body, true);
+    if (!is_array($decoded)) {
+        $maybe = base64_decode($body, true);
+        if ($maybe !== false && str_contains($maybe, '://')) {
+            $body = $maybe;
+        }
+    }
+
+    if (is_array($decoded)) {
+        foreach ($decoded as $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+            $name = trim((string) ($entry['remarks'] ?? ''));
+            if ($name === '') {
+                continue;
+            }
+            $protocol = '';
+            $network = '';
+            foreach (($entry['outbounds'] ?? []) as $ob) {
+                if (($ob['tag'] ?? '') === 'proxy') {
+                    $protocol = (string) ($ob['protocol'] ?? '');
+                    $network = (string) ($ob['streamSettings']['network'] ?? '');
+                    break;
+                }
+            }
+            $items[] = ['name' => $name, 'protocol' => $protocol, 'network' => $network];
+        }
+    } else {
+        foreach (preg_split('/\r?\n/', $body) as $line) {
+            $line = trim($line);
+            if (!preg_match('#^([a-z0-9]+)://#i', $line, $m)) {
+                continue;
+            }
+            $hash = strpos($line, '#');
+            $name = $hash !== false ? rawurldecode(substr($line, $hash + 1)) : $m[1];
+            $items[] = ['name' => trim($name), 'protocol' => strtolower($m[1]), 'network' => ''];
+        }
+    }
+
+    $out = [];
+    foreach ($items as $item) {
+        $name = $item['name'];
+        $isGroup = str_contains($name, '⬇');
+        $isAuto = !$isGroup && (bool) preg_match('/авто/iu', $name);
+        $cc = '';
+        if (preg_match('/^([\x{1F1E6}-\x{1F1FF}]{2})/u', $name, $fm)) {
+            $chars = preg_split('//u', $fm[1], -1, PREG_SPLIT_NO_EMPTY);
+            foreach ($chars as $ch) {
+                $cc .= chr(mb_ord($ch) - 0x1F1E6 + 65);
+            }
+        }
+        $clean = trim((string) preg_replace('/^[\x{1F1E6}-\x{1F1FF}]{2}\s*/u', '', $name));
+        $clean = trim(str_replace(['⬇️', '⬇'], '', $clean));
+        $out[] = [
+            'name' => $clean,
+            'cc' => $cc,
+            'protocol' => $item['protocol'],
+            'network' => $item['network'],
+            'group' => $isGroup,
+            'auto' => $isAuto,
+        ];
+    }
+    return $out;
 }

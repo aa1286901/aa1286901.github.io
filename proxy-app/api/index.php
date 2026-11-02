@@ -936,6 +936,16 @@ if (preg_match('#^/api/vpn/sub/([A-Za-z0-9]+)$#', $uri, $vpnMatch) === 1 && $met
     vpn_serve_subscription((string) $vpnMatch[1]);
 }
 
+if ($uri === '/api/vpn/servers' && $method === 'GET') {
+    $auth = require_auth();
+    if ((string) ($auth['role'] ?? 'user') !== 'admin') {
+        require_active_subscription_user($auth);
+    }
+    $servers = vpn_server_list();
+    $total = count(array_filter($servers, static fn (array $s): bool => !$s['group'] && !$s['auto']));
+    json_response(['servers' => $servers, 'total' => $total]);
+}
+
 if (preg_match('#^/api/admin/users/([^/]+)/vpn$#', $uri, $vpnAdminMatch) === 1 && $method === 'POST') {
     require_admin();
     $vpnPhone = normalize_phone(urldecode((string) $vpnAdminMatch[1]));
