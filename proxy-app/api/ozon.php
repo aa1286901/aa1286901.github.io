@@ -71,10 +71,20 @@ function ozon_qr_id(): string
 
 // Получить у Ozon прямую ссылку СБП (https://qr.nspk.ru/...) на нужную сумму.
 // Это тот же запрос, что делает страница оплаты Ozon. Если не вышло — null, клиенту дадим обычную ссылку.
+// Последний результат запроса к Ozon — для проверки в админке
+function ozon_sbp_log(array $info): void
+{
+    ensure_push_schema();
+    $info['at'] = gmdate('Y-m-d H:i:s');
+    db()->prepare("INSERT OR REPLACE INTO app_settings (key, value) VALUES ('sbp_last', :v)")
+        ->execute([':v' => json_encode($info, JSON_UNESCAPED_UNICODE)]);
+}
+
 function ozon_fetch_sbp_link(int $amountKop): ?string
 {
     $qrId = ozon_qr_id();
     if ($qrId === '' || !function_exists('curl_init')) {
+        ozon_sbp_log(['ok' => false, 'error' => $qrId === '' ? 'В OZON_PAY_URL не найден ID QR-кода' : 'На хостинге нет PHP curl']);
         return null;
     }
     $rate = (float) (getenv('OZON_SBP_COMMISSION') ?: '0.019');
@@ -105,17 +115,25 @@ function ozon_fetch_sbp_link(int $amountKop): ?string
             ]], JSON_UNESCAPED_UNICODE),
         ]);
         $raw = curl_exec($ch);
+        $http = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err = curl_error($ch);
         curl_close($ch);
         $res = json_decode((string) $raw, true)['data']['sbpCreatePaymentLinkV2'] ?? null;
+        $log = ['ok' => false, 'http' => $http, 'curlError' => $err, 'qrId' => $qrId, 'commission' => $commission,
+            'status' => is_array($res) ? ($res['status'] ?? null) : null, 'body' => mb_substr(trim(strip_tags((string) $raw)), 0, 300)];
         if (!is_array($res)) {
-            return null; // антибот или Ozon недоступен
+            ozon_sbp_log($log); // антибот или Ozon недоступен
+            return null;
         }
         if (($res['status'] ?? '') === 'OK_STATUS' && preg_match('#(?:qr\.nspk\.ru/|qr-pay/)([A-Z0-9]{32})#', (string) ($res['paymentLink'] ?? ''), $m)) {
+            ozon_sbp_log(['ok' => true, 'http' => $http, 'qrId' => $qrId, 'link' => 'https://qr.nspk.ru/' . $m[1]]);
             return 'https://qr.nspk.ru/' . $m[1];
         }
         if (($res['status'] ?? '') !== 'COMMISSION_DISCREPANCY') {
+            ozon_sbp_log($log);
             return null;
         }
+        ozon_sbp_log($log);
     }
     return null;
 }
@@ -375,6 +393,14 @@ function ozon_handle_routes(string $uri, string $method): void
     if (preg_match('#^/api/ozon/orders/([a-f0-9]{24})/cancel$#', $uri, $m) === 1 && $method === 'POST') {
         db()->prepare("UPDATE ozon_orders SET status = 'cancelled' WHERE token = :t AND status = 'pending'")->execute([':t' => $m[1]]);
         json_response(['message' => 'Заявка отменена']);
+    }
+
+    // Проверка: может ли сервер получить прямую ссылку СБП у Ozon (100 ₽, ничего не списывается)
+    if ($uri === '/api/admin/ozon/sbp-check' && $method === 'POST') {
+        require_admin();
+        $link = ozon_fetch_sbp_link(10000);
+        $last = json_decode((string) (db()->query("SELECT value FROM app_settings WHERE key = 'sbp_last'")->fetchColumn() ?: '{}'), true);
+        json_response(['ok' => (bool) $link, 'link' => $link, 'details' => $last, 'payUrl' => ozon_pay_url()]);
     }
 
     if ($uri === '/api/admin/ozon' && $method === 'GET') {
