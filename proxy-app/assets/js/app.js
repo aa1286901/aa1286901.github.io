@@ -86,6 +86,10 @@ const state = {
   },
   proxyConnectModal: { open: false, connectUrl: "", network: "", proxyKey: "", copied: false },
   admin: {
+    tab: "overview",
+    sheet: null,
+    userFilter: "all",
+    invitePhone: "",
     section: "users",
     users: [],
     proxies: [],
@@ -1235,581 +1239,18 @@ async function runAdminClientPing(runId, sourceItems) {
 }
 
 
-function freeVpnScreen() {
-  return `<section class="stack free-vpn-screen">
-    <header class="vpn-page-header">
-      <button class="vpn-back-btn mini-btn" data-action="open-tab" data-tab="home" aria-label="Назад">
-        <i class="fa-solid fa-arrow-left"></i>
-      </button>
-      <div class="vpn-page-title">
-        <h1>ahmedov.vpn</h1>
-        <p>Инструкция по установке</p>
-      </div>
-    </header>
-
-    <article class="card p4 vpn-hero-card">
-      <div class="vpn-hero-top">
-        <div class="vpn-hero-icon"><i class="fa-solid fa-bolt"></i></div>
-        <div class="vpn-hero-copy">
-          <h2>Быстрые и надёжные сервера</h2>
-          <p>ahmedov.vpn использует открытые источники для конфигураций и серверов.</p>
-        </div>
-      </div>
-      <div class="vpn-hero-stats">
-        <div class="vpn-stat-tile"><i class="fa-solid fa-earth-europe"></i><div><strong>Более</strong><span>10+ стран</span></div></div>
-        <div class="vpn-stat-tile"><i class="fa-solid fa-infinity"></i><div><strong>Без лимитов</strong><span>Трафик</span></div></div>
-        <div class="vpn-stat-tile green"><i class="fa-solid fa-rotate"></i><div><strong>Постоянно</strong><span>обновляется</span></div></div>
-      </div>
-    </article>
-
-    <article class="card p4 vpn-steps-card">
-      <div class="vpn-steps-grid">
-        <div class="vpn-step-item">
-          <div class="vpn-step-index">1</div>
-          <h4>Установите приложение Incy</h4>
-          <p>Нажмите на иконку чтобы перейти в App Store.</p>
-          <a class="vpn-step-visual incy" href="https://apps.apple.com/ru/app/incy/id6756943388" target="_blank" rel="noopener noreferrer" aria-label="Открыть Incy в App Store">INCY</a>
-        </div>
-        <div class="vpn-step-item">
-          <div class="vpn-step-index">2</div>
-          <h4>Добавьте подписку в приложение</h4>
-          <p>После нажмите на "+" чтобы добавить подписку.</p>
-          <a class="vpn-step-visual" href="incy://add/https://ahmedov.online/vpn/sub.php" aria-label="Добавить подписку в Incy"><i class="fa-solid fa-plus"></i></a>
-        </div>
-        <div class="vpn-step-item">
-          <div class="vpn-step-index">3</div>
-          <h4>Выберите лучший сервер</h4>
-          <p>Используйте кнопку чтобы измерить задержку.</p>
-          <div class="vpn-step-visual vpn-step-visual-lightning"><i class="fa-solid fa-bolt"></i></div>
-        </div>
-      </div>
-    </article>
-
-    <article class="card p4 vpn-info-card purple">
-      <div class="vpn-info-copy">
-        <div class="vpn-info-head">
-          <span class="vpn-info-icon"><i class="fa-solid fa-shield-halved"></i></span>
-          <div>
-            <h3>Что такое "Черный список"?</h3>
-            <p>Подписки, обходящие Чёрные списки РКН</p>
-          </div>
-        </div>
-        <div class="muted vpn-info-text">Эти сервера помогают обойти блокировки и ограничения в сетях, где многие сайты и сервисы недоступны. Они используют специальные протоколы и маршруты для стабильного соединения.</div>
-        <div class="vpn-country-row">
-          <span class="vpn-country-pill">🇩🇪 Германия</span>
-          <span class="vpn-country-pill">🇳🇱 Нидерланды</span>
-          <span class="vpn-country-pill">🇺🇸 США</span>
-          <span class="vpn-country-pill">и другие…</span>
-        </div>
-      </div>
-    </article>
-
-    <article class="card p4 vpn-info-card green">
-      <div class="vpn-info-copy">
-        <div class="vpn-info-head">
-          <span class="vpn-info-icon green"><i class="fa-solid fa-lock"></i></span>
-          <div>
-            <h3>Что такое "Белый список"?</h3>
-            <p>Подписки, обходящие Белые списки РКН</p>
-          </div>
-        </div>
-        <div class="muted vpn-info-text">Эти сервера работают в сетях с белыми списками и ограничениями по доступу. Подходят для мобильных сетей, Wi‑Fi в общественных местах и корпоративных сетей.</div>
-        <div class="vpn-country-row">
-          <span class="vpn-country-pill">🇫🇮 Финляндия</span>
-          <span class="vpn-country-pill">🇸🇪 Швеция</span>
-          <span class="vpn-country-pill">🇫🇷 Франция</span>
-          <span class="vpn-country-pill">и другие…</span>
-        </div>
-      </div>
-    </article>
-
-    <article class="card p4 vpn-notes-card">
-      <div class="vpn-info-head">
-        <span class="vpn-info-icon blue"><i class="fa-solid fa-circle-info"></i></span>
-        <div>
-          <h3>Важно знать про ahmedov.vpn</h3>
-          <p>Список серверов берется из открытых источников</p>
-        </div>
-      </div>
-      <ul class="vpn-notes-list">
-        <li>Если какой-то сервер не работает обновите подписку чтобы получить новые сервера.</li>
-        <li>Сервера могут меняться, так сервис постоянно добавляет новые и удаляет нерабочие.</li>
-        <li>За стабильность соеденение и скорость интернета сервис не несет гарантию.</li>
-        <li>Мы не храним логи и не отслеживаем вашу активность через VPN и прокси сервера.</li>
-      </ul>
-    </article>
-  </section>`;
-}
-
-function vpnTabScreen() {
-  const v = state.vpn;
-  const source = VPN_SOURCES[v.selectedSource];
-  const servers = v.filtered || [];
-
-  // Фильтр: показываем только online или checking серверы (offline скрываем)
-  // Если проверка ещё не проводилась — показываем все
-  const displayServers = v.latencyChecked || v.latencyChecking
-    ? servers.filter(s => s.online || s.checking)
-    : servers;
-
-  const sourceTabs = Object.entries(VPN_SOURCES)
-    .map(([key, src]) => {
-      const isActive = v.selectedSource === key;
-      return `<button class="vpn-source-tab ${isActive ? "active" : ""}" data-action="vpn-select-source" data-source="${esc(key)}">${esc(src.name)}</button>`;
-    })
-    .join("");
-
-  const stats = v.loading
-    ? `<div class="vpn-stats"><div class="vpn-stat-item"><div class="vpn-stat-label">Серверов</div><div class="vpn-stat-value">-</div></div><div class="vpn-stat-item"><div class="vpn-stat-label">Доступны</div><div class="vpn-stat-value">-</div></div><div class="vpn-stat-item"><div class="vpn-stat-label">Проверка</div><div class="vpn-stat-value">-</div></div></div>`
-    : `<div class="vpn-stats"><div class="vpn-stat-item"><div class="vpn-stat-label">Серверов</div><div class="vpn-stat-value">${esc(servers.length)}</div></div><div class="vpn-stat-item"><div class="vpn-stat-label">Доступны</div><div class="vpn-stat-value online">${esc(v.online)}</div></div><div class="vpn-stat-item"><div class="vpn-stat-label">Проверка</div><div class="vpn-stat-value">${esc(v.checking)}</div></div></div>`;
-
-  // Кнопка проверки пинга вместо поиска
-  const checkPingBtn = v.latencyChecking
-    ? `<div class="vpn-check-btn-wrapper"><button class="vpn-check-btn checking" disabled><span class="vpn-check-spinner"></span> Проверка пинга...</button></div>`
-    : v.latencyChecked
-      ? `<div class="vpn-check-btn-wrapper"><button class="vpn-check-btn checked" disabled><i class="fa-solid fa-check"></i> Пинг проверен</button></div>`
-      : `<div class="vpn-check-btn-wrapper"><button class="vpn-check-btn" data-action="vpn-check-latency"><i class="fa-solid fa-bolt"></i> Проверить пинг</button></div>`;
-
-  const infoNotice = `<article class="card p3 vpn-info-notice">
-    <div class="vpn-info-notice-content">
-      <div class="vpn-info-notice-text">
-        <div>Серверы загружаются из <strong>открытых источников.</strong> Мы не гарантируем работоспособность и стабильность. Пинг — приблизительная оценка. Реальные значения в приложении могут отличаться.</div>
-      </div>
-    </div>
-  </article>`;
-
-  const serverCards = v.loading
-    ? `<div class="vpn-loader-wrapper"><div class="vpn-loader"><div class="vpn-loader-spinner"></div><div class="vpn-loader-text">Загрузка серверов...</div></div></div>`
-    : displayServers.length === 0
-      ? `<div class="vpn-empty">Нет доступных серверов. Попробуйте выбрать другой источник.</div>`
-      : displayServers.map((s) => {
-        let pingClass = "";
-        if (s.ping < 80) pingClass = "ping-good";
-        else if (s.ping < 180) pingClass = "ping-medium";
-        else pingClass = "ping-bad";
-
-        // Формируем теги в зависимости от протокола
-        let protocolTags = `<span class="vpn-tag">${esc(s.protocol.toUpperCase())}</span>`;
-
-        if (s.protocol === "ss") {
-          // Shadowsocks: показываем метод шифрования
-          protocolTags += ` <span class="vpn-tag">${esc(s.method || "aes-256-gcm")}</span>`;
-        } else {
-          // VLESS / Trojan: показываем security и type
-          protocolTags += ` <span class="vpn-tag">${esc(s.security || "tls")}</span>`;
-          protocolTags += ` <span class="vpn-tag">${esc(s.type || "tcp")}</span>`;
-        }
-
-        // Показываем пинг только если была проведена проверка
-        if (v.latencyChecked && s.ping !== null && !s.checking) {
-          protocolTags += ` <span class="vpn-tag ${pingClass}">${esc(s.ping)} ms</span>`;
-        } else if (v.latencyChecked && s.checking) {
-          protocolTags += ` <span class="vpn-tag">checking...</span>`;
-        }
-
-        return `<div class="vpn-server-card">
-            <div class="vpn-server-head">
-              <a href="${esc(s.raw)}" class="vpn-server-link" title="Открыть в клиенте">
-                <div class="vpn-server-info">
-                  <div class="vpn-server-name">${esc(s.name)}</div>
-                  <div class="vpn-server-host">${esc(s.host)}:${esc(s.port)}</div>
-                </div>
-              </a>
-              <button class="vpn-qr-btn mini-btn" data-action="vpn-show-qr" data-raw="${esc(s.raw)}" title="Показать QR-код">
-                <i class="fa-solid fa-qrcode"></i>
-              </button>
-            </div>
-            <div class="vpn-server-meta">
-              ${protocolTags}
-            </div>
-            <button class="vpn-copy-btn mini-btn" data-action="vpn-copy-config" data-raw="${esc(s.raw)}">
-              <i class="fa-solid fa-copy"></i> Копировать конфиг
-            </button>
-          </div>`;
-      }).join("");
-
-  return `<section class="stack vpn-tab-screen">
-    <header class="header">
-      <div class="brand-icon network-brand" style="color:#a78bfa;background:linear-gradient(180deg,rgba(167,139,250,0.24),rgba(109,40,217,0.82));"><i class="fa-solid fa-shield-halved"></i></div>
-      <div class="header-title"><h1>ahmedov.vpn</h1></div>
-    </header>
-    <div class="vpn-sources-wrapper">
-      <div class="vpn-sources-tabs">${sourceTabs}</div>
-    </div>
-    ${stats}
-    ${infoNotice}
-    ${checkPingBtn}
-    <div class="vpn-servers-list">${serverCards}</div>
-  </section>`;
-}
-
-function vpnQrModal(rawUrl) {
-  if (!rawUrl) return "";
-
-  return `<div class="vpn-qr-overlay" data-action="vpn-hide-qr">
-    <article class="vpn-qr-card" data-action="vpn-qr-card">
-      <button class="vpn-qr-close mini-btn" data-action="vpn-hide-qr">×</button>
-      <h3 class="vpn-qr-title">Отсканируйте QR-код</h3>
-      <div id="vpn-qr-container"></div>
-    </article>
-  </div>`;
-}
 
 
-function installGuideModal() {
-  if (!state.installGuideOpen) return "";
-  return `<div class="pwa-install-overlay" data-action="hide-install-guide">
-      <article class="pwa-install-dialog" style="--tint-color:#424ef4;">
-        <button class="pwa-install-close" data-action="hide-install-guide" title="Закрыть">
-          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M5.3 18.7c.2.2.4.3.7.3s.5-.1.7-.3l5.3-5.3 5.3 5.3a1.08 1.08 0 0 0 .7.3 1.08 1.08 0 0 0 .7-.3c.4-.4.4-1 0-1.4L13.4 12l5.3-5.3c.4-.4.4-1 0-1.4s-1-.4-1.4 0L12 10.6 6.7 5.3c-.4-.4-1-.4-1.4 0s-.4 1 0 1.4l5.3 5.3-5.3 5.3c-.4.4-.4 1 0 1.4z" fill="currentColor"/></svg>
-        </button>
-        <div class="pwa-install-header">
-          <div class="pwa-install-icon">
-            <img src="./assets/icons/icon-192.svg" alt="App icon" width="64" height="64" draggable="false" />
-          </div>
-          <div class="pwa-install-about">
-            <div class="pwa-install-name">ahmedov.proxy</div>
-            <div class="pwa-install-desc">Установка приложения</div>
-          </div>
-        </div>
-        <div class="pwa-install-body">
-          <div class="pwa-install-intro">Добавьте сайт на главный экран, чтобы открывать кабинет как отдельное приложение.</div>
-          <div class="pwa-step-list">
-            <div class="pwa-platform">
-              <div class="pwa-platform-head"><span class="pwa-platform-symbol">${pwaSafariSVG()}</span><div><strong>iPhone</strong><span>Safari</span></div></div>
-              <div class="pwa-step-card"><span class="pwa-step-icon">${pwaSafariSVG()}</span><div><strong>Откройте сайт в Safari</strong><span>Установка на iPhone работает через браузер Safari.</span></div></div>
-              <div class="pwa-step-card"><span class="pwa-step-icon">${pwaShareSVG()}</span><div><strong>Нажмите «Поделиться»</strong><span>Кнопка находится в нижней панели браузера.</span></div></div>
-              <div class="pwa-step-card"><span class="pwa-step-icon">${pwaAddSVG()}</span><div><strong>Выберите «На экран Домой»</strong><span>Подтвердите добавление и запустите иконку с главного экрана.</span></div></div>
-            </div>
-            <div class="pwa-platform">
-              <div class="pwa-platform-head"><span class="pwa-platform-symbol"><i class="fa-brands fa-android"></i></span><div><strong>Android</strong><span>Chrome</span></div></div>
-              <div class="pwa-step-card"><span class="pwa-step-icon"><i class="fa-brands fa-chrome"></i></span><div><strong>Откройте сайт в Chrome</strong><span>Лучше использовать Chrome или совместимый браузер.</span></div></div>
-              <div class="pwa-step-card"><span class="pwa-step-icon">${pwaDotsSVG()}</span><div><strong>Откройте меню браузера</strong><span>Нажмите на значок с тремя точками в верхней части экрана.</span></div></div>
-              <div class="pwa-step-card"><span class="pwa-step-icon">${pwaAddSVG()}</span><div><strong>Нажмите «Установить приложение»</strong><span>После установки открывайте кабинет через иконку на главном экране.</span></div></div>
-            </div>
-          </div>
-        </div>
-      </article>
-    </div>`;
-}
-
-function pwaBlockedScreen() {
-  return `
-  <section class="stack">
-    <header class="landing-header">
-      <div class="landing-brand">
-        <div class="brand-icon"><img src="./assets/icons/icon-192.svg" alt="ahmedov.proxy" /></div>
-        <div class="landing-brand-copy">
-          <h1>ahmedov.proxy</h1>
-          <p>Премиум прокси-сервера</p>
-        </div>
-      </div>
-    </header>
-
-    <article class="card p4 stack pwa-lock-card landing-hero landing-shell">
-      <div class="landing-hero-grid">
-        <div class="landing-copy">
-          <h2 class="landing-title">Прокси для Telegram и WhatsApp <span>без блокировок</span></h2>
-          <p class="landing-subtitle">Быстрые, приватные и стабильные прокси-сервера без VPN</p>
-        </div>
-        <div class="landing-visual" aria-hidden="true">
-          <div class="landing-orbit orbit-a"></div>
-          <div class="landing-orbit orbit-b"></div>
-          <div class="landing-bubble tg"><i class="fa-brands fa-telegram"></i></div>
-          <div class="landing-bubble wa"><i class="fa-brands fa-whatsapp"></i></div>
-          <div class="landing-server-stack">
-            <span class="landing-server top"></span>
-            <span class="landing-server middle"></span>
-            <span class="landing-server bottom"></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="landing-feature-grid">
-        <div class="landing-feature-tile"><i class="fa-solid fa-bolt"></i><span>Низкий пинг</span></div>
-        <div class="landing-feature-tile"><i class="fa-solid fa-shield-halved"></i><span>Безопасное подключение</span></div>
-        <div class="landing-feature-tile"><i class="fa-solid fa-earth-europe"></i><span>EU сервера</span></div>
-      </div>
-
-      <button class="btn landing-cta-btn" data-action="go-app-route">
-        <i class="fa-solid fa-bolt"></i>
-        <span>Подключить сейчас</span>
-      </button>
-      <div class="landing-cta-note"><i class="fa-solid fa-lock"></i><span>После перехода откроется личный кабинет: вход, оплата и подключение доступны и в браузере, и в приложении.</span></div>
-    </article>
-
-    <article class="card p3 stack landing-pricing-card">
-      <div class="landing-section-head">
-        <h3>Тарифы</h3>
-        <p>Чем больше срок, тем выгоднее</p>
-      </div>
-      <div class="landing-tariff-grid">
-        <button class="landing-plan-card" data-action="go-app-route">
-          <div class="landing-plan-meta">
-            <strong>90 дней</strong>
-            <span>Оптимальный старт</span>
-            <em>~5.4 ₽ в день</em>
-          </div>
-          <div class="landing-plan-price">490 ₽ <i class="fa-solid fa-angle-right"></i></div>
-        </button>
-        <button class="landing-plan-card landing-plan-card-best" data-action="go-app-route">
-          <div class="landing-plan-badge hot"><i class="fa-solid fa-fire"></i> Самый популярный</div>
-          <div class="landing-plan-meta">
-            <strong>180 дней</strong>
-            <span>Лучшая выгода</span>
-            <em>~3.8 ₽ в день</em>
-          </div>
-          <div class="landing-plan-price best">690 ₽ <i class="fa-solid fa-angle-right"></i></div>
-        </button>
-        <button class="landing-plan-card" data-action="go-app-route">
-          <div class="landing-plan-badge cool"><i class="fa-solid fa-gem"></i> Максимальная выгода</div>
-          <div class="landing-plan-meta">
-            <strong>360 дней</strong>
-            <span>Большая экономия</span>
-            <em>~2.7 ₽ в день</em>
-          </div>
-          <div class="landing-plan-price cool">990 ₽ <i class="fa-solid fa-angle-right"></i></div>
-        </button>
-      </div>
-      <div class="landing-refund-note"><i class="fa-solid fa-shield-heart"></i><span>Гарантия возврата средств 24 часа</span></div>
-    </article>
-
-    <article class="card p3 stack landing-flow-card">
-      <div class="landing-section-head">
-        <h3>Как это работает?</h3>
-      </div>
-      <div class="landing-flow-grid">
-        <div class="landing-flow-step"><div class="landing-flow-icon"><i class="fa-regular fa-credit-card"></i></div><span>1. Оплачиваете тариф</span></div>
-        <div class="landing-flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-        <div class="landing-flow-step"><div class="landing-flow-icon"><i class="fa-regular fa-envelope"></i></div><span>2. Получаете прокси</span></div>
-        <div class="landing-flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-        <div class="landing-flow-step"><div class="landing-flow-icon success"><i class="fa-solid fa-circle-check"></i></div><span>4. Пользуетесь без ограничений</span></div>
-      </div>
-    </article>
-
-    <div class="landing-benefit-grid">
-      <article class="card p3 landing-benefit-card"><i class="fa-solid fa-shield-halved"></i><span>Работает без VPN</span></article>
-      <article class="card p3 landing-benefit-card"><i class="fa-solid fa-gauge-high"></i><span>Высокая скорость</span></article>
-      <article class="card p3 landing-benefit-card"><i class="fa-solid fa-headset"></i><span>Поддержка 24/7</span></article>
-    </div>
-
-  </section>`;
-}
 
 
-function adminUsersSection() {
-  const a = state.admin;
-  const users = sortAdminUsersByDays((a.users || []).filter((u) => (a.userSearch ? String(u.phone || "").includes(a.userSearch.replace(/\D/g, "")) : true)), a.userSort);
-  return `
-  <section class="stack">
-    <article class="card p3 stack">
-      <h3 style="margin:0;font-size:1rem;">Добавить / обновить участника</h3>
-      <input placeholder="+7 900 123 45 67" value="${esc(a.userForm.phone)}" data-input="admin-user-phone" />
-      <div class="grid-2">
-        <input placeholder="Тариф" value="${esc(a.userForm.subscription_type)}" data-input="admin-user-type" />
-        <input placeholder="Дней" type="number" value="${esc(a.userForm.duration_days)}" data-input="admin-user-days" />
-      </div>
-      <div class="grid-2">
-        <button class="btn btn-primary" data-action="admin-save-user">${a.saving ? "Сохраняем..." : "Сохранить участника"}</button>
-        <label class="custom-checkbox" style="font-size:13px;">
-          <input type="checkbox" data-input="admin-user-active" ${a.userForm.is_active ? "checked" : ""} />
-          <span class="custom-box" aria-hidden="true"></span>
-          <span class="label-text">Активный доступ</span>
-        </label>
-      </div>
-    </article>
-    <article class="card p3">
-      <div class="user-search-row">
-        <input placeholder="Поиск по номеру" value="${esc(a.userSearch)}" data-input="admin-user-search" />
-        <button class="mini-btn user-sort-btn ${a.userSort === "asc" ? "is-asc" : ""}" type="button" data-action="admin-user-sort" aria-label="Сортировать по количеству дней" title="${a.userSort === "asc" ? "Сначала меньше дней" : "Сначала больше дней"}">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 5v14" />
-            <path d="m6 13 6 6 6-6" />
-          </svg>
-        </button>
-      </div>
-    </article>
-    ${a.loading
-      ? Array.from({ length: 4 })
-        .map(() => `<div class="card skeleton"></div>`)
-        .join("")
-      : users
-        .map(
-          (u) => `<article class="card p3 stack">
-          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
-            <strong>${esc(u.displayPhone)}</strong>
-            <span class="pill ${u.isActive ? "wa" : ""}" style="${u.isActive ? "" : "background:rgba(248,113,113,.15);color:#fca5a5;"}">${u.isActive ? "Активен" : "Отключён"}</span>
-          </div>
-          ${subscriptionSummary(u)}
-          <button class="mini-btn" data-action="copy-invite" data-code="${esc(u.inviteCode || "")}" style="text-align:left;border:1px solid rgba(100,222,121,.35);background:rgba(100,222,121,.12);color:var(--wa);font-weight:700;">invite: ${esc(u.inviteCode || "—")}</button>
-          <div class="grid-2">
-            <button class="mini-btn" data-action="admin-edit-user" data-phone="${esc(u.phone)}">Изменить</button>
-            <button class="mini-btn" style="background:rgba(239,68,68,.14);color:#fca5a5;" data-action="admin-delete-user" data-phone="${esc(u.phone)}">Удалить</button>
-          </div>
-        </article>`
-        )
-        .join("")
-    }
-  </section>`;
-}
-
-function adminProxiesSection() {
-  const a = state.admin;
-  const rows = (a.proxies || []).filter((p) => p.network === a.proxyFilter);
-  return `
-  <section class="stack">
-    <article class="card p3 stack">
-      <h3 style="margin:0;font-size:1rem;">Добавить / обновить прокси</h3>
-      <div class="grid-1">
-        <div class="radio-toggle-group" role="tablist" aria-label="Выберите сеть">
-          ${["telegram", "whatsapp"]
-      .map((n) => `
-              <button type="button" class="radio-toggle ${a.proxyForm.network === n ? "active" : ""}" data-action="admin-proxy-network-select" data-network="${esc(n)}">${esc(n.charAt(0).toUpperCase() + n.slice(1))}</button>
-            `)
-      .join("")}
-        </div>
-     </div>
-        <input placeholder="Название" value="${esc(a.proxyForm.name)}" data-input="admin-proxy-name" />
-      <div class="grid-2">
-        <input placeholder="host" value="${esc(a.proxyForm.host)}" data-input="admin-proxy-host" />
-        <input placeholder="port" type="number" min="1" max="65535" value="${esc(a.proxyForm.port)}" data-input="admin-proxy-port" />
-      </div>
-      <input placeholder="connect_url" value="${esc(a.proxyForm.connect_url)}" data-input="admin-proxy-url" />
-      <div class="grid-2">
-        <button class="btn btn-primary" data-action="admin-save-proxy">${a.saving ? "Сохраняем..." : "Сохранить прокси"}</button>
-        <label class="custom-checkbox" style="font-size:13px;">
-          <input type="checkbox" data-input="admin-proxy-active" ${a.proxyForm.is_active ? "checked" : ""} />
-          <span class="custom-box" aria-hidden="true"></span>
-          <span class="label-text">Активный</span>
-        </label>
-      </div>
-      <label class="custom-checkbox" style="font-size:13px; margin-top:8px;">
-        <input type="checkbox" data-input="admin-proxy-recommended" ${a.proxyForm.is_recommended ? "checked" : ""} />
-        <span class="custom-box" aria-hidden="true" style="background:linear-gradient(135deg, #fbbf24, #f59e0b);"></span>
-        <span class="label-text" style="color:#fbbf24;">by ahmedov</span>
-      </label>
-    </article>
-    <article class="card p3 stack">
-      <h3 style="margin:0;font-size:1rem;">Массовое добавление прокси</h3>
-      <div class="muted" style="font-size:12px;">Сеть возьмется из текущей вкладки: <strong>${esc(a.proxyFilter)}</strong></div>
-      <div class="muted" style="font-size:12px;">Формат строки: <code>WA Германия | wa2.example.com | 10022 | whatsapp://send?phone=79990000000 | 1</code></div>
-      <div class="muted" style="font-size:12px;">Поля: название | host | port | connect_url | active (1 или 0)</div>
-      <textarea placeholder="WA Германия | wa2.example.com | 10022 | whatsapp://send?phone=79990000000 | 1" data-input="admin-bulk-proxies" style="min-height:120px;resize:vertical;">${esc(a.bulkProxiesText)}</textarea>
-      <button class="btn btn-primary" data-action="admin-import-proxies">${a.saving ? "Импортируем..." : "Импортировать прокси"}</button>
-    </article>
-    <div class="card tabs" style="grid-template-columns: repeat(2, minmax(0, 1fr))">
-      ${["telegram", "whatsapp"]
-      .map((n) => `<button class="${a.proxyFilter === n ? "active" : ""}" data-action="admin-proxy-filter" data-network="${n}">${n}</button>`)
-      .join("")}
-    </div>
-    ${a.loading
-      ? Array.from({ length: 4 })
-        .map(() => `<div class="card skeleton"></div>`)
-        .join("")
-      : rows
-        .map((p) => {
-          const tg = p.network === "telegram";
-          return `<article class="card p3 stack">
-                <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
-                  <strong>${esc(p.name)}</strong>
-                  <div style="display:flex;align-items:center;gap:6px;">
-                    <span class="admin-proxy-status" style="color:${p.isReachable ? "var(--muted)" : "#f87171"};">
-                      <span class="dot ${p.isChecking ? "checking" : p.isUnstable ? "unstable" : p.isReachable ? (tg ? "tg" : "wa") : "off"}"></span>
-                      ${p.isChecking ? "..." : p.isReachable ? `${esc(p.ping)} ms` : "off"}
-                    </span>
-                    <span class="pill ${tg ? "tg" : "wa"}">${esc(p.network)}</span>
-                  </div>
-                </div>
-                <div class="grid-3">
-                  <button class="mini-btn" data-action="admin-edit-proxy" data-id="${esc(p.id)}">Изменить</button>
-                  <button class="mini-btn" data-action="admin-toggle-proxy" data-id="${esc(p.id)}">${p.isActive ? "Откл." : "Вкл."}</button>
-                  <button class="mini-btn" style="background:rgba(239,68,68,.14);color:#fca5a5;" data-action="admin-delete-proxy" data-id="${esc(p.id)}">Удалить</button>
-                </div>
-              </article>`;
-        })
-        .join("")
-    }
-  </section>`;
-}
-
-function adminPromoCodesSection() {
-  const a = state.admin;
-  const planNames = {
-    301: "3 месяца",
-    302: "6 месяцев",
-    303: "12 месяцев",
-  };
-  return `
-  <section class="stack">
-    <article class="card p3 stack">
-      <h3 style="margin:0;font-size:1rem;">Добавить / обновить промокод</h3>
-      <input placeholder="Промокод (например: PREM150)" value="${esc(a.promoForm.code)}" data-input="admin-promo-code" />
-      <div class="radio-toggle-group" style="grid-template-columns: repeat(3, minmax(0, 1fr))" role="tablist" aria-label="Выберите тариф">
-        ${[301, 302, 303]
-      .map((id) =>
-        `<button type="button" class="radio-toggle ${a.promoForm.plan_id === id ? "active" : ""}" data-action="admin-promo-select" data-plan-id="${id}">${esc(planNames[id] || id)}</button>`
-      )
-      .join("")}
-      </div>
-      <input placeholder="Скидка (сумма в рублях, например: 150)" type="number" value="" data-input="admin-promo-discount" />
-      <input placeholder="Цена с промокодом (отображается на сайте, например: 150 ₽)" value="${esc(a.promoForm.price_label)}" data-input="admin-promo-price-label" />
-      <div class="grid-2">
-        <button class="btn btn-primary" data-action="admin-save-promo">${a.saving ? "Сохраняем..." : "Сохранить промокод"}</button>
-        <label class="custom-checkbox" style="font-size:13px;">
-          <input type="checkbox" data-input="admin-promo-active" ${a.promoForm.is_active ? "checked" : ""} />
-          <span class="custom-box" aria-hidden="true"></span>
-          <span class="label-text">Активный промокод</span>
-        </label>
-      </div>
-    </article>
-    ${a.loading
-      ? Array.from({ length: 3 })
-        .map(() => `<div class="card skeleton"></div>`)
-        .join("")
-      : (a.promoCodes || [])
-        .map((p) => `<article class="card p3 stack">
-              <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
-                <div>
-                  <strong style="font-size:16px;">${esc(p.code)}</strong>
-                  <div class="muted" style="font-size:12px;">Тариф: ${esc(planNames[p.plan_id] || p.plan_id)} • ${esc(p.discount_amount || 0)} ₽ скидка • ${esc(p.price_label)}</div>
-                </div>
-                <span class="pill ${p.is_active ? "wa" : ""}" style="${p.is_active ? "" : "background:rgba(248,113,113,.15);color:#fca5a5;"}">${p.is_active ? "Активен" : "Откл."}</span>
-              </div>
-              <div class="grid-3">
-                <button class="mini-btn" data-action="admin-edit-promo" data-id="${esc(p.id)}">Изменить</button>
-                <button class="mini-btn" data-action="admin-toggle-promo" data-id="${esc(p.id)}">${p.is_active ? "Откл." : "Вкл."}</button>
-                <button class="mini-btn" style="background:rgba(239,68,68,.14);color:#fca5a5;" data-action="admin-delete-promo" data-id="${esc(p.id)}">Удалить</button>
-              </div>
-            </article>`)
-        .join("")
-    }
-  </section>`;
-}
-
-function adminScreen() {
-  const a = state.admin;
-  return `
-  <section class="stack">
-    ${header("")}
-    <div class="card tabs">
-      <button class="${a.section === "users" ? "active" : ""}" data-action="admin-section" data-section="users">Участники</button>
-      <button class="${a.section === "proxies" ? "active" : ""}" data-action="admin-section" data-section="proxies">Прокси-серверы</button>
-      <button class="${a.section === "promoCodes" ? "active" : ""}" data-action="admin-section" data-section="promoCodes">Промокоды</button>
-    </div>
-    ${a.message ? `<div class="card p3 muted" style="font-size:12px;">${esc(a.message)}</div>` : ""}
-    ${a.lastInviteCode ? `<div class="card p3"><div class="muted" style="font-size:12px;">Новый invite-код</div><strong style="font-size:20px;color:var(--wa);letter-spacing:.14em;">${esc(a.lastInviteCode)}</strong></div>` : ""}
-    ${a.section === "users" ? adminUsersSection() : a.section === "proxies" ? adminProxiesSection() : adminPromoCodesSection()}
-    <button class="btn btn-logout" data-action="logout">Выйти из аккаунта</button>
-  </section>`;
-}
 
 
-function header(subtitle) {
-  return `<header class="header">
-      <div class="brand-icon"><img src="./assets/icons/icon-192.svg" alt="ahmedov.proxy" /></div>
-      <div class="header-title"><h1>ahmedov.proxy</h1><p>${esc(subtitle || "")}</p></div>
-    </header>`;
-}
+
+
+
+
+
+
 
 
 
@@ -2014,6 +1455,7 @@ async function loadVpnServers(sourceKey) {
   v.online = 0;
   v.latencyChecking = false;
   v.latencyChecked = false;
+  v.limit = VPN_RENDER_STEP;
 
   render();
 
@@ -2283,14 +1725,6 @@ function contactButtons() {
   </div>`;
 }
 
-function isClientUiScreen() {
-  if (isPaymentRoute()) return true;
-  if (state.pwaBlocked) return false;
-  if (state.booting) return true;
-  if (!state.token || !state.user || (state.role !== "admin" && !state.subscription)) return true;
-  if (state.role === "admin") return false;
-  return state.activeTab !== "vpn" && state.activeTab !== "free-vpn";
-}
 
 function planPerMonth(plan) {
   const amount = Number(String(plan?.price || "").replace(/\D+/g, ""));
@@ -2580,9 +2014,10 @@ function bottomBar() {
   const t = state.activeTab;
   const onServers = t === "telegram" || t === "whatsapp";
   const net = state.lastNetwork === "whatsapp" ? "whatsapp" : "telegram";
-  return `<nav class="ui-tabbar" role="tablist" aria-label="Главная навигация">
+  return `<nav class="ui-tabbar four" role="tablist" aria-label="Главная навигация">
     <button class="ui-tab ${t === "home" ? "active" : ""}" role="tab" aria-selected="${t === "home"}" data-action="open-tab" data-tab="home">${uiIcon(t === "home" ? "homeFill" : "home")}Главная</button>
     <button class="ui-tab ${onServers ? "active" : ""}" role="tab" aria-selected="${onServers}" data-action="open-tab" data-tab="${net}">${uiIcon(onServers ? "serversFill" : "servers")}Серверы</button>
+    <button class="ui-tab ${t === "vpn" || t === "free-vpn" ? "active" : ""}" role="tab" aria-selected="${t === "vpn"}" data-action="open-tab" data-tab="vpn">${uiIcon(t === "vpn" || t === "free-vpn" ? "vpnFill" : "vpn")}VPN</button>
     <button class="ui-tab ${t === "account" ? "active" : ""}" role="tab" aria-selected="${t === "account"}" data-action="open-tab" data-tab="account">${uiIcon(t === "account" ? "userFill" : "user")}Аккаунт</button>
   </nav>`;
 }
@@ -2774,6 +2209,580 @@ function plansOverlay() {
   </div>`;
 }
 
+// ==========================
+// UI: стартовая страница, установка, VPN
+// ==========================
+
+Object.assign(UI_ICON_PATHS, {
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+  qr: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2"/>',
+  bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  vpn: '<path d="M12 3 5 6v5c0 4.5 3 8.5 7 10 4-1.5 7-5.5 7-10V6z"/><circle cx="12" cy="11" r="2.5"/>',
+  vpnFill: '<path d="M12 3 5 6v5c0 4.5 3 8.5 7 10 4-1.5 7-5.5 7-10V6z" fill="currentColor"/><circle cx="12" cy="11" r="2.5" fill="var(--ui-bg)" stroke="none"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  chartFill: '<rect x="3" y="10" width="3.5" height="10" rx="1" fill="currentColor"/><rect x="9" y="4" width="3.5" height="16" rx="1" fill="currentColor"/><rect x="15" y="13" width="3.5" height="7" rx="1" fill="currentColor"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.5-5.5 6.5-5.5s5.5 2 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5c2 .6 3.2 2.5 3.8 5.5"/>',
+  usersFill: '<circle cx="9" cy="8" r="3.8" fill="currentColor" stroke="none"/><path d="M2.5 20.5c1-3.8 3.5-6 6.5-6s5.5 2.2 6.5 6z" fill="currentColor" stroke="none"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5c2 .6 3.2 2.5 3.8 5.5"/>',
+  ticket: '<path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="M14 6v12" stroke-dasharray="2 2"/>',
+  ticketFill: '<path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z" fill="currentColor"/>',
+  logout: '<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/>',
+  download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+  share: '<path d="M12 3v12M8 7l4-4 4 4M5 12v8h14v-8"/>',
+  dots: '<circle cx="12" cy="5" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="19" r="1.4" fill="currentColor"/>',
+  addSquare: '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+  card: '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/>',
+});
+
+function landingScreen() {
+  const plans = [
+    { id: 301, name: "90 дней", note: "Оптимальный старт", price: "490 ₽", day: "~5,4 ₽ в день" },
+    { id: 302, name: "180 дней", note: "Самый популярный", price: "690 ₽", day: "~3,8 ₽ в день", save: "−30%" },
+    { id: 303, name: "360 дней", note: "Максимальная выгода", price: "990 ₽", day: "~2,7 ₽ в день", save: "−49%" },
+  ];
+  const step = (n, title, text) => `<div class="ui-step"><span class="ui-step-num">${n}</span><span class="ui-step-text"><b>${title}</b><span>${text}</span></span></div>`;
+  return `<section class="ui-stack">
+    <header class="ui-top">
+      <img class="ui-logo sm" src="./assets/icons/icon-512.svg" alt="" width="48" height="48" />
+      <div class="ui-top-text"><span class="ui-brand" style="font-size:20px;line-height:24px;">ahmedov.proxy</span><span class="ui-sub" style="font-size:13px;">Прокси для Telegram и WhatsApp</span></div>
+      <button class="ui-btn-sm" data-action="go-app-route">Войти</button>
+    </header>
+
+    <article class="ui-hero" style="gap:14px;">
+      <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:10px;">
+        <span class="ui-hero-chip" style="align-self:flex-start;"><i></i>Работает без VPN</span>
+        <h1 style="margin:0;font-size:30px;line-height:35px;font-weight:800;letter-spacing:-0.6px;">Telegram и WhatsApp без блокировок</h1>
+        <span class="ui-hero-cap">Быстрые и стабильные прокси-серверы. Подключение в одно касание.</span>
+      </div>
+      <button class="ui-hero-btn" style="position:relative;z-index:1;height:50px;border-radius:16px;font-size:17px;" data-action="go-app-route">Подключить сейчас</button>
+    </article>
+
+    <div class="ui-grid3">
+      <div class="ui-card ui-feature">${uiIcon("bolt", 22)}<span>Низкий пинг</span></div>
+      <div class="ui-card ui-feature">${uiIcon("shield", 22)}<span>Безопасно</span></div>
+      <div class="ui-card ui-feature">${uiIcon("globe", 22)}<span>EU-серверы</span></div>
+    </div>
+
+    <section class="ui-sec">
+      <div class="ui-sec-head"><h2 class="ui-h2">Тарифы</h2><span class="ui-sub" style="font-size:14px;">Telegram + WhatsApp</span></div>
+      <div class="ui-plans">${plans.map((p) => `<button class="ui-plan" data-action="open-payment-page" data-plan-id="${p.id}">
+        <span class="ui-plan-text">
+          <span class="ui-plan-title">${p.name}${p.save ? `<span class="ui-plan-save">${p.save}</span>` : ""}</span>
+          <span class="ui-plan-sub">${p.note} · ${p.day}</span>
+        </span>
+        <span class="ui-plan-price">${p.price}</span>
+      </button>`).join("")}</div>
+      <p class="ui-caption" style="margin:0;">Гарантия возврата средств в течение 24 часов.</p>
+    </section>
+
+    <section class="ui-sec">
+      <h2 class="ui-h2" style="padding:0 4px;">Как это работает</h2>
+      <div class="ui-card ui-pad ui-steps">
+        ${step(1, "Оплачиваете тариф", "Выберите срок — оплата через поддержку.")}
+        ${step(2, "Получаете код доступа", "8 цифр для входа в приложение.")}
+        ${step(3, "Подключаетесь в один тап", "Выбираете сервер — и мессенджер работает.")}
+      </div>
+    </section>
+
+    <button class="ui-card ui-row-card" data-action="show-install-guide">
+      <span class="ui-row-icon" style="background:var(--ui-accent-btn);">${uiIcon("download", 18, 2.1)}</span>
+      <span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:16px;">Установить приложение</span><span class="ui-sub" style="font-size:13px;">Иконка на экране «Домой» — как обычное приложение</span></span>
+      <span class="ui-chev">${uiIcon("chevron", 14, 2.6)}</span>
+    </button>
+
+    <article class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:12px;">
+      <strong style="font-size:17px;">Остались вопросы?</strong>
+      ${contactButtons()}
+    </article>
+  </section>`;
+}
+
+function installGuideModal() {
+  if (!state.installGuideOpen) return "";
+  const row = (icon, title, text) => `<div class="ui-step"><span class="ui-step-num icon">${icon}</span><span class="ui-step-text"><b>${title}</b><span>${text}</span></span></div>`;
+  return `<div class="ui-layer" data-action="hide-install-guide">
+    <article class="ui-sheet landing-install-card" role="dialog" aria-label="Установка приложения">
+      <span class="ui-grabber" aria-hidden="true"></span>
+      <div class="ui-sheet-head">
+        <button class="ui-sheet-close" data-action="hide-install-guide" aria-label="Закрыть">${uiIcon("close", 14, 3)}</button>
+        <img class="ui-logo" src="./assets/icons/icon-512.svg" alt="" width="72" height="72" style="width:72px;height:72px;border-radius:18px;" />
+        <h2 class="ui-sheet-title">Установка приложения</h2>
+        <span class="ui-sub" style="font-size:15px;">Добавьте кабинет на экран «Домой» — он откроется как отдельное приложение.</span>
+      </div>
+      <span class="ui-label">iPhone · Safari</span>
+      <div class="ui-card ui-pad ui-steps" style="background:var(--ui-fill);box-shadow:none;">
+        ${row(uiIcon("globe", 18), "Откройте сайт в Safari", "Установка на iPhone работает через Safari.")}
+        ${row(uiIcon("share", 18), "Нажмите «Поделиться»", "Кнопка в нижней панели браузера.")}
+        ${row(uiIcon("addSquare", 18), "Выберите «На экран Домой»", "Подтвердите и откройте иконку с главного экрана.")}
+      </div>
+      <span class="ui-label">Android · Chrome</span>
+      <div class="ui-card ui-pad ui-steps" style="background:var(--ui-fill);box-shadow:none;">
+        ${row(uiIcon("globe", 18), "Откройте сайт в Chrome", "Или в другом совместимом браузере.")}
+        ${row(uiIcon("dots", 18), "Откройте меню браузера", "Три точки в верхней части экрана.")}
+        ${row(uiIcon("download", 18), "«Установить приложение»", "Потом открывайте кабинет через иконку.")}
+      </div>
+      <button class="ui-btn" data-action="hide-install-guide">Понятно</button>
+    </article>
+  </div>`;
+}
+
+function pwaBlockedScreen() {
+  return landingScreen();
+}
+
+const VPN_RENDER_STEP = 60;
+
+function vpnTabScreen() {
+  const v = state.vpn;
+  const servers = v.filtered || [];
+  const shown = v.latencyChecked || v.latencyChecking ? servers.filter((s) => s.online || s.checking) : servers;
+  const limit = v.limit || VPN_RENDER_STEP;
+  const visible = shown.slice(0, limit);
+
+  const pingPill = (s) => {
+    if (s.checking) return `<span class="ui-ping checking">проверяем…</span>`;
+    if (!v.latencyChecked || s.ping === null || s.ping === undefined) return "";
+    if (!s.online) return `<span class="ui-ping">нет ответа</span>`;
+    return `<span class="ui-ping ${s.ping < 180 ? "ok" : "slow"}">${esc(s.ping)} мс</span>`;
+  };
+
+  const rows = v.loading
+    ? Array.from({ length: 5 }).map(() => `<div class="ui-skel"></div>`).join("")
+    : !visible.length
+      ? `<div class="ui-card ui-empty">Нет доступных серверов. Выберите другой список.</div>`
+      : `<div class="ui-card ui-servers">${visible.map((s) => {
+        const parts = splitProxyName(s.name);
+        const tag = s.protocol === "ss" ? (s.method || "ss") : `${s.security || "tls"} · ${s.type || "tcp"}`;
+        const copied = v.copiedRaw === s.raw;
+        return `<div class="ui-vpn-row">
+          <span class="ui-cc">${esc(parts.cc || String(s.protocol || "").slice(0, 2).toUpperCase())}</span>
+          <span class="ui-server-text">
+            <span class="ui-server-name">${esc(parts.name)}</span>
+            <span class="ui-server-host">${esc(String(s.protocol || "").toUpperCase())} · ${esc(tag)}</span>
+          </span>
+          ${pingPill(s)}
+          <button class="ui-mini-icon" data-action="vpn-show-qr" data-raw="${esc(s.raw)}" aria-label="QR-код">${uiIcon("qr", 18)}</button>
+          <button class="ui-mini-icon ${copied ? "on" : ""}" data-action="vpn-copy-config" data-raw="${esc(s.raw)}" aria-label="Скопировать конфиг">${uiIcon(copied ? "check" : "copy", 18)}</button>
+        </div>`;
+      }).join("")}</div>`;
+
+  return `<section class="ui-stack">
+    <div style="display:flex;flex-direction:column;gap:2px;padding:0 4px;">
+      <h1 class="ui-h1" style="padding:0;">VPN</h1>
+      <span class="ui-sub" style="font-size:15px;">ahmedov.vpn · бесплатные серверы из открытых источников</span>
+    </div>
+
+    <article class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:14px;">
+      <strong style="font-size:17px;">Быстрая установка</strong>
+      <div class="ui-steps">
+        <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Установите приложение Incy</b><span>Бесплатно в App Store.</span></span><a class="ui-btn-sm soft" href="https://apps.apple.com/ru/app/incy/id6756943388" target="_blank" rel="noopener">App Store</a></div>
+        <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Добавьте подписку</b><span>Все серверы появятся в Incy сами.</span></span><a class="ui-btn-sm" href="incy://add/https://ahmedov.online/vpn/sub.php">Добавить</a></div>
+        <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Выберите быстрый сервер</b><span>В Incy нажмите проверку задержки и подключитесь.</span></span></div>
+      </div>
+    </article>
+
+    <section class="ui-sec">
+      <div class="ui-sec-head"><h2 class="ui-h2">Серверы вручную</h2></div>
+      <div class="ui-chips">
+        ${Object.entries(VPN_SOURCES).map(([key, src]) => `<button class="ui-chip ${v.selectedSource === key ? "on" : ""}" data-action="vpn-select-source" data-source="${esc(key)}">${esc(src.name)}</button>`).join("")}
+      </div>
+      <div class="ui-grid2">
+        <div class="ui-card ui-tile" style="cursor:default;"><span class="ui-tile-label">Серверов</span><span class="ui-tile-value">${v.loading ? "…" : esc(servers.length)}</span></div>
+        <div class="ui-card ui-tile" style="cursor:default;"><span class="ui-tile-label">Доступны</span><span class="ui-tile-value" style="color:var(--ui-green-text);">${v.latencyChecked || v.latencyChecking ? esc(v.online) : "—"}</span></div>
+      </div>
+      <button class="ui-btn ${v.latencyChecked ? "ghost" : ""}" data-action="vpn-check-latency" ${v.latencyChecking || v.latencyChecked || v.loading ? "disabled" : ""}>
+        ${v.latencyChecking ? `<span class="ui-spin"></span>Проверяем пинг…` : v.latencyChecked ? `${uiIcon("check", 18)}Пинг проверен` : `${uiIcon("bolt", 18)}Проверить пинг`}
+      </button>
+      ${rows}
+      ${shown.length > visible.length ? `<button class="ui-btn ghost" data-action="vpn-show-more">Показать ещё (${shown.length - visible.length})</button>` : ""}
+    </section>
+
+    <details class="ui-card ui-details">
+      <summary>Чёрный и белый список — в чём разница?</summary>
+      <p><b>Чёрный список</b> — серверы, которые обходят блокировки сайтов и сервисов. Германия, Нидерланды, США и другие.</p>
+      <p><b>Белый список</b> — для сетей, где открыт только разрешённый список сайтов: мобильный интернет, общественный Wi‑Fi, корпоративные сети.</p>
+    </details>
+    <details class="ui-card ui-details">
+      <summary>Важно знать</summary>
+      <p>Серверы берутся из открытых источников и постоянно меняются. Если сервер не работает — обновите подписку в Incy.</p>
+      <p>Мы не гарантируем скорость и стабильность. Мы не храним логи и не отслеживаем активность.</p>
+    </details>
+  </section>`;
+}
+
+function freeVpnScreen() {
+  return vpnTabScreen();
+}
+
+function vpnQrModal(rawUrl) {
+  if (!rawUrl) return "";
+  return `<div class="ui-layer" data-action="vpn-hide-qr">
+    <article class="ui-sheet" data-action="vpn-qr-card" role="dialog" aria-label="QR-код сервера">
+      <span class="ui-grabber" aria-hidden="true"></span>
+      <div class="ui-sheet-head">
+        <button class="ui-sheet-close" data-action="vpn-hide-qr" aria-label="Закрыть">${uiIcon("close", 14, 3)}</button>
+        <h2 class="ui-sheet-title">QR-код сервера</h2>
+        <span class="ui-sub" style="font-size:15px;">Отсканируйте в приложении Incy или другом VPN-клиенте.</span>
+      </div>
+      <div style="display:flex;justify-content:center;"><div class="ui-qr big" id="vpn-qr-container" role="img" aria-label="QR-код конфигурации"></div></div>
+      <button class="ui-btn ghost" data-action="vpn-copy-config" data-raw="${esc(rawUrl)}">${uiIcon(state.vpn.copiedRaw === rawUrl ? "check" : "copy", 18)}${state.vpn.copiedRaw === rawUrl ? "Скопировано" : "Скопировать конфиг"}</button>
+    </article>
+  </div>`;
+}
+
+// ==========================
+// UI: админка
+// ==========================
+
+const ADMIN_PLAN_NAMES = { 301: "90 дней", 302: "180 дней", 303: "360 дней" };
+
+function adminUserStatus(u) {
+  const days = Number(u.daysLeft);
+  if (!u.isActive) return { cls: "off", text: "Отключён" };
+  if (!Number.isFinite(days) || days <= 0) return { cls: "off", text: "Истекла" };
+  if (days <= 7) return { cls: "slow", text: "Скоро конец" };
+  return { cls: "ok", text: "Активен" };
+}
+
+function adminBuckets(users) {
+  const out = { all: users, active: [], soon: [], off: [], fresh: [] };
+  const monthAgo = Date.now() - 30 * 24 * 3600 * 1000;
+  users.forEach((u) => {
+    const st = adminUserStatus(u).cls;
+    if (st === "ok" || st === "slow") out.active.push(u);
+    if (st === "slow") out.soon.push(u);
+    if (st === "off") out.off.push(u);
+    const created = Date.parse(String(u.createdAt || "").replace(" ", "T") + "Z");
+    if (Number.isFinite(created) && created >= monthAgo) out.fresh.push(u);
+  });
+  return out;
+}
+
+function waLink(phone10, text) {
+  return `https://wa.me/7${String(phone10 || "").replace(/\D/g, "").slice(-10)}?text=${encodeURIComponent(text)}`;
+}
+
+function reminderText(u) {
+  const date = formatDateOnly(u.expiresAt);
+  const payUrl = `${location.origin}${paymentPath()}?phone=${u.phone}`;
+  return `Здравствуйте! Ваша подписка ahmedov.proxy заканчивается ${date}. Продлить можно здесь: ${payUrl}`;
+}
+
+function accessText(phone10, code) {
+  const url = `${location.origin}${appPath()}?phone=${phone10}&invite=${code}`;
+  return `Ваш доступ к ahmedov.proxy готов!\nКод доступа: ${code}\nОткройте ссылку — вход выполнится сам: ${url}`;
+}
+
+function adminTabbar() {
+  const tab = state.admin.tab || "overview";
+  const item = (id, icon, label) => `<button class="ui-tab ${tab === id ? "active" : ""}" role="tab" aria-selected="${tab === id}" data-action="admin-tab" data-tab="${id}">${uiIcon(tab === id ? icon + "Fill" : icon)}${label}</button>`;
+  return `<nav class="ui-tabbar four" role="tablist" aria-label="Разделы админки">
+    ${item("overview", "chart", "Обзор")}
+    ${item("users", "users", "Клиенты")}
+    ${item("proxies", "servers", "Серверы")}
+    ${item("promo", "ticket", "Промо")}
+  </nav>`;
+}
+
+function adminMessage() {
+  const msg = state.admin.message;
+  if (!msg) return "";
+  return `<div class="ui-msg info ui-toast" role="status"><span style="flex:1;">${esc(msg)}</span><button class="ui-mini-icon" data-action="admin-dismiss" aria-label="Скрыть">${uiIcon("close", 14, 2.6)}</button></div>`;
+}
+
+function adminHead(title, actionsHtml = "") {
+  return `<div class="ui-top" style="padding:0 4px;">
+    <h1 class="ui-h1" style="padding:0;flex:1;min-width:0;">${title}</h1>
+    ${actionsHtml}
+  </div>`;
+}
+
+function adminSoonRow(u) {
+  const days = Math.max(0, Number(u.daysLeft) || 0);
+  return `<div class="ui-qrow" style="min-height:62px;">
+    <span class="ui-qrow-text">
+      <span class="ui-qrow-title" style="font-size:16px;">${esc(u.displayPhone)}</span>
+      <span class="ui-qrow-sub">${days} ${ruPlural(days, "день", "дня", "дней")} · до ${esc(formatDateOnly(u.expiresAt))}</span>
+    </span>
+    <a class="ui-mini-icon wa" href="${esc(waLink(u.phone, reminderText(u)))}" target="_blank" rel="noopener" aria-label="Напомнить в WhatsApp">${uiIcon("wa", 18, 2.2)}</a>
+    <button class="ui-btn-sm soft" data-action="admin-extend" data-phone="${esc(u.phone)}" data-days="30">+30 дн.</button>
+  </div>`;
+}
+
+function adminOverview() {
+  const a = state.admin;
+  const users = a.users || [];
+  const b = adminBuckets(users);
+  const proxies = a.proxies || [];
+  const online = proxies.filter((p) => p.isReachable).length;
+  const checking = proxies.some((p) => p.isChecking);
+  const byNet = (net) => {
+    const list = proxies.filter((p) => p.network === net);
+    return `${list.filter((p) => p.isReachable).length}/${list.length}`;
+  };
+  const soon = b.soon.slice().sort((x, y) => Number(x.daysLeft) - Number(y.daysLeft));
+  const isDark = resolvedTheme() === "dark";
+  const tile = (filter, label, value, color, sub) => `<button class="ui-card ui-tile" data-action="admin-users-filter" data-filter="${filter}">
+      <span class="ui-tile-label">${label}</span>
+      <span class="ui-tile-value" style="color:${color};">${value}</span>
+      <span class="ui-sub" style="font-size:13px;">${sub}</span>
+    </button>`;
+
+  return `<section class="ui-stack">
+    <header class="ui-top">
+      <div class="ui-top-text"><span class="ui-sub">${greetingText()}</span><span class="ui-brand">Админка</span></div>
+      <button class="ui-iconbtn" data-action="toggle-theme" aria-label="${isDark ? "Светлая тема" : "Тёмная тема"}">${uiIcon(isDark ? "sun" : "moon", 20)}</button>
+      <button class="ui-iconbtn" data-action="logout" aria-label="Выйти">${uiIcon("logout", 20)}</button>
+    </header>
+    ${adminMessage()}
+
+    <div class="ui-grid2">
+      ${tile("all", "Клиентов", users.length, "var(--ui-text)", `+${b.fresh.length} за 30 дней`)}
+      ${tile("active", "Активных", b.active.length, "var(--ui-green-text)", users.length ? `${Math.round((b.active.length / users.length) * 100)}% от всех` : "—")}
+      ${tile("soon", "Скоро конец", b.soon.length, "var(--ui-orange-text)", "7 дней и меньше")}
+      ${tile("off", "Неактивны", b.off.length, "var(--ui-red)", "истекли или отключены")}
+    </div>
+
+    <button class="ui-card ui-tile" data-action="admin-tab" data-tab="proxies">
+      <span style="display:flex;justify-content:space-between;align-items:center;"><span class="ui-tile-label">Серверы в сети</span><span class="ui-sub" style="font-size:13px;">TG ${byNet("telegram")} · WA ${byNet("whatsapp")}</span></span>
+      <span class="ui-tile-value">${checking && !online ? `<small>Проверяем…</small>` : `${online} <small>из ${proxies.length}</small>`}</span>
+      <span class="ui-bar" aria-hidden="true"><span style="width:${proxies.length ? Math.round((online / proxies.length) * 100) : 0}%"></span></span>
+    </button>
+
+    <div class="ui-grid3">
+      <button class="ui-card ui-feature" data-action="admin-new" data-kind="user">${uiIcon("users", 22)}<span>Клиент</span></button>
+      <button class="ui-card ui-feature" data-action="admin-new" data-kind="proxy">${uiIcon("servers", 22)}<span>Сервер</span></button>
+      <button class="ui-card ui-feature" data-action="admin-new" data-kind="promo">${uiIcon("ticket", 22)}<span>Промокод</span></button>
+    </div>
+
+    <section class="ui-sec">
+      <div class="ui-sec-head"><h2 class="ui-h2">Скоро закончится</h2>${soon.length > 5 ? `<button class="ui-link" data-action="admin-users-filter" data-filter="soon">Все ${soon.length}</button>` : ""}</div>
+      ${soon.length
+      ? `<div class="ui-card ui-list">${soon.slice(0, 5).map(adminSoonRow).join("")}</div>
+           <p class="ui-caption" style="margin:0;">Зелёная кнопка откроет WhatsApp с готовым напоминанием и ссылкой на оплату.</p>`
+      : `<div class="ui-card ui-empty" style="padding:20px;">На этой неделе ни у кого не заканчивается подписка.</div>`}
+    </section>
+  </section>`;
+}
+
+function adminUsersTab() {
+  const a = state.admin;
+  const users = a.users || [];
+  const b = adminBuckets(users);
+  const filter = a.userFilter || "all";
+  const q = String(a.userSearch || "").replace(/\D/g, "");
+  let list = b[filter] || users;
+  if (q) list = list.filter((u) => String(u.phone || "").includes(q));
+  list = sortAdminUsersByDays(list, a.userSort);
+  const chips = [["all", "Все", users.length], ["active", "Активные", b.active.length], ["soon", "Скоро конец", b.soon.length], ["off", "Неактивны", b.off.length]];
+
+  const card = (u) => {
+    const st = adminUserStatus(u);
+    const days = Number(u.daysLeft);
+    return `<article class="ui-card ui-pad ui-admin-card">
+      <div class="ui-admin-card-top">
+        <span class="ui-qrow-text">
+          <span class="ui-qrow-title">${esc(u.displayPhone)}</span>
+          <span class="ui-qrow-sub">${esc(u.subscriptionType || "—")} · до ${esc(formatDateOnly(u.expiresAt))}${Number.isFinite(days) ? ` · ${days} дн.` : ""}</span>
+        </span>
+        <span class="ui-tag ${st.cls}">${st.text}</span>
+      </div>
+      <div class="ui-admin-actions">
+        ${u.inviteCode ? `<button class="ui-code-chip" data-action="copy-invite" data-code="${esc(u.inviteCode)}" aria-label="Скопировать код">${uiIcon("copy", 14)}${esc(u.inviteCode)}</button>` : `<span class="ui-sub" style="font-size:13px;flex:1;">Кода нет</span>`}
+        <a class="ui-mini-icon wa" href="${esc(waLink(u.phone, u.inviteCode ? accessText(u.phone, u.inviteCode) : reminderText(u)))}" target="_blank" rel="noopener" aria-label="Написать в WhatsApp">${uiIcon("wa", 18, 2.2)}</a>
+        <button class="ui-mini-icon" data-action="admin-edit-user" data-phone="${esc(u.phone)}" aria-label="Изменить">${uiIcon("edit", 18)}</button>
+        <button class="ui-mini-icon danger" data-action="admin-delete-user" data-phone="${esc(u.phone)}" aria-label="Удалить">${uiIcon("trash", 18)}</button>
+      </div>
+    </article>`;
+  };
+
+  return `<section class="ui-stack">
+    ${adminHead("Клиенты", `<button class="ui-iconbtn" data-action="admin-sheet" data-sheet="import-users" aria-label="Импорт списком">${uiIcon("download", 20)}</button><button class="ui-iconbtn accent" data-action="admin-new" data-kind="user" aria-label="Добавить клиента">${uiIcon("plus", 22, 2.4)}</button>`)}
+    ${adminMessage()}
+    <div style="display:flex;gap:10px;">
+      <div class="ui-field" style="flex:1;height:48px;border-radius:16px;"><label for="adm-search" style="position:absolute;left:-9999px;">Поиск по номеру</label><input id="adm-search" type="tel" inputmode="numeric" placeholder="Поиск по номеру" value="${esc(a.userSearch)}" data-input="admin-user-search" style="padding-left:16px;font-size:16px;font-weight:500;" /></div>
+      <button class="ui-iconbtn" style="width:48px;height:48px;border-radius:16px;" data-action="admin-user-sort" aria-label="${a.userSort === "asc" ? "Сначала меньше дней" : "Сначала больше дней"}">${uiIcon(a.userSort === "asc" ? "chevron" : "chevron", 18, 2.4).replace("<svg", `<svg style="transform:rotate(${a.userSort === "asc" ? 90 : -90}deg)"`)}</button>
+    </div>
+    <div class="ui-chips">${chips.map(([id, label, n]) => `<button class="ui-chip ${filter === id ? "on" : ""}" data-action="admin-users-filter" data-filter="${id}">${label} · ${n}</button>`).join("")}</div>
+    ${a.loading && !users.length
+      ? Array.from({ length: 4 }).map(() => `<div class="ui-skel" style="height:110px;"></div>`).join("")
+      : list.length ? list.map(card).join("") : `<div class="ui-card ui-empty">Никого не нашли.</div>`}
+  </section>`;
+}
+
+function adminProxiesTab() {
+  const a = state.admin;
+  const net = a.proxyFilter === "whatsapp" ? "whatsapp" : "telegram";
+  const rows = (a.proxies || []).filter((p) => p.network === net);
+  const isTg = net === "telegram";
+  const row = (p) => {
+    const parts = splitProxyName(p.name);
+    const st = proxyStatus(p);
+    return `<article class="ui-card ui-pad ui-admin-card" style="${p.isActive ? "" : "opacity:.62;"}">
+      <div class="ui-admin-card-top">
+        <span class="ui-cc">${esc(parts.cc || (isTg ? "TG" : "WA"))}</span>
+        <span class="ui-qrow-text">
+          <span class="ui-qrow-title" style="display:flex;align-items:center;gap:6px;">${esc(parts.name)}${p.isRecommended ? `<span class="ui-badge">by ahmedov</span>` : ""}</span>
+          <span class="ui-qrow-sub">${esc(p.host)}:${esc(p.port)}</span>
+        </span>
+        <span class="ui-ping ${st.cls}">${esc(st.text)}</span>
+      </div>
+      <div class="ui-admin-actions">
+        <label class="ui-switch-row"><input type="checkbox" class="ui-switch" ${p.isActive ? "checked" : ""} data-action="admin-toggle-proxy" data-id="${esc(p.id)}" aria-label="Показывать клиентам" /><span>${p.isActive ? "Включён" : "Выключен"}</span></label>
+        <button class="ui-mini-icon" data-action="admin-edit-proxy" data-id="${esc(p.id)}" aria-label="Изменить">${uiIcon("edit", 18)}</button>
+        <button class="ui-mini-icon danger" data-action="admin-delete-proxy" data-id="${esc(p.id)}" aria-label="Удалить">${uiIcon("trash", 18)}</button>
+      </div>
+    </article>`;
+  };
+  return `<section class="ui-stack">
+    ${adminHead("Серверы", `<button class="ui-iconbtn" data-action="admin-sheet" data-sheet="import-proxies" aria-label="Импорт списком">${uiIcon("download", 20)}</button><button class="ui-iconbtn accent" data-action="admin-new" data-kind="proxy" aria-label="Добавить сервер">${uiIcon("plus", 22, 2.4)}</button>`)}
+    ${adminMessage()}
+    <div class="ui-seg" role="tablist" aria-label="Мессенджер">
+      <button class="${isTg ? "on" : ""}" role="tab" aria-selected="${isTg}" data-action="admin-proxy-filter" data-network="telegram"><span class="ui-seg-ico tg">${uiIcon("tg", 12)}</span>Telegram</button>
+      <button class="${!isTg ? "on" : ""}" role="tab" aria-selected="${!isTg}" data-action="admin-proxy-filter" data-network="whatsapp"><span class="ui-seg-ico wa">${uiIcon("wa", 12, 2.8)}</span>WhatsApp</button>
+    </div>
+    <p class="ui-caption" style="margin:0;">В сети ${rows.filter((p) => p.isReachable).length} из ${rows.length}. Выключенные серверы клиенты не видят.</p>
+    ${a.loading && !rows.length
+      ? Array.from({ length: 4 }).map(() => `<div class="ui-skel" style="height:110px;"></div>`).join("")
+      : rows.length ? rows.map(row).join("") : `<div class="ui-card ui-empty">Серверов пока нет — добавьте первый.</div>`}
+  </section>`;
+}
+
+function adminPromoTab() {
+  const a = state.admin;
+  const list = a.promoCodes || [];
+  const card = (p) => `<article class="ui-card ui-pad ui-admin-card" style="${p.is_active ? "" : "opacity:.62;"}">
+      <div class="ui-admin-card-top">
+        <span class="ui-qrow-text">
+          <span class="ui-qrow-title" style="font-size:20px;letter-spacing:.06em;">${esc(p.code)}</span>
+          <span class="ui-qrow-sub">${esc(ADMIN_PLAN_NAMES[p.plan_id] || p.plan_id)} · цена ${esc(p.price_label || "—")}${Number(p.discount_amount) ? ` · скидка ${esc(p.discount_amount)} ₽` : ""}</span>
+        </span>
+      </div>
+      <div class="ui-admin-actions">
+        <label class="ui-switch-row"><input type="checkbox" class="ui-switch" ${p.is_active ? "checked" : ""} data-action="admin-toggle-promo" data-id="${esc(p.id)}" aria-label="Промокод активен" /><span>${p.is_active ? "Активен" : "Выключен"}</span></label>
+        <button class="ui-mini-icon" data-action="admin-edit-promo" data-id="${esc(p.id)}" aria-label="Изменить">${uiIcon("edit", 18)}</button>
+        <button class="ui-mini-icon danger" data-action="admin-delete-promo" data-id="${esc(p.id)}" aria-label="Удалить">${uiIcon("trash", 18)}</button>
+      </div>
+    </article>`;
+  return `<section class="ui-stack">
+    ${adminHead("Промокоды", `<button class="ui-iconbtn accent" data-action="admin-new" data-kind="promo" aria-label="Добавить промокод">${uiIcon("plus", 22, 2.4)}</button>`)}
+    ${adminMessage()}
+    <p class="ui-caption" style="margin:0;">Клиент вводит промокод на странице оплаты и видит указанную здесь цену.</p>
+    ${list.length ? list.map(card).join("") : `<div class="ui-card ui-empty">Промокодов пока нет.</div>`}
+  </section>`;
+}
+
+function adminSheet() {
+  const a = state.admin;
+  const kind = a.sheet;
+  if (!kind) return "";
+  const shell = (title, body) => `<div class="ui-layer" data-action="admin-close-sheet">
+    <article class="ui-sheet" data-action="admin-sheet-card" role="dialog" aria-label="${esc(title)}">
+      <span class="ui-grabber" aria-hidden="true"></span>
+      <div class="ui-sheet-head" style="align-items:flex-start;text-align:left;padding-right:40px;">
+        <button class="ui-sheet-close" data-action="admin-close-sheet" aria-label="Закрыть">${uiIcon("close", 14, 3)}</button>
+        <h2 class="ui-sheet-title" style="font-size:22px;">${title}</h2>
+      </div>
+      ${a.message ? `<div class="ui-msg info">${esc(a.message)}</div>` : ""}
+      ${body}
+    </article>
+  </div>`;
+  const field = (id, label, input) => `<div style="display:flex;flex-direction:column;gap:6px;"><label class="ui-label" for="${id}">${label}</label>${input}</div>`;
+  const text = (id, dataInput, value, placeholder, type = "text", extra = "") => `<div class="ui-field" style="height:52px;border-radius:16px;box-shadow:none;background:var(--ui-fill);"><input id="${id}" type="${type}" value="${esc(value)}" placeholder="${esc(placeholder)}" data-input="${dataInput}" style="padding-left:16px;font-size:16px;font-weight:500;" ${extra} /></div>`;
+  const sw = (dataInput, checked, label) => `<label class="ui-switch-row big"><span>${label}</span><input type="checkbox" class="ui-switch" data-input="${dataInput}" ${checked ? "checked" : ""} /></label>`;
+
+  if (kind === "user") {
+    const f = a.userForm;
+    const exists = (a.users || []).some((u) => u.phone === normalizePhone(f.phone));
+    const presets = [30, 90, 180, 360];
+    return shell(exists ? "Изменить клиента" : "Новый клиент", `
+      ${field("adm-u-phone", "Номер телефона", text("adm-u-phone", "admin-user-phone", f.phone, "+7 900 123 45 67", "tel", exists ? "readonly" : ""))}
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <span class="ui-label">${exists ? "Сколько дней будет с сегодняшнего дня" : "Срок подписки"}</span>
+        <div class="ui-chips">${presets.map((d) => `<button class="ui-chip ${Number(f.duration_days) === d ? "on" : ""}" data-action="admin-plan-days" data-days="${d}">${d} дн.</button>`).join("")}</div>
+      </div>
+      <div class="ui-grid2">
+        ${field("adm-u-days", "Дней", text("adm-u-days", "admin-user-days", f.duration_days, "90", "number", 'inputmode="numeric"'))}
+        ${field("adm-u-type", "Название тарифа", text("adm-u-type", "admin-user-type", f.subscription_type, "90 дней"))}
+      </div>
+      ${sw("admin-user-active", f.is_active, "Доступ включён")}
+      <button class="ui-btn" data-action="admin-save-user" ${a.saving ? "disabled" : ""}>${a.saving ? "Сохраняем…" : "Сохранить"}</button>
+      ${exists ? "" : `<p class="ui-caption" style="margin:0;">После сохранения появится код доступа — его можно сразу отправить клиенту в WhatsApp.</p>`}`);
+  }
+
+  if (kind === "invite") {
+    const phone = a.invitePhone || "";
+    const code = a.lastInviteCode || "";
+    return shell("Код доступа готов", `
+      <div class="ui-card ui-amount" style="background:var(--ui-fill);box-shadow:none;">
+        <span class="ui-sub" style="font-size:15px;">${esc(displayPhone(phone))}</span>
+        <span class="ui-invite-code">${esc(code)}</span>
+      </div>
+      <a class="ui-btn wa" href="${esc(waLink(phone, accessText(phone, code)))}" target="_blank" rel="noopener">${uiIcon("wa", 20, 2.2)}Отправить в WhatsApp</a>
+      <button class="ui-btn ghost" data-action="copy-invite" data-code="${esc(code)}">${uiIcon("copy", 18)}Скопировать код</button>
+      <p class="ui-caption" style="margin:0;">В сообщении будет ссылка — по ней клиент войдёт без ввода кода.</p>`);
+  }
+
+  if (kind === "proxy") {
+    const f = a.proxyForm;
+    const isTg = f.network !== "whatsapp";
+    return shell(f.id ? "Изменить сервер" : "Новый сервер", `
+      <div class="ui-seg" role="tablist" aria-label="Мессенджер">
+        <button class="${isTg ? "on" : ""}" data-action="admin-form-network" data-network="telegram"><span class="ui-seg-ico tg">${uiIcon("tg", 12)}</span>Telegram</button>
+        <button class="${!isTg ? "on" : ""}" data-action="admin-form-network" data-network="whatsapp"><span class="ui-seg-ico wa">${uiIcon("wa", 12, 2.8)}</span>WhatsApp</button>
+      </div>
+      ${field("adm-p-name", "Название (можно с флагом 🇷🇺 в начале)", text("adm-p-name", "admin-proxy-name", f.name, "🇷🇺 TG Москва"))}
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:10px;">
+        ${field("adm-p-host", "Хост", text("adm-p-host", "admin-proxy-host", f.host, "proxy.example.com"))}
+        ${field("adm-p-port", "Порт", text("adm-p-port", "admin-proxy-port", f.port, "443", "number", 'inputmode="numeric"'))}
+      </div>
+      ${field("adm-p-url", "Ссылка подключения", text("adm-p-url", "admin-proxy-url", f.connect_url, isTg ? "tg://proxy?server=…" : "https://wa.me/proxy?host=…"))}
+      ${sw("admin-proxy-active", f.is_active, "Показывать клиентам")}
+      ${sw("admin-proxy-recommended", f.is_recommended, "Рекомендуемый (by ahmedov)")}
+      <button class="ui-btn" data-action="admin-save-proxy" ${a.saving ? "disabled" : ""}>${a.saving ? "Сохраняем…" : "Сохранить"}</button>`);
+  }
+
+  if (kind === "promo") {
+    const f = a.promoForm;
+    return shell(f.id ? "Изменить промокод" : "Новый промокод", `
+      ${field("adm-c-code", "Промокод", text("adm-c-code", "admin-promo-code", f.code, "PREM150", "text", 'autocapitalize="characters"'))}
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <span class="ui-label">Тариф</span>
+        <div class="ui-chips">${[301, 302, 303].map((id) => `<button class="ui-chip ${Number(f.plan_id) === id ? "on" : ""}" data-action="admin-promo-select" data-plan-id="${id}">${ADMIN_PLAN_NAMES[id]}</button>`).join("")}</div>
+      </div>
+      <div class="ui-grid2">
+        ${field("adm-c-disc", "Скидка, ₽", text("adm-c-disc", "admin-promo-discount", f.discount_amount || "", "150", "number", 'inputmode="numeric"'))}
+        ${field("adm-c-price", "Цена для клиента", text("adm-c-price", "admin-promo-price-label", f.price_label, "340 ₽"))}
+      </div>
+      ${sw("admin-promo-active", f.is_active, "Промокод активен")}
+      <button class="ui-btn" data-action="admin-save-promo" ${a.saving ? "disabled" : ""}>${a.saving ? "Сохраняем…" : "Сохранить"}</button>`);
+  }
+
+  if (kind === "import-users") {
+    return shell("Импорт клиентов списком", `
+      <p class="ui-caption" style="margin:0;">Одна строка — один клиент: <b>телефон | тариф | дней | активен (1 или 0)</b></p>
+      <textarea class="ui-textarea" data-input="admin-bulk-users" placeholder="79001234567 | 90 дней | 90 | 1">${esc(a.bulkUsersText)}</textarea>
+      <button class="ui-btn" data-action="admin-import-users" ${a.saving ? "disabled" : ""}>${a.saving ? "Импортируем…" : "Импортировать"}</button>`);
+  }
+
+  if (kind === "import-proxies") {
+    return shell("Импорт серверов списком", `
+      <p class="ui-caption" style="margin:0;">Сеть: <b>${a.proxyFilter === "whatsapp" ? "WhatsApp" : "Telegram"}</b> (как на экране «Серверы»). Строка: <b>название | хост | порт | ссылка | активен (1 или 0)</b></p>
+      <textarea class="ui-textarea" data-input="admin-bulk-proxies" placeholder="🇩🇪 WA Германия | wa2.example.com | 10022 | https://wa.me/proxy?host=… | 1">${esc(a.bulkProxiesText)}</textarea>
+      <button class="ui-btn" data-action="admin-import-proxies" ${a.saving ? "disabled" : ""}>${a.saving ? "Импортируем…" : "Импортировать"}</button>`);
+  }
+  return "";
+}
+
+function adminScreen() {
+  const tab = state.admin.tab || "overview";
+  const body = tab === "users" ? adminUsersTab() : tab === "proxies" ? adminProxiesTab() : tab === "promo" ? adminPromoTab() : adminOverview();
+  return body + adminTabbar();
+}
+
 function render() {
   const active = document.activeElement;
   const activeInputKey = active?.dataset?.input || "";
@@ -2805,17 +2814,18 @@ function render() {
       body += bottomBar();
     } else if (state.activeTab === "free-vpn") {
       body = freeVpnScreen();
+      body += bottomBar();
     } else {
       body = serversScreen(state.activeTab);
       body += bottomBar();
     }
   }
 
-  const uiMode = isClientUiScreen();
+  const uiMode = true;
   document.documentElement.classList.toggle("ui-mode", uiMode);
   app.classList.toggle("ui", uiMode);
 
-  app.innerHTML = body + legalModal() + installGuideModal() + (isPaymentRoute() ? "" : plansOverlay()) + (state.vpn.qrModal.open ? vpnQrModal(state.vpn.qrModal.raw) : "") + (state.proxyConnectModal?.open ? proxyConnectModal(state.proxyConnectModal.connectUrl, state.proxyConnectModal.network) : "");
+  app.innerHTML = body + (state.role === "admin" && state.token ? adminSheet() : "") + legalModal() + installGuideModal() + (isPaymentRoute() ? "" : plansOverlay()) + (state.vpn.qrModal.open ? vpnQrModal(state.vpn.qrModal.raw) : "") + (state.proxyConnectModal?.open ? proxyConnectModal(state.proxyConnectModal.connectUrl, state.proxyConnectModal.network) : "");
 
   // Генерация QR-кода после рендера
   if (state.vpn.qrModal.open && state.vpn.qrModal.raw) {
@@ -2825,10 +2835,10 @@ function render() {
         container.innerHTML = "";
         new QRCode(container, {
           text: state.vpn.qrModal.raw,
-          width: 220,
-          height: 220,
-          colorDark: "#ffffff",
-          colorLight: "#1a1a2e",
+          width: 232,
+          height: 232,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.M
         });
       }
@@ -3135,8 +3145,13 @@ async function submitAuth() {
       phoneInput: "",
       hint: "Доступ активирован.",
     });
-    startSessionHeartbeat();
-    ensureHomeProxies();
+    if ((payload.role || "user") === "admin") {
+      stopSessionHeartbeat();
+      await loadAdminAll();
+    } else {
+      startSessionHeartbeat();
+      ensureHomeProxies();
+    }
   } catch (e) {
     if (flow !== authFlowId) return;
     setState({ loadingAuth: false, hint: e.message || "Неверный invite-код." });
@@ -3238,7 +3253,9 @@ app.addEventListener("input", (event) => {
 
   if (input === "admin-user-search") {
     state.admin.userSearch = event.target.value;
-    // Рендер вызывается только при нажатии Enter (обрабатывается ниже)
+    releaseTyping();
+    clearTimeout(window.__admSearchTimer);
+    window.__admSearchTimer = setTimeout(() => render(), 250);
     return;
   }
 
@@ -3709,7 +3726,7 @@ app.addEventListener("click", async (event) => {
 
   if (action === "open-tab") {
     const tab = el.dataset.tab;
-    if (tab === "free-vpn") {
+    if (tab === "free-vpn" || tab === "vpn") {
       refreshVpnSubscription();
     }
     const isNet = ["telegram", "whatsapp"].includes(tab);
@@ -3747,7 +3764,21 @@ app.addEventListener("click", async (event) => {
     const raw = el.dataset.raw;
     if (raw) {
       copyVpnConfig(raw);
+      state.vpn.copiedRaw = raw;
+      render();
+      setTimeout(() => {
+        if (state.vpn.copiedRaw === raw) {
+          state.vpn.copiedRaw = "";
+          render();
+        }
+      }, 1600);
     }
+    return;
+  }
+
+  if (action === "vpn-show-more") {
+    state.vpn.limit = (state.vpn.limit || VPN_RENDER_STEP) + VPN_RENDER_STEP;
+    render();
     return;
   }
 
@@ -3769,6 +3800,57 @@ app.addEventListener("click", async (event) => {
   }
 
   if (state.role !== "admin") return;
+
+  if (action === "admin-tab") {
+    const tab = el.dataset.tab || "overview";
+    setAdmin({ tab, sheet: null });
+    window.scrollTo(0, 0);
+    if (tab === "proxies") await refreshAdminProxies();
+    return;
+  }
+  if (action === "admin-users-filter") {
+    setAdmin({ tab: "users", userFilter: el.dataset.filter || "all" });
+    window.scrollTo(0, 0);
+    return;
+  }
+  if (action === "admin-dismiss") return setAdmin({ message: "" });
+  if (action === "admin-sheet") return setAdmin({ sheet: el.dataset.sheet || null, message: "" });
+  if (action === "admin-close-sheet") {
+    const clickedClose = !!event.target.closest('[data-action="admin-close-sheet"]');
+    if (!clickedClose && event.target.closest('[data-action="admin-sheet-card"]')) return;
+    return setAdmin({ sheet: null });
+  }
+  if (action === "admin-new") {
+    const kind = el.dataset.kind;
+    if (kind === "user") return setAdmin({ message: "", sheet: "user", userForm: { phone: "", subscription_type: "90 дней", duration_days: 90, is_active: true } });
+    if (kind === "proxy") return setAdmin({ message: "", sheet: "proxy", proxyForm: { id: null, network: state.admin.proxyFilter || "telegram", name: "", host: "", port: 443, connect_url: "", is_active: true, is_recommended: false } });
+    if (kind === "promo") return setAdmin({ message: "", sheet: "promo", promoForm: { id: null, code: "", plan_id: 301, discount_amount: 0, price_label: "", is_active: true } });
+    return;
+  }
+  if (action === "admin-plan-days") {
+    const days = Number(el.dataset.days || 0);
+    return setAdmin({ userForm: { ...state.admin.userForm, duration_days: days, subscription_type: `${days} дней` } });
+  }
+  if (action === "admin-form-network") {
+    return setAdmin({ proxyForm: { ...state.admin.proxyForm, network: el.dataset.network === "whatsapp" ? "whatsapp" : "telegram" } });
+  }
+  if (action === "admin-extend") {
+    const u = state.admin.users.find((x) => String(x.phone) === String(el.dataset.phone));
+    if (!u) return;
+    const add = Number(el.dataset.days || 30);
+    const base = Math.max(0, Number(u.daysLeft) || 0);
+    setAdmin({ saving: true });
+    try {
+      await api.adminUpdateUser(state.token, u.phone, { duration_days: base + add, is_active: true, subscription_type: u.subscriptionType });
+      setAdmin({ message: `${u.displayPhone}: подписка продлена на ${add} дней.` });
+      await loadAdminAll();
+    } catch (e) {
+      setAdmin({ message: e.message || "Не удалось продлить подписку." });
+    } finally {
+      setAdmin({ saving: false });
+    }
+    return;
+  }
 
   if (action === "admin-section") {
     setAdmin({ section: el.dataset.section });
@@ -3802,7 +3884,7 @@ app.addEventListener("click", async (event) => {
     if (!code) return;
     try {
       await navigator.clipboard.writeText(code);
-      setAdmin({ message: `Invite-код скопирован: ${code}` });
+      setAdmin({ message: `Код ${code} скопирован.` });
     } catch { }
     return;
   }
@@ -3821,9 +3903,11 @@ app.addEventListener("click", async (event) => {
       if (state.admin.users.some((u) => u.phone === phone)) resp = await api.adminUpdateUser(state.token, phone, payload);
       else resp = await api.adminCreateUser(state.token, { phone, ...payload });
       setAdmin({
-        userForm: { phone: "", subscription_type: "30 дней", duration_days: 30, is_active: true },
-        message: resp?.inviteCode ? `Пользователь сохранён. Новый invite-код: ${resp.inviteCode}` : "Пользователь сохранён.",
+        userForm: { phone: "", subscription_type: "90 дней", duration_days: 90, is_active: true },
+        message: resp?.inviteCode ? "" : "Клиент сохранён.",
         lastInviteCode: resp?.inviteCode || "",
+        invitePhone: phone,
+        sheet: resp?.inviteCode ? "invite" : null,
       });
       await loadAdminAll();
     } catch (e) {
@@ -3854,7 +3938,8 @@ app.addEventListener("click", async (event) => {
       }
       setAdmin({
         bulkUsersText: "",
-        message: `Импортировано участников: ${parsed.rows.length}`,
+        sheet: null,
+        message: `Импортировано клиентов: ${parsed.rows.length}`,
       });
       await loadAdminAll();
     } catch (e) {
@@ -3871,6 +3956,8 @@ app.addEventListener("click", async (event) => {
     if (!u) return;
     setAdmin({
       section: "users",
+      sheet: "user",
+      message: "",
       userForm: {
         phone: displayPhone(u.phone),
         subscription_type: u.subscriptionType,
@@ -3882,10 +3969,11 @@ app.addEventListener("click", async (event) => {
   }
 
   if (action === "admin-delete-user") {
+    if (!window.confirm(`Удалить клиента ${displayPhone(el.dataset.phone)}? Это нельзя отменить.`)) return;
     setAdmin({ saving: true });
     try {
       await api.adminDeleteUser(state.token, el.dataset.phone);
-      setAdmin({ message: "Пользователь удалён." });
+      setAdmin({ message: "Клиент удалён." });
       await loadAdminAll();
     } catch (e) {
       setAdmin({ message: e.message || "Не удалось удалить пользователя." });
@@ -3901,13 +3989,22 @@ app.addEventListener("click", async (event) => {
     const port = parseInt(f.port, 10);
     if (!Number.isFinite(port) || port <= 0 || port > 65535) return setAdmin({ message: "Укажите корректный порт (1–65535)." });
     const payload = { network: f.network, name: f.name.trim(), host: f.host.trim(), port, ping_ms: 40, connect_url: f.connect_url.trim(), is_active: !!f.is_active, is_recommended: !!f.is_recommended, sort_order: 100 };
-    if (f.id) await api.adminUpdateProxy(state.token, f.id, payload);
-    else await api.adminCreateProxy(state.token, payload);
-    setAdmin({
-      proxyForm: { id: null, network: "telegram", name: "", host: "", port: 443, connect_url: "", is_active: true, is_recommended: false },
-      message: "Прокси сохранён.",
-    });
-    await refreshAdminProxies();
+    setAdmin({ saving: true, message: "" });
+    try {
+      if (f.id) await api.adminUpdateProxy(state.token, f.id, payload);
+      else await api.adminCreateProxy(state.token, payload);
+      setAdmin({
+        proxyFilter: f.network,
+        proxyForm: { id: null, network: "telegram", name: "", host: "", port: 443, connect_url: "", is_active: true, is_recommended: false },
+        sheet: null,
+        message: "Сервер сохранён.",
+      });
+      await refreshAdminProxies();
+    } catch (e) {
+      setAdmin({ message: e.message || "Не удалось сохранить сервер." });
+    } finally {
+      setAdmin({ saving: false });
+    }
     return;
   }
 
@@ -3927,7 +4024,8 @@ app.addEventListener("click", async (event) => {
       }
       setAdmin({
         bulkProxiesText: "",
-        message: `Импортировано прокси: ${parsed.rows.length}`,
+        sheet: null,
+        message: `Импортировано серверов: ${parsed.rows.length}`,
       });
       await loadAdminAll();
     } catch (e) {
@@ -3943,6 +4041,8 @@ app.addEventListener("click", async (event) => {
     if (!p) return;
     setAdmin({
       section: "proxies",
+      sheet: "proxy",
+      message: "",
       proxyForm: { id: p.id, network: p.network, name: p.name, host: p.host, port: p.port, connect_url: p.connectUrl, is_active: !!p.isActive, is_recommended: !!p.isRecommended },
     });
     return;
@@ -3964,10 +4064,11 @@ app.addEventListener("click", async (event) => {
   }
 
   if (action === "admin-delete-proxy") {
+    if (!window.confirm("Удалить этот сервер?")) return;
     setAdmin({ saving: true });
     try {
       await api.adminDeleteProxy(state.token, el.dataset.id);
-      setAdmin({ message: "Прокси удалён." });
+      setAdmin({ message: "Сервер удалён." });
       await loadAdminAll();
     } catch (e) {
       setAdmin({ message: e.message || "Не удалось удалить прокси." });
@@ -3988,6 +4089,7 @@ app.addEventListener("click", async (event) => {
       else await api.adminCreatePromoCode(state.token, payload);
       setAdmin({
         promoForm: { id: null, code: "", plan_id: 301, discount_amount: 0, price_label: "", is_active: true },
+        sheet: null,
         message: "Промокод сохранён.",
       });
       await loadAdminAll();
@@ -4004,12 +4106,15 @@ app.addEventListener("click", async (event) => {
     if (!p) return;
     setAdmin({
       section: "promoCodes",
+      sheet: "promo",
+      message: "",
       promoForm: { id: p.id, code: p.code, plan_id: p.plan_id, discount_amount: p.discount_amount, price_label: p.price_label, is_active: !!p.is_active },
     });
     return;
   }
 
   if (action === "admin-delete-promo") {
+    if (!window.confirm("Удалить этот промокод?")) return;
     setAdmin({ saving: true });
     try {
       await api.adminDeletePromoCode(state.token, el.dataset.id);

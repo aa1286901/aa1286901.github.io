@@ -21,18 +21,7 @@
     <link rel="icon" href="./favicon.ico" sizes="any" />
     <link rel="icon" href="./assets/icons/icon-192.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./assets/icons/icon-192.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link id="app-styles" rel="stylesheet" href="./assets/css/styles.css" />
     <link id="app-ui-styles" rel="stylesheet" href="./assets/css/ui.css" />
     <script>
       (function () {
@@ -65,10 +54,6 @@
       }
 
       function loadAppAssets(assetVersion) {
-        const stylesEl = document.getElementById("app-styles");
-        if (stylesEl) {
-          stylesEl.href = `./assets/css/styles.css?v=${encodeURIComponent(assetVersion)}`;
-        }
         const uiStylesEl = document.getElementById("app-ui-styles");
         if (uiStylesEl) {
           uiStylesEl.href = `./assets/css/ui.css?v=${encodeURIComponent(assetVersion)}`;
