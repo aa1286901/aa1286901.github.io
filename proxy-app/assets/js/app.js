@@ -1574,7 +1574,7 @@ function serversScreen(network) {
       : !best ? `<div class="ui-card ui-empty">Серверов пока нет. Загляните чуть позже или напишите в поддержку.</div>` : "";
 
   return `<section class="ui-stack">
-    <h1 class="ui-h1">Серверы</h1>
+    <h1 class="ui-h1">Прокси</h1>
     <div class="ui-seg" role="tablist" aria-label="Мессенджер">
       <button class="${isTg ? "on" : ""}" role="tab" aria-selected="${isTg}" data-action="open-tab" data-tab="telegram"><span class="ui-seg-ico tg">${uiIcon("tg", 12)}</span>Telegram</button>
       <button class="${!isTg ? "on" : ""}" role="tab" aria-selected="${!isTg}" data-action="open-tab" data-tab="whatsapp"><span class="ui-seg-ico wa">${uiIcon("wa", 12, 2.8)}</span>WhatsApp</button>
@@ -1708,7 +1708,7 @@ function bottomBar() {
   const net = state.lastNetwork === "whatsapp" ? "whatsapp" : "telegram";
   return `<nav class="ui-tabbar four" role="tablist" aria-label="Главная навигация">
     <button class="ui-tab ${t === "home" ? "active" : ""}" role="tab" aria-selected="${t === "home"}" data-action="open-tab" data-tab="home">${uiIcon(t === "home" ? "homeFill" : "home")}Главная</button>
-    <button class="ui-tab ${onServers ? "active" : ""}" role="tab" aria-selected="${onServers}" data-action="open-tab" data-tab="${net}">${uiIcon(onServers ? "serversFill" : "servers")}Серверы</button>
+    <button class="ui-tab ${onServers ? "active" : ""}" role="tab" aria-selected="${onServers}" data-action="open-tab" data-tab="${net}">${uiIcon(onServers ? "serversFill" : "servers")}Прокси</button>
     <button class="ui-tab ${t === "vpn" || t === "free-vpn" ? "active" : ""}" role="tab" aria-selected="${t === "vpn"}" data-action="open-tab" data-tab="vpn">${uiIcon(t === "vpn" || t === "free-vpn" ? "vpnFill" : "vpn")}VPN</button>
     <button class="ui-tab ${t === "account" ? "active" : ""}" role="tab" aria-selected="${t === "account"}" data-action="open-tab" data-tab="account">${uiIcon(t === "account" ? "userFill" : "user")}Аккаунт</button>
   </nav>`;
