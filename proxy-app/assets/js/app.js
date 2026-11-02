@@ -54,7 +54,7 @@ const state = {
   proxies: { telegram: [], whatsapp: [] },
   loadingProxyTab: false,
   vpn: { copiedRaw: "" },
-  vpnList: { loading: false, loaded: false, servers: [], total: 0, error: "", expanded: false },
+  vpnList: { loading: false, loaded: false, servers: [], total: 0, error: "", tab: "" },
   proxyConnectModal: { open: false, connectUrl: "", network: "", proxyKey: "", copied: false },
   admin: {
     tab: "overview",
@@ -2093,6 +2093,7 @@ function vpnPaywall() {
     </article>
     <div class="ui-card ui-pad ui-steps">
       ${perk("globe", "Все приложения и сайты", "Instagram, YouTube и другие сервисы — не только мессенджеры.")}
+      ${perk("shield", "Работает при белых списках", "Мобильные серверы подключаются в LTE, даже когда интернет ограничен.")}
       ${perk("refresh", "Серверы обновляются сами", "Нерабочие убираются, новые добавляются в подписку.")}
       ${perk("bolt", "Подключение за минуту", "Приложение Happ или Incy и одна кнопка «Добавить».")}
     </div>
@@ -2117,7 +2118,6 @@ async function loadVpnList(force = false) {
   }
 }
 
-const VPN_LIST_PREVIEW = 14;
 
 function vpnProtocolLabel(s) {
   const p = String(s.protocol || "").toLowerCase();
@@ -2129,42 +2129,58 @@ function vpnProtocolLabel(s) {
   return p.toUpperCase();
 }
 
+function vpnGroupMeta(title) {
+  const t = String(title || "").replace(/[^\p{L}\p{N}\s/]/gu, " ").replace(/\s+/g, " ").trim();
+  if (/мобил/i.test(t)) return { label: "Мобильные · LTE", note: "Работают в мобильном интернете (LTE), даже когда включены белые списки." };
+  if (/быстр/i.test(t)) return { label: "Быстрые", note: t ? `${t}. Для дома и Wi‑Fi.` : "" };
+  if (/vless/i.test(t)) return { label: "Резервные", note: "Если серверы VLESS не подключаются — попробуйте эти." };
+  if (/игр/i.test(t)) return { label: "Игровые", note: "Низкая задержка для игр и звонков (Hysteria2)." };
+  if (/остальн/i.test(t)) return { label: "Остальные", note: "Дополнительные серверы в разных странах." };
+  return { label: t || "Серверы", note: "" };
+}
+
+function vpnGroups(servers) {
+  const groups = [];
+  const auto = [];
+  let current = null;
+  servers.forEach((s) => {
+    if (s.group) {
+      current = { title: s.name, items: [] };
+      groups.push(current);
+      return;
+    }
+    if (s.auto) {
+      auto.push(s);
+      return;
+    }
+    if (!current) {
+      current = { title: /мобил/i.test(s.name) ? "Мобильные" : "Основные", items: [] };
+      groups.push(current);
+    }
+    current.items.push(s);
+  });
+  const out = groups.filter((g) => g.items.length).map((g, i) => ({ id: `g${i}`, ...vpnGroupMeta(g.title), items: g.items }));
+  if (auto.length) out.push({ id: "auto", label: "Авто", note: "Приложение само выбирает самый быстрый сервер из группы.", items: auto });
+  return out;
+}
+
 function vpnServerListSection(locked) {
   const l = state.vpnList;
+  const head = (right = "") => `<div class="ui-sec-head"><h2 class="ui-h2">Серверы</h2>${right}</div>`;
   if (l.loading && !l.loaded) {
-    return `<section class="ui-sec"><h2 class="ui-h2" style="padding:0 4px;">Серверы</h2>${Array.from({ length: 5 }).map(() => `<div class="ui-skel"></div>`).join("")}</section>`;
+    return `<section class="ui-sec">${head()}${Array.from({ length: 4 }).map(() => `<div class="ui-skel"></div>`).join("")}</section>`;
   }
   if (l.error && !l.servers.length) {
-    return `<section class="ui-sec"><h2 class="ui-h2" style="padding:0 4px;">Серверы</h2><div class="ui-card ui-empty">${esc(l.error)}<br><button class="ui-link" data-action="vpn-list-reload" style="margin-top:8px;">Повторить</button></div></section>`;
+    return `<section class="ui-sec">${head()}<div class="ui-card ui-empty">${esc(l.error)}<br><button class="ui-link" data-action="vpn-list-reload" style="margin-top:8px;">Повторить</button></div></section>`;
   }
   if (!l.servers.length) return "";
 
+  const groups = vpnGroups(l.servers);
+  const active = groups.find((g) => g.id === l.tab) || groups[0];
   const countries = new Set(l.servers.filter((s) => !s.group && s.cc && s.cc !== "EU").map((s) => s.cc)).size;
-  const all = l.servers;
-  let shown = all;
-  if (!l.expanded) {
-    let count = 0;
-    shown = [];
-    for (const s of all) {
-      if (!s.group) count += 1;
-      if (count > VPN_LIST_PREVIEW) break;
-      shown.push(s);
-    }
-  }
+  const mobile = groups.find((g) => /мобил/i.test(g.label));
 
-  const blocks = [];
-  let rows = [];
-  const flush = () => {
-    if (rows.length) blocks.push(`<div class="ui-card ui-servers">${rows.join("")}</div>`);
-    rows = [];
-  };
-  shown.forEach((s) => {
-    if (s.group) {
-      flush();
-      blocks.push(`<div class="ui-label" style="padding:6px 6px 0;">${esc(s.name)}</div>`);
-      return;
-    }
-    rows.push(`<div class="ui-vpn-row">
+  const rows = active.items.map((s) => `<div class="ui-vpn-row">
       <span class="ui-cc">${esc(s.cc || "VPN")}</span>
       <span class="ui-server-text">
         <span class="ui-server-name">${esc(s.name)}</span>
@@ -2172,15 +2188,18 @@ function vpnServerListSection(locked) {
       </span>
       ${s.auto ? `<span class="ui-badge">Авто</span>` : ""}
       ${locked ? `<span class="ui-chev" aria-label="Доступно после оплаты">${uiIcon("lock", 16, 2)}</span>` : `<span class="ui-dot ok" aria-hidden="true"></span>`}
-    </div>`);
-  });
-  flush();
+    </div>`).join("");
 
-  const hidden = all.filter((s) => !s.group).length - shown.filter((s) => !s.group).length;
   return `<section class="ui-sec">
-    <div class="ui-sec-head"><h2 class="ui-h2">Серверы</h2><span class="ui-sub" style="font-size:14px;">${l.total} серверов · ${countries} стран</span></div>
-    ${blocks.join("")}
-    ${hidden > 0 ? `<button class="ui-btn ghost" style="height:46px;" data-action="vpn-list-more">Показать все (ещё ${hidden})</button>` : ""}
+    ${head(`<span class="ui-sub" style="font-size:14px;">${l.total} серверов · ${countries} стран</span>`)}
+    ${mobile ? `<div class="ui-msg ok" style="display:flex;gap:10px;align-items:flex-start;"><span style="display:flex;flex-shrink:0;">${uiIcon("check", 18, 2.6)}</span><span><b>Работает при белых списках LTE</b> — ${mobile.items.length} мобильных серверов для мобильного интернета.</span></div>` : ""}
+    <div class="ui-tabs-scroll" role="tablist" aria-label="Группы серверов">
+      ${groups.map((g) => `<button class="ui-chip ${g.id === active.id ? "on" : ""}" role="tab" aria-selected="${g.id === active.id}" data-action="vpn-list-tab" data-tab="${g.id}">${esc(g.label)} · ${g.items.length}</button>`).join("")}
+    </div>
+    <div class="ui-card ui-servers">
+      ${active.note ? `<div class="ui-caption" style="padding:12px 14px 10px;border-bottom:1px solid var(--ui-sep);">${esc(active.note)}</div>` : ""}
+      ${rows}
+    </div>
     <p class="ui-caption" style="margin:0;">${locked ? "Все эти серверы появятся в вашем приложении сразу после оплаты." : "Список обновляется сам — в приложении просто обновите подписку."}</p>
   </section>`;
 }
@@ -2490,11 +2509,20 @@ function adminVpnBlock(u) {
       <span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:16px;">VPN</span>
         <span class="ui-qrow-sub">${active ? `Активен до ${esc(formatDateOnly(u.vpnExpiresAt))} · ${esc(u.vpnDaysLeft)} дн.` : u.vpnExpiresAt ? "Закончился" : "Не подключён"}</span></span>
     </div>
-    <span class="ui-label" style="padding:0;">${active ? "Продлить на" : "Выдать на"}</span>
-    <div class="ui-chips">${[30, 90, 180, 360].map((d) => `<button class="ui-chip" data-action="admin-vpn" data-mode="add" data-days="${d}" data-phone="${esc(u.phone)}">+${d} дн.</button>`).join("")}</div>
+    <label class="ui-label" for="adm-vpn-days" style="padding:0;">Сколько дней VPN будет с сегодняшнего дня</label>
+    <div class="ui-stepper">
+      <button data-action="admin-vpn-step" data-delta="-30" aria-label="Минус 30 дней">−30</button>
+      <button data-action="admin-vpn-step" data-delta="-1" aria-label="Минус 1 день">−1</button>
+      <div class="ui-field"><input id="adm-vpn-days" type="number" inputmode="numeric" min="0" value="${esc(state.admin.vpnDays)}" data-input="admin-vpn-days" /></div>
+      <button data-action="admin-vpn-step" data-delta="1" aria-label="Плюс 1 день">+1</button>
+      <button data-action="admin-vpn-step" data-delta="30" aria-label="Плюс 30 дней">+30</button>
+    </div>
+    <div class="ui-chips">${[30, 90, 180, 360].map((d) => `<button class="ui-chip ${Number(state.admin.vpnDays) === d ? "on" : ""}" data-action="admin-vpn-preset" data-days="${d}">${d} дн.</button>`).join("")}${active ? `<button class="ui-chip" data-action="admin-vpn-preset" data-days="${Math.max(0, Number(u.vpnDaysLeft) || 0) + 30}">+30 к остатку</button>` : ""}</div>
+    <span class="ui-caption" style="padding:0;">${Number(state.admin.vpnDays) > 0 ? `VPN будет до ${esc(formatDateOnly(new Date(Date.now() + Number(state.admin.vpnDays) * 86400000).toISOString()))}` : "0 дней — VPN будет отключён"}</span>
+    <button class="ui-btn" style="height:50px;font-size:16px;" data-action="admin-vpn-save" data-phone="${esc(u.phone)}" ${state.admin.saving ? "disabled" : ""}>${active ? "Сохранить срок VPN" : "Выдать VPN"}</button>
     ${active ? `<div class="ui-grid2">
         <a class="ui-btn wa" style="height:46px;font-size:15px;" href="${esc(waLink(u.phone, sendText))}" target="_blank" rel="noopener">${uiIcon("wa", 18, 2.2)}Отправить</a>
-        <button class="ui-btn ghost" style="height:46px;font-size:15px;" data-action="admin-copy" data-text="${esc(u.vpnUrl || "")}">${uiIcon("copy", 16)}Ссылка</button>
+        <button class="ui-btn ghost" style="height:46px;font-size:15px;background:var(--ui-card);" data-action="admin-copy" data-text="${esc(u.vpnUrl || "")}">${uiIcon("copy", 16)}Ссылка</button>
       </div>
       <div class="ui-grid2">
         <button class="ui-text-btn" style="height:38px;font-size:14px;" data-action="admin-vpn" data-mode="reset" data-phone="${esc(u.phone)}">Новая ссылка</button>
@@ -2532,10 +2560,15 @@ function adminSheet() {
         <span class="ui-label">${exists ? "Сколько дней будет с сегодняшнего дня" : "Срок подписки"}</span>
         <div class="ui-chips">${presets.map((d) => `<button class="ui-chip ${Number(f.duration_days) === d ? "on" : ""}" data-action="admin-plan-days" data-days="${d}">${d} дн.</button>`).join("")}</div>
       </div>
-      <div class="ui-grid2">
-        ${field("adm-u-days", "Дней", text("adm-u-days", "admin-user-days", f.duration_days, "90", "number", 'inputmode="numeric"'))}
-        ${field("adm-u-type", "Название тарифа", text("adm-u-type", "admin-user-type", f.subscription_type, "90 дней"))}
+      <div class="ui-stepper">
+        <button data-action="admin-user-step" data-delta="-30" aria-label="Минус 30 дней">−30</button>
+        <button data-action="admin-user-step" data-delta="-1" aria-label="Минус 1 день">−1</button>
+        <div class="ui-field" style="background:var(--ui-fill);"><label for="adm-u-days" style="position:absolute;left:-9999px;">Дней</label><input id="adm-u-days" type="number" inputmode="numeric" min="0" value="${esc(f.duration_days)}" data-input="admin-user-days" /></div>
+        <button data-action="admin-user-step" data-delta="1" aria-label="Плюс 1 день">+1</button>
+        <button data-action="admin-user-step" data-delta="30" aria-label="Плюс 30 дней">+30</button>
       </div>
+      <span class="ui-caption" style="padding:0 6px;">${Number(f.duration_days) > 0 ? `Прокси будет до ${esc(formatDateOnly(new Date(Date.now() + Number(f.duration_days) * 86400000).toISOString()))}` : "0 дней — подписка закончится сегодня"}</span>
+      ${field("adm-u-type", "Название тарифа", text("adm-u-type", "admin-user-type", f.subscription_type, "90 дней"))}
       ${sw("admin-user-active", f.is_active, "Доступ включён")}
       <button class="ui-btn" data-action="admin-save-user" ${a.saving ? "disabled" : ""}>${a.saving ? "Сохраняем…" : "Сохранить"}</button>
       ${exists ? "" : `<p class="ui-caption" style="margin:0;">После сохранения появится код доступа — его можно сразу отправить клиенту в WhatsApp.</p>`}
@@ -3062,6 +3095,12 @@ app.addEventListener("input", (event) => {
     return;
   }
 
+  if (input === "admin-vpn-days") {
+    state.admin.vpnDays = String(event.target.value).replace(/\D/g, "");
+    releaseTyping();
+    return;
+  }
+
   if (input === "admin-user-type") {
     state.admin.userForm.subscription_type = event.target.value;
     releaseTyping();
@@ -3566,7 +3605,7 @@ app.addEventListener("click", async (event) => {
 
 
 
-  if (action === "vpn-list-more") return setState({ vpnList: { ...state.vpnList, expanded: true } });
+  if (action === "vpn-list-tab") return setState({ vpnList: { ...state.vpnList, tab: el.dataset.tab } });
   if (action === "vpn-list-reload") return loadVpnList(true);
   if (action === "vpn-select-plan") {
     return setState({ vpnPlanId: el.dataset.planId });
@@ -3623,6 +3662,31 @@ app.addEventListener("click", async (event) => {
   }
   if (action === "admin-form-network") {
     return setAdmin({ proxyForm: { ...state.admin.proxyForm, network: el.dataset.network === "whatsapp" ? "whatsapp" : "telegram" } });
+  }
+  if (action === "admin-user-step") {
+    const next = Math.max(0, (Number(state.admin.userForm.duration_days) || 0) + Number(el.dataset.delta || 0));
+    return setAdmin({ userForm: { ...state.admin.userForm, duration_days: next } });
+  }
+  if (action === "admin-vpn-step") {
+    const next = Math.max(0, (Number(state.admin.vpnDays) || 0) + Number(el.dataset.delta || 0));
+    return setAdmin({ vpnDays: next });
+  }
+  if (action === "admin-vpn-preset") return setAdmin({ vpnDays: Number(el.dataset.days || 0) });
+  if (action === "admin-vpn-save") {
+    const phone = el.dataset.phone;
+    const days = Math.max(0, Number(state.admin.vpnDays) || 0);
+    if (days === 0 && !window.confirm(`Отключить VPN у ${displayPhone(phone)}? Ссылка перестанет работать.`)) return;
+    setAdmin({ saving: true });
+    try {
+      await api.adminVpn(state.token, phone, days > 0 ? { mode: "set", days } : { mode: "off" });
+      await loadAdminAll();
+      setAdmin({ message: days > 0 ? `VPN: ${days} ${ruPlural(days, "день", "дня", "дней")} с сегодняшнего дня.` : "VPN отключён." });
+    } catch (e) {
+      setAdmin({ message: e.message || "Не удалось изменить VPN." });
+    } finally {
+      setAdmin({ saving: false });
+    }
+    return;
   }
   if (action === "admin-vpn") {
     const phone = el.dataset.phone;
@@ -3774,6 +3838,7 @@ app.addEventListener("click", async (event) => {
       section: "users",
       sheet: "user",
       message: "",
+      vpnDays: u.vpnActive ? Math.max(0, Number(u.vpnDaysLeft) || 0) : 30,
       userForm: {
         phone: displayPhone(u.phone),
         subscription_type: u.subscriptionType,
