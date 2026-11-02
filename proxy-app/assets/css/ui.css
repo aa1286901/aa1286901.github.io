@@ -452,3 +452,31 @@ html.ui-mode body::after { display: none; }
   backdrop-filter: blur(16px);
   pointer-events: none;
 }
+
+/* Эмблема приложения на входе и на странице оплаты */
+img.ui-logo {
+  display: block;
+  width: 92px;
+  height: 92px;
+  border-radius: 22px;
+  background: none;
+  box-shadow: 0 16px 40px rgba(37, 72, 214, 0.28);
+  object-fit: cover;
+}
+img.ui-logo.sm {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+/* Safari красит подставленный номер в жёлтый — возвращаем цвета темы */
+.ui input:-webkit-autofill,
+.ui input:-webkit-autofill:hover,
+.ui input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--ui-text);
+  -webkit-box-shadow: 0 0 0 1000px var(--ui-card) inset;
+  box-shadow: 0 0 0 1000px var(--ui-card) inset;
+  caret-color: var(--ui-text);
+  transition: background-color 9999s ease-out 0s;
+}
