@@ -3086,12 +3086,12 @@ function ozonOrderView(o, inSheet) {
     </div>
     <a class="ui-btn" href="${esc(o.payUrl)}" target="_blank" rel="noopener" data-action="ozon-pay-open">${uiIcon("bank", 20, 2.1)}Оплатить ${esc(o.amountLabel)} по СБП</a>
     <div class="ui-card ui-pad ui-steps" style="${flat}">
-      <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Нажмите «Оплатить»</b><span>${o.directLink ? `Откроется выбор банка — сумма ${esc(o.amountLabel)} уже указана.` : `Откроется страница Ozon — выберите банк и введите сумму ${esc(o.amountLabel)}.`}</span></span></div>
+      <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Нажмите «Оплатить»</b><span>Откроется страница Ozon — проверьте сумму ${esc(o.amountLabel)} и выберите свой банк.</span></span></div>
       <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Подтвердите платёж в банке</b><span>Получатель — Ozon Банк, перевод по СБП без комиссии.</span></span></div>
       <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Вернитесь сюда</b><span>И нажмите «Я оплатил(а)» — мы сразу получим уведомление.</span></span></div>
     </div>
     <button class="ui-btn ${state.ozonPayOpened === o.token ? "" : "ghost"}" data-action="ozon-claim" data-token="${esc(o.token)}" ${state.ozonClaiming ? "disabled" : ""}>${uiIcon("check", 18, 2.6)}${state.ozonClaiming ? "Отправляем…" : "Я оплатил(а)"}</button>
-    ${o.directLink ? `<details class="ui-card ui-details" style="${flat}">
+    ${o.payUrl ? `<details class="ui-card ui-details" style="${flat}">
         <summary>Оплатить с другого телефона</summary>
         <p>Отсканируйте QR-код камерой или в приложении банка.</p>
         <div class="ui-qr-box" data-qr="${esc(o.payUrl)}"></div>
@@ -3258,13 +3258,6 @@ function adminPaymentsTab() {
     ${head}
     ${adminMessage()}
     ${adminPushCard()}
-    <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:8px;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:16px;">Прямая ссылка СБП</span><span class="ui-sub" style="font-size:13px;">Получает ли сервер у Ozon ссылку qr.nspk.ru с суммой</span></span>
-        <button class="ui-btn-sm soft" data-action="admin-sbp-check" ${a.saving ? "disabled" : ""}>Проверить</button>
-      </div>
-      ${a.sbpCheck ? `<div class="ui-msg ${a.sbpCheck.ok ? "ok" : "err"}" style="white-space:pre-wrap;word-break:break-all;font-size:13px;">${esc(a.sbpCheck.text)}</div>` : ""}
-    </div>
     <section class="ui-sec">
       <div class="ui-sec-head"><h2 class="ui-h2">Заявки</h2><span class="ui-sub" style="font-size:14px;">${claimedCount ? `${claimedCount} оплачено` : pending.length}</span></div>
       ${pending.length ? pendingCards : `<div class="ui-card ui-empty" style="padding:18px;">Новых заявок нет.</div>`}
@@ -4381,22 +4374,6 @@ app.addEventListener("click", async (event) => {
     window.scrollTo(0, 0);
     if (tab === "proxies") await refreshAdminProxies();
     if (tab === "payments") await loadAdminOzon();
-    return;
-  }
-  if (action === "admin-sbp-check") {
-    setAdmin({ saving: true, sbpCheck: null });
-    try {
-      const r = await request("/admin/ozon/sbp-check", { method: "POST", headers: { Authorization: `Bearer ${state.token}` } });
-      const d = r.details || {};
-      const text = r.ok
-        ? `Работает ✅\n${r.link}`
-        : `Не работает ❌\nHTTP: ${d.http ?? "—"}${d.status ? `\nСтатус Ozon: ${d.status}` : ""}${d.curlError ? `\nОшибка: ${d.curlError}` : ""}${d.error ? `\n${d.error}` : ""}${d.body ? `\nОтвет: ${d.body.slice(0, 200)}` : ""}\nQR: ${d.qrId || "—"}`;
-      setAdmin({ sbpCheck: { ok: r.ok, text } });
-    } catch (e) {
-      setAdmin({ sbpCheck: { ok: false, text: e.message || "Не получилось." } });
-    } finally {
-      setAdmin({ saving: false });
-    }
     return;
   }
   if (action === "admin-push-bell") {
