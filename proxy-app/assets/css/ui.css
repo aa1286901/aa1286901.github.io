@@ -618,3 +618,15 @@ div.ui-feature { cursor: default; }
 .ui-combo { display: flex; align-items: center; gap: 12px; padding: 14px 14px 14px 16px; cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; }
 .ui-combo.on { border-color: #5E5CE6; }
 .ui-combo s { opacity: 0.7; }
+
+/* Ожидание подтверждения оплаты */
+.ui-wait { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 28px 20px 24px; text-align: center; }
+.ui-wait-ring { position: relative; width: 92px; height: 92px; border-radius: 50%; display: grid; place-items: center; color: var(--ui-accent); background: rgba(10, 132, 255, 0.12); margin-bottom: 6px; }
+.ui-wait-ring > span { position: absolute; inset: -6px; border-radius: 50%; border: 3px solid rgba(10, 132, 255, 0.18); border-top-color: var(--ui-accent); animation: ui-spin 1.4s linear infinite; }
+.ui-wait-title { font-size: 24px; line-height: 30px; font-weight: 800; letter-spacing: -0.4px; }
+.ui-wait-chip { margin-top: 4px; padding: 8px 14px; border-radius: 999px; background: var(--ui-fill); font-size: 14px; font-weight: 600; color: var(--ui-text); }
+.ui-step-num.icon.done { background: rgba(52, 199, 89, 0.16); color: var(--ui-green-text); }
+.ui-step-num.icon.now { background: rgba(10, 132, 255, 0.14); color: var(--ui-accent); }
+.ui-details .ui-contacts { padding: 0 16px 16px; }
+.ui-qr-box { display: flex; justify-content: center; padding: 4px 16px 18px; }
+.ui-qr-box img, .ui-qr-box canvas { background: #fff; padding: 10px; border-radius: 14px; }

@@ -1313,6 +1313,7 @@ const UI_ICON_PATHS = {
   copy: '<rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  bell: '<path d="M6 9a6 6 0 1 1 12 0c0 5 2 6.5 2 6.5H4S6 14 6 9z"/><path d="M10 19a2 2 0 0 0 4 0"/>',
   shield: '<path d="M12 3 5 6v5c0 4.5 3 8.5 7 10 4-1.5 7-5.5 7-10V6z"/><path d="m9 12 2 2 4-4"/>',
   lock: '<rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
   chat: '<path d="M4 5h16v11H9l-5 4z"/>',
@@ -1437,7 +1438,7 @@ function messageFor(key) {
   }
   if (key === "pay-ozon") {
     const o = ozonCurrent();
-    return `${hello} Я оплатил(а) через Ozon${o ? `: ${o.amountLabel}, ${o.kind === "proxy" ? `прокси ${o.planName}` : o.planName}. Мой номер: ${o.displayPhone}${o.payer ? `, перевод от ${o.payer.replace(/\.$/, "")}` : ""}` : ""}. Чек прикрепляю.`;
+    return `${hello} Я оплатил(а) по СБП${o ? `: ${o.amountLabel}, ${o.kind === "proxy" ? `прокси ${o.planName}` : o.planName}. Мой номер: ${o.displayPhone}` : ""}. Подскажите, когда подтвердится?`;
   }
   if (key === "vpn") {
     const plans = vpnPlans();
@@ -2050,9 +2051,8 @@ function paymentScreen() {
           <div><span>Тариф</span><b>${esc(useCombo ? combo.name : (p.promoData?.name || selectedPlan.name))}</b></div>
           <div><span>К оплате</span><b style="font-size:18px;">${esc(amountLabel)}</b></div>
         </div>` : ""}
-      ${p.ozonEnabled ? `${ozonPayerField("pay-payer")}
-        <button class="ui-btn" data-action="ozon-start" data-kind="${useCombo ? "combo" : "proxy"}" ${p.ozonCreating ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${p.ozonCreating ? "Создаём заявку…" : `Перейти к оплате ${esc(amountLabel)}`}</button>
-        <p class="ui-caption" style="margin:-6px 0 0;text-align:center;">По СБП через Ozon, без комиссии. Подтверждаем обычно за 10–15 минут.</p>` : ""}
+      ${p.ozonEnabled ? `<button class="ui-btn" data-action="ozon-start" data-kind="${useCombo ? "combo" : "proxy"}" ${p.ozonCreating ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${p.ozonCreating ? "Создаём заявку…" : `Оплатить ${esc(amountLabel)} по СБП`}</button>
+        <p class="ui-caption" style="margin:-6px 0 0;text-align:center;">Через приложение вашего банка, без комиссии. Сумма подставится сама.</p>` : ""}
       ${SHOW_SBP_BUTTON && p.paymentEnabled ? `<button class="ui-btn" data-action="payment-create" ${p.creating ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${p.creating ? "Создаём платёж…" : `Оплатить ${esc(amountLabel)} через СБП`}</button>` : ""}
       <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;">
         <strong style="font-size:16px;">${p.ozonEnabled || (SHOW_SBP_BUTTON && p.paymentEnabled) ? "Или оформим вручную" : "Для оплаты напишите нам"}</strong>
@@ -2269,9 +2269,8 @@ function vpnBuyBlock() {
       </button>`;
     }).join("")}</div>
     <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;">
-      ${ozonPayerField("vpn-payer")}
-      <button class="ui-btn" data-action="ozon-start" data-kind="vpn" data-plan-id="${esc(plan.id)}" ${state.ozonCreating ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${state.ozonCreating ? "Создаём заявку…" : `Перейти к оплате ${esc(plan.price)}`}</button>
-      <span class="ui-sub" style="font-size:13px;text-align:center;margin-top:-4px;">По СБП через Ozon, без комиссии. VPN включится после подтверждения.</span>
+      <button class="ui-btn" data-action="ozon-start" data-kind="vpn" data-plan-id="${esc(plan.id)}" ${state.ozonCreating ? "disabled" : ""}>${uiIcon("bank", 20, 2.1)}${state.ozonCreating ? "Создаём заявку…" : `Оплатить ${esc(plan.price)} по СБП`}</button>
+      <span class="ui-sub" style="font-size:13px;text-align:center;margin-top:-4px;">Через приложение вашего банка, без комиссии. VPN включится после подтверждения.</span>
       <span class="ui-label" style="text-align:center;padding-top:4px;">Или напишите нам — сообщение уже готово</span>
       ${contactButtons("vpn")}
     </div>`;
@@ -2936,22 +2935,6 @@ function adminScreen() {
 // ==========================
 
 const OZON_ORDER_KEY = "ahmedov_ozon_order";
-const OZON_PAYER_KEY = "ahmedov_ozon_payer";
-
-function ozonPayerValue() {
-  if (typeof state.ozonPayer !== "string") {
-    try { state.ozonPayer = localStorage.getItem(OZON_PAYER_KEY) || ""; } catch { state.ozonPayer = ""; }
-  }
-  return state.ozonPayer;
-}
-
-function ozonPayerField(id) {
-  return `<div class="ui-form" style="margin-top:0;gap:6px;">
-      <label class="ui-label" for="${id}">От чьего имени будет оплата</label>
-      <div class="ui-field text"><input id="${id}" type="text" autocomplete="name" autocapitalize="words" spellcheck="false" placeholder="Например, Иван И." value="${esc(ozonPayerValue())}" data-input="ozon-payer" /></div>
-      <span class="ui-caption" style="margin:0;padding:0 4px;">Имя и первая буква фамилии — как покажет банк. По нему мы найдём ваш перевод.</span>
-    </div>`;
-}
 let ozonPollTimer = null;
 
 function ozonSaveToken(token) {
@@ -3008,14 +2991,7 @@ function ozonStartPolling(token) {
 }
 
 async function ozonStart(kind, planId) {
-  const payer = String(ozonPayerValue() || "").replace(/\s+/g, " ").trim();
-  if (payer.length < 2 || !/\p{L}{2}/u.test(payer)) {
-    const msg = "Укажите, от чьего имени будет перевод — например, «Иван И.»";
-    if (isPaymentRoute()) return setPaymentPage({ error: msg });
-    return showToast(msg);
-  }
-  try { localStorage.setItem(OZON_PAYER_KEY, payer); } catch { }
-  const body = { kind, plan_id: String(planId || ""), payer };
+  const body = { kind, plan_id: String(planId || "") };
   const headers = {};
   if (kind === "vpn") {
     headers.Authorization = `Bearer ${state.token}`;
@@ -3082,37 +3058,61 @@ function ozonOrderView(o, inSheet) {
       <button class="ui-btn" data-action="ozon-new">Создать новую заявку</button>`;
   }
   const flat = inSheet ? "background:var(--ui-fill);box-shadow:none;" : "";
-  const summary = `<span class="ui-sub" style="font-size:15px;">${esc(o.planName)} · ${esc(o.displayPhone)}</span>
-      ${o.payer ? `<span class="ui-sub" style="font-size:14px;">Перевод от: <b style="color:var(--ui-text);">${esc(o.payer)}</b></span>` : ""}`;
+  const summary = `<span class="ui-sub" style="font-size:15px;">${esc(o.planName)} · ${esc(o.displayPhone)}</span>`;
   if (o.claimedAt) {
-    return `<div class="ui-card ui-amount" style="${flat}">
-        <span class="ui-status-chip"><span class="ui-spin"></span>Проверяем оплату</span>
-        <span class="ui-amount-num" style="font-size:40px;line-height:46px;margin-top:6px;">${esc(o.amountLabel)}</span>
-        ${summary}
-      </div>
-      <div class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:10px;${flat}">
-        <strong style="font-size:17px;">Отправьте чек администратору</strong>
-        <span class="ui-sub" style="font-size:14px;margin-top:-4px;">Скриншот или файл чека из вашего банка. Сообщение уже готово — просто прикрепите чек.</span>
-        ${contactButtons("pay-ozon")}
+    const isVpn = o.kind === "vpn";
+    return `<div class="ui-card ui-wait" style="${flat}">
+        <span class="ui-wait-ring" aria-hidden="true"><span></span>${uiIcon("clock", 34, 2)}</span>
+        <strong class="ui-wait-title">Ждём подтверждения</strong>
+        <span class="ui-sub" style="font-size:15px;text-align:center;">Администратор проверяет ваш платёж <b style="color:var(--ui-text);">${esc(o.amountLabel)}</b></span>
+        <span class="ui-wait-chip">Обычно 15–20 минут · иногда до 24 часов</span>
       </div>
       <div class="ui-card ui-pad ui-steps" style="${flat}">
-        <div class="ui-step"><span class="ui-step-num icon">${uiIcon("clock", 18)}</span><span class="ui-step-text"><b>Обычно подтверждаем за 10–15 минут</b><span>Самое долгое — до 24 часов.</span></span></div>
-        <div class="ui-step"><span class="ui-step-num icon">${uiIcon("check", 18, 2.6)}</span><span class="ui-step-text"><b>${o.kind === "vpn" ? "VPN включится сам" : "Доступ откроется здесь"}</b><span>${o.kind === "vpn" ? "Появится во вкладке VPN — страницу можно закрыть." : "После подтверждения на этой странице появится код входа. Её можно закрыть и открыть позже."}</span></span></div>
-      </div>`;
+        <div class="ui-step"><span class="ui-step-num icon done">${uiIcon("check", 18, 2.8)}</span><span class="ui-step-text"><b>Заявка создана</b><span>${esc(o.planName)} · ${esc(o.displayPhone)}</span></span></div>
+        <div class="ui-step"><span class="ui-step-num icon done">${uiIcon("check", 18, 2.8)}</span><span class="ui-step-text"><b>Вы оплатили</b><span>Отметка получена ${esc(clientTime(o.claimedAt))}</span></span></div>
+        <div class="ui-step"><span class="ui-step-num icon now"><span class="ui-spin"></span></span><span class="ui-step-text"><b>Проверка оплаты</b><span>${isVpn ? "После подтверждения VPN включится сам во вкладке VPN." : "После подтверждения здесь появится доступ — можно закрыть и открыть позже."}</span></span></div>
+      </div>
+      <details class="ui-card ui-details" style="${flat}">
+        <summary>Есть вопрос по оплате?</summary>
+        <p>Напишите нам — сообщение уже готово.</p>
+        ${contactButtons("pay-ozon")}
+      </details>`;
   }
   return `<div class="ui-card ui-amount" style="${flat}">
       <span class="ui-sub" style="font-size:14px;">К оплате</span>
       <span class="ui-amount-num">${esc(o.amountLabel)}</span>
       ${summary}
     </div>
-    <a class="ui-btn" href="${esc(o.payUrl)}" target="_blank" rel="noopener">${uiIcon("bank", 20, 2.1)}Оплатить ${esc(o.amountLabel)} в Ozon</a>
+    <a class="ui-btn" href="${esc(o.payUrl)}" target="_blank" rel="noopener" data-action="ozon-pay-open">${uiIcon("bank", 20, 2.1)}Оплатить ${esc(o.amountLabel)} по СБП</a>
     <div class="ui-card ui-pad ui-steps" style="${flat}">
-      <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Оплатите по СБП</b><span>Откроется страница Ozon — выберите свой банк и переведите ${esc(o.amountLabel)}.</span></span></div>
-      <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Сохраните чек</b><span>Скриншот или файл чека из приложения банка.</span></span></div>
-      <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Вернитесь сюда</b><span>Нажмите «Я оплатил(а)» и отправьте чек администратору.</span></span></div>
+      <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Нажмите «Оплатить»</b><span>${o.directLink ? `Откроется выбор банка — сумма ${esc(o.amountLabel)} уже указана.` : `Откроется страница Ozon — выберите банк и введите сумму ${esc(o.amountLabel)}.`}</span></span></div>
+      <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Подтвердите платёж в банке</b><span>Получатель — Ozon Банк, перевод по СБП без комиссии.</span></span></div>
+      <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Вернитесь сюда</b><span>И нажмите «Я оплатил(а)» — мы сразу получим уведомление.</span></span></div>
     </div>
-    <button class="ui-btn ghost" data-action="ozon-claim" data-token="${esc(o.token)}" ${state.ozonClaiming ? "disabled" : ""}>${uiIcon("check", 18, 2.6)}${state.ozonClaiming ? "Отправляем…" : "Я оплатил(а)"}</button>
+    <button class="ui-btn ${state.ozonPayOpened === o.token ? "" : "ghost"}" data-action="ozon-claim" data-token="${esc(o.token)}" ${state.ozonClaiming ? "disabled" : ""}>${uiIcon("check", 18, 2.6)}${state.ozonClaiming ? "Отправляем…" : "Я оплатил(а)"}</button>
+    ${o.directLink ? `<details class="ui-card ui-details" style="${flat}">
+        <summary>Оплатить с другого телефона</summary>
+        <p>Отсканируйте QR-код камерой или в приложении банка.</p>
+        <div class="ui-qr-box" data-qr="${esc(o.payUrl)}"></div>
+      </details>` : ""}
     <button class="ui-text-btn red" data-action="ozon-cancel" data-token="${esc(o.token)}">Отменить заявку</button>`;
+}
+
+function clientTime(value) {
+  const t = Date.parse(String(value || "").replace(" ", "T") + "Z");
+  if (!Number.isFinite(t)) return "";
+  const d = new Date(t);
+  const pad = (n) => String(n).padStart(2, "0");
+  return `в ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function renderOzonQr() {
+  document.querySelectorAll(".ui-qr-box[data-qr]").forEach((box) => {
+    if (box.dataset.done === box.dataset.qr || typeof QRCode === "undefined") return;
+    box.innerHTML = "";
+    new QRCode(box, { text: box.dataset.qr, width: 200, height: 200, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+    box.dataset.done = box.dataset.qr;
+  });
 }
 
 function ozonSheet() {
@@ -3152,6 +3152,70 @@ async function loadAdminOzon() {
   }
 }
 
+function pushSupported() {
+  return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+}
+
+function urlB64ToUint8Array(b64) {
+  const pad = "=".repeat((4 - (b64.length % 4)) % 4);
+  const raw = atob((b64 + pad).replace(/-/g, "+").replace(/_/g, "/"));
+  return Uint8Array.from(raw, (c) => c.charCodeAt(0));
+}
+
+async function adminPushRefresh() {
+  if (!pushSupported()) return setAdmin({ push: { supported: false } });
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    const sub = reg ? await reg.pushManager.getSubscription() : null;
+    setAdmin({ push: { supported: true, on: !!sub && Notification.permission === "granted", denied: Notification.permission === "denied" } });
+  } catch {
+    setAdmin({ push: { supported: true, on: false } });
+  }
+}
+
+async function adminPushEnable() {
+  setAdmin({ saving: true });
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm !== "granted") throw new Error("Уведомления запрещены. Разрешите их в Настройках iPhone → Уведомления → ahmedov.proxy.");
+    const info = await request("/admin/push", { headers: { Authorization: `Bearer ${state.token}` } });
+    const reg = await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8Array(info.publicKey) });
+    await request("/admin/push/subscribe", { method: "POST", headers: { Authorization: `Bearer ${state.token}` }, body: JSON.stringify({ subscription: sub.toJSON() }) });
+    const test = await request("/admin/push/test", { method: "POST", headers: { Authorization: `Bearer ${state.token}` } });
+    setAdmin({ message: test.sent ? "Уведомления включены — проверочное уже отправлено." : "Подписка сохранена, но проверочное уведомление не дошло. Попробуйте ещё раз." });
+  } catch (e) {
+    setAdmin({ message: e.message || "Не удалось включить уведомления." });
+  } finally {
+    setAdmin({ saving: false });
+    await adminPushRefresh();
+  }
+}
+
+function adminPushCard() {
+  const ps = state.admin.push;
+  if (!ps) return "";
+  if (!ps.supported) {
+    return `<div class="ui-card ui-row-card" style="cursor:default;">
+      <span class="ui-row-icon" style="background:#8E8E93;">${uiIcon("bell", 18, 2.1)}</span>
+      <span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:16px;">Уведомления об оплатах</span><span class="ui-sub" style="font-size:13px;white-space:normal;">На iPhone работают, только если админка добавлена на экран «Домой» (Поделиться → На экран «Домой») и открыта оттуда.</span></span>
+    </div>`;
+  }
+  if (ps.on) {
+    return `<div class="ui-card ui-row-card" style="cursor:default;">
+      <span class="ui-row-icon" style="background:#34C759;">${uiIcon("bell", 18, 2.1)}</span>
+      <span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:16px;">Уведомления включены</span><span class="ui-sub" style="font-size:13px;">Придут, когда клиент нажмёт «Я оплатил(а)»</span></span>
+      <button class="ui-btn-sm soft" data-action="admin-push-test" ${state.admin.saving ? "disabled" : ""}>Проверить</button>
+    </div>`;
+  }
+  return `<button class="ui-card ui-row-card" data-action="admin-push-enable" style="border-color:rgba(10,132,255,.45);" ${state.admin.saving ? "disabled" : ""}>
+      <span class="ui-row-icon" style="background:#0A84FF;">${uiIcon("bell", 18, 2.1)}</span>
+      <span class="ui-qrow-text"><span class="ui-qrow-title" style="font-size:16px;">Включить уведомления об оплатах</span><span class="ui-sub" style="font-size:13px;white-space:normal;">${ps.denied ? "Сейчас запрещены — разрешите в Настройках iPhone → Уведомления." : "Узнавайте сразу, когда клиент оплатил"}</span></span>
+      <span class="ui-chev">${uiIcon("chevron", 14, 2.6)}</span>
+    </button>`;
+}
+
 function adminPaymentsTab() {
   const a = state.admin;
   const z = a.ozon;
@@ -3169,14 +3233,14 @@ function adminPaymentsTab() {
   const pendingCards = pending.map((o) => `<article class="ui-card ui-pad ui-admin-card">
       <div class="ui-admin-card-top">
         <span class="ui-qrow-text">
-          <span class="ui-qrow-title" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">${esc(o.payer || "Имя не указано")} ${kindTag(o)}</span>
-          <span class="ui-qrow-sub" style="white-space:normal;"><b style="color:var(--ui-text);">${esc(o.amountLabel)}</b> · ${esc(o.planName)} · ${esc(o.displayPhone)}${o.promoCode ? ` · промокод ${esc(o.promoCode)}` : ""}</span>
+          <span class="ui-qrow-title" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">${esc(o.amountLabel)} ${kindTag(o)}</span>
+          <span class="ui-qrow-sub" style="white-space:normal;"><b style="color:var(--ui-text);">${esc(o.displayPhone)}</b> · ${esc(o.planName)}${o.payer ? ` · от ${esc(o.payer)}` : ""}${o.promoCode ? ` · промокод ${esc(o.promoCode)}` : ""}</span>
           <span class="ui-qrow-sub">${o.claimedAt ? `<span style="color:var(--ui-orange-text);font-weight:600;">Клиент оплатил · ${esc(adminTime(o.claimedAt))}</span>` : `Заявка создана ${esc(adminTime(o.createdAt))} · ещё не оплачено`}</span>
         </span>
       </div>
       <div class="ui-admin-actions">
         <button class="ui-btn" style="height:42px;font-size:15px;flex:1;" data-action="admin-ozon-confirm" data-id="${o.id}">Подтвердить</button>
-        <a class="ui-mini-icon wa" href="${esc(waLink(o.phone, o.claimedAt ? `Здравствуйте! Проверяем вашу оплату ${o.amountLabel} (${o.planName}). Пришлите, пожалуйста, чек.` : `Здравствуйте! Видим вашу заявку на ${o.planName} (${o.amountLabel}). Подскажите, получилось оплатить?`))}" target="_blank" rel="noopener" aria-label="Написать клиенту">${uiIcon("wa", 18, 2.2)}</a>
+        <a class="ui-mini-icon wa" href="${esc(waLink(o.phone, o.claimedAt ? `Здравствуйте! Не видим вашу оплату ${o.amountLabel} (${o.planName}). Пришлите, пожалуйста, чек.` : `Здравствуйте! Видим вашу заявку на ${o.planName} (${o.amountLabel}). Подскажите, получилось оплатить?`))}" target="_blank" rel="noopener" aria-label="Написать клиенту">${uiIcon("wa", 18, 2.2)}</a>
         <button class="ui-mini-icon danger" data-action="admin-ozon-reject" data-id="${o.id}" aria-label="Отклонить">${uiIcon("close", 16, 2.6)}</button>
       </div>
     </article>`).join("");
@@ -3192,10 +3256,11 @@ function adminPaymentsTab() {
   return `<section class="ui-stack">
     ${head}
     ${adminMessage()}
+    ${adminPushCard()}
     <section class="ui-sec">
       <div class="ui-sec-head"><h2 class="ui-h2">Заявки</h2><span class="ui-sub" style="font-size:14px;">${claimedCount ? `${claimedCount} оплачено` : pending.length}</span></div>
       ${pending.length ? pendingCards : `<div class="ui-card ui-empty" style="padding:18px;">Новых заявок нет.</div>`}
-      ${pending.length ? `<p class="ui-caption" style="margin:0;">Сверьте имя и сумму с уведомлением Ozon (или с чеком клиента) и нажмите «Подтвердить» — доступ выдастся сам. «Ещё не оплачено» — клиент создал заявку, но не нажал «Я оплатил(а)».</p>` : ""}
+      ${pending.length ? `<p class="ui-caption" style="margin:0;">Проверьте поступление этой суммы в Ozon Банке и нажмите «Подтвердить» — доступ выдастся сам. «Ещё не оплачено» — клиент создал заявку, но не нажал «Я оплатил(а)».</p>` : ""}
     </section>
     <section class="ui-sec">
       <div class="ui-sec-head"><h2 class="ui-h2">Оплачено</h2><span class="ui-sub" style="font-size:14px;">${paid.length}</span></div>
@@ -3247,6 +3312,7 @@ function render() {
   app.classList.toggle("ui", uiMode);
 
   if (state.demo && !isPaymentRoute()) body = demoBanner() + body;
+  queueMicrotask(renderOzonQr);
   app.innerHTML = body + ozonSheet() + (state.toast ? `<div class="ui-toast-float" role="status">${esc(state.toast)}</div>` : "") + demoSheet() + (state.role === "admin" && state.token ? adminSheet() : "") + legalModal() + installGuideModal() + (isPaymentRoute() ? "" : plansOverlay()) + (state.proxyConnectModal?.open ? proxyConnectModal(state.proxyConnectModal.connectUrl, state.proxyConnectModal.network) : "");
 
 
@@ -3442,6 +3508,11 @@ async function loadAdminAll() {
   setAdmin({ loading: true });
   try {
     void loadAdminOzon();
+    void adminPushRefresh();
+    if (location.hash === "#payments") {
+      history.replaceState(null, "", location.pathname + location.search);
+      setAdmin({ tab: "payments" });
+    }
     const [u, p, pc] = await Promise.all([api.adminUsers(state.token), api.adminProxies(state.token, "all"), api.adminPromoCodes(state.token)]);
     if (adminProxyRunId !== runId) return;
 
@@ -3670,11 +3741,6 @@ app.addEventListener("input", (event) => {
     return;
   }
 
-  if (input === "ozon-payer") {
-    state.ozonPayer = event.target.value;
-    releaseTyping();
-    return;
-  }
 
   if (input === "admin-vpn-days") {
     state.admin.vpnDays = String(event.target.value).replace(/\D/g, "");
@@ -3854,6 +3920,11 @@ app.addEventListener("click", async (event) => {
     const kind = ["vpn", "combo"].includes(el.dataset.kind) ? el.dataset.kind : "proxy";
     const planId = kind === "vpn" ? el.dataset.planId : (state.paymentPage.selectedPlanId || state.paymentPage.plans?.[0]?.id);
     await ozonStart(kind, planId);
+    return;
+  }
+  if (action === "ozon-pay-open") {
+    state.ozonPayOpened = ozonCurrent()?.token || "";
+    setTimeout(render, 300);
     return;
   }
   if (action === "ozon-claim") {
@@ -4302,6 +4373,19 @@ app.addEventListener("click", async (event) => {
     window.scrollTo(0, 0);
     if (tab === "proxies") await refreshAdminProxies();
     if (tab === "payments") await loadAdminOzon();
+    return;
+  }
+  if (action === "admin-push-enable") {
+    await adminPushEnable();
+    return;
+  }
+  if (action === "admin-push-test") {
+    try {
+      const r = await request("/admin/push/test", { method: "POST", headers: { Authorization: `Bearer ${state.token}` } });
+      setAdmin({ message: r.message || "Отправлено." });
+    } catch (e) {
+      setAdmin({ message: e.message || "Не получилось." });
+    }
     return;
   }
   if (action === "admin-ozon-refresh") {
@@ -4761,6 +4845,20 @@ document.addEventListener("visibilitychange", () => {
     void pollPaymentStatusOnce(state.plansOverlay.payment.token);
   }
 });
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.addEventListener("message", (event) => {
+    const type = event.data?.type;
+    if (state.role !== "admin" || !state.token) return;
+    if (type === "open-payments") {
+      setAdmin({ tab: "payments" });
+      window.scrollTo(0, 0);
+      void loadAdminOzon();
+    } else if (type === "push") {
+      void loadAdminOzon();
+    }
+  });
+}
 
 if ("serviceWorker" in navigator && (window.isSecureContext || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
   window.addEventListener("load", () => {

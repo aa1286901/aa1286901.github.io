@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-// Оплата по СБП через ссылку Ozon с ручным подтверждением.
-// Клиент указывает, от чьего имени будет перевод, платит сумму тарифа по ссылке Ozon,
-// нажимает «Я оплатил(а)» и присылает чек. Администратор видит имя в уведомлении банка
-// и подтверждает заявку в админке — доступ выдаётся автоматически.
+// Оплата по СБП через QR Ozon с ручным подтверждением.
+// Сервер получает у Ozon прямую ссылку СБП (qr.nspk.ru) с суммой заявки, клиент платит,
+// нажимает «Я оплатил(а)» — администратору приходит push-уведомление, он подтверждает
+// заявку в админке, и доступ выдаётся автоматически.
 
 const OZON_ORDER_TTL_HOURS = 24;
 
@@ -52,11 +52,90 @@ function ensure_ozon_schema(): void
     if (!in_array('claimed_at', $cols, true)) {
         $pdo->exec('ALTER TABLE ozon_orders ADD COLUMN claimed_at TEXT DEFAULT NULL');
     }
+    if (!in_array('sbp_url', $cols, true)) {
+        $pdo->exec('ALTER TABLE ozon_orders ADD COLUMN sbp_url TEXT DEFAULT NULL');
+        $pdo->exec('ALTER TABLE ozon_orders ADD COLUMN sbp_at TEXT DEFAULT NULL');
+    }
 }
 
 function ozon_money(int $kop): string
 {
     return number_format($kop / 100, $kop % 100 === 0 ? 0 : 2, ',', ' ') . ' ₽';
+}
+
+// ID QR-кода Ozon из ссылки вида https://finance.ozon.ru/apps/sbp/ozonbankpay/<uuid>
+function ozon_qr_id(): string
+{
+    return preg_match('#([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})#i', ozon_pay_url(), $m) ? strtolower($m[1]) : '';
+}
+
+// Получить у Ozon прямую ссылку СБП (https://qr.nspk.ru/...) на нужную сумму.
+// Это тот же запрос, что делает страница оплаты Ozon. Если не вышло — null, клиенту дадим обычную ссылку.
+function ozon_fetch_sbp_link(int $amountKop): ?string
+{
+    $qrId = ozon_qr_id();
+    if ($qrId === '' || !function_exists('curl_init')) {
+        return null;
+    }
+    $rate = (float) (getenv('OZON_SBP_COMMISSION') ?: '0.019');
+    $base = $amountKop * $rate;
+    foreach (array_unique([(int) round($base), (int) floor($base), (int) ceil($base)]) as $commission) {
+        $ch = curl_init('https://finance.ozon.ru/apps/sbp/api/qrTopUp/sbpCreatePaymentLinkV2');
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 8,
+            CURLOPT_CONNECTTIMEOUT => 4,
+            CURLOPT_HTTPHEADER => [
+                'Accept: application/json',
+                'Content-Type: application/json',
+                'Origin: https://finance.ozon.ru',
+                'Referer: https://finance.ozon.ru/apps/sbp/ozonbankpay/' . $qrId,
+                'x-o3-language: ru',
+                'User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1',
+            ],
+            CURLOPT_POSTFIELDS => json_encode(['input' => [
+                'amount' => $amountKop,
+                'bankName' => 'Сбербанк',
+                'platform' => 'DESKTOP',
+                'paymentMethodInput' => 'NSPK_PAYMENT',
+                'isCommissionPaidByPayer' => false,
+                'scannedQRId' => $qrId,
+                'commissionAmount' => $commission,
+            ]], JSON_UNESCAPED_UNICODE),
+        ]);
+        $raw = curl_exec($ch);
+        curl_close($ch);
+        $res = json_decode((string) $raw, true)['data']['sbpCreatePaymentLinkV2'] ?? null;
+        if (!is_array($res)) {
+            return null; // антибот или Ozon недоступен
+        }
+        if (($res['status'] ?? '') === 'OK_STATUS' && preg_match('#(?:qr\.nspk\.ru/|qr-pay/)([A-Z0-9]{32})#', (string) ($res['paymentLink'] ?? ''), $m)) {
+            return 'https://qr.nspk.ru/' . $m[1];
+        }
+        if (($res['status'] ?? '') !== 'COMMISSION_DISCREPANCY') {
+            return null;
+        }
+    }
+    return null;
+}
+
+// Прямая ссылка для заявки: создаём, если её нет или она старше 6 часов (и клиент ещё не оплатил)
+function ozon_ensure_sbp_link(array $order): array
+{
+    if ((string) $order['status'] !== 'pending' || !empty($order['claimed_at'])) {
+        return $order;
+    }
+    $fresh = !empty($order['sbp_url']) && !empty($order['sbp_at']) && strtotime((string) $order['sbp_at'] . ' UTC') > time() - 6 * 3600;
+    if ($fresh) {
+        return $order;
+    }
+    $url = ozon_fetch_sbp_link((int) $order['amount_kop']);
+    if ($url) {
+        db()->prepare('UPDATE ozon_orders SET sbp_url = :u, sbp_at = CURRENT_TIMESTAMP WHERE id = :id')->execute([':u' => $url, ':id' => $order['id']]);
+        return ozon_find_order((string) $order['token']);
+    }
+    return $order;
 }
 
 // Имя отправителя, как его покажет банк: «Иван И.», «Мария Петровна К.»
@@ -96,7 +175,8 @@ function ozon_order_public(array $o, bool $withCode = false): array
         'payer' => $o['payer'] ?? null,
         'claimedAt' => $o['claimed_at'] ?? null,
         'status' => $status,
-        'payUrl' => ozon_pay_url(),
+        'payUrl' => !empty($o['sbp_url']) ? (string) $o['sbp_url'] : ozon_pay_url(),
+        'directLink' => !empty($o['sbp_url']),
         'phone' => (string) $o['phone'],
         'displayPhone' => display_phone((string) $o['phone']),
         'createdAt' => (string) $o['created_at'],
@@ -108,7 +188,7 @@ function ozon_order_public(array $o, bool $withCode = false): array
     return $data;
 }
 
-function ozon_create_order(string $phone, string $kind, string $planId, ?string $promoCode, string $payer): array
+function ozon_create_order(string $phone, string $kind, string $planId, ?string $promoCode, ?string $payer = null): array
 {
     ensure_ozon_schema();
     if ($kind === 'vpn') {
@@ -159,8 +239,7 @@ function ozon_create_order(string $phone, string $kind, string $planId, ?string 
         AND COALESCE(promo_code, '') = :promo AND created_at >= datetime('now', :ttl) ORDER BY id DESC LIMIT 1");
     $same->execute([':phone' => $phone, ':kind' => $kind, ':plan' => $planId, ':promo' => (string) $promoCode, ':ttl' => '-' . OZON_ORDER_TTL_HOURS . ' hours']);
     if ($existing = $same->fetch()) {
-        db()->prepare('UPDATE ozon_orders SET payer = :payer WHERE id = :id')->execute([':payer' => $payer, ':id' => $existing['id']]);
-        return ozon_find_order((string) $existing['token']);
+        return ozon_ensure_sbp_link($existing);
     }
     $count = db()->prepare("SELECT COUNT(*) FROM ozon_orders WHERE status = 'pending' AND phone = :phone AND created_at >= datetime('now', '-24 hours')");
     $count->execute([':phone' => $phone]);
@@ -175,7 +254,7 @@ function ozon_create_order(string $phone, string $kind, string $planId, ?string 
         ':token' => $token, ':phone' => $phone, ':kind' => $kind, ':plan_id' => $planId,
         ':plan_name' => $name, ':days' => $days, ':amount' => $baseRub * 100, ':promo' => $promoCode, ':payer' => $payer,
     ]);
-    return ozon_find_order($token);
+    return ozon_ensure_sbp_link(ozon_find_order($token));
 }
 
 // Выдать доступ по оплаченной заявке.
@@ -252,7 +331,7 @@ function ozon_handle_routes(string $uri, string $method): void
         if ($phone === '') {
             json_response(['message' => 'Укажите корректный номер телефона'], 422);
         }
-        $payer = ozon_clean_payer((string) ($data['payer'] ?? ''));
+        $payer = trim((string) ($data['payer'] ?? '')) !== '' ? ozon_clean_payer((string) $data['payer']) : null;
         $order = ozon_create_order($phone, $kind, (string) ($data['plan_id'] ?? ''), isset($data['promoCode']) ? (string) $data['promoCode'] : null, $payer);
         json_response(['order' => ozon_order_public($order)], 201);
     }
@@ -274,11 +353,21 @@ function ozon_handle_routes(string $uri, string $method): void
 
     // Клиент сообщает, что перевёл деньги
     if (preg_match('#^/api/ozon/orders/([a-f0-9]{24})/paid$#', $uri, $m) === 1 && $method === 'POST') {
+        $before = ozon_find_order($m[1]);
+        if (!$before) {
+            json_response(['message' => 'Заявка не найдена'], 404);
+        }
         db()->prepare("UPDATE ozon_orders SET claimed_at = COALESCE(claimed_at, CURRENT_TIMESTAMP) WHERE token = :t AND status = 'pending'")
             ->execute([':t' => $m[1]]);
         $order = ozon_find_order($m[1]);
-        if (!$order) {
-            json_response(['message' => 'Заявка не найдена'], 404);
+        if (empty($before['claimed_at']) && (string) $order['status'] === 'pending') {
+            // Push администратору: клиент оплатил, нужно проверить и подтвердить
+            push_notify_admins(
+                'Оплата ' . ozon_money((int) $order['amount_kop']) . ' — проверьте',
+                display_phone((string) $order['phone']) . ' · ' . ((string) $order['kind'] === 'proxy' ? 'Прокси ' : '') . $order['plan_name'] . '. Клиент нажал «Я оплатил(а)».',
+                '#payments',
+                'pay-' . $order['id']
+            );
         }
         json_response(['order' => ozon_order_public($order, true)]);
     }
