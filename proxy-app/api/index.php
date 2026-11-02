@@ -447,7 +447,7 @@ function find_user(string $phone): ?array
     $stmt = db()->prepare(
         'SELECT id, phone, subscription_type, expires_at, is_active, COALESCE(balance, 0) AS balance,
                 invite_code, invite_code_hash, invite_issued_at, invite_used_at, created_at,
-                vpn_expires_at, vpn_token
+                vpn_expires_at, vpn_token, winback_at
          FROM users
          WHERE phone = :phone
          LIMIT 1'
@@ -471,6 +471,7 @@ function user_subscription_payload(array $user): array
         'supportUrl' => config()['support_url'],
         'vpn' => vpn_payload((string) ($user['phone'] ?? '')),
         'vpnPlans' => vpn_plans_payload(),
+        'comboPlans' => combo_plans_payload(),
     ];
 }
 
@@ -795,6 +796,7 @@ function map_user_admin_row(array $row): array
         'inviteIssuedAt' => $row['invite_issued_at'] ?? null,
         'inviteUsedAt' => $row['invite_used_at'] ?? null,
         'createdAt' => (string) ($row['created_at'] ?? ''),
+        'winbackAt' => $row['winback_at'] ?? null,
         'vpnExpiresAt' => $row['vpn_expires_at'] ?? null,
         'vpnDaysLeft' => vpn_days_left($row['vpn_expires_at'] ?? null),
         'vpnActive' => vpn_is_active($row['vpn_expires_at'] ?? null),
@@ -974,6 +976,14 @@ if ($uri === '/api/vpn/servers' && $method === 'GET') {
     json_response(['servers' => $servers, 'total' => $total]);
 }
 
+// Отметить, что клиенту отправили сообщение «вернитесь»
+if (preg_match('#^/api/admin/users/([^/]+)/winback$#', $uri, $wbMatch) === 1 && $method === 'POST') {
+    require_admin();
+    $wbPhone = normalize_phone(urldecode((string) $wbMatch[1]));
+    db()->prepare('UPDATE users SET winback_at = CURRENT_TIMESTAMP WHERE phone = :phone')->execute([':phone' => $wbPhone]);
+    json_response(['ok' => true, 'winbackAt' => gmdate('Y-m-d H:i:s')]);
+}
+
 if (preg_match('#^/api/admin/users/([^/]+)/vpn$#', $uri, $vpnAdminMatch) === 1 && $method === 'POST') {
     require_admin();
     $vpnPhone = normalize_phone(urldecode((string) $vpnAdminMatch[1]));
@@ -1005,6 +1015,7 @@ ozon_handle_routes($uri, $method);
 if ($uri === '/api/plans' && $method === 'GET') {
     json_response(array_merge(plans_payload(), [
         'vpnPlans' => vpn_plans_payload(),
+        'comboPlans' => combo_plans_payload(),
         'ozonEnabled' => ozon_enabled(),
         'banks' => payment_banks_payload(),
         'paymentEnabled' => payment_configured(),
@@ -1409,7 +1420,7 @@ if ($uri === '/api/admin/users' && $method === 'GET') {
     $stmt = db()->query(
         'SELECT id, phone, subscription_type, expires_at, is_active, COALESCE(balance, 0) AS balance,
                 invite_code, invite_code_hash, invite_issued_at, invite_used_at, created_at,
-                vpn_expires_at, vpn_token
+                vpn_expires_at, vpn_token, winback_at
          FROM users
          ORDER BY datetime(created_at) DESC, id DESC'
     );

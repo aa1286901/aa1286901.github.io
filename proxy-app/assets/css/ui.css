@@ -613,3 +613,8 @@ div.ui-feature { cursor: default; }
 
 .ui-tabbar.five { grid-template-columns: repeat(5, minmax(0, 1fr)); max-width: 480px; gap: 2px; }
 .ui-tabbar.five .ui-tab { font-size: 10px; border-radius: 22px; }
+
+/* Комплект «Прокси + VPN» на странице оплаты */
+.ui-combo { display: flex; align-items: center; gap: 12px; padding: 14px 14px 14px 16px; cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; }
+.ui-combo.on { border-color: #5E5CE6; }
+.ui-combo s { opacity: 0.7; }
