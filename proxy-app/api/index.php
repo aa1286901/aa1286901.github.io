@@ -1238,7 +1238,7 @@ if ($uri === '/api/auth/invite' && $method === 'POST') {
     }
 
     if (!hash_equals($storedCode, $code)) {
-        json_response(['message' => 'Неверный invite-код.'], 403);
+        json_response(['message' => 'Неверный код доступа.'], 403);
     }
 
     // Просто помечаем invite-код как использованный, НЕ генерируем новый
