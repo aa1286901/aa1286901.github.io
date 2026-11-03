@@ -2390,7 +2390,7 @@ function vpnPaywall() {
       ${perk("globe", "Все приложения и сайты", "Instagram, YouTube и другие сервисы — не только мессенджеры.")}
       ${perk("shield", "Работает при белых списках", "Мобильные серверы подключаются в LTE, даже когда интернет ограничен.")}
       ${perk("refresh", "Серверы обновляются сами", "Нерабочие убираются, новые добавляются в подписку.")}
-      ${perk("bolt", "Подключение за минуту", "Приложение Happ или Incy и одна кнопка «Добавить».")}
+      ${perk("bolt", "Подключение за минуту", "Бесплатное приложение v2RAGE и одна кнопка «Добавить».")}
     </div>
     ${vpnServerListSection(true)}
     ${vpnComboOffer()}
@@ -2523,15 +2523,13 @@ function vpnTabScreen() {
     <article class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:14px;">
       <strong style="font-size:17px;">Подключение за минуту</strong>
       <div class="ui-steps">
-        <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Установите Happ или Incy</b><span>Бесплатно в App Store и Google Play.</span></span></div>
-        <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Добавьте свою подписку</b><span>Нажмите кнопку своего приложения ниже.</span></span></div>
-        <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Включите VPN</b><span>Лучший сервер выберется автоматически.</span></span></div>
+        <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Установите v2RAGE</b><span>Бесплатно в App Store — кнопка ниже.</span></span></div>
+        <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Нажмите «Добавить в v2RAGE»</b><span>Приложение откроется и спросит — подтвердите добавление.</span></span></div>
+        <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Выберите сервер и включите VPN</b><span>При ограничениях мобильного интернета — серверы «Мобильный».</span></span></div>
       </div>
-      <div class="ui-grid2">
-        <a class="ui-btn" style="height:50px;font-size:16px;" ${demoLock(`happ://add/${sub.subUrl || ""}`)}>Добавить в Happ</a>
-        <a class="ui-btn" style="height:50px;font-size:16px;" ${demoLock(`incy://add/${sub.subUrl || ""}`)}>Добавить в Incy</a>
-      </div>
-      <a class="ui-btn ghost" style="height:44px;font-size:14px;" href="https://apps.apple.com/ru/app/incy/id6756943388" target="_blank" rel="noopener">Скачать Incy в App Store</a>
+      <a class="ui-btn ghost" style="height:50px;font-size:16px;" href="${V2RAGE_STORE_URL}" target="_blank" rel="noopener">${uiIcon("download", 18, 2.1)}Скачать v2RAGE в App Store</a>
+      <a class="ui-btn" style="height:54px;font-size:17px;" ${demoLock(v2rageImportUrl(sub.subUrl))}>${uiIcon("plus", 18, 2.4)}Добавить в v2RAGE</a>
+      <p class="ui-caption" style="margin:-4px 0 0;text-align:center;">Уже пользуетесь Happ? <a href="${esc(`happ://add/${sub.subUrl || ""}`)}" style="color:var(--ui-accent-text);font-weight:600;">Добавить в Happ</a></p>
       <button class="ui-btn ghost" style="height:46px;" data-action="vpn-copy-sub" data-url="${esc(sub.subUrl || "")}">${uiIcon(copied ? "check" : "copy", 18)}${copied ? "Ссылка скопирована" : "Скопировать ссылку подписки"}</button>
       <p class="ui-caption" style="margin:0;">Ссылка личная — не передавайте её другим. Когда подписка закончится, в приложении появится сообщение «Подписка окончена».</p>
     </article>
@@ -2865,7 +2863,7 @@ function adminVpnBlock(u) {
   if (!u) return "";
   const active = !!u.vpnActive;
   const sendText = active && u.vpnUrl
-    ? `Ваш VPN ahmedov.proxy подключён до ${formatDateOnly(u.vpnExpiresAt)}.\n1) Установите приложение Happ или Incy (App Store / Google Play)\n2) Добавьте вашу личную подписку: ${u.vpnUrl}\nИли откройте вкладку VPN в приложении ahmedov.proxy — там кнопки «Добавить в Happ» и «Добавить в Incy».`
+    ? `Ваш VPN ahmedov.proxy подключён до ${formatDateOnly(u.vpnExpiresAt)}.\n1) Установите бесплатное приложение v2RAGE: ${V2RAGE_STORE_URL}\n2) Добавьте вашу личную подписку: ${u.vpnUrl}\nПроще всего — откройте вкладку VPN в приложении ahmedov.proxy и нажмите «Добавить в v2RAGE».`
     : "";
   return `<div class="ui-card ui-pad" style="background:var(--ui-fill);box-shadow:none;display:flex;flex-direction:column;gap:12px;margin-top:4px;">
     <div style="display:flex;align-items:center;gap:10px;">
@@ -3013,6 +3011,12 @@ function adminScreen() {
 // Оплата по СБП через Ozon: заявка с уникальной суммой и ожидание поступления
 // ==========================
 
+// Основное VPN-приложение — v2RAGE (есть в российском App Store, импорт по ссылке v2rage://import?url=...)
+const V2RAGE_STORE_URL = "https://apps.apple.com/ru/app/v2rage/id6761075402";
+function v2rageImportUrl(subUrl) {
+  return `v2rage://import?url=${encodeURIComponent(subUrl || "")}`;
+}
+
 const OZON_ORDER_KEY = "ahmedov_ozon_order";
 let ozonPollTimer = null;
 
@@ -3123,7 +3127,7 @@ function ozonOrderView(o, inSheet) {
         <span class="ui-sub" style="font-size:15px;">${esc(o.planName)} · ${esc(o.displayPhone)}</span>
       </div>
       ${isVpn
-      ? `<p class="ui-caption" style="margin:0;text-align:center;">VPN подключён — во вкладке VPN нажмите «Добавить в Happ» или «Добавить в Incy».</p>
+      ? `<p class="ui-caption" style="margin:0;text-align:center;">VPN подключён — во вкладке VPN нажмите «Добавить в v2RAGE».</p>
            <button class="ui-btn" data-action="ozon-close">Готово</button>`
       : o.inviteCode
         ? `<div class="ui-card ui-amount" style="padding:16px;"><span class="ui-sub" style="font-size:15px;">Ваш код доступа</span><span class="ui-invite-code">${esc(o.inviteCode)}</span></div>
@@ -4613,7 +4617,7 @@ app.addEventListener("click", async (event) => {
     const mode = el.dataset.mode;
     const days = Number(el.dataset.days || 0);
     if (mode === "off" && !window.confirm(`Отключить VPN у ${displayPhone(phone)}? Ссылка перестанет работать.`)) return;
-    if (mode === "reset" && !window.confirm("Выдать новую ссылку? Старая перестанет работать — клиенту нужно будет добавить новую в Incy.")) return;
+    if (mode === "reset" && !window.confirm("Выдать новую ссылку? Старая перестанет работать — клиенту нужно будет добавить новую в v2RAGE.")) return;
     setAdmin({ saving: true });
     try {
       await api.adminVpn(state.token, phone, { mode, days });
