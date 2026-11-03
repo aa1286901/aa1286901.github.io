@@ -263,8 +263,110 @@ function vpn_stub_body(string $message): string
     ]], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 
+// Happ/Incy (и похожие) понимают JSON-конфиги Xray; остальные приложения (Karing, Shadowrocket, V2RC…)
+// ждут стандартную подписку — base64 со ссылками vless:// и hy2://. ?format=json|links — принудительно.
+function vpn_wants_json(): bool
+{
+    $format = strtolower((string) ($_GET['format'] ?? ''));
+    if ($format === 'json') {
+        return true;
+    }
+    if ($format === 'links' || $format === 'base64') {
+        return false;
+    }
+    return (bool) preg_match('/happ|incy|v2raytun|streisand/i', (string) ($_SERVER['HTTP_USER_AGENT'] ?? ''));
+}
+
+function vpn_q(array $params): string
+{
+    $params = array_filter($params, static fn ($v) => $v !== null && $v !== '');
+    return http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+}
+
+// Один outbound Xray → ссылка vless:// или hy2://
+function vpn_outbound_to_link(array $o, string $name): ?string
+{
+    $ss = (array) ($o['streamSettings'] ?? []);
+    $net = (string) ($ss['network'] ?? 'tcp');
+    $sec = (string) ($ss['security'] ?? 'none');
+    $label = '#' . rawurlencode($name);
+    if (($o['protocol'] ?? '') === 'vless') {
+        $vn = $o['settings']['vnext'][0] ?? null;
+        $user = $vn['users'][0] ?? null;
+        if (!$vn || !$user || empty($user['id'])) {
+            return null;
+        }
+        $q = ['encryption' => 'none', 'type' => $net, 'security' => $sec, 'flow' => $user['flow'] ?? ''];
+        if ($sec === 'reality') {
+            $r = (array) ($ss['realitySettings'] ?? []);
+            $q += ['sni' => $r['serverName'] ?? '', 'pbk' => $r['publicKey'] ?? '', 'sid' => $r['shortId'] ?? '', 'fp' => $r['fingerprint'] ?? '', 'spx' => $r['spiderX'] ?? ''];
+        } elseif ($sec === 'tls') {
+            $t = (array) ($ss['tlsSettings'] ?? []);
+            $q += ['sni' => $t['serverName'] ?? '', 'fp' => $t['fingerprint'] ?? '', 'alpn' => implode(',', (array) ($t['alpn'] ?? []))];
+        }
+        if ($net === 'ws') {
+            $w = (array) ($ss['wsSettings'] ?? []);
+            $q += ['path' => $w['path'] ?? '/', 'host' => $w['host'] ?? ($w['headers']['Host'] ?? '')];
+        } elseif ($net === 'grpc') {
+            $g = (array) ($ss['grpcSettings'] ?? []);
+            $q += ['serviceName' => $g['serviceName'] ?? '', 'authority' => $g['authority'] ?? '', 'mode' => !empty($g['multiMode']) ? 'multi' : 'gun'];
+        } elseif ($net === 'xhttp' || $net === 'splithttp') {
+            $x = (array) ($ss['xhttpSettings'] ?? $ss['splithttpSettings'] ?? []);
+            $q += ['path' => $x['path'] ?? '/', 'host' => $x['host'] ?? '', 'mode' => $x['mode'] ?? ''];
+        } elseif ($net === 'httpupgrade') {
+            $h = (array) ($ss['httpupgradeSettings'] ?? []);
+            $q += ['path' => $h['path'] ?? '/', 'host' => $h['host'] ?? ''];
+        }
+        return 'vless://' . rawurlencode((string) $user['id']) . '@' . $vn['address'] . ':' . (int) $vn['port'] . '?' . vpn_q($q) . $label;
+    }
+    if (($o['protocol'] ?? '') === 'hysteria') {
+        $set = (array) ($o['settings'] ?? []);
+        $auth = (string) ($ss['hysteriaSettings']['auth'] ?? '');
+        $t = (array) ($ss['tlsSettings'] ?? []);
+        if (empty($set['address']) || $auth === '') {
+            return null;
+        }
+        $q = ['sni' => $t['serverName'] ?? '', 'alpn' => implode(',', (array) ($t['alpn'] ?? [])), 'insecure' => !empty($t['allowInsecure']) ? '1' : ''];
+        return 'hy2://' . rawurlencode($auth) . '@' . $set['address'] . ':' . (int) $set['port'] . '?' . vpn_q($q) . $label;
+    }
+    return null;
+}
+
+// JSON-конфиги Xray → base64-список ссылок (конфиги «АВТО» с несколькими серверами пропускаем — это дубли)
+function vpn_json_to_links(string $body): ?string
+{
+    $decoded = json_decode($body, true);
+    if (!is_array($decoded)) {
+        return null;
+    }
+    $links = [];
+    foreach ($decoded as $cfg) {
+        if (!is_array($cfg)) {
+            continue;
+        }
+        $obs = array_values(array_filter((array) ($cfg['outbounds'] ?? []), static fn ($o) => is_array($o) && in_array($o['protocol'] ?? '', ['vless', 'hysteria'], true)));
+        if (count($obs) !== 1) {
+            continue;
+        }
+        $link = vpn_outbound_to_link($obs[0], trim((string) ($cfg['remarks'] ?? 'VPN')));
+        if ($link !== null) {
+            $links[$link] = true;
+        }
+    }
+    return $links ? base64_encode(implode("\n", array_keys($links))) : null;
+}
+
 function vpn_send_stub(string $title, string $message, int $expireTs): never
 {
+    if (!vpn_wants_json()) {
+        // Для обычных приложений — одна «пустая» запись с текстом, чтобы клиент увидел причину
+        header('Content-Type: text/plain; charset=utf-8');
+        header('Profile-Title: base64:' . base64_encode($title));
+        header('Profile-Update-Interval: 1');
+        header('Subscription-Userinfo: upload=0; download=0; total=0; expire=' . max(0, $expireTs));
+        echo base64_encode('vless://00000000-0000-0000-0000-000000000000@127.0.0.1:1?encryption=none&type=tcp&security=none#' . rawurlencode($message));
+        exit;
+    }
     header('Content-Type: application/json; charset=utf-8');
     header('Profile-Title: base64:' . base64_encode($title));
     header('Profile-Update-Interval: 1');
@@ -302,7 +404,16 @@ function vpn_serve_subscription(string $token): never
     }
 
     $headers = $upstream['headers'] ?? [];
-    header('Content-Type: ' . ($headers['content-type'] ?? 'text/plain; charset=utf-8'));
+    $body = (string) $upstream['body'];
+    $contentType = $headers['content-type'] ?? 'text/plain; charset=utf-8';
+    if (!vpn_wants_json()) {
+        $links = vpn_json_to_links($body);
+        if ($links !== null) {
+            $body = $links;
+            $contentType = 'text/plain; charset=utf-8';
+        }
+    }
+    header('Content-Type: ' . $contentType);
     foreach (VPN_PASS_HEADERS as $name) {
         if (isset($headers[$name]) && $headers[$name] !== '') {
             header($name . ': ' . $headers[$name]);
@@ -311,7 +422,7 @@ function vpn_serve_subscription(string $token): never
     header('Profile-Title: ' . ($headers['profile-title'] ?? ('base64:' . base64_encode($title))));
     header("Content-Disposition: inline; filename*=utf-8''" . rawurlencode($title));
     header('Subscription-Userinfo: upload=0; download=0; total=0; expire=' . $expireTs);
-    echo $upstream['body'];
+    echo $body;
     exit;
 }
 
