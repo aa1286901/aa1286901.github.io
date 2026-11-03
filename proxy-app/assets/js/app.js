@@ -103,6 +103,10 @@ const userProxyRunIds = { telegram: 0, whatsapp: 0 };
 let adminProxyRunId = 0;
 const CLIENT_PING_TIMEOUT_MS = 1600;
 const CLIENT_PING_ATTEMPTS = 3;
+// Ошибка быстрее этого — отказ самого браузера (например, «опасный» порт 993), сеть не трогалась
+const CLIENT_INSTANT_FAIL_MS = 5;
+// Порты, к которым браузеры (Safari, Chrome) не пускают запросы вообще — проверяем такие серверы через 443
+const BROWSER_BLOCKED_PORTS = new Set([1, 7, 9, 11, 13, 15, 17, 19, 20, 21, 22, 23, 25, 37, 42, 43, 53, 69, 77, 79, 87, 95, 101, 102, 103, 104, 109, 110, 111, 113, 115, 117, 119, 123, 135, 137, 139, 143, 161, 179, 389, 427, 465, 512, 513, 514, 515, 526, 530, 531, 532, 540, 548, 554, 556, 563, 587, 601, 636, 989, 990, 993, 995, 1719, 1720, 1723, 2049, 3659, 4045, 4190, 5060, 5061, 6000, 6566, 6665, 6666, 6667, 6668, 6669, 6679, 6697, 10080]);
 const CLIENT_FAILS_TO_OFF = 3;
 const DNS_TIMEOUT_MS = 1400;
 const DNS_CACHE_TTL_MS = 3 * 60 * 1000;
@@ -1106,26 +1110,39 @@ async function checkProxyFromClient(network, proxy) {
   let delayedFailCount = 0;
   let timeoutCount = 0;
   let fastFailCount = 0;
-  const targets = buildClientProbeUrls(host, port);
-  for (const target of targets) {
-    for (let i = 0; i < CLIENT_PING_ATTEMPTS; i++) {
-      const result = await probeUrlOnce(target);
-      if (result.ok) {
-        successCount += 1;
-        pingSamples.push(result.elapsedMs);
-        bestPing = bestPing === null ? result.elapsedMs : Math.min(bestPing, result.elapsedMs);
-      } else if (!result.timedOut && result.elapsedMs >= 180) {
-        // Non-HTTP proxy ports often fail request parsing, but delayed failure
-        // still indicates path to host:port is reachable from client network.
-        delayedFailCount += 1;
-        pingSamples.push(result.elapsedMs);
-        bestPing = bestPing === null ? result.elapsedMs : Math.min(bestPing, result.elapsedMs);
-      } else if (result.timedOut) {
-        timeoutCount += 1;
-      } else {
-        fastFailCount += 1;
+
+  // Браузер не умеет говорить с прокси по протоколу Telegram, поэтому шлём обычный веб-запрос
+  // на host:port и засекаем время до ответа или ошибки. Любой ответ из сети = сервер жив.
+  const probePort = async (p) => {
+    for (const target of buildClientProbeUrls(host, p)) {
+      for (let i = 0; i < CLIENT_PING_ATTEMPTS; i++) {
+        const result = await probeUrlOnce(target);
+        if (result.ok) {
+          successCount += 1;
+          pingSamples.push(result.elapsedMs);
+          bestPing = bestPing === null ? result.elapsedMs : Math.min(bestPing, result.elapsedMs);
+        } else if (result.timedOut) {
+          timeoutCount += 1;
+        } else if (result.elapsedMs >= CLIENT_INSTANT_FAIL_MS) {
+          // Ответ пришёл, но не веб-страница (MTProto, чужой сертификат) — путь до сервера есть
+          delayedFailCount += 1;
+          pingSamples.push(result.elapsedMs);
+          bestPing = bestPing === null ? result.elapsedMs : Math.min(bestPing, result.elapsedMs);
+        } else {
+          fastFailCount += 1;
+        }
       }
     }
+  };
+
+  if (!BROWSER_BLOCKED_PORTS.has(port)) await probePort(port);
+  // Порт закрыт для браузера (993 и т. п.) или нет ответа — проверяем 443 того же сервера
+  let via443 = false;
+  if (successCount === 0 && delayedFailCount === 0 && port !== 443) {
+    timeoutCount = 0;
+    fastFailCount = 0;
+    await probePort(443);
+    via443 = successCount > 0 || delayedFailCount > 0;
   }
 
   const basePing = median(pingSamples);
@@ -1188,6 +1205,7 @@ async function checkProxyFromClient(network, proxy) {
     isLivePing: true,
     connectivityScore: score,
     dnsResolveMs: Number.isFinite(dnsMs) ? dnsMs : null,
+    pingVia443: via443,
   };
 }
 
