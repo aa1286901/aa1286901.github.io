@@ -10,6 +10,7 @@ require_once __DIR__ . '/vpn.php';
 require_once __DIR__ . '/ozon.php';
 require_once __DIR__ . '/webpush.php';
 require_once __DIR__ . '/referral.php';
+require_once __DIR__ . '/announcements.php';
 
 function array_keys_recursive(array $array): array
 {
@@ -1016,6 +1017,7 @@ if (preg_match('#^/api/admin/users/([^/]+)/vpn$#', $uri, $vpnAdminMatch) === 1 &
 }
 
 ref_handle_routes($uri, $method);
+ann_handle_routes($uri, $method);
 ozon_handle_routes($uri, $method);
 push_handle_routes($uri, $method);
 
