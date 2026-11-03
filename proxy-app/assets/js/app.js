@@ -1497,6 +1497,90 @@ async function paymentApplyPromo() {
 }
 
 // ==========================
+// Объявления: карусель баннеров на главной
+// ==========================
+const ANN_COLORS = ["#5B3FD6", "#C2410C", "#0F766E", "#BE185D", "#15803D", "#1D1D1F"];
+const ANN_TAGS = ["", "Объявление", "Реклама", "Акция", "Новое"];
+const ANN_ACTIONS = [["none", "Без кнопки"], ["link", "Ссылка"], ["pay", "Оплата прокси"], ["combo", "Прокси + VPN"], ["vpn", "Вкладка VPN"], ["referral", "Приведи друга"]];
+let annTimer = null;
+let annTouchedAt = 0;
+
+async function ensureAnnouncements(force = false) {
+  const a = state.anns || {};
+  if (a.loading || (a.loaded && !force)) return;
+  state.anns = { ...a, loading: true };
+  try {
+    const r = await request("/announcements");
+    state.anns = { loaded: true, loading: false, items: r.items || [] };
+  } catch {
+    state.anns = { loaded: true, loading: false, items: [] };
+  }
+  render();
+}
+
+function annCard(it, opts = {}) {
+  const href = it.action === "link" ? it.url : "#";
+  const tagName = opts.preview ? "div" : "a";
+  const attrs = opts.preview ? "" : `href="${esc(href)}" ${it.action === "link" ? 'target="_blank" rel="noopener"' : ""} data-action="ann-open" data-id="${esc(it.id)}" data-kind="${esc(it.action)}"`;
+  return `<${tagName} class="ui-ann" style="background:${esc(it.color || ANN_COLORS[0])};" ${attrs}>
+      <span class="ui-ann-text">
+        ${it.tag ? `<span class="ui-ann-tag">${esc(it.tag)}</span>` : ""}
+        <b class="ui-ann-title">${esc(it.title || "Заголовок")}</b>
+        ${it.text ? `<span class="ui-ann-sub">${esc(it.text)}</span>` : ""}
+        ${it.action !== "none" && it.buttonText ? `<span class="ui-ann-btn">${esc(it.buttonText)}${uiIcon("chevron", 12, 3)}</span>` : ""}
+      </span>
+      ${it.imageUrl ? `<img class="ui-ann-img" src="${esc(it.imageUrl)}" alt="" loading="lazy" />` : ""}
+    </${tagName}>`;
+}
+
+function announcementsCarousel() {
+  if (!state.anns?.loaded) {
+    void ensureAnnouncements();
+    return "";
+  }
+  const items = state.anns.items || [];
+  if (!items.length) return "";
+  const idx = Math.min(state.annIndex || 0, items.length - 1);
+  return `<section class="ui-ann-wrap" aria-label="Объявления">
+      <div class="ui-ann-track ${items.length > 1 ? "multi" : ""}" data-ann-track>${items.map((it) => annCard(it)).join("")}</div>
+      ${items.length > 1 ? `<div class="ui-ann-dots" aria-hidden="true">${items.map((_, i) => `<i class="${i === idx ? "on" : ""}"></i>`).join("")}</div>` : ""}
+    </section>`;
+}
+
+// После каждой отрисовки: вернуть карусель на текущий слайд, следить за листанием, автопрокрутка
+function annAfterRender() {
+  const track = document.querySelector("[data-ann-track]");
+  if (!track) {
+    if (annTimer) { clearInterval(annTimer); annTimer = null; }
+    return;
+  }
+  const slideW = () => (track.firstElementChild ? track.firstElementChild.getBoundingClientRect().width + 10 : track.clientWidth);
+  const idx = state.annIndex || 0;
+  track.scrollLeft = idx * slideW();
+  const dots = track.parentElement.querySelectorAll(".ui-ann-dots i");
+  const sync = () => {
+    const i = Math.round(track.scrollLeft / slideW());
+    if (i !== state.annIndex) {
+      state.annIndex = i;
+      dots.forEach((d, k) => d.classList.toggle("on", k === i));
+    }
+  };
+  track.addEventListener("scroll", () => { sync(); }, { passive: true });
+  track.addEventListener("touchstart", () => { annTouchedAt = Date.now(); }, { passive: true });
+  const count = track.children.length;
+  if (count > 1 && !annTimer) {
+    annTimer = setInterval(() => {
+      const t = document.querySelector("[data-ann-track]");
+      if (!t || document.hidden || isTyping || Date.now() - annTouchedAt < 12000) return;
+      const n = t.children.length;
+      const w = t.firstElementChild ? t.firstElementChild.getBoundingClientRect().width + 10 : t.clientWidth;
+      const next = ((state.annIndex || 0) + 1) % n;
+      t.scrollTo({ left: next * w, behavior: "smooth" });
+    }, 6000);
+  }
+}
+
+// ==========================
 // «Приведи друга»
 // ==========================
 const REF_KEY = "ahmedov_ref";
@@ -1759,6 +1843,8 @@ function homeScreen() {
     </article>
 
     ${browserLoginBanner()}
+
+    ${announcementsCarousel()}
 
     <section class="ui-sec">
       <div class="ui-sec-head"><h2 class="ui-h2">Подключиться в один тап</h2><button class="ui-link" data-action="open-tab" data-tab="telegram">Все</button></div>
@@ -2851,12 +2937,91 @@ function adminPromoTab() {
         <button class="ui-mini-icon danger" data-action="admin-delete-promo" data-id="${esc(p.id)}" aria-label="Удалить">${uiIcon("trash", 18)}</button>
       </div>
     </article>`;
+  const view = a.promoView === "ann" ? "ann" : "codes";
+  const seg = `<div class="ui-seg" role="tablist" aria-label="Раздел">
+      <button class="${view === "codes" ? "on" : ""}" role="tab" aria-selected="${view === "codes"}" data-action="admin-promo-view" data-view="codes">Промокоды</button>
+      <button class="${view === "ann" ? "on" : ""}" role="tab" aria-selected="${view === "ann"}" data-action="admin-promo-view" data-view="ann">Объявления</button>
+    </div>`;
+  if (view === "ann") return adminAnnView(seg);
   return `<section class="ui-stack">
-    ${adminHead("Промокоды", `<button class="ui-iconbtn accent" data-action="admin-new" data-kind="promo" aria-label="Добавить промокод">${uiIcon("plus", 22, 2.4)}</button>`)}
+    ${adminHead("Промо", `<button class="ui-iconbtn accent" data-action="admin-new" data-kind="promo" aria-label="Добавить промокод">${uiIcon("plus", 22, 2.4)}</button>`)}
+    ${seg}
     ${adminMessage()}
     <p class="ui-caption" style="margin:0;">Клиент вводит промокод на странице оплаты и видит указанную здесь цену.</p>
     ${list.length ? list.map(card).join("") : `<div class="ui-card ui-empty">Промокодов пока нет.</div>`}
   </section>`;
+}
+
+async function loadAdminAnns() {
+  try {
+    const r = await request("/admin/announcements", { headers: { Authorization: `Bearer ${state.token}` } });
+    setAdmin({ anns: r.items || [] });
+  } catch (e) {
+    setAdmin({ anns: [], message: e.message || "Не удалось загрузить объявления." });
+  }
+}
+
+function adminAnnView(seg) {
+  const a = state.admin;
+  if (!a.anns) void loadAdminAnns();
+  const list = a.anns || [];
+  const endLabel = (d) => d ? `до ${formatDateOnly(d)}` : "без срока";
+  const card = (it, i) => `<article class="ui-card ui-pad ui-admin-card" style="${it.isActive ? "" : "opacity:.6;"}">
+      <div style="pointer-events:none;">${annCard(it, { preview: true })}</div>
+      <span class="ui-qrow-sub">${it.isActive ? "Показывается" : "Скрыто"} · ${esc(endLabel(it.endsAt))} · нажатий: ${esc(it.clicks)}</span>
+      <div class="ui-admin-actions">
+        <label class="ui-switch-row"><input type="checkbox" class="ui-switch" ${it.isActive ? "checked" : ""} data-action="admin-ann-toggle" data-id="${esc(it.id)}" aria-label="Показывать клиентам" /><span>${it.isActive ? "Вкл." : "Выкл."}</span></label>
+        <button class="ui-mini-icon" data-action="admin-ann-move" data-id="${esc(it.id)}" data-dir="-1" aria-label="Выше" ${i === 0 ? "disabled" : ""}>${uiIcon("chevron", 14, 2.6).replace("<svg", '<svg style="transform:rotate(-90deg)"')}</button>
+        <button class="ui-mini-icon" data-action="admin-ann-move" data-id="${esc(it.id)}" data-dir="1" aria-label="Ниже" ${i === list.length - 1 ? "disabled" : ""}>${uiIcon("chevron", 14, 2.6).replace("<svg", '<svg style="transform:rotate(90deg)"')}</button>
+        <button class="ui-mini-icon" data-action="admin-ann-edit" data-id="${esc(it.id)}" aria-label="Изменить">${uiIcon("edit", 18)}</button>
+        <button class="ui-mini-icon danger" data-action="admin-ann-delete" data-id="${esc(it.id)}" aria-label="Удалить">${uiIcon("trash", 18)}</button>
+      </div>
+    </article>`;
+  return `<section class="ui-stack">
+    ${adminHead("Промо", `<button class="ui-iconbtn accent" data-action="admin-ann-new" aria-label="Добавить объявление">${uiIcon("plus", 22, 2.4)}</button>`)}
+    ${seg}
+    ${adminMessage()}
+    <p class="ui-caption" style="margin:0;">Баннеры на главной у клиентов, листаются каруселью. Порядок — как здесь: верхний показывается первым.</p>
+    ${!a.anns ? `<div class="ui-skel" style="height:140px;"></div>` : list.length ? list.map(card).join("") : `<div class="ui-card ui-empty">Объявлений пока нет — нажмите «+».</div>`}
+  </section>`;
+}
+
+function annEmptyForm() {
+  return { id: null, tag: "Объявление", title: "", text: "", action: "none", buttonText: "Подробнее", url: "", color: ANN_COLORS[0], imageUrl: "", endsAt: "", isActive: true };
+}
+
+function annPreviewHtml() {
+  const f = state.admin.annForm || annEmptyForm();
+  return annCard({ ...f, title: f.title || "Заголовок объявления", buttonText: f.buttonText || "Подробнее" }, { preview: true });
+}
+
+async function annUploadImage(file) {
+  if (!file) return;
+  setAdmin({ annUploading: true, message: "" });
+  try {
+    const dataUrl = await new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        const max = 600;
+        const k = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width * k);
+        c.height = Math.round(img.height * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL(file.type === "image/png" ? "image/png" : "image/jpeg", 0.86));
+      };
+      img.onerror = () => reject(new Error("Не удалось открыть картинку"));
+      img.src = url;
+    });
+    const r = await request("/admin/announcements/upload", { method: "POST", headers: { Authorization: `Bearer ${state.token}` }, body: JSON.stringify({ image: dataUrl }) });
+    setAdmin({ annForm: { ...state.admin.annForm, imageUrl: r.url } });
+  } catch (e) {
+    setAdmin({ message: e.message || "Не удалось загрузить картинку." });
+  } finally {
+    setAdmin({ annUploading: false });
+  }
 }
 
 function adminVpnBlock(u) {
@@ -2967,6 +3132,31 @@ function adminSheet() {
       ${sw("admin-proxy-active", f.is_active, "Показывать клиентам")}
       ${sw("admin-proxy-recommended", f.is_recommended, "Рекомендуемый (by ahmedov)")}
       <button class="ui-btn" data-action="admin-save-proxy" ${a.saving ? "disabled" : ""}>${a.saving ? "Сохраняем…" : "Сохранить"}</button>`);
+  }
+
+  if (kind === "ann") {
+    const f = a.annForm || annEmptyForm();
+    const chip = (act, val, on, label) => `<button class="ui-chip ${on ? "on" : ""}" data-action="${act}" data-val="${esc(val)}">${label}</button>`;
+    return shell(f.id ? "Изменить объявление" : "Новое объявление", `
+      <div id="ann-preview" style="pointer-events:none;">${annPreviewHtml()}</div>
+      <div style="display:flex;flex-direction:column;gap:6px;"><span class="ui-label">Метка</span>
+        <div class="ui-chips" style="flex-wrap:wrap;">${ANN_TAGS.map((t) => chip("admin-ann-set", `tag:${t}`, f.tag === t, t || "Без метки")).join("")}</div></div>
+      ${field("adm-a-title", "Заголовок", text("adm-a-title", "ann-field", f.title, "Например: Новые серверы в Турции", "text", 'data-field="title" maxlength="80"'))}
+      ${field("adm-a-text", "Текст (одна строка)", text("adm-a-text", "ann-field", f.text, "Коротко: что и почему важно", "text", 'data-field="text" maxlength="160"'))}
+      <div style="display:flex;flex-direction:column;gap:6px;"><span class="ui-label">Кнопка ведёт</span>
+        <div class="ui-chips" style="flex-wrap:wrap;">${ANN_ACTIONS.map(([v, l]) => chip("admin-ann-set", `action:${v}`, f.action === v, l)).join("")}</div></div>
+      ${f.action !== "none" ? field("adm-a-btn", "Текст кнопки", text("adm-a-btn", "ann-field", f.buttonText, "Подробнее", "text", 'data-field="buttonText" maxlength="30"')) : ""}
+      ${f.action === "link" ? field("adm-a-url", "Ссылка", text("adm-a-url", "ann-field", f.url, "https://… или https://wa.me/7…", "url", 'data-field="url" autocapitalize="off"')) : ""}
+      <div style="display:flex;flex-direction:column;gap:6px;"><span class="ui-label">Цвет</span>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">${ANN_COLORS.map((c) => `<button class="ui-ann-swatch ${f.color === c ? "on" : ""}" style="background:${c};" data-action="admin-ann-set" data-val="color:${c}" aria-label="Цвет ${c}"></button>`).join("")}</div></div>
+      <div style="display:flex;flex-direction:column;gap:6px;"><span class="ui-label">Картинка справа (необязательно)</span>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <label class="ui-btn ghost" style="height:46px;font-size:15px;flex:1;cursor:pointer;">${uiIcon("download", 16, 2.2)}${a.annUploading ? "Загружаем…" : f.imageUrl ? "Заменить" : "Выбрать фото"}<input type="file" accept="image/*" data-input="ann-image" style="display:none;" /></label>
+          ${f.imageUrl ? `<button class="ui-btn ghost" style="height:46px;font-size:15px;flex:0 0 auto;padding:0 16px;" data-action="admin-ann-set" data-val="imageUrl:">Убрать</button>` : ""}
+        </div></div>
+      ${field("adm-a-end", "Показывать до (необязательно)", text("adm-a-end", "ann-field", f.endsAt || "", "", "date", 'data-field="endsAt"'))}
+      ${sw("ann-active", f.isActive, "Показывать клиентам")}
+      <button class="ui-btn" data-action="admin-ann-save" ${a.saving || a.annUploading ? "disabled" : ""}>${a.saving ? "Сохраняем…" : "Сохранить"}</button>`);
   }
 
   if (kind === "promo") {
@@ -3401,6 +3591,7 @@ function render() {
 
   if (state.demo && !isPaymentRoute()) body = demoBanner() + body;
   queueMicrotask(renderOzonQr);
+  queueMicrotask(annAfterRender);
   app.innerHTML = body + ozonSheet() + (state.toast ? `<div class="ui-toast-float" role="status">${esc(state.toast)}</div>` : "") + demoSheet() + (state.role === "admin" && state.token ? adminSheet() : "") + legalModal() + installGuideModal() + (isPaymentRoute() ? "" : plansOverlay()) + (state.proxyConnectModal?.open ? proxyConnectModal(state.proxyConnectModal.connectUrl, state.proxyConnectModal.network) : "");
 
 
@@ -3761,6 +3952,19 @@ app.addEventListener("input", (event) => {
     }, 0);
   };
 
+  if (input === "ann-field") {
+    const field = event.target.dataset.field;
+    state.admin.annForm = { ...state.admin.annForm, [field]: event.target.value };
+    const pv = document.getElementById("ann-preview");
+    if (pv) pv.innerHTML = annPreviewHtml();
+    releaseTyping();
+    return;
+  }
+  if (input === "ann-image") {
+    releaseTyping();
+    return;
+  }
+
   if (input === "phone-input") {
     const raw = String(event.target.value || "");
     const caret = typeof event.target.selectionStart === "number" ? event.target.selectionStart : raw.length;
@@ -3918,6 +4122,8 @@ app.addEventListener("change", (event) => {
   const { input } = event.target.dataset;
   if (!input) return;
   if (input === "admin-user-active") setAdmin({ userForm: { ...state.admin.userForm, is_active: event.target.checked } });
+  if (input === "ann-active") setAdmin({ annForm: { ...state.admin.annForm, isActive: event.target.checked } });
+  if (input === "ann-image") void annUploadImage(event.target.files?.[0]);
   if (input === "admin-proxy-active") setAdmin({ proxyForm: { ...state.admin.proxyForm, is_active: event.target.checked } });
   if (input === "admin-proxy-recommended") setAdmin({ proxyForm: { ...state.admin.proxyForm, is_recommended: event.target.checked } });
   if (input === "admin-proxy-network") setAdmin({ proxyForm: { ...state.admin.proxyForm, network: event.target.value } });
@@ -4008,6 +4214,26 @@ app.addEventListener("click", async (event) => {
     const kind = ["vpn", "combo"].includes(el.dataset.kind) ? el.dataset.kind : "proxy";
     const planId = kind === "vpn" ? el.dataset.planId : (state.paymentPage.selectedPlanId || state.paymentPage.plans?.[0]?.id);
     await ozonStart(kind, planId);
+    return;
+  }
+  if (action === "ann-open") {
+    const id = el.dataset.id;
+    const kind = el.dataset.kind;
+    request(`/announcements/${encodeURIComponent(id)}/click`, { method: "POST" }).catch(() => { });
+    if (kind === "link") return; // ссылка откроется сама
+    event.preventDefault();
+    if (kind === "none") return;
+    if (state.demo) return setState({ demoSheet: true });
+    if (kind === "vpn") return setState({ activeTab: "vpn" });
+    if (kind === "referral") {
+      setState({ activeTab: "account" });
+      setTimeout(() => document.getElementById("referral")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+      return;
+    }
+    if (kind === "pay" || kind === "combo") {
+      openPaymentPage({ phone: state.user?.phone || "", planId: 301, vpn: kind === "combo" });
+      return;
+    }
     return;
   }
   if (action === "open-referral") {
@@ -4572,6 +4798,49 @@ app.addEventListener("click", async (event) => {
     const clickedClose = !!event.target.closest('[data-action="admin-close-sheet"]');
     if (!clickedClose && event.target.closest('[data-action="admin-sheet-card"]')) return;
     return setAdmin({ sheet: null });
+  }
+  if (action === "admin-promo-view") return setAdmin({ promoView: el.dataset.view === "ann" ? "ann" : "codes", message: "" });
+  if (action === "admin-ann-new") return setAdmin({ sheet: "ann", message: "", annForm: annEmptyForm() });
+  if (action === "admin-ann-edit") {
+    const it = (state.admin.anns || []).find((x) => String(x.id) === String(el.dataset.id));
+    if (!it) return;
+    return setAdmin({ sheet: "ann", message: "", annForm: { ...annEmptyForm(), ...it, endsAt: it.endsAt || "" } });
+  }
+  if (action === "admin-ann-set") {
+    const raw = el.dataset.val || "";
+    const i = raw.indexOf(":");
+    const key = raw.slice(0, i);
+    const val = raw.slice(i + 1);
+    const f = { ...state.admin.annForm, [key]: val };
+    if (key === "action" && val !== "none" && !f.buttonText) f.buttonText = "Подробнее";
+    return setAdmin({ annForm: f });
+  }
+  if (action === "admin-ann-save") {
+    setAdmin({ saving: true, message: "" });
+    try {
+      await request("/admin/announcements", { method: "POST", headers: { Authorization: `Bearer ${state.token}` }, body: JSON.stringify(state.admin.annForm) });
+      setAdmin({ sheet: null, message: "Объявление сохранено — клиенты увидят его на главной." });
+      await loadAdminAnns();
+      state.anns = null;
+    } catch (e) {
+      setAdmin({ message: e.message || "Не удалось сохранить." });
+    } finally {
+      setAdmin({ saving: false });
+    }
+    return;
+  }
+  if (action === "admin-ann-toggle" || action === "admin-ann-move" || action === "admin-ann-delete") {
+    const id = el.dataset.id;
+    if (action === "admin-ann-delete" && !window.confirm("Удалить объявление?")) return;
+    try {
+      if (action === "admin-ann-delete") await request(`/admin/announcements/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${state.token}` } });
+      else await request(`/admin/announcements/${id}/${action === "admin-ann-toggle" ? "toggle" : "move"}`, { method: "POST", headers: { Authorization: `Bearer ${state.token}` }, body: JSON.stringify({ dir: Number(el.dataset.dir || 0) }) });
+      await loadAdminAnns();
+      state.anns = null;
+    } catch (e) {
+      setAdmin({ message: e.message || "Не получилось." });
+    }
+    return;
   }
   if (action === "admin-new") {
     const kind = el.dataset.kind;

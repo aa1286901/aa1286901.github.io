@@ -3,3 +3,4 @@
 database/*.db
 database/*.db-*
 .DS_Store
+uploads/
