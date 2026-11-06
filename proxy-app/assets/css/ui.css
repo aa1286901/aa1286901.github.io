@@ -660,3 +660,10 @@ div.ui-feature { cursor: default; }
 .ui-ann-dots i.on { width: 18px; background: var(--ui-text); }
 .ui-ann-swatch { width: 40px; height: 40px; border-radius: 12px; border: 3px solid transparent; cursor: pointer; padding: 0; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.35); }
 .ui-ann-swatch.on { border-color: var(--ui-text); }
+
+/* Экран оплаты: крупная кнопка «Оплатить» и «Я оплатил(а)» под ней */
+.ui-btn.ui-pay-big { height: 64px; font-size: 19px; font-weight: 800; border-radius: 20px; box-shadow: 0 12px 34px rgba(10, 132, 255, 0.45); }
+.ui-btn.ui-pay-big.pulse { animation: ui-pay-pulse 1.6s ease-in-out infinite; }
+@keyframes ui-pay-pulse { 0%, 100% { transform: scale(1); box-shadow: 0 12px 34px rgba(10, 132, 255, 0.45); } 50% { transform: scale(1.025); box-shadow: 0 14px 44px rgba(10, 132, 255, 0.7); } }
+.ui-btn.ui-btn-ok { background: #34C759; color: #FFFFFF; }
+.ui-btn[data-action="ozon-claim"]:disabled { opacity: 0.45; cursor: not-allowed; }
