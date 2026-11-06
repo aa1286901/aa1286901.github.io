@@ -3370,27 +3370,36 @@ function ozonOrderView(o, inSheet) {
         ${contactButtons("pay-ozon")}
       </details>`;
   }
+  const opened = ozonPayOpenedFor(o.token);
+  const copied = state.ozonCopied === o.token;
   return `<div class="ui-card ui-amount" style="${flat}">
       <span class="ui-sub" style="font-size:14px;">К оплате</span>
       <span class="ui-amount-num">${esc(o.amountLabel)}</span>
       ${summary}
-    </div>
-    <div class="ui-grid2">
-      <button class="ui-btn ghost" style="height:52px;font-size:15px;${inSheet ? "background:var(--ui-card);" : ""}" data-action="ozon-copy-amount" data-amount="${esc(o.amountInput)}">${uiIcon(state.ozonCopied === o.token ? "check" : "copy", 18)}${state.ozonCopied === o.token ? "Скопировано" : "Копировать сумму"}</button>
-      <a class="ui-btn" style="height:52px;font-size:15px;" href="${esc(o.payUrl)}" target="_blank" rel="noopener" data-action="ozon-pay-open">${uiIcon("bank", 18, 2.1)}Оплатить</a>
+      <button class="ui-btn-sm soft" style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;" data-action="ozon-copy-amount" data-amount="${esc(o.amountInput)}">${uiIcon(copied ? "check" : "copy", 15)}${copied ? "Сумма скопирована" : "Копировать сумму"}</button>
     </div>
     <div class="ui-card ui-pad ui-steps" style="${flat}">
-      <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Нажмите «Оплатить»</b><span>Откроется страница Ozon. Введите сумму <b style="color:var(--ui-text);">${esc(o.amountLabel)}</b> — её можно вставить кнопкой «Копировать сумму».</span></span></div>
+      <div class="ui-step"><span class="ui-step-num ${opened ? "icon done" : ""}">${opened ? uiIcon("check", 18, 2.8) : "1"}</span><span class="ui-step-text"><b>Нажмите «Оплатить» ниже</b><span>Откроется страница Ozon. Введите сумму <b style="color:var(--ui-text);">${esc(o.amountLabel)}</b> — её можно вставить кнопкой «Копировать сумму».</span></span></div>
       <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Выберите банк и подтвердите платёж</b><span>Перевод по СБП без комиссии.</span></span></div>
       <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Вернитесь сюда</b><span>И нажмите «Я оплатил(а)» — мы сразу получим уведомление.</span></span></div>
     </div>
-    <button class="ui-btn ${state.ozonPayOpened === o.token ? "" : "ghost"}" data-action="ozon-claim" data-token="${esc(o.token)}" ${state.ozonClaiming ? "disabled" : ""}>${uiIcon("check", 18, 2.6)}${state.ozonClaiming ? "Отправляем…" : "Я оплатил(а)"}</button>
+    <a class="ui-btn ui-pay-big ${opened ? "" : "pulse"}" href="${esc(o.payUrl)}" target="_blank" rel="noopener" data-action="ozon-pay-open">${uiIcon("bank", 22, 2.1)}Оплатить ${esc(o.amountLabel)}</a>
+    <button class="ui-btn ${opened ? "ui-btn-ok" : "ghost"}" data-action="ozon-claim" data-token="${esc(o.token)}" ${state.ozonClaiming || !opened ? "disabled" : ""}>${uiIcon("check", 18, 2.6)}${state.ozonClaiming ? "Отправляем…" : "Я оплатил(а)"}</button>
+    ${opened ? "" : `<p class="ui-caption" style="margin:-6px 0 0;text-align:center;">Кнопка «Я оплатил(а)» станет активной после нажатия «Оплатить»</p>`}
     ${o.payUrl ? `<details class="ui-card ui-details" style="${flat}">
         <summary>Оплатить с другого телефона</summary>
         <p>Отсканируйте QR-код камерой или в приложении банка.</p>
         <div class="ui-qr-box" data-qr="${esc(o.payUrl)}"></div>
       </details>` : ""}
     <button class="ui-text-btn red" data-action="ozon-cancel" data-token="${esc(o.token)}">Отменить заявку</button>`;
+}
+
+const OZON_OPENED_KEY = "ahmedov_ozon_opened";
+// Клиент уже переходил по ссылке оплаты этой заявки (запоминаем и после перезапуска приложения)
+function ozonPayOpenedFor(token) {
+  if (!token) return false;
+  if (state.ozonPayOpened === token) return true;
+  try { return localStorage.getItem(OZON_OPENED_KEY) === token; } catch { return false; }
 }
 
 function clientTime(value) {
@@ -4287,7 +4296,9 @@ app.addEventListener("click", async (event) => {
     return;
   }
   if (action === "ozon-pay-open") {
-    state.ozonPayOpened = ozonCurrent()?.token || "";
+    const tok = ozonCurrent()?.token || "";
+    state.ozonPayOpened = tok;
+    try { localStorage.setItem(OZON_OPENED_KEY, tok); } catch { }
     setTimeout(render, 300);
     return;
   }
