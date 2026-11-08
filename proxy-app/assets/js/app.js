@@ -2624,18 +2624,28 @@ function vpnTabScreen() {
       </div>
     </article>
 
-    <article class="ui-card ui-pad" style="display:flex;flex-direction:column;gap:14px;">
-      <strong style="font-size:17px;">Подключение за минуту</strong>
-      <div class="ui-steps">
-        <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Установите v2RAGE</b><span>Бесплатно в App Store — кнопка ниже.</span></span></div>
-        <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Нажмите «Добавить в v2RAGE»</b><span>Приложение откроется и спросит — подтвердите добавление.</span></span></div>
-        <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Выберите сервер и включите VPN</b><span>При ограничениях мобильного интернета — серверы «Мобильный».</span></span></div>
+    <article class="ui-card ui-pad ui-vguide ${state.vpnGuideOpen ? "open" : ""}">
+      <div class="ui-vguide-head">
+        <span class="ui-mini-icon" style="background:rgba(10,132,255,.14);color:var(--ui-accent);">${uiIcon("bolt", 18, 2.2)}</span>
+        <span class="ui-vguide-title"><b>Подключение</b><span>Приложение v2RAGE · бесплатно</span></span>
       </div>
-      <a class="ui-btn ghost" style="height:50px;font-size:16px;" href="${V2RAGE_STORE_URL}" target="_blank" rel="noopener">${uiIcon("download", 18, 2.1)}Скачать v2RAGE в App Store</a>
-      <a class="ui-btn" style="height:54px;font-size:17px;" ${demoLock(v2rageImportUrl(sub.subUrl))}>${uiIcon("plus", 18, 2.4)}Добавить в v2RAGE</a>
-      <p class="ui-caption" style="margin:-4px 0 0;text-align:center;">Уже пользуетесь Happ? <a href="${esc(`happ://add/${sub.subUrl || ""}`)}" style="color:var(--ui-accent-text);font-weight:600;">Добавить в Happ</a></p>
-      <button class="ui-btn ghost" style="height:46px;" data-action="vpn-copy-sub" data-url="${esc(sub.subUrl || "")}">${uiIcon(copied ? "check" : "copy", 18)}${copied ? "Ссылка скопирована" : "Скопировать ссылку подписки"}</button>
-      <p class="ui-caption" style="margin:0;">Ссылка личная — не передавайте её другим. Когда подписка закончится, в приложении появится сообщение «Подписка окончена».</p>
+      <a class="ui-btn" style="height:52px;font-size:17px;" ${demoLock(v2rageImportUrl(sub.subUrl))}>${uiIcon("plus", 18, 2.4)}Добавить в v2RAGE</a>
+      <div class="ui-vguide-row">
+        <a class="ui-btn ghost" href="${V2RAGE_STORE_URL}" target="_blank" rel="noopener">${uiIcon("download", 16, 2.2)}App Store</a>
+        <button class="ui-btn ghost ${copied ? "ok" : ""}" data-action="vpn-copy-sub" data-url="${esc(sub.subUrl || "")}">${uiIcon(copied ? "check" : "copy", 16)}${copied ? "Скопировано" : "Ссылка"}</button>
+      </div>
+      <button class="ui-vguide-toggle" data-action="vpn-guide-toggle" aria-expanded="${state.vpnGuideOpen ? "true" : "false"}">
+        <span>Как подключить · 3 шага</span><span class="ui-vguide-chev">${uiIcon("chevron", 14, 2.6)}</span>
+      </button>
+      ${state.vpnGuideOpen ? `<div class="ui-vguide-body">
+        <div class="ui-steps">
+          <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Установите v2RAGE</b><span>Бесплатно в App Store — кнопка выше.</span></span></div>
+          <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Нажмите «Добавить в v2RAGE»</b><span>Приложение откроется и спросит — подтвердите добавление.</span></span></div>
+          <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Выберите сервер и включите VPN</b><span>При ограничениях мобильного интернета — серверы «Мобильный».</span></span></div>
+        </div>
+        <p class="ui-caption" style="margin:0;">Уже пользуетесь Happ? <a href="${esc(`happ://add/${sub.subUrl || ""}`)}" style="color:var(--ui-accent-text);font-weight:600;">Добавить в Happ</a></p>
+        <p class="ui-caption" style="margin:0;">Ссылка личная — не передавайте её другим. Когда подписка закончится, в приложении появится сообщение «Подписка окончена».</p>
+      </div>` : ""}
     </article>
     ${state.vpnBuyOpen ? `<section class="ui-sec" id="vpn-buy"><h2 class="ui-h2" style="padding:0 4px;">Продлить VPN</h2>${vpnBuyBlock()}</section>` : ""}
     ${vpnServerListSection(false)}
@@ -4721,6 +4731,10 @@ app.addEventListener("click", async (event) => {
   if (action === "vpn-list-reload") return loadVpnList(true);
   if (action === "vpn-select-plan") {
     return setState({ vpnPlanId: el.dataset.planId });
+  }
+  if (action === "vpn-guide-toggle") {
+    setState({ vpnGuideOpen: !state.vpnGuideOpen });
+    return;
   }
   if (action === "vpn-open-buy") {
     setState({ vpnBuyOpen: true });
