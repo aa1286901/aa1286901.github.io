@@ -28,7 +28,7 @@ const state = {
   pendingPhone: "",
   inviteInput: "",
   authStep: "phone",
-  hint: "",
+  hint: (() => { try { const h = sessionStorage.getItem("ahmedov_login_hint") || ""; sessionStorage.removeItem("ahmedov_login_hint"); return h; } catch { return ""; } })(),
   loadingAuth: false,
   installGuideOpen: false,
   paymentPage: {
@@ -296,6 +296,7 @@ function stopSessionHeartbeat() {
 function startSessionHeartbeat() {
   stopSessionHeartbeat();
   if (!state.token || state.role === "admin") return;
+  void reportDevice();
   sessionHeartbeatTimer = setInterval(() => {
     void runSessionHeartbeatCheck();
   }, SESSION_CHECK_INTERVAL_MS);
@@ -542,9 +543,14 @@ async function loadPaymentPage() {
   }
 }
 
+const LOGIN_HINT_KEY = "ahmedov_login_hint";
+
 async function handleExpiredSubscription(message = "Подписка закончилась. Оплатите доступ.") {
   if (!isPaymentRoute()) {
-    const phone = normalizePhone(state.user?.phone || state.pendingPhone || state.phoneInput || "");
+    let tokenPhone = "";
+    try { tokenPhone = JSON.parse(atob(String(state.token || "").split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))).sub || ""; } catch { }
+    const phone = normalizePhone(state.user?.phone || state.pendingPhone || state.phoneInput || tokenPhone || "");
+    try { sessionStorage.setItem(LOGIN_HINT_KEY, message); } catch { }
     logout({ hint: message });
     openAppPage({ phone });
     return;
@@ -1348,6 +1354,7 @@ const UI_ICON_PATHS = {
   calendar: '<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>',
   bank: '<path d="M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/>',
   tag: '<path d="M3 12V5a2 2 0 0 1 2-2h7l9 9-9 9z"/><circle cx="8" cy="8" r="1.4"/>',
+  phone: '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
   refresh: '<path d="M20 11a8 8 0 0 0-14.6-4.6L3 9M4 13a8 8 0 0 0 14.6 4.6L21 15M3 4v5h5M21 20v-5h-5"/>',
 };
 
@@ -2494,7 +2501,7 @@ function vpnPaywall() {
       ${perk("globe", "Все приложения и сайты", "Instagram, YouTube и другие сервисы — не только мессенджеры.")}
       ${perk("shield", "Работает при белых списках", "Мобильные серверы подключаются в LTE, даже когда интернет ограничен.")}
       ${perk("refresh", "Серверы обновляются сами", "Нерабочие убираются, новые добавляются в подписку.")}
-      ${perk("bolt", "Подключение за минуту", "Бесплатное приложение v2RAGE и одна кнопка «Добавить».")}
+      ${perk("bolt", "Подключение за минуту", "Бесплатное приложение для iPhone и Android и одна кнопка «Добавить».")}
     </div>
     ${vpnServerListSection(true)}
     ${vpnComboOffer()}
@@ -2624,32 +2631,56 @@ function vpnTabScreen() {
       </div>
     </article>
 
-    <article class="ui-card ui-pad ui-vguide ${state.vpnGuideOpen ? "open" : ""}">
-      <div class="ui-vguide-head">
-        <span class="ui-mini-icon" style="background:rgba(10,132,255,.14);color:var(--ui-accent);">${uiIcon("bolt", 18, 2.2)}</span>
-        <span class="ui-vguide-title"><b>Подключение</b><span>Приложение v2RAGE · бесплатно</span></span>
-      </div>
-      <a class="ui-btn" style="height:52px;font-size:17px;" ${demoLock(v2rageImportUrl(sub.subUrl))}>${uiIcon("plus", 18, 2.4)}Добавить в v2RAGE</a>
-      <div class="ui-vguide-row">
-        <a class="ui-btn ghost" href="${V2RAGE_STORE_URL}" target="_blank" rel="noopener">${uiIcon("download", 16, 2.2)}App Store</a>
-        <button class="ui-btn ghost ${copied ? "ok" : ""}" data-action="vpn-copy-sub" data-url="${esc(sub.subUrl || "")}">${uiIcon(copied ? "check" : "copy", 16)}${copied ? "Скопировано" : "Ссылка"}</button>
-      </div>
-      <button class="ui-vguide-toggle" data-action="vpn-guide-toggle" aria-expanded="${state.vpnGuideOpen ? "true" : "false"}">
-        <span>Как подключить · 3 шага</span><span class="ui-vguide-chev">${uiIcon("chevron", 14, 2.6)}</span>
-      </button>
-      ${state.vpnGuideOpen ? `<div class="ui-vguide-body">
-        <div class="ui-steps">
-          <div class="ui-step"><span class="ui-step-num">1</span><span class="ui-step-text"><b>Установите v2RAGE</b><span>Бесплатно в App Store — кнопка выше.</span></span></div>
-          <div class="ui-step"><span class="ui-step-num">2</span><span class="ui-step-text"><b>Нажмите «Добавить в v2RAGE»</b><span>Приложение откроется и спросит — подтвердите добавление.</span></span></div>
-          <div class="ui-step"><span class="ui-step-num">3</span><span class="ui-step-text"><b>Выберите сервер и включите VPN</b><span>При ограничениях мобильного интернета — серверы «Мобильный».</span></span></div>
-        </div>
-        <p class="ui-caption" style="margin:0;">Уже пользуетесь Happ? <a href="${esc(`happ://add/${sub.subUrl || ""}`)}" style="color:var(--ui-accent-text);font-weight:600;">Добавить в Happ</a></p>
-        <p class="ui-caption" style="margin:0;">Ссылка личная — не передавайте её другим. Когда подписка закончится, в приложении появится сообщение «Подписка окончена».</p>
-      </div>` : ""}
-    </article>
+    ${vpnGuideCard(sub, copied)}
     ${state.vpnBuyOpen ? `<section class="ui-sec" id="vpn-buy"><h2 class="ui-h2" style="padding:0 4px;">Продлить VPN</h2>${vpnBuyBlock()}</section>` : ""}
     ${vpnServerListSection(false)}
   </section>`;
+}
+
+function vpnGuideCard(sub, copied) {
+  const plat = devicePlatform();
+  const url = sub.subUrl || "";
+  const apps = {
+    ios: { name: "v2RAGE", store: "App Store", storeUrl: V2RAGE_STORE_URL, importUrl: v2rageImportUrl(url) },
+    android: { name: "v2RayTun", store: "Google Play", storeUrl: V2RAYTUN_PLAY_URL, importUrl: v2raytunImportUrl(url) },
+  };
+  const app = apps[plat];
+  const copyBtn = (label) => `<button class="ui-btn ghost ${copied ? "ok" : ""}" data-action="vpn-copy-sub" data-url="${esc(url)}">${uiIcon(copied ? "check" : "copy", 16)}${copied ? "Скопировано" : label}</button>`;
+  const head = `<div class="ui-vguide-head">
+      <span class="ui-mini-icon" style="background:rgba(10,132,255,.14);color:var(--ui-accent);">${uiIcon("bolt", 18, 2.2)}</span>
+      <span class="ui-vguide-title"><b>Подключение</b><span>${app ? `Приложение ${app.name} · бесплатно` : "iPhone — v2RAGE, Android — v2RayTun"}</span></span>
+    </div>`;
+  const main = app
+    ? `<a class="ui-btn" style="height:52px;font-size:17px;" ${demoLock(app.importUrl)}>${uiIcon("plus", 18, 2.4)}Добавить в ${app.name}</a>
+      <div class="ui-vguide-row">
+        <a class="ui-btn ghost" href="${app.storeUrl}" target="_blank" rel="noopener">${uiIcon("download", 16, 2.2)}${app.store}</a>
+        ${copyBtn("Ссылка")}
+      </div>`
+    : `<button class="ui-btn ${copied ? "ok" : ""}" style="height:52px;font-size:17px;" data-action="vpn-copy-sub" data-url="${esc(url)}">${uiIcon(copied ? "check" : "copy", 18)}${copied ? "Ссылка скопирована" : "Скопировать ссылку подписки"}</button>
+      <div class="ui-vguide-row">
+        <a class="ui-btn ghost" href="${V2RAGE_STORE_URL}" target="_blank" rel="noopener">${uiIcon("download", 16, 2.2)}iPhone</a>
+        <a class="ui-btn ghost" href="${V2RAYTUN_PLAY_URL}" target="_blank" rel="noopener">${uiIcon("download", 16, 2.2)}Android</a>
+      </div>`;
+  const steps = app
+    ? [["Установите " + app.name, `Бесплатно в ${app.store} — кнопка выше.`],
+       [`Нажмите «Добавить в ${app.name}»`, "Приложение откроется и спросит — подтвердите добавление."],
+       ["Выберите сервер и включите VPN", "При ограничениях мобильного интернета — серверы «Мобильный»."]]
+    : [["Установите приложение на телефон", "iPhone — v2RAGE из App Store, Android — v2RayTun из Google Play."],
+       ["Откройте этот кабинет на телефоне", "Там появится кнопка «Добавить» — подписка добавится в одно касание."],
+       ["Или вставьте ссылку вручную", "В приложении: «+» → «Импорт из буфера обмена»."]];
+  const open = !!state.vpnGuideOpen;
+  return `<article class="ui-card ui-pad ui-vguide ${open ? "open" : ""}">
+    ${head}
+    ${main}
+    <button class="ui-vguide-toggle" data-action="vpn-guide-toggle" aria-expanded="${open ? "true" : "false"}">
+      <span>Как подключить · 3 шага</span><span class="ui-vguide-chev">${uiIcon("chevron", 14, 2.6)}</span>
+    </button>
+    ${open ? `<div class="ui-vguide-body">
+      <div class="ui-steps">${steps.map((st, i) => `<div class="ui-step"><span class="ui-step-num">${i + 1}</span><span class="ui-step-text"><b>${esc(st[0])}</b><span>${esc(st[1])}</span></span></div>`).join("")}</div>
+      ${plat === "ios" ? `<p class="ui-caption" style="margin:0;">Уже пользуетесь Happ? <a href="${esc(`happ://add/${url}`)}" style="color:var(--ui-accent-text);font-weight:600;">Добавить в Happ</a></p>` : ""}
+      <p class="ui-caption" style="margin:0;">Ссылка личная — не передавайте её другим. Когда подписка закончится, в приложении появится сообщение «Подписка окончена».</p>
+    </div>` : ""}
+  </article>`;
 }
 
 function freeVpnScreen() {
@@ -2881,6 +2912,7 @@ function adminUsersTab() {
           ${isWinback ? `<span class="ui-qrow-sub" style="${u.winbackAt ? "color:var(--ui-green-text);font-weight:600;" : ""}">${u.winbackAt ? `Писали ${esc(adminTime(u.winbackAt))}` : `Не платит ${Math.abs(days)} ${ruPlural(Math.abs(days), "день", "дня", "дней")} · ещё не писали`}</span>
           ${promoOn ? `<span class="ui-qrow-sub" style="color:var(--ui-orange-text);font-weight:600;">${uiIcon("tag", 13, 2.2)}В сообщении промокод ${esc(promoOn.code)}</span>` : ""}` : ""}
           ${u.refFriends || u.referredBy ? `<span class="ui-qrow-sub" style="color:#FF9F0A;font-weight:600;">${uiIcon("gift", 13, 2.2)}${u.refFriends ? `Привёл друзей: ${esc(u.refFriends)} · получил +${esc(u.refDays)} дн.` : ""}${u.refFriends && u.referredBy ? " · " : ""}${u.referredBy ? `пришёл от ${esc(u.referredBy)}` : ""}</span>` : ""}
+          ${u.device ? `<span class="ui-qrow-sub">${uiIcon("phone", 13, 2.2)}${esc(deviceTitle(u.device))}${u.loginAt ? ` · вход ${esc(adminTime(u.loginAt))}` : ""}</span>` : ""}
           ${u.vpnActive ? `<span class="ui-qrow-sub" style="color:#8E8CFF;font-weight:600;">${uiIcon("vpn", 13, 2.2)}VPN до ${esc(formatDateOnly(u.vpnExpiresAt))} · ${esc(u.vpnDaysLeft)} дн.</span>` : ""}
         </span>
         <span class="ui-tag ${st.cls}">${st.text}</span>
@@ -3056,7 +3088,7 @@ function adminVpnBlock(u) {
   if (!u) return "";
   const active = !!u.vpnActive;
   const sendText = active && u.vpnUrl
-    ? `Ваш VPN ahmedov.proxy подключён до ${formatDateOnly(u.vpnExpiresAt)}.\n1) Установите бесплатное приложение v2RAGE: ${V2RAGE_STORE_URL}\n2) Добавьте вашу личную подписку: ${u.vpnUrl}\nПроще всего — откройте вкладку VPN в приложении ahmedov.proxy и нажмите «Добавить в v2RAGE».`
+    ? `Ваш VPN ahmedov.proxy подключён до ${formatDateOnly(u.vpnExpiresAt)}.\n1) Установите бесплатное приложение: iPhone — v2RAGE ${V2RAGE_STORE_URL}, Android — v2RayTun ${V2RAYTUN_PLAY_URL}\n2) Добавьте вашу личную подписку: ${u.vpnUrl}\nПроще всего — откройте вкладку VPN в приложении ahmedov.proxy и нажмите «Добавить».`
     : "";
   return `<div class="ui-card ui-pad" style="background:var(--ui-fill);box-shadow:none;display:flex;flex-direction:column;gap:12px;margin-top:4px;">
     <div style="display:flex;align-items:center;gap:10px;">
@@ -3084,6 +3116,36 @@ function adminVpnBlock(u) {
         <button class="ui-text-btn red" style="height:38px;font-size:14px;" data-action="admin-vpn" data-mode="off" data-phone="${esc(u.phone)}">Отключить VPN</button>
       </div>` : ""}
   </div>`;
+}
+
+function adminDeviceBlock(u) {
+  if (!u) return "";
+  const d = u.device;
+  if (!d) return `<div class="ui-card ui-pad" style="background:var(--ui-fill);box-shadow:none;display:flex;flex-direction:column;gap:4px;">
+      <strong style="font-size:16px;">Устройство</strong>
+      <span class="ui-sub" style="font-size:13px;">Пока неизвестно — данные появятся, когда клиент откроет личный кабинет.</span></div>`;
+  const rows = [
+    ["Модель", d.os === "iOS" ? `${d.model || "iPhone"} (по размеру экрана)` : [d.brand, d.model].filter(Boolean).join(" ") || "—"],
+    ["Код модели", d.os === "iOS" ? "" : d.modelCode],
+    ["Система", [d.os, d.osVersion].filter(Boolean).join(" ")],
+    ["Браузер", [d.browser, d.browserVersion].filter(Boolean).join(" ")],
+    ["Как открыт", d.app],
+    ["Экран", d.screen],
+    ["Память / ядра", [d.memory ? `${d.memory} ГБ` : "", d.cores ? `${d.cores} ядер` : ""].filter(Boolean).join(" · ")],
+    ["Сеть", d.connection],
+    ["Язык", d.languages || d.language],
+    ["Часовой пояс", d.timezone],
+    ["Тема", d.theme],
+    ["IP-адрес", u.deviceIp],
+    ["Последний вход", u.loginAt ? adminTime(u.loginAt) : ""],
+    ["Данные обновлены", u.deviceAt ? adminTime(u.deviceAt) : ""],
+  ].filter((r) => r[1]);
+  return `<div class="ui-card ui-pad ui-devbox" style="background:var(--ui-fill);box-shadow:none;">
+      <strong style="font-size:16px;">Устройство</strong>
+      <dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>
+      ${d.ua ? `<details><summary>Строка браузера</summary><code>${esc(d.ua)}</code></details>` : ""}
+      <span class="ui-caption" style="margin:0;">В кабинете может быть только одна активная сессия: при входе с другого устройства прежнее отключается.</span>
+    </div>`;
 }
 
 function adminSheet() {
@@ -3127,7 +3189,8 @@ function adminSheet() {
       ${sw("admin-user-active", f.is_active, "Доступ включён")}
       <button class="ui-btn" data-action="admin-save-user" ${a.saving ? "disabled" : ""}>${a.saving ? "Сохраняем…" : "Сохранить"}</button>
       ${exists ? "" : `<p class="ui-caption" style="margin:0;">После сохранения появится код доступа — его можно сразу отправить клиенту в WhatsApp.</p>`}
-      ${exists ? adminVpnBlock((a.users || []).find((u) => u.phone === normalizePhone(f.phone))) : ""}`);
+      ${exists ? adminVpnBlock((a.users || []).find((u) => u.phone === normalizePhone(f.phone))) : ""}
+      ${exists ? adminDeviceBlock((a.users || []).find((u) => u.phone === normalizePhone(f.phone))) : ""}`);
   }
 
   if (kind === "invite") {
@@ -3233,6 +3296,127 @@ function adminScreen() {
 const V2RAGE_STORE_URL = "https://apps.apple.com/ru/app/v2rage/id6761075402";
 function v2rageImportUrl(subUrl) {
   return `v2rage://import?url=${encodeURIComponent(subUrl || "")}`;
+}
+
+// ==========================
+// Устройство клиента: система, модель, браузер — для кнопок VPN и карточки в админке
+// ==========================
+const V2RAYTUN_PLAY_URL = "https://play.google.com/store/apps/details?id=com.v2raytun.android";
+function v2raytunImportUrl(subUrl) {
+  return `v2raytun://import/${subUrl || ""}`;
+}
+
+function devicePlatform() {
+  const ua = navigator.userAgent || "";
+  if (/android/i.test(ua)) return "android";
+  if (/iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1)) return "ios";
+  return "other";
+}
+
+// iPhone не сообщает модель — угадываем группу по размеру экрана (в точках) и плотности
+const IPHONE_BY_SCREEN = {
+  "320x568@2": "iPhone SE (1-го поколения) / 5s",
+  "375x667@2": "iPhone SE (2–3-го поколения) / 6–8",
+  "414x736@3": "iPhone 6–8 Plus",
+  "375x812@3": "iPhone X / XS / 11 Pro / 12–13 mini",
+  "414x896@2": "iPhone XR / 11",
+  "414x896@3": "iPhone XS Max / 11 Pro Max",
+  "390x844@3": "iPhone 12–14 / 16e",
+  "428x926@3": "iPhone 12–13 Pro Max / 14 Plus",
+  "393x852@3": "iPhone 14 Pro / 15 / 15 Pro / 16",
+  "430x932@3": "iPhone 14 Pro Max / 15 Plus / 15 Pro Max / 16 Plus",
+  "402x874@3": "iPhone 16 Pro / 17 / 17 Pro",
+  "420x912@3": "iPhone Air",
+  "440x956@3": "iPhone 16 Pro Max / 17 Pro Max",
+};
+
+const ANDROID_BRANDS = [
+  [/^SM-|^GT-|^Galaxy/i, "Samsung"], [/^Pixel/i, "Google"], [/^(Redmi|POCO|Mi |MI |M2\d|2\d{3}[A-Z0-9]{4,})/i, "Xiaomi"],
+  [/^(CPH|OPPO)/i, "OPPO"], [/^RMX/i, "realme"], [/^(V2\d{3}|vivo)/i, "vivo"], [/^(ELE|VOG|ANA|NOH|LYA|JNY|ALN|BRA|FOA|CTR|NEN|REA)-/i, "Huawei"],
+  [/^(NTH|ANY|LLY|RKY|TFY|CMA|VNE|ALI|CRT|FNE|LGE|BVL)-/i, "Honor"], [/^(TECNO|KJ|KI|CK|LH|BG)/i, "Tecno"], [/^(Infinix|X6\d{2})/i, "Infinix"],
+  [/^(moto|motorola|XT\d)/i, "Motorola"], [/^(ONEPLUS|[A-Z]{2}\d{4}$)/i, "OnePlus"], [/^Nothing|^A0\d{2}/i, "Nothing"], [/^(Nokia|TA-)/i, "Nokia"],
+];
+
+function uaParse(ua) {
+  const out = {};
+  let m;
+  if ((m = ua.match(/Android\s([\d.]+)/))) { out.os = "Android"; out.osVersion = m[1]; }
+  else if ((m = ua.match(/(?:iPhone|CPU) OS (\d+[_\d]*)/))) { out.os = /iPad/.test(ua) ? "iPadOS" : "iOS"; out.osVersion = m[1].replace(/_/g, "."); }
+  else if (/Macintosh/.test(ua)) out.os = navigator.maxTouchPoints > 1 ? "iPadOS" : "macOS";
+  else if (/Windows/.test(ua)) out.os = "Windows";
+  else if (/Linux/.test(ua)) out.os = "Linux";
+  if ((m = ua.match(/;\s*([^;)]+?)\s+Build\//))) out.modelCode = m[1];
+  else if ((m = ua.match(/Android [\d.]+;\s*([^;)]+)\)/)) && m[1].trim() !== "K") out.modelCode = m[1].trim();
+  const browsers = [
+    [/YaBrowser\/([\d.]+)/, "Яндекс Браузер"], [/SamsungBrowser\/([\d.]+)/, "Samsung Internet"], [/EdgA?\/([\d.]+)/, "Edge"],
+    [/OPR\/([\d.]+)/, "Opera"], [/Firefox\/([\d.]+)|FxiOS\/([\d.]+)/, "Firefox"], [/CriOS\/([\d.]+)/, "Chrome"],
+    [/Telegram/i, "Telegram (встроенный)"], [/Instagram/i, "Instagram (встроенный)"], [/WhatsApp/i, "WhatsApp (встроенный)"],
+    [/Chrome\/([\d.]+)/, "Chrome"], [/Version\/([\d.]+).*Safari/, "Safari"],
+  ];
+  for (const [re, name] of browsers) {
+    const b = ua.match(re);
+    if (b) { out.browser = name; const v = (b[1] || b[2] || "").split(".")[0]; if (v) out.browserVersion = v; break; }
+  }
+  return out;
+}
+
+async function collectDevice() {
+  const ua = navigator.userAgent || "";
+  const d = uaParse(ua);
+  d.ua = ua;
+  try {
+    const hints = navigator.userAgentData && navigator.userAgentData.getHighEntropyValues
+      ? await navigator.userAgentData.getHighEntropyValues(["model", "platform", "platformVersion", "architecture", "fullVersionList"])
+      : null;
+    if (hints) {
+      if (hints.model) d.modelCode = hints.model;
+      if (hints.platform === "Android" && hints.platformVersion) d.osVersion = hints.platformVersion.split(".")[0];
+      if (hints.platform === "Windows" && hints.platformVersion) d.osVersion = Number(hints.platformVersion.split(".")[0]) >= 13 ? "11" : "10";
+      if (hints.platform === "macOS" && hints.platformVersion) d.osVersion = hints.platformVersion;
+      if (hints.architecture) d.arch = hints.architecture;
+    }
+  } catch { }
+  const w = Math.min(screen.width, screen.height), h = Math.max(screen.width, screen.height), dpr = Math.round(window.devicePixelRatio || 1);
+  d.screen = `${w}×${h} @${window.devicePixelRatio || 1}x`;
+  if (d.os === "iOS") d.model = IPHONE_BY_SCREEN[`${w}x${h}@${dpr}`] || "iPhone";
+  else if (d.os === "iPadOS") d.model = "iPad";
+  else if (d.modelCode) {
+    d.brand = (ANDROID_BRANDS.find(([re]) => re.test(d.modelCode)) || [])[1] || "";
+    d.model = d.modelCode;
+  }
+  d.standalone = !!(window.matchMedia?.("(display-mode: standalone)").matches || navigator.standalone);
+  d.app = d.standalone ? "Установлено на экран (PWA)" : "В браузере";
+  d.language = navigator.language || "";
+  d.languages = (navigator.languages || []).slice(0, 4).join(", ");
+  try { d.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch { }
+  d.theme = window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "тёмная" : "светлая";
+  if (navigator.deviceMemory) d.memory = navigator.deviceMemory;
+  if (navigator.hardwareConcurrency) d.cores = navigator.hardwareConcurrency;
+  d.touchPoints = navigator.maxTouchPoints || 0;
+  d.touch = d.touchPoints > 0;
+  const c = navigator.connection;
+  if (c) d.connection = [c.type, c.effectiveType].filter(Boolean).join(" · ");
+  return d;
+}
+
+const DEVICE_SENT_KEY = "ahmedov_device_sent";
+async function reportDevice() {
+  if (!state.token || state.role === "admin") return;
+  try {
+    const mark = `${state.token.slice(-16)}`;
+    const prev = JSON.parse(localStorage.getItem(DEVICE_SENT_KEY) || "{}");
+    if (prev.mark === mark && Date.now() - Number(prev.at || 0) < 6 * 3600 * 1000) return;
+    const device = await collectDevice();
+    await request("/device", { method: "POST", headers: { Authorization: `Bearer ${state.token}` }, body: JSON.stringify({ device }) });
+    localStorage.setItem(DEVICE_SENT_KEY, JSON.stringify({ mark, at: Date.now() }));
+  } catch { }
+}
+
+function deviceTitle(d) {
+  if (!d) return "";
+  const name = d.os === "iOS" || d.os === "iPadOS" ? (d.model || d.os) : [d.brand, d.model].filter(Boolean).join(" ") || d.os || "Устройство";
+  const os = [d.os, d.osVersion].filter(Boolean).join(" ");
+  return [name, os].filter(Boolean).join(" · ");
 }
 
 const OZON_ORDER_KEY = "ahmedov_ozon_order";
@@ -3345,7 +3529,7 @@ function ozonOrderView(o, inSheet) {
         <span class="ui-sub" style="font-size:15px;">${esc(o.planName)} · ${esc(o.displayPhone)}</span>
       </div>
       ${isVpn
-      ? `<p class="ui-caption" style="margin:0;text-align:center;">VPN подключён — во вкладке VPN нажмите «Добавить в v2RAGE».</p>
+      ? `<p class="ui-caption" style="margin:0;text-align:center;">VPN подключён — во вкладке VPN нажмите «Добавить».</p>
            <button class="ui-btn" data-action="ozon-close">Готово</button>`
       : o.inviteCode
         ? `<div class="ui-card ui-amount" style="padding:16px;"><span class="ui-sub" style="font-size:15px;">Ваш код доступа</span><span class="ui-invite-code">${esc(o.inviteCode)}</span></div>
@@ -4929,7 +5113,7 @@ app.addEventListener("click", async (event) => {
     const mode = el.dataset.mode;
     const days = Number(el.dataset.days || 0);
     if (mode === "off" && !window.confirm(`Отключить VPN у ${displayPhone(phone)}? Ссылка перестанет работать.`)) return;
-    if (mode === "reset" && !window.confirm("Выдать новую ссылку? Старая перестанет работать — клиенту нужно будет добавить новую в v2RAGE.")) return;
+    if (mode === "reset" && !window.confirm("Выдать новую ссылку? Старая перестанет работать — клиенту нужно будет заново добавить её в приложение.")) return;
     setAdmin({ saving: true });
     try {
       await api.adminVpn(state.token, phone, { mode, days });

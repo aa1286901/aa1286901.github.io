@@ -685,3 +685,11 @@ div.ui-feature { cursor: default; }
 .ui-vguide-body { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; animation: ui-vguide-in .2s ease; }
 @keyframes ui-vguide-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .ui-vguide-body { animation: none; } .ui-vguide-chev { transition: none; } }
+
+/* Карточка устройства клиента в админке */
+.ui-devbox { display: flex; flex-direction: column; gap: 10px; }
+.ui-devbox dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; font-size: 14px; }
+.ui-devbox dt { color: var(--ui-sub); }
+.ui-devbox dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.ui-devbox details summary { cursor: pointer; font-size: 13px; color: var(--ui-accent-text); font-weight: 600; }
+.ui-devbox code { display: block; margin-top: 6px; font-size: 12px; line-height: 17px; color: var(--ui-sub); overflow-wrap: anywhere; }
