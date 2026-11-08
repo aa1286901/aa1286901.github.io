@@ -11,6 +11,7 @@ require_once __DIR__ . '/ozon.php';
 require_once __DIR__ . '/webpush.php';
 require_once __DIR__ . '/referral.php';
 require_once __DIR__ . '/announcements.php';
+require_once __DIR__ . '/device.php';
 
 function array_keys_recursive(array $array): array
 {
@@ -34,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 ensure_vpn_schema();
 ensure_ref_schema();
+ensure_device_schema();
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
@@ -491,6 +493,7 @@ function require_auth(): array
     if (!$payload) {
         json_response(['message' => 'Invalid token'], 401);
     }
+    session_check($payload);
 
     return $payload;
 }
@@ -861,6 +864,9 @@ function issue_auth_token(string $phone, string $role): array
         'exp' => time() + config()['jwt_ttl'],
         'iat' => time(),
     ];
+    if ($role !== 'admin') {
+        $payload['sid'] = session_start_for($phone);
+    }
     return [
         'token' => jwt_sign($payload),
         'role' => $role,
@@ -1368,6 +1374,15 @@ if ($uri === '/api/auth/invite' && $method === 'POST') {
     ]);
 }
 
+if ($uri === '/api/device' && $method === 'POST') {
+    $auth = require_auth();
+    if (!is_admin_auth($auth)) {
+        $body = read_json_body();
+        device_save(normalize_phone((string) ($auth['sub'] ?? '')), is_array($body['device'] ?? null) ? $body['device'] : []);
+    }
+    json_response(['ok' => true]);
+}
+
 if ($uri === '/api/auth/me' && $method === 'GET') {
     $auth = require_auth();
     $phone = (string) ($auth['sub'] ?? '');
@@ -1429,7 +1444,8 @@ if ($uri === '/api/admin/users' && $method === 'GET') {
     $stmt = db()->query(
         'SELECT id, phone, subscription_type, expires_at, is_active, COALESCE(balance, 0) AS balance,
                 invite_code, invite_code_hash, invite_issued_at, invite_used_at, created_at,
-                vpn_expires_at, vpn_token, winback_at, referred_by
+                vpn_expires_at, vpn_token, winback_at, referred_by,
+                login_at, device_json, device_at, device_ip
          FROM users
          ORDER BY datetime(created_at) DESC, id DESC'
     );
@@ -1439,7 +1455,7 @@ if ($uri === '/api/admin/users' && $method === 'GET') {
         $st = $refStats[(string) $row['phone']] ?? [];
         $u['refFriends'] = (int) ($st['friends'] ?? 0);
         $u['refDays'] = (int) ($st['days'] ?? 0);
-        return $u;
+        return array_merge($u, device_admin_fields($row));
     }, $stmt->fetchAll());
 
     json_response(['users' => $users]);
