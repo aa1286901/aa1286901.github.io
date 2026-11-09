@@ -1282,6 +1282,9 @@ async function runAdminClientPing(runId, sourceItems) {
 // ==========================
 
 const THEME_KEY = "ahmedov_theme";
+const INSTAGRAM_URL = "https://www.instagram.com/ahmedov.proxy/";
+const IG_GRADIENT = "linear-gradient(45deg,#F9CE34 0%,#EE2A7B 55%,#6228D7 100%)";
+
 const SUPPORT_LINKS = {
   telegram: "https://t.me/ahmedov_ml",
   whatsapp: "https://wa.me/79634150424",
@@ -1354,6 +1357,7 @@ const UI_ICON_PATHS = {
   calendar: '<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>',
   bank: '<path d="M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/>',
   tag: '<path d="M3 12V5a2 2 0 0 1 2-2h7l9 9-9 9z"/><circle cx="8" cy="8" r="1.4"/>',
+  instagram: '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17" cy="7" r="0.6" fill="currentColor"/>',
   phone: '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
   refresh: '<path d="M20 11a8 8 0 0 0-14.6-4.6L3 9M4 13a8 8 0 0 0 14.6 4.6L21 15M3 4v5h5M21 20v-5h-5"/>',
 };
@@ -1900,6 +1904,12 @@ function homeScreen() {
       </div>
       ${contactButtons("support")}
     </article>
+
+    <a class="ui-card ui-ig-row" href="${INSTAGRAM_URL}" target="_blank" rel="noopener">
+      <span class="ui-ig-icon" style="background:${IG_GRADIENT}">${uiIcon("instagram", 20, 2.1)}</span>
+      <span class="ui-ig-text"><b>Мы в Instagram</b><span>Советы и разборы каждый день · @ahmedov.proxy</span></span>
+      <span class="ui-chev">${uiIcon("chevron", 14, 2.6)}</span>
+    </a>
   </section>`;
 }
 
@@ -2006,6 +2016,16 @@ function accountScreen() {
     </div>
 
     ${referralSection()}
+
+    <div class="ui-sec" style="gap:8px;">
+      <span class="ui-label">Мы в соцсетях</span>
+      <div class="ui-card ui-group">
+        <a class="ui-row" href="${INSTAGRAM_URL}" target="_blank" rel="noopener">
+          <span class="ui-row-icon" style="background:${IG_GRADIENT}">${uiIcon("instagram", 17, 2.1)}</span>
+          <span class="ui-row-main"><span class="ui-row-label">Instagram</span><span class="ui-row-value">@ahmedov.proxy</span><span class="ui-chev">${uiIcon("chevron", 14, 2.6)}</span></span>
+        </a>
+      </div>
+    </div>
 
     <div class="ui-sec" style="gap:8px;">
       <span class="ui-label">Поддержка</span>
