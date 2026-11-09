@@ -4,9 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Фонд Сагасидейбук</title>
-<meta name="description" content="Благотворительный фонд селения Сагасидейбук: сборы, пожертвования, отчёты и объявления.">
-<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0E1210" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Благотворительный фонд селения Сагасидейбук: сборы, пожертвования, отчёты и новости.">
+<meta name="theme-color" content="#F3F5F4">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -16,29 +15,30 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="app.css?v=3">
 </head>
 <body>
 <header class="top">
   <div class="top-in">
     <a class="brand" href="#/">
-      <img src="icons/icon.svg" alt="" width="30" height="30">
-      <span>Фонд Сагасидейбук</span>
+      <img src="icons/icon.svg" alt="" width="36" height="36">
+      <span><b>Сагасидейбук</b><small>благотворительный фонд</small></span>
     </a>
-    <nav class="nav" id="nav" aria-label="Разделы"></nav>
+    <nav class="dnav" id="dnav" aria-label="Разделы"></nav>
+    <a class="round" href="#/o-fonde" aria-label="О фонде"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg></a>
   </div>
 </header>
 
-<div class="demo-bar" id="demo-bar" hidden>Демо-версия: все суммы и данные примерные</div>
-
 <main class="wrap" id="view" tabindex="-1"></main>
+
+<nav class="bnav" id="bnav" aria-label="Разделы"></nav>
 
 <div class="scrim" id="scrim"></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Пожертвование"></div>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="data.js"></script>
-<script src="app.js"></script>
+<script src="data.js?v=3"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
