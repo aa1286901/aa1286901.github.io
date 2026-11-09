@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Фонд Сагасидейбук</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: интерактивный телефон-прототип слева, заметки по проекту справа (на телефоне — друг под другом) */
+:root{
+  --page:#E7EDE8; --surface:#FFFFFF; --surface-2:#F2F6F3; --ink:#13241A; --muted:#5A6B61; --line:#DBE4DD;
+  --accent:#0E5A39; --accent-press:#0A4630; --on-accent:#FFFFFF; --accent-soft:#E0EEE5;
+  --brass:#B8862B; --brass-soft:#F6ECD6; --danger:#B4452F; --track:#E3EAE5;
+  --sky1:#CFE3DA; --sky2:#F3EBD8; --ridge1:#9CB8A8; --ridge2:#5F8C74; --ridge3:#2F6148; --ground:#1F4A35;
+  --frame:#1A231E;
+  --f-display:"Unbounded","Manrope",system-ui,sans-serif;
+  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --page:#0A110D; --surface:#121C16; --surface-2:#18251D; --ink:#E5EEE8; --muted:#93A69A; --line:#243429;
+  --accent:#46B07D; --accent-press:#3A9A6B; --on-accent:#05140C; --accent-soft:#183326;
+  --brass:#D9AE57; --brass-soft:#2E2614; --danger:#E07A63; --track:#22322A;
+  --sky1:#1A2E26; --sky2:#2A2A1E; --ridge1:#2D4A3C; --ridge2:#21402F; --ridge3:#173425; --ground:#0F2419;
+  --frame:#000000; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --page:#0A110D; --surface:#121C16; --surface-2:#18251D; --ink:#E5EEE8; --muted:#93A69A; --line:#243429;
+  --accent:#46B07D; --accent-press:#3A9A6B; --on-accent:#05140C; --accent-soft:#183326;
+  --brass:#D9AE57; --brass-soft:#2E2614; --danger:#E07A63; --track:#22322A;
+  --sky1:#1A2E26; --sky2:#2A2A1E; --ridge1:#2D4A3C; --ridge2:#21402F; --ridge3:#173425; --ground:#0F2419;
+  --frame:#000000; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+
+.stage{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:400px minmax(0,1fr);gap:48px;align-items:start}
+@media (max-width:900px){.stage{grid-template-columns:minmax(0,1fr);gap:32px}}
+
+/* ---------- Phone ---------- */
+.phone{width:100%;max-width:400px;margin:0 auto;height:820px;border-radius:52px;background:var(--frame);padding:11px;
+  box-shadow:0 30px 60px -30px rgba(10,40,25,.45);position:sticky;top:20px}
+@media (max-width:900px){.phone{position:relative;top:0;height:min(820px,calc(100svh - 40px));min-height:640px}}
+@media (max-width:440px){.phone{border-radius:34px;padding:6px}}
+.screen{position:relative;height:100%;border-radius:42px;overflow:hidden;background:var(--surface-2);display:flex;flex-direction:column}
+@media (max-width:440px){.screen{border-radius:28px}}
+.status{flex:none;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 26px 0 30px;font-weight:700;font-size:14px;background:var(--surface)}
+.status .island{width:96px;height:26px;border-radius:20px;background:var(--frame)}
+.status .sig{display:flex;gap:5px;align-items:center}
+.view{flex:1;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.view::-webkit-scrollbar{display:none}
+
+.tabbar{flex:none;display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface);border-top:1px solid var(--line);padding:6px 4px 18px}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:600;color:var(--muted);padding:6px 0}
+.tab svg{width:22px;height:22px}
+.tab[aria-current="page"]{color:var(--accent)}
+
+/* ---------- App parts ---------- */
+.topbar{background:var(--surface);padding:6px 18px 14px;display:flex;align-items:center;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.logo .mark{width:40px;height:40px;border-radius:12px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;flex:none}
+.logo b{font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:-.01em;display:block;line-height:1.15}
+.logo small{color:var(--muted);font-size:11.5px}
+.iconbtn{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);color:var(--ink);position:relative;flex:none}
+.iconbtn .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--danger);border:2px solid var(--surface-2)}
+
+.pagehead{background:var(--surface);padding:6px 18px 16px}
+.pagehead h1{font-family:var(--f-display);font-weight:700;font-size:26px;margin:0;letter-spacing:-.02em}
+.pagehead p{margin:4px 0 0;color:var(--muted);font-size:13.5px}
+.backhead{background:var(--surface);padding:4px 12px 12px;display:flex;align-items:center;gap:8px}
+.backhead h1{font-size:17px;font-weight:800;margin:0;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.hero{position:relative;margin:0 14px;border-radius:24px;overflow:hidden;color:#fff;background:var(--ground)}
+.hero svg.scene{display:block;width:100%;height:auto}
+.hero .over{position:absolute;inset:auto 0 0 0;padding:16px 18px 18px;background:linear-gradient(to top,rgba(8,30,20,.85),rgba(8,30,20,0))}
+.hero .over small{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.hero .over .big{font-family:var(--f-display);font-weight:700;font-size:26px;letter-spacing:-.02em;line-height:1.1;margin-top:2px}
+.hero .over .row{display:flex;justify-content:space-between;align-items:end;gap:8px;margin-top:4px;font-size:12.5px;opacity:.92}
+
+.cta{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:54px;border-radius:16px;background:var(--accent);color:var(--on-accent);font-weight:800;font-size:16px}
+.cta:active{background:var(--accent-press)}
+.cta.ghost{background:var(--accent-soft);color:var(--accent)}
+.pad{padding:14px}
+.section{padding:20px 14px 4px}
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:0 4px 10px}
+.sechead h2{font-size:17px;font-weight:800;margin:0;letter-spacing:-.01em}
+.sechead button{color:var(--accent);font-weight:700;font-size:13px}
+
+.cats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:16px 14px 0}
+.cat{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--ink);text-align:center}
+.cat .ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:var(--surface);color:var(--c,var(--accent));border:1px solid var(--line)}
+
+.card{background:var(--surface);border-radius:20px;border:1px solid var(--line)}
+.urgent{padding:16px;display:grid;gap:12px;border-color:color-mix(in srgb,var(--brass) 45%,var(--line))}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:var(--brass-soft);color:var(--brass)}
+.badge.green{background:var(--accent-soft);color:var(--accent)}
+.badge.grey{background:var(--surface-2);color:var(--muted)}
+.urgent h3{margin:0;font-size:17px;font-weight:800;line-height:1.25}
+.urgent p{margin:0;color:var(--muted);font-size:13.5px}
+
+.bar{height:8px;border-radius:99px;background:var(--track);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.bar.brass i{background:var(--brass)}
+.money{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--muted)}
+.money b{color:var(--ink);font-size:15px;font-weight:800}
+
+.list{display:grid;gap:10px}
+.camp{display:grid;grid-template-columns:64px minmax(0,1fr) 16px;gap:12px;align-items:center;padding:12px;text-align:left;width:100%}
+.thumb{width:64px;height:64px;border-radius:16px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--surface))}
+.thumb svg{width:30px;height:30px}
+.camp h3{margin:0 0 2px;font-size:14.5px;font-weight:800;line-height:1.25}
+.camp .meta{font-size:12px;color:var(--muted);margin-bottom:7px}
+.camp .pct{font-size:12px;font-weight:800;color:var(--accent);margin-top:5px;display:flex;justify-content:space-between}
+.camp .pct span{color:var(--muted);font-weight:600}
+.chev{color:var(--muted)}
+
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--surface-2);border-radius:14px;padding:4px;margin:0 18px 14px}
+.seg button{height:36px;border-radius:10px;font-weight:700;font-size:13.5px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:0 14px 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:13px;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+
+.detailhero{margin:0 14px;border-radius:24px;height:150px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--surface));position:relative;overflow:hidden}
+.detailhero svg.big{width:72px;height:72px}
+.detailhero .tag{position:absolute;left:14px;top:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--surface-2);border-radius:14px;padding:10px 12px}
+.stat b{display:block;font-size:16px;font-weight:800}
+.stat span{font-size:11.5px;color:var(--muted)}
+.prose{font-size:14px;color:var(--ink);margin:0}
+.prose + .prose{margin-top:8px}
+.rows{display:grid}
+.rowi{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:12px;align-items:center;padding:11px 14px;border-top:1px solid var(--line)}
+.rowi:first-child{border-top:0}
+.rowi .ri{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:var(--surface-2);color:var(--muted)}
+.rowi .ri.in{background:var(--accent-soft);color:var(--accent)}
+.rowi .ri.out{background:color-mix(in srgb,var(--danger) 12%,var(--surface));color:var(--danger)}
+.rowi .t{font-size:13.5px;font-weight:700;line-height:1.3}
+.rowi .s{font-size:12px;color:var(--muted)}
+.rowi .v{font-weight:800;font-size:14px;white-space:nowrap}
+.rowi .v.plus{color:var(--accent)}
+.rowi .v.minus{color:var(--danger)}
+
+/* boxes */
+.boxsum{padding:16px;display:grid;gap:10px;background:var(--accent);color:var(--on-accent);border:0}
+.boxsum small{opacity:.85;font-size:12.5px}
+.boxsum .big{font-family:var(--f-display);font-weight:700;font-size:26px}
+.boxsum .next{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.14);border-radius:12px;padding:10px 12px;font-size:13px}
+.boxcard{padding:14px;display:grid;gap:10px;text-align:left;width:100%}
+.boxtop{display:flex;gap:12px;align-items:center}
+.boxtop .ic{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:var(--brass-soft);color:var(--brass);flex:none}
+.boxtop h3{margin:0;font-size:14.5px;font-weight:800}
+.boxtop p{margin:0;font-size:12px;color:var(--muted)}
+.boxfoot{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
+.boxfoot b{color:var(--ink)}
+.act{padding:14px;display:grid;gap:8px;border-top:1px solid var(--line)}
+.act:first-child{border-top:0}
+.act .h{display:flex;justify-content:space-between;gap:8px;font-weight:800;font-size:14px}
+.act .w{font-size:12.5px;color:var(--muted)}
+.act .proof{display:flex;gap:8px;flex-wrap:wrap}
+
+/* reports */
+.month{display:flex;align-items:center;justify-content:space-between;margin:0 14px;padding:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.month b{font-size:15px}
+.month button{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--surface-2)}
+.month button:disabled{opacity:.35;cursor:default}
+.totals{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tot{padding:14px}
+.tot small{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.tot b{display:block;font-size:19px;font-weight:800;margin-top:4px}
+.tot.in b{color:var(--accent)} .tot.out b{color:var(--danger)}
+.split{display:flex;height:10px;border-radius:99px;overflow:hidden;gap:2px}
+.legend{display:grid;gap:6px;font-size:12.5px}
+.legend div{display:flex;align-items:center;gap:8px}
+.legend i{width:10px;height:10px;border-radius:3px;flex:none}
+.legend span{flex:1;color:var(--muted)}
+.legend b{font-weight:800}
+.chart{padding:14px 10px 8px}
+.chart svg{display:block;width:100%;height:auto}
+.doc{display:flex;gap:12px;align-items:center;padding:12px 14px}
+.doc .ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--danger) 12%,var(--surface));color:var(--danger);font-size:10px;font-weight:800;flex:none}
+.doc div{flex:1;min-width:0;font-size:13.5px;font-weight:700}
+.doc small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+
+/* news */
+.news{padding:14px;display:grid;gap:8px}
+.news h3{margin:0;font-size:15px;font-weight:800;line-height:1.3}
+.news p{margin:0;font-size:13.5px;color:var(--muted)}
+.news .when{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;font-weight:700;color:var(--ink)}
+.news .when span{display:inline-flex;gap:5px;align-items:center}
+.news .when svg{color:var(--muted)}
+
+/* sheet */
+.scrim{position:absolute;inset:0;background:rgba(5,20,12,.45);z-index:20;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:92%;overflow-y:auto;z-index:21;background:var(--surface);border-radius:28px 28px 0 0;
+  padding:10px 18px 26px;transform:translateY(102%);transition:transform .28s cubic-bezier(.2,.8,.2,1);scrollbar-width:none}
+.sheet.on{transform:none}
+.sheet .grab{width:40px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 12px}
+.sheet h2{font-size:19px;font-weight:800;margin:0 0 2px}
+.sheet .to{font-size:13px;color:var(--muted);margin-bottom:14px}
+.lbl{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.types button,.amts button{height:44px;border-radius:12px;border:1.5px solid var(--line);font-weight:800;font-size:14px;background:var(--surface)}
+.types button[aria-pressed="true"],.amts button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.hint{font-size:12px;color:var(--muted);margin-top:8px}
+.amts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.amtin{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:12px;padding:0 14px;height:50px;margin-top:8px}
+.amtin input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:20px;font-weight:800;color:var(--ink)}
+.amtin input:focus{outline:none}
+.amtin:focus-within{border-color:var(--accent)}
+.methods{display:grid;gap:8px}
+.method{display:flex;gap:12px;align-items:center;padding:12px 14px;border:1.5px solid var(--line);border-radius:14px;text-align:left;width:100%}
+.method[aria-pressed="true"]{border-color:var(--accent)}
+.method .mi{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--surface-2);flex:none}
+.method div{flex:1;font-weight:800;font-size:14px}
+.method small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+.radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);flex:none}
+.method[aria-pressed="true"] .radio{border:6px solid var(--accent)}
+.toggle{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line);font-size:14px;font-weight:700}
+.toggle small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+.sw{width:46px;height:28px;border-radius:99px;background:var(--track);position:relative;flex:none;transition:background .15s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .15s}
+.sw[aria-checked="true"]{background:var(--accent)}
+.sw[aria-checked="true"]::after{transform:translateX(18px)}
+.secure{display:flex;gap:6px;align-items:center;justify-content:center;font-size:11.5px;color:var(--muted);margin-top:10px}
+.done{text-align:center;padding:10px 4px 0;display:grid;gap:10px;justify-items:center}
+.done .ok{width:72px;height:72px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+.done h2{font-family:var(--f-display);font-size:20px}
+.receipt{width:100%;background:var(--surface-2);border-radius:16px;padding:6px 14px;text-align:left}
+.receipt div{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px dashed var(--line);font-size:13px}
+.receipt div:first-child{border-top:0}
+.receipt span{color:var(--muted)}
+
+/* ---------- Notes (right column) ---------- */
+.notes{min-width:0;display:grid;gap:28px;padding-top:8px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.notes h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,4vw,40px);line-height:1.08;letter-spacing:-.025em;margin:8px 0 12px;text-wrap:balance}
+.notes .lead{font-size:16.5px;color:var(--muted);max-width:60ch;margin:0}
+.notes h2{font-size:18px;font-weight:800;margin:0 0 12px;letter-spacing:-.01em}
+.map{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.map button{text-align:left;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);display:grid;gap:4px}
+.map button:hover{border-color:var(--accent)}
+.map b{font-size:14.5px;display:flex;gap:8px;align-items:center}
+.map b svg{color:var(--accent);width:18px;height:18px}
+.map span{font-size:13px;color:var(--muted)}
+.idea{display:grid;gap:10px}
+.idea div{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;font-size:14.5px;max-width:68ch}
+.idea div svg{color:var(--accent);margin-top:2px}
+.qs{display:grid;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.q{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;padding:14px 16px;border-top:1px solid var(--line);font-size:14.5px}
+.q:first-child{border-top:0}
+.q .n{width:26px;height:26px;border-radius:8px;background:var(--brass-soft);color:var(--brass);font-weight:800;font-size:13px;display:grid;place-items:center}
+.q small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.demo{font-size:12.5px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.sheet,.scrim,.sw,.sw::after{transition:none}}
+</style>
+
+<div class="stage">
+  <div class="phone" aria-label="Прототип приложения">
+    <div class="screen" id="screen">
+      <div class="status"><span class="num">9:41</span><span class="island"></span><span class="sig" aria-hidden="true">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3.5" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><rect x="23" y="4" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".4"/></svg>
+      </span></div>
+      <div class="view" id="view"></div>
+      <nav class="tabbar" id="tabbar"></nav>
+      <div class="scrim" id="scrim"></div>
+      <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Пожертвование"></div>
+    </div>
+  </div>
+
+  <section class="notes">
+    <div>
+      <div class="eyebrow">Макет приложения · черновик 1</div>
+      <h1>Фонд селения Сагасидейбук</h1>
+      <p class="lead">Кликабельный прототип: всё в телефоне слева нажимается. Главная мысль — каждый рубль виден. Онлайн-пожертвования, ящики для садаки по селу и расходы фонда сходятся в одном отчёте.</p>
+    </div>
+
+    <div>
+      <h2>Экраны</h2>
+      <div class="map" id="map"></div>
+    </div>
+
+    <div>
+      <h2>Что отличает этот вариант</h2>
+      <div class="idea" id="ideas"></div>
+    </div>
+
+    <div>
+      <h2>Что нужно уточнить у вас</h2>
+      <div class="qs" id="qs"></div>
+    </div>
+
+    <p class="demo">Все суммы, имена и даты в макете примерные. Фото мечети, медресе и селения подставим, когда пришлёте.</p>
+  </section>
+</div>
+
+<script>
+const I = {
+  home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  layers:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
+  box:'<rect x="4" y="8" width="16" height="12" rx="2"/><path d="M9 8V5h6v3M10 13h4"/>',
+  doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+  mega:'<path d="M4 10v4a1 1 0 0 0 1 1h3l6 4V5L8 9H5a1 1 0 0 0-1 1z"/><path d="M18 9a4 4 0 0 1 0 6"/>',
+  heart:'<path d="M12 20s-7.5-4.6-9.3-9.2C1.4 7.4 3.6 4 7 4c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.4 0 5.6 3.4 4.3 6.8C19.5 15.4 12 20 12 20z"/>',
+  hands:'<path d="M11 14h2a2 2 0 0 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16"/><path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.8-2.9l-4.2 3.9"/><path d="m2 15 6 6"/>',
+  mosque:'<path d="M5 21v-7a7 7 0 0 1 14 0v7z"/><path d="M12 7V3M3 21h18M10 21v-4a2 2 0 0 1 4 0v4"/>',
+  book:'<path d="M3 5c3-1.3 6-1.3 9 .5 3-1.8 6-1.8 9-.5v14c-3-1.3-6-1.3-9 .5-3-1.8-6-1.8-9-.5z"/><path d="M12 5.5v14"/>',
+  aid:'<path d="M3 8h18v12H3z"/><path d="M8 8V5h8v3M12 11v6M9 14h6"/>',
+  road:'<path d="M8 3 4 21M16 3l4 18M12 4v3M12 11v3M12 18v2"/>',
+  chev:'<path d="m9 6 6 6-6 6"/>',
+  back:'<path d="m15 6-6 6 6 6"/>',
+  check:'<path d="m5 12 5 5L20 7"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  pin:'<path d="M12 21s-7-6.1-7-11.5a7 7 0 0 1 14 0C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M21.5 20a6.5 6.5 0 0 0-4-6"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  down:'<path d="M12 5v14M6 13l6 6 6-6"/>',
+  up:'<path d="M12 19V5M6 11l6-6 6 6"/>',
+  bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  card:'<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/>',
+  qr:'<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2"/>',
+  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  camera:'<path d="M4 8h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13.5" r="3.5"/>',
+  shield:'<path d="M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+  repeat:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>',
+  grid:'<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>'
+};
+const ic = (n,s=20,w=1.8) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
+const rub = n => n.toLocaleString('ru-RU') + ' ₽';
+const pct = c => Math.min(100, Math.round(c.raised / c.goal * 100));
+
+const CATS = [
+  {id:'need',  name:'Нуждающимся', icon:'hands',  c:'#B8862B'},
+  {id:'mosque',name:'Мечеть',      icon:'mosque', c:'#0E5A39'},
+  {id:'madrasa',name:'Медресе',    icon:'book',   c:'#2F6E8E'},
+  {id:'gaza',  name:'Газа',        icon:'aid',    c:'#9A4A3A'},
+  {id:'road',  name:'Селение',     icon:'road',   c:'#5D6B3A'}
+];
+const cat = id => CATS.find(c => c.id === id);
+
+const CAMPAIGNS = [
+  {id:'need1', cat:'need', title:'Помощь нуждающимся семьям', sub:'Продукты, лекарства, оплата лечения', raised:184500, goal:300000, donors:96, left:'Постоянный сбор', urgent:true,
+   text:['Фонд в первую очередь помогает своим: семьям без кормильца, пожилым, больным. Каждый месяц собираем продуктовые наборы и оплачиваем лечение.','Имена семей не публикуются. В отчёте видно, сколько семей получили помощь и на какую сумму.'],
+   spent:[['Продуктовые наборы, 12 семей','25 окт',54000],['Лечение, 2 семьи','18 окт',38500]]},
+  {id:'mosque1', cat:'mosque', title:'Достройка мечети', sub:'Внутренняя отделка и отопление', raised:2160000, goal:3000000, donors:428, left:'38 дней',
+   text:['Коробка и купол готовы. Осталось утеплить стены, сделать отделку и провести отопление к зиме.','Смета и чеки на материалы выкладываются во вкладку «Отчёты».'],
+   spent:[['Гипсокартон и профиль','10 окт',120000],['Цемент, 60 мешков','5 окт',90000]]},
+  {id:'madrasa1', cat:'madrasa', title:'Два новых класса медресе', sub:'Ремонт, парты, учебники', raised:900000, goal:2000000, donors:211, left:'60 дней',
+   text:['Детей стало больше, чем мест. Пристраиваем два класса и закупаем мебель и учебники.'],
+   spent:[['Кирпич, 4 поддона','2 окт',64000]]},
+  {id:'gaza1', cat:'gaza', title:'Гуманитарная помощь Газе', sub:'Через проверенный фонд-партнёр', raised:412000, goal:1000000, donors:305, left:'14 дней',
+   text:['Собранное переводится фонду-партнёру, который доставляет продукты и медикаменты. Подтверждение перевода прикладываем к отчёту.'],
+   spent:[['Перевод фонду-партнёру','20 окт',150000]]},
+  {id:'road1', cat:'road', title:'Дорога к кладбищу', sub:'Щебень, грейдер, водоотвод', raised:145000, goal:450000, donors:58, left:'45 дней',
+   text:['После дождей дорогу размывает. Нужно отсыпать щебнем около 600 метров и сделать канаву для воды.'],
+   spent:[['Щебень, 3 КамАЗа','27 окт',36000]]}
+];
+const DONE = [
+  {id:'water', cat:'road', title:'Водопровод на верхнюю улицу', sub:'Завершён в августе 2026', raised:380000, goal:380000, donors:142, left:'Завершён', text:['Проложено 900 метров трубы, подключено 23 дома.'], spent:[['Трубы и фитинги','12 авг',214000],['Работа экскаватора','15 авг',96000],['Подключение домов','20 авг',70000]]},
+  {id:'winter', cat:'need', title:'Зимняя помощь 2025–2026', sub:'Завершён в марте 2026', raised:265000, goal:250000, donors:117, left:'Завершён', text:['Уголь и тёплые вещи для 31 семьи.'], spent:[['Уголь, 31 семья','Дек 2025',186000],['Тёплые вещи','Янв 2026',79000]]}
+];
+const allCamps = () => CAMPAIGNS.concat(DONE);
+
+const BOXES = [
+  {id:'b1', place:'Джума-мечеть, главный вход', goes:'Достройка мечети', last:'7 ноя', amount:38450, next:'14 ноя, после джума',
+   history:[['7 ноя',38450,'Магомед А., Ибрагим К., Расул Г.'],['31 окт',35200,'Магомед А., Ибрагим К., Шамиль М.'],['24 окт',41100,'Магомед А., Расул Г., Шамиль М.']]},
+  {id:'b2', place:'Магазин «Нур», центр', goes:'Общий фонд', last:'7 ноя', amount:12300, next:'14 ноя',
+   history:[['7 ноя',12300,'Магомед А., Ибрагим К., Расул Г.'],['24 окт',10850,'Магомед А., Расул Г., Шамиль М.']]},
+  {id:'b3', place:'Медресе, коридор', goes:'Классы медресе', last:'31 окт', amount:9150, next:'14 ноя',
+   history:[['31 окт',9150,'Магомед А., Ибрагим К., Шамиль М.']]},
+  {id:'b4', place:'Магазин на нижней улице', goes:'Общий фонд', last:'31 окт', amount:4800, next:'14 ноя',
+   history:[['31 окт',4800,'Магомед А., Ибрагим К., Шамиль М.']]}
+];
+
+const MONTHS = [
+  {m:'Май',inc:280,exp:190},{m:'Июн',inc:310,exp:260},{m:'Июл',inc:265,exp:300},
+  {m:'Авг',inc:330,exp:240},{m:'Сен',inc:298,exp:310},{m:'Окт',inc:351,exp:398}
+];
+const REPORTS = {
+  'Октябрь 2026':{online:214300, boxes:96850, cash:40000,
+    out:[['Достройка мечети','Гипсокартон, цемент',210000],['Газа','Перевод фонду-партнёру',150000],['Нуждающимся','Продукты и лечение, 14 семей',92500],['Медресе','Кирпич',64000],['Селение','Щебень, 3 КамАЗа',36000]],
+    balance:1240600},
+  'Сентябрь 2026':{online:181200, boxes:88400, cash:28400,
+    out:[['Достройка мечети','Купол, кровля',240000],['Нуждающимся','Продукты, 11 семей',47000],['Селение','Вывоз мусора',23000]],
+    balance:1287750}
+};
+const NEWS = [
+  {type:'Субботник', badge:'green', title:'Субботник у мечети и на кладбище', text:'Приглашаем всех мужчин. Инструмент есть, обед от фонда.', date:'15 ноября, 09:00', place:'Сбор у мечети'},
+  {type:'Ящики', badge:'', title:'Вскрытие ящиков в пятницу', text:'После джума комиссия вскроет ящики и пересчитает деньги. Присутствовать может любой житель.', date:'14 ноября, 13:30', place:'Джума-мечеть'},
+  {type:'Собрание', badge:'grey', title:'Общее собрание жителей', text:'Обсуждаем ремонт дороги к кладбищу и отчёт фонда за осень.', date:'20 ноября, 19:00', place:'Дом культуры'},
+  {type:'Нужна помощь', badge:'', title:'Нужны 6 человек на разгрузку', text:'Привезут продуктовые наборы для нуждающихся семей. Займёт около часа.', date:'12 ноября, 16:00', place:'Склад у медресе'}
+];
+
+/* ---------------- state ---------------- */
+const S = {tab:'home', stack:[], campSeg:'active', campCat:'all', month:'Октябрь 2026', d:null};
+const view = document.getElementById('view');
+
+function go(tab){S.tab=tab;S.stack=[];render();}
+function push(screen){S.stack.push(screen);render();}
+function pop(){S.stack.pop();render();}
+
+const TABS = [['home','Главная','home'],['campaigns','Сборы','layers'],['boxes','Ящики','box'],['reports','Отчёты','doc'],['news','Объявления','mega']];
+
+function render(){
+  document.getElementById('tabbar').innerHTML = TABS.map(([id,l,i]) =>
+    `<button class="tab" data-tab="${id}" ${S.tab===id?'aria-current="page"':''}>${ic(i,22,S.tab===id?2.2:1.8)}${l}</button>`).join('');
+  const top = S.stack[S.stack.length-1];
+  let html;
+  if (top && top.kind==='camp') html = campDetail(top.id);
+  else if (top && top.kind==='box') html = boxDetail(top.id);
+  else html = ({home,campaigns,boxes,reports,news})[S.tab]();
+  view.innerHTML = html;
+  view.scrollTop = 0;
+}
+
+function campRow(c){
+  const k = cat(c.cat);
+  return `<button class="card camp" data-camp="${c.id}">
+    <span class="thumb" style="--c:${k.c}">${ic(k.icon,30,1.6)}</span>
+    <span style="min-width:0">
+      <h3>${c.title}</h3>
+      <div class="meta num"><b style="color:var(--ink)">${rub(c.raised)}</b> из ${rub(c.goal)}</div>
+      <div class="bar"><i style="width:${pct(c)}%"></i></div>
+      <div class="pct num">${pct(c)}%<span>${c.left}</span></div>
+    </span>
+    <span class="chev">${ic('chev',16)}</span>
+  </button>`;
+}
+
+function scene(){
+  return `<svg class="scene" viewBox="0 0 390 210" aria-hidden="true">
+    <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--sky1)"/><stop offset="1" stop-color="var(--sky2)"/></linearGradient></defs>
+    <rect width="390" height="210" fill="url(#sky)"/>
+    <circle cx="70" cy="48" r="18" fill="var(--sky2)" opacity=".9"/>
+    <path d="M0 118 L42 86 L88 104 L136 62 L184 96 L232 54 L284 92 L334 70 L390 100 V210 H0Z" fill="var(--ridge1)"/>
+    <path d="M0 148 L54 120 L112 140 L172 110 L242 136 L304 116 L390 140 V210 H0Z" fill="var(--ridge2)"/>
+    <g fill="var(--ridge3)">
+      <path d="M0 170 Q110 150 210 166 T390 160 V210 H0Z"/>
+      <rect x="40" y="150" width="20" height="14"/><path d="M37 151 L50 142 L63 151Z"/>
+      <rect x="78" y="146" width="24" height="16"/><path d="M75 147 L90 137 L105 147Z"/>
+      <rect x="124" y="152" width="18" height="12"/><path d="M121 153 L133 145 L145 153Z"/>
+      <rect x="168" y="150" width="22" height="14"/><path d="M165 151 L179 142 L193 151Z"/>
+      <rect x="342" y="148" width="22" height="14"/><path d="M339 149 L353 140 L367 149Z"/>
+    </g>
+    <g fill="var(--ground)">
+      <rect x="248" y="132" width="64" height="34"/>
+      <path d="M256 132 A24 24 0 0 1 304 132Z"/>
+      <rect x="279" y="100" width="2" height="9"/>
+      <rect x="320" y="86" width="9" height="80"/>
+      <rect x="317" y="106" width="15" height="4"/>
+      <path d="M317 86 L324.5 64 L332 86Z"/>
+      <path d="M0 184 Q120 172 230 180 T390 176 V210 H0Z"/>
+    </g>
+  </svg>`;
+}
+
+function home(){
+  const urgent = CAMPAIGNS[0];
+  return `
+  <div class="topbar">
+    <div class="logo"><span class="mark">${ic('mosque',22,2)}</span><span><b>Фонд Сагасидейбук</b><small>Благотворительный фонд селения</small></span></div>
+    <button class="iconbtn" data-tab="news" aria-label="Объявления">${ic('bell')}<span class="dot"></span></button>
+  </div>
+  <div class="hero" style="background:var(--sky1)">
+    ${scene()}
+    <div class="over">
+      <small>Собрано в октябре</small>
+      <div class="big num">351 150 ₽</div>
+      <div class="row"><span>онлайн · ящики · наличные</span><span>от 312 человек</span></div>
+    </div>
+  </div>
+  <div class="pad" style="padding-bottom:0"><button class="cta" data-donate="">${ic('heart',22,2)}Пожертвовать</button></div>
+  <div class="cats">${CATS.map(k=>`<button class="cat" data-cat="${k.id}"><span class="ic" style="--c:${k.c}">${ic(k.icon,24,1.7)}</span>${k.name}</button>`).join('')}</div>
+
+  <div class="section">
+    <div class="card urgent">
+      <span class="badge">${ic('hands',13,2.2)} В первую очередь</span>
+      <h3>${urgent.title}</h3>
+      <p>${urgent.sub}. В этом месяце помогли 14 семьям.</p>
+      <div class="bar brass"><i style="width:${pct(urgent)}%"></i></div>
+      <div class="money num"><span><b>${rub(urgent.raised)}</b> из ${rub(urgent.goal)}</span><span>${pct(urgent)}%</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button class="cta ghost" style="height:44px;font-size:14px" data-camp="${urgent.id}">Подробнее</button>
+        <button class="cta" style="height:44px;font-size:14px" data-donate="${urgent.id}">Помочь</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sechead"><h2>Актуальные сборы</h2><button data-tab="campaigns">Все</button></div>
+    <div class="list">${CAMPAIGNS.slice(1,4).map(campRow).join('')}</div>
+  </div>
+
+  <div class="section">
+    <div class="sechead"><h2>Ящики для садаки</h2><button data-tab="boxes">Все ящики</button></div>
+    <button class="card boxcard" data-box="b1">
+      <div class="boxtop"><span class="ic">${ic('box',22)}</span><span style="flex:1;min-width:0"><h3>Последнее вскрытие: 7 ноября</h3><p>4 ящика · комиссия из 3 человек</p></span><b class="num" style="font-size:16px">64 700 ₽</b></div>
+      <div class="boxfoot"><span>Следующее вскрытие</span><b>14 ноя, после джума</b></div>
+    </button>
+  </div>
+
+  <div class="section" style="padding-bottom:20px">
+    <div class="sechead"><h2>Объявления</h2><button data-tab="news">Все</button></div>
+    ${newsCard(NEWS[0])}
+  </div>`;
+}
+
+function campaigns(){
+  const src = S.campSeg==='active' ? CAMPAIGNS : DONE;
+  const list = S.campCat==='all' ? src : src.filter(c=>c.cat===S.campCat);
+  return `
+  <div class="pagehead"><h1>Сборы</h1><p>Выберите, куда направить пожертвование</p></div>
+  <div style="background:var(--surface);padding-bottom:12px">
+    <div class="seg"><button data-seg="active" aria-pressed="${S.campSeg==='active'}">Активные · ${CAMPAIGNS.length}</button><button data-seg="done" aria-pressed="${S.campSeg==='done'}">Завершённые · ${DONE.length}</button></div>
+    <div class="chips"><button class="chip" data-chip="all" aria-pressed="${S.campCat==='all'}">Все</button>${CATS.map(k=>`<button class="chip" data-chip="${k.id}" aria-pressed="${S.campCat===k.id}">${k.name}</button>`).join('')}</div>
+  </div>
+  <div class="section" style="padding-bottom:20px"><div class="list">${list.length?list.map(campRow).join(''):`<div class="card" style="padding:20px;text-align:center;color:var(--muted)">В этой категории пока нет сборов</div>`}</div></div>`;
+}
+
+function campDetail(id){
+  const c = allCamps().find(x=>x.id===id), k = cat(c.cat), done = c.left==='Завершён';
+  const spentSum = c.spent.reduce((a,s)=>a+s[2],0);
+  return `
+  <div class="backhead"><button class="iconbtn" data-back aria-label="Назад">${ic('back')}</button><h1>${k.name}</h1></div>
+  <div style="background:var(--surface);padding-bottom:16px">
+    <div class="detailhero" style="--c:${k.c}"><span class="tag badge ${done?'grey':'green'}">${done?'Завершён':'Идёт сбор'}</span>${ic(k.icon,72,1.3).replace('<svg','<svg class="big"')}</div>
+    <div style="padding:16px 18px 0;display:grid;gap:12px">
+      <h2 style="margin:0;font-size:21px;font-weight:800;line-height:1.2">${c.title}</h2>
+      <div class="money num" style="font-size:14px"><span><b style="font-size:20px">${rub(c.raised)}</b> из ${rub(c.goal)}</span><b style="color:var(--accent)">${pct(c)}%</b></div>
+      <div class="bar"><i style="width:${pct(c)}%"></i></div>
+      <div class="stats num">
+        <div class="stat"><b>${c.donors}</b><span>человек</span></div>
+        <div class="stat"><b>${c.left.replace('Постоянный сбор','∞').replace('Завершён','✓')}</b><span>${c.left.includes('дн')?'осталось':'срок'}</span></div>
+        <div class="stat"><b>${Math.round(spentSum/1000)} т.</b><span>потрачено</span></div>
+      </div>
+      ${done?'':`<button class="cta" data-donate="${c.id}">${ic('heart',22,2)}Пожертвовать</button>`}
+    </div>
+  </div>
+  <div class="section"><div class="card" style="padding:16px">${c.text.map(t=>`<p class="prose">${t}</p>`).join('')}</div></div>
+  <div class="section">
+    <div class="sechead"><h2>Куда потрачено</h2><button data-tab="reports">Отчёт</button></div>
+    <div class="card rows">${c.spent.map(s=>`<div class="rowi"><span class="ri out">${ic('up',18)}</span><span><div class="t">${s[0]}</div><div class="s">${s[1]} · чек приложен</div></span><span class="v minus num">−${rub(s[2])}</span></div>`).join('')}</div>
+  </div>
+  <div class="section" style="padding-bottom:20px">
+    <div class="sechead"><h2>Последние пожертвования</h2></div>
+    <div class="card rows">
+      ${[['Аноним','5 мин назад',1000],['Магомед','1 ч назад',5000],['Аноним','3 ч назад',500],['Патимат','вчера',2000]].map(d=>`<div class="rowi"><span class="ri in">${ic('heart',16,2)}</span><span><div class="t">${d[0]}</div><div class="s">${d[1]}</div></span><span class="v plus num">+${rub(d[2])}</span></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function boxes(){
+  const total = BOXES.reduce((a,b)=>a+b.amount,0);
+  return `
+  <div class="pagehead"><h1>Ящики</h1><p>Ящики для садаки по селению и каждое их вскрытие</p></div>
+  <div class="section">
+    <div class="card boxsum">
+      <small>Из ящиков за последние вскрытия</small>
+      <div class="big num">${rub(total)}</div>
+      <div class="next">${ic('cal',18)}<span>Следующее вскрытие — <b>14 ноября, после джума</b>. Прийти может любой.</span></div>
+    </div>
+  </div>
+  <div class="section" style="padding-bottom:20px">
+    <div class="sechead"><h2>${BOXES.length} ящика в селении</h2></div>
+    <div class="list">${BOXES.map(b=>`
+      <button class="card boxcard" data-box="${b.id}">
+        <div class="boxtop"><span class="ic">${ic('box',22)}</span><span style="flex:1;min-width:0"><h3>${b.place}</h3><p>Идёт на: ${b.goes}</p></span><span class="chev">${ic('chev',16)}</span></div>
+        <div class="boxfoot"><span>Вскрыт ${b.last}</span><b class="num">${rub(b.amount)}</b></div>
+      </button>`).join('')}</div>
+    <div class="card" style="padding:14px;margin-top:12px;display:flex;gap:12px;align-items:flex-start">
+      <span style="color:var(--accent)">${ic('shield',22)}</span>
+      <span style="font-size:13px;color:var(--muted)"><b style="color:var(--ink)">Как вскрывают ящики.</b> Три человека из комиссии, всегда вместе. Деньги считают на месте, сумму записывают в акт и сразу публикуют здесь с фото.</span>
+    </div>
+  </div>`;
+}
+
+function boxDetail(id){
+  const b = BOXES.find(x=>x.id===id);
+  return `
+  <div class="backhead"><button class="iconbtn" data-back aria-label="Назад">${ic('back')}</button><h1>Ящик</h1></div>
+  <div style="background:var(--surface);padding:4px 18px 18px;display:grid;gap:12px">
+    <div class="boxtop"><span class="ic" style="width:52px;height:52px">${ic('box',26)}</span><span><h3 style="font-size:17px">${b.place}</h3><p>Деньги идут на: <b style="color:var(--ink)">${b.goes}</b></p></span></div>
+    <div class="stats num" style="grid-template-columns:1fr 1fr">
+      <div class="stat"><b>${rub(b.history.reduce((a,h)=>a+h[1],0))}</b><span>за ${b.history.length} вскр.</span></div>
+      <div class="stat"><b>${b.next.split(',')[0]}</b><span>след. вскрытие</span></div>
+    </div>
+  </div>
+  <div class="section" style="padding-bottom:20px">
+    <div class="sechead"><h2>Вскрытия</h2></div>
+    <div class="card">${b.history.map(h=>`
+      <div class="act">
+        <div class="h"><span>${h[0]}</span><span class="num" style="color:var(--accent)">+${rub(h[1])}</span></div>
+        <div class="w">${ic('users',14)} Комиссия: ${h[2]}</div>
+        <div class="proof"><span class="badge grey">${ic('camera',13,2)} Фото пересчёта</span><span class="badge grey">${ic('doc',13,2)} Акт, PDF</span></div>
+      </div>`).join('')}</div>
+  </div>`;
+}
+
+function chart(){
+  const W=340,H=170,L=34,B=24,T=10,max=400, sx=(W-L-6)/MONTHS.length, h=v=>(H-B-T)*v/max;
+  let g='';
+  for(let v=0; v<=max; v+=100){const y=H-B-h(v); g+=`<line x1="${L}" x2="${W-4}" y1="${y}" y2="${y}" stroke="var(--line)" stroke-width="1"/><text x="${L-6}" y="${y+4}" text-anchor="end" font-size="10" fill="var(--muted)">${v}</text>`;}
+  MONTHS.forEach((m,i)=>{const x=L+i*sx+sx/2, bw=Math.min(14,sx/3.4), last=i===MONTHS.length-1;
+    g+=`<rect x="${x-bw-1.5}" y="${H-B-h(m.inc)}" width="${bw}" height="${h(m.inc)}" rx="3" fill="var(--accent)" opacity="${last?1:.55}"/>`;
+    g+=`<rect x="${x+1.5}" y="${H-B-h(m.exp)}" width="${bw}" height="${h(m.exp)}" rx="3" fill="var(--brass)" opacity="${last?1:.55}"/>`;
+    g+=`<text x="${x}" y="${H-6}" text-anchor="middle" font-size="10.5" font-weight="${last?800:500}" fill="${last?'var(--ink)':'var(--muted)'}">${m.m}</text>`;});
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Поступления и расходы за 6 месяцев, тысяч рублей">${g}</svg>`;
+}
+
+function reports(){
+  const r = REPORTS[S.month], inc = r.online+r.boxes+r.cash, out = r.out.reduce((a,o)=>a+o[2],0);
+  const keys = Object.keys(REPORTS), i = keys.indexOf(S.month);
+  const parts = [['Онлайн (СБП, карта)',r.online,'var(--accent)'],['Ящики для садаки',r.boxes,'var(--brass)'],['Наличными в фонд',r.cash,'var(--muted)']];
+  return `
+  <div class="pagehead"><h1>Отчёты</h1><p>Всё, что пришло в фонд, и всё, что потрачено</p></div>
+  <div style="background:var(--surface);padding-bottom:14px">
+    <div class="month"><button data-month="${keys[i+1]||''}" ${keys[i+1]?'':'disabled'} aria-label="Предыдущий месяц">${ic('back',18)}</button><b>${S.month}</b><button data-month="${keys[i-1]||''}" ${keys[i-1]?'':'disabled'} aria-label="Следующий месяц">${ic('chev',18)}</button></div>
+  </div>
+  <div class="section"><div class="totals num">
+    <div class="card tot in"><small>${ic('down',14,2.2)} Поступило</small><b>+${rub(inc)}</b></div>
+    <div class="card tot out"><small>${ic('up',14,2.2)} Потрачено</small><b>−${rub(out)}</b></div>
+  </div></div>
+  <div class="section"><div class="card" style="padding:16px;display:grid;gap:12px">
+    <b style="font-size:14px">Откуда деньги</b>
+    <div class="split">${parts.map(p=>`<i style="flex:${p[1]};background:${p[2]}"></i>`).join('')}</div>
+    <div class="legend num">${parts.map(p=>`<div><i style="background:${p[2]}"></i><span>${p[0]}</span><b>${rub(p[1])}</b></div>`).join('')}</div>
+  </div></div>
+  <div class="section">
+    <div class="sechead"><h2>Расходы</h2></div>
+    <div class="card rows">${r.out.map(o=>`<div class="rowi"><span class="ri out">${ic('up',18)}</span><span><div class="t">${o[0]}</div><div class="s">${o[1]}</div></span><span class="v minus num">−${rub(o[2])}</span></div>`).join('')}</div>
+  </div>
+  <div class="section"><div class="card" style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px">
+    <span style="font-size:13.5px;color:var(--muted)">Остаток на счёте фонда<br>на конец месяца</span><b class="num" style="font-size:18px">${rub(r.balance)}</b>
+  </div></div>
+  <div class="section">
+    <div class="sechead"><h2>За полгода, тыс. ₽</h2></div>
+    <div class="card chart">${chart()}
+      <div style="display:flex;gap:16px;justify-content:center;font-size:12px;color:var(--muted);padding-top:4px"><span style="display:flex;gap:6px;align-items:center"><i style="width:10px;height:10px;border-radius:3px;background:var(--accent)"></i>Поступления</span><span style="display:flex;gap:6px;align-items:center"><i style="width:10px;height:10px;border-radius:3px;background:var(--brass)"></i>Расходы</span></div>
+    </div>
+  </div>
+  <div class="section" style="padding-bottom:20px">
+    <div class="sechead"><h2>Документы</h2></div>
+    <div class="card rows">
+      <div class="doc"><span class="ic">PDF</span><div>Отчёт за ${S.month.toLowerCase()}<small>Подписан председателем и казначеем</small></div>${ic('down',18)}</div>
+      <div class="doc" style="border-top:1px solid var(--line)"><span class="ic">PDF</span><div>Чеки и накладные<small>14 файлов</small></div>${ic('down',18)}</div>
+      <div class="doc" style="border-top:1px solid var(--line)"><span class="ic">PDF</span><div>Акты вскрытия ящиков<small>4 акта</small></div>${ic('down',18)}</div>
+    </div>
+  </div>`;
+}
+
+function newsCard(n){
+  return `<div class="card news">
+    <span class="badge ${n.badge}">${n.type}</span>
+    <h3>${n.title}</h3><p>${n.text}</p>
+    <div class="when"><span>${ic('cal',15)}${n.date}</span><span>${ic('pin',15)}${n.place}</span></div>
+  </div>`;
+}
+function news(){
+  return `<div class="pagehead"><h1>Объявления</h1><p>Для всех жителей селения</p></div>
+  <div class="section" style="padding-bottom:20px"><div class="list">${NEWS.map(newsCard).join('')}</div></div>`;
+}
+
+/* ---------------- donate sheet ---------------- */
+const sheet = document.getElementById('sheet'), scrim = document.getElementById('scrim');
+function openDonate(id){
+  S.d = {camp:id||'', type:'sadaka', amt:1000, custom:'', method:'sbp', anon:true, monthly:false, done:false};
+  drawSheet(); scrim.classList.add('on'); sheet.classList.add('on');
+}
+function closeDonate(){scrim.classList.remove('on'); sheet.classList.remove('on');}
+function drawSheet(){
+  const d = S.d, c = d.camp ? allCamps().find(x=>x.id===d.camp) : null;
+  const amount = d.custom ? parseInt(d.custom,10)||0 : d.amt;
+  if (d.done){
+    sheet.innerHTML = `<div class="grab"></div><div class="done">
+      <span class="ok">${ic('check',36,2.4)}</span>
+      <h2>Джазакаллаху хайран!</h2>
+      <p style="margin:0;color:var(--muted);font-size:14px">Пожертвование поступило в фонд. Оно появится в отчёте за ноябрь.</p>
+      <div class="receipt num">
+        <div><span>Сумма</span><b>${rub(amount)}</b></div>
+        <div><span>Куда</span><b>${c?c.title:'Куда нужнее всего'}</b></div>
+        <div><span>Вид</span><b>${({sadaka:'Садака',zakat:'Закят',nazr:'Назр'})[d.type]}</b></div>
+        <div><span>Имя в списке</span><b>${d.anon?'Аноним':'Ваше имя'}</b></div>
+      </div>
+      <button class="cta" data-close>Готово</button>
+      <span class="demo">Это демо, оплата не проводилась</span>
+    </div>`;
+    return;
+  }
+  const opts = [['',`Куда нужнее всего`]].concat(CAMPAIGNS.map(x=>[x.id,x.title]));
+  sheet.innerHTML = `<div class="grab"></div>
+    <h2>Пожертвование</h2>
+    <div class="to">Решение примет правление фонда, если выбрано «Куда нужнее всего»</div>
+    <div class="chips" style="padding:0;flex-wrap:wrap">${opts.map(o=>`<button class="chip" data-dcamp="${o[0]}" aria-pressed="${d.camp===o[0]}">${o[1]}</button>`).join('')}</div>
+    <div class="lbl">Вид</div>
+    <div class="types">${[['sadaka','Садака'],['zakat','Закят'],['nazr','Назр']].map(t=>`<button data-dtype="${t[0]}" aria-pressed="${d.type===t[0]}">${t[1]}</button>`).join('')}</div>
+    ${d.type==='zakat'?`<div class="hint">Закят идёт только нуждающимся семьям и учитывается в отчёте отдельно.</div>`:''}
+    <div class="lbl">Сумма</div>
+    <div class="amts num">${[300,500,1000,3000,5000,10000].map(a=>`<button data-amt="${a}" aria-pressed="${!d.custom&&d.amt===a}">${a.toLocaleString('ru-RU')} ₽</button>`).join('')}</div>
+    <label class="amtin num"><input id="custom-amt" inputmode="numeric" placeholder="Другая сумма" value="${d.custom}" aria-label="Другая сумма"><span style="font-weight:800;color:var(--muted)">₽</span></label>
+    <div class="lbl">Способ оплаты</div>
+    <div class="methods">
+      <button class="method" data-method="sbp" aria-pressed="${d.method==='sbp'}"><span class="mi">${ic('qr',20)}</span><div>СБП<small>Через приложение вашего банка, без комиссии</small></div><span class="radio"></span></button>
+      <button class="method" data-method="card" aria-pressed="${d.method==='card'}"><span class="mi">${ic('card',20)}</span><div>Банковская карта<small>Мир, Visa, Mastercard</small></div><span class="radio"></span></button>
+    </div>
+    <div style="margin-top:12px">
+      <div class="toggle"><span>Не показывать имя<small>В списке будет «Аноним»</small></span><button class="sw" role="switch" data-sw="anon" aria-checked="${d.anon}" aria-label="Не показывать имя"></button></div>
+      <div class="toggle"><span>Каждый месяц<small>Автоплатёж, отменить можно в любой момент</small></span><button class="sw" role="switch" data-sw="monthly" aria-checked="${d.monthly}" aria-label="Каждый месяц"></button></div>
+    </div>
+    <button class="cta num" data-pay ${amount<10?'disabled style="opacity:.5"':''}>Оплатить ${rub(amount)}${d.monthly?' в месяц':''}</button>
+    <div class="secure">${ic('lock',13,2)} Платёж идёт на расчётный счёт фонда</div>`;
+}
+
+/* ---------------- events ---------------- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('button'); if(!t) return;
+  const ds = t.dataset;
+  if ('tab' in ds){ go(ds.tab); return; }
+  if ('camp' in ds){ push({kind:'camp',id:ds.camp}); return; }
+  if ('box' in ds){ if(S.tab!=='boxes'){S.tab='boxes';S.stack=[];} push({kind:'box',id:ds.box}); return; }
+  if ('back' in ds){ pop(); return; }
+  if ('cat' in ds){ S.tab='campaigns'; S.stack=[]; S.campSeg='active'; S.campCat=ds.cat; render(); return; }
+  if ('seg' in ds){ S.campSeg=ds.seg; render(); return; }
+  if ('chip' in ds){ S.campCat=ds.chip; render(); return; }
+  if ('month' in ds){ if(ds.month){S.month=ds.month; render();} return; }
+  if ('donate' in ds){ openDonate(ds.donate); return; }
+  if ('close' in ds){ closeDonate(); return; }
+  if ('jump' in ds){ const [tab,sub]=ds.jump.split(':'); if(tab==='donate'){ S.tab='home'; S.stack=[]; render(); openDonate(''); return; } S.tab=tab; S.stack=[]; if(sub) S.stack.push({kind:'camp',id:sub}); render(); return; }
+  if (S.d){
+    if ('dcamp' in ds){ S.d.camp=ds.dcamp; if(S.d.type==='zakat'&&ds.dcamp&&!ds.dcamp.startsWith('need')) S.d.type='sadaka'; drawSheet(); return; }
+    if ('dtype' in ds){ S.d.type=ds.dtype; if(ds.dtype==='zakat') S.d.camp='need1'; drawSheet(); return; }
+    if ('amt' in ds){ S.d.amt=+ds.amt; S.d.custom=''; drawSheet(); return; }
+    if ('method' in ds){ S.d.method=ds.method; drawSheet(); return; }
+    if ('sw' in ds){ S.d[ds.sw]=!S.d[ds.sw]; drawSheet(); return; }
+    if ('pay' in ds){ S.d.done=true; drawSheet(); sheet.scrollTop=0; return; }
+  }
+});
+scrim.addEventListener('click', closeDonate);
+sheet.addEventListener('input', e => {
+  if (e.target.id==='custom-amt'){
+    S.d.custom = e.target.value.replace(/\D/g,'').slice(0,7);
+    const amount = parseInt(S.d.custom,10)||S.d.amt;
+    sheet.querySelectorAll('[data-amt]').forEach(b=>b.setAttribute('aria-pressed', !S.d.custom && +b.dataset.amt===S.d.amt));
+    const pay = sheet.querySelector('[data-pay]');
+    pay.textContent = 'Оплатить ' + rub(S.d.custom?parseInt(S.d.custom,10)||0:S.d.amt) + (S.d.monthly?' в месяц':'');
+    e.target.value = S.d.custom;
+  }
+});
+
+/* ---------------- notes column ---------------- */
+document.getElementById('map').innerHTML = [
+  ['home','home','Главная','Сколько собрано, кнопка «Пожертвовать», срочный сбор'],
+  ['campaigns','layers','Сборы','Нуждающимся, мечеть, медресе, Газа, селение'],
+  ['campaigns:mosque1','mosque','Карточка сбора','Прогресс, куда потрачено, кто помог'],
+  ['donate','heart','Пожертвование','Садака, закят или назр; СБП или карта'],
+  ['boxes','box','Ящики','Где стоят, кто вскрывал, сколько было'],
+  ['reports','doc','Отчёты','Приход и расход за месяц, документы'],
+  ['news','mega','Объявления','Субботники, собрания, просьбы о помощи']
+].map(m=>`<button data-jump="${m[0]}"><b>${ic(m[1])}${m[2]}</b><span>${m[3]}</span></button>`).join('');
+
+document.getElementById('ideas').innerHTML = [
+  ['box','<b>Ящики — отдельная вкладка.</b> Наличные из ящиков обычно никто не видит. Здесь каждое вскрытие записано: дата, сумма, кто из комиссии был, фото пересчёта.'],
+  ['hands','<b>Нуждающимся — первым пунктом.</b> Так, как вы сказали: сначала свои, потом мечеть и остальное. Имена семей не публикуются.'],
+  ['heart','<b>Садака, закят и назр.</b> Закят автоматически идёт только на помощь нуждающимся и учитывается отдельно.'],
+  ['doc','<b>Один отчёт на всё.</b> Онлайн, ящики и наличные складываются в общий приход месяца, а каждый расход привязан к сбору и чеку.'],
+  ['aid','<b>Газа — это сектор Газа.</b> В прошлых макетах «Газ» путался с газификацией. Здесь это гуманитарный сбор, а дороги и водопровод — в категории «Селение».']
+].map(x=>`<div>${ic(x[0],20)}<span>${x[1]}</span></div>`).join('');
+
+document.getElementById('qs').innerHTML = [
+  ['Фонд зарегистрирован официально? Есть расчётный счёт?','Для приёма оплаты через СБП и карты нужен счёт организации (НКО) или ИП. От этого зависит, какую платёжную систему подключать.'],
+  ['Сколько ящиков и где они стоят?','И кто входит в комиссию, которая их вскрывает. Как часто вскрывают — каждую пятницу или раз в месяц?'],
+  ['Через кого отправляете помощь в Газу?','Название фонда-партнёра, чтобы указать его в карточке сбора и в отчёте.'],
+  ['Кто будет вносить отчёты и объявления?','Нужна простая админка: один-два человека из фонда добавляют расходы, чеки и вскрытия ящиков с телефона.'],
+  ['Как правильно писать название?','«Сагасидейбук» или «Сагаси-Дейбук». Есть ли логотип или цвета, которые уже используете?'],
+  ['Фотографии','Мечеть, медресе, вид на селение. Они заменят иллюстрации в макете.'],
+  ['Сайт или приложение?','Предлагаю начать с сайта, который на телефоне выглядит как приложение (можно добавить на главный экран). Это быстрее и бесплатно для жителей. Отдельное приложение в App Store / Google Play можно сделать потом.']
+].map((q,i)=>`<div class="q"><span class="n">${i+1}</span><span><b>${q[0]}</b><small>${q[1]}</small></span></div>`).join('');
+
+render();
+</script>
+
+</body>
+</html>
