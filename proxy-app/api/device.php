@@ -66,18 +66,23 @@ function session_check(array $auth): void
 
 function client_ip(): string
 {
-    $candidates = [
+    // Заголовкам прокси верим только если сам запрос пришёл с внутреннего адреса (прокси хостинга),
+    // иначе клиент мог бы подставить любой IP.
+    $remote = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+    $isPublic = $remote !== '' && filter_var($remote, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+    if ($isPublic) {
+        return $remote;
+    }
+    foreach ([
         (string) ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? ''),
         trim(explode(',', (string) ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ''))[0]),
         (string) ($_SERVER['HTTP_X_REAL_IP'] ?? ''),
-        (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
-    ];
-    foreach ($candidates as $ip) {
+    ] as $ip) {
         if ($ip !== '' && filter_var($ip, FILTER_VALIDATE_IP)) {
             return $ip;
         }
     }
-    return '';
+    return $remote;
 }
 
 /** Оставляем только известные поля и обрезаем длину — данные приходят от клиента. */

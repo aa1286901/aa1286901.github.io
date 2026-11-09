@@ -701,3 +701,11 @@ div.ui-feature { cursor: default; }
 .ui-ig-text b { font-size: 16px; font-weight: 700; }
 .ui-ig-text span { font-size: 13px; color: var(--ui-sub); }
 .ui-ig-row:focus-visible { outline: 2px solid var(--ui-accent); outline-offset: 2px; }
+
+/* Журнал заходов клиента в админке */
+.ui-visit { display: flex; gap: 12px; align-items: baseline; font-size: 14px; }
+.ui-visit + .ui-visit { border-top: 1px solid var(--ui-sep); padding-top: 8px; }
+.ui-visit-at { color: var(--ui-sub); font-variant-numeric: tabular-nums; flex-shrink: 0; width: 84px; }
+.ui-visit-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.ui-visit-main b { font-weight: 600; overflow-wrap: anywhere; }
+.ui-visit-main span { color: var(--ui-sub); font-size: 13px; overflow-wrap: anywhere; }

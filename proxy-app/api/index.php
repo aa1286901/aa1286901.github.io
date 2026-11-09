@@ -12,6 +12,7 @@ require_once __DIR__ . '/webpush.php';
 require_once __DIR__ . '/referral.php';
 require_once __DIR__ . '/announcements.php';
 require_once __DIR__ . '/device.php';
+require_once __DIR__ . '/geo.php';
 
 function array_keys_recursive(array $array): array
 {
@@ -1374,11 +1375,29 @@ if ($uri === '/api/auth/invite' && $method === 'POST') {
     ]);
 }
 
+if (preg_match('#^/api/admin/users/([^/]+)/visits$#', $uri, $vm) === 1 && $method === 'GET') {
+    require_admin();
+    json_response(['visits' => visits_for(normalize_phone(urldecode($vm[1])), 10), 'geo' => geo_status()]);
+}
+
+if ($uri === '/api/admin/geo' && $method === 'GET') {
+    require_admin();
+    json_response(geo_status());
+}
+
+if ($uri === '/api/admin/geo/update' && $method === 'POST') {
+    require_admin();
+    $res = geo_update();
+    json_response($res, $res['ok'] ? 200 : 502);
+}
+
 if ($uri === '/api/device' && $method === 'POST') {
     $auth = require_auth();
     if (!is_admin_auth($auth)) {
         $body = read_json_body();
-        device_save(normalize_phone((string) ($auth['sub'] ?? '')), is_array($body['device'] ?? null) ? $body['device'] : []);
+        $devPhone = normalize_phone((string) ($auth['sub'] ?? ''));
+        device_save($devPhone, is_array($body['device'] ?? null) ? $body['device'] : []);
+        visit_log($devPhone);
     }
     json_response(['ok' => true]);
 }
@@ -1402,6 +1421,7 @@ if ($uri === '/api/auth/me' && $method === 'GET') {
     if ($role !== 'admin') {
         $user = require_active_subscription_user($auth);
         $response['subscription'] = user_subscription_payload($user);
+        try { visit_log(normalize_phone($phone)); } catch (Throwable $e) { }
     }
 
     json_response($response);
@@ -1450,11 +1470,13 @@ if ($uri === '/api/admin/users' && $method === 'GET') {
          ORDER BY datetime(created_at) DESC, id DESC'
     );
     $refStats = ref_admin_stats();
-    $users = array_map(static function (array $row) use ($refStats): array {
+    $lastVisits = visits_last_by_phone();
+    $users = array_map(static function (array $row) use ($refStats, $lastVisits): array {
         $u = map_user_admin_row($row);
         $st = $refStats[(string) $row['phone']] ?? [];
         $u['refFriends'] = (int) ($st['friends'] ?? 0);
         $u['refDays'] = (int) ($st['days'] ?? 0);
+        $u['lastVisit'] = $lastVisits[(string) $row['phone']] ?? null;
         return array_merge($u, device_admin_fields($row));
     }, $stmt->fetchAll());
 
