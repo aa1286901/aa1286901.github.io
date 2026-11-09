@@ -1357,6 +1357,7 @@ const UI_ICON_PATHS = {
   calendar: '<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>',
   bank: '<path d="M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/>',
   tag: '<path d="M3 12V5a2 2 0 0 1 2-2h7l9 9-9 9z"/><circle cx="8" cy="8" r="1.4"/>',
+  pin: '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
   instagram: '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17" cy="7" r="0.6" fill="currentColor"/>',
   phone: '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
   refresh: '<path d="M20 11a8 8 0 0 0-14.6-4.6L3 9M4 13a8 8 0 0 0 14.6 4.6L21 15M3 4v5h5M21 20v-5h-5"/>',
@@ -2933,6 +2934,7 @@ function adminUsersTab() {
           ${promoOn ? `<span class="ui-qrow-sub" style="color:var(--ui-orange-text);font-weight:600;">${uiIcon("tag", 13, 2.2)}В сообщении промокод ${esc(promoOn.code)}</span>` : ""}` : ""}
           ${u.refFriends || u.referredBy ? `<span class="ui-qrow-sub" style="color:#FF9F0A;font-weight:600;">${uiIcon("gift", 13, 2.2)}${u.refFriends ? `Привёл друзей: ${esc(u.refFriends)} · получил +${esc(u.refDays)} дн.` : ""}${u.refFriends && u.referredBy ? " · " : ""}${u.referredBy ? `пришёл от ${esc(u.referredBy)}` : ""}</span>` : ""}
           ${u.device ? `<span class="ui-qrow-sub">${uiIcon("phone", 13, 2.2)}${esc(deviceTitle(u.device))}${u.loginAt ? ` · вход ${esc(adminTime(u.loginAt))}` : ""}</span>` : ""}
+          ${u.lastVisit ? `<span class="ui-qrow-sub">${uiIcon("pin", 13, 2.2)}${esc(visitPlace(u.lastVisit))}</span>` : ""}
           ${u.vpnActive ? `<span class="ui-qrow-sub" style="color:#8E8CFF;font-weight:600;">${uiIcon("vpn", 13, 2.2)}VPN до ${esc(formatDateOnly(u.vpnExpiresAt))} · ${esc(u.vpnDaysLeft)} дн.</span>` : ""}
         </span>
         <span class="ui-tag ${st.cls}">${st.text}</span>
@@ -3138,6 +3140,43 @@ function adminVpnBlock(u) {
   </div>`;
 }
 
+function visitPlace(v) {
+  if (!v) return "";
+  const place = [v.city, v.country].filter(Boolean).join(", ");
+  return [place || v.ip, v.operator].filter(Boolean).join(" · ");
+}
+
+async function loadAdminVisits(phone) {
+  setAdmin({ visits: { phone, loading: true, items: [], geo: null } });
+  try {
+    const d = await request(`/admin/users/${encodeURIComponent(phone)}/visits`, { headers: { Authorization: `Bearer ${state.token}` } });
+    if (state.admin.visits?.phone !== phone) return;
+    setAdmin({ visits: { phone, loading: false, items: d.visits || [], geo: d.geo || null } });
+  } catch (e) {
+    setAdmin({ visits: { phone, loading: false, items: [], geo: null, error: e.message || "Не удалось загрузить заходы" } });
+  }
+}
+
+function adminVisitsBlock(u) {
+  if (!u) return "";
+  const v = state.admin.visits;
+  if (!v || v.phone !== u.phone) return "";
+  const geo = v.geo;
+  const rows = (v.items || []).map((x) => `<div class="ui-visit">
+      <span class="ui-visit-at">${esc(adminTime(x.at))}</span>
+      <span class="ui-visit-main"><b>${esc([x.city, x.country].filter(Boolean).join(", ") || "Место неизвестно")}</b><span>${esc([x.operator, x.ip].filter(Boolean).join(" · "))}</span></span>
+    </div>`).join("");
+  return `<div class="ui-card ui-pad ui-devbox" style="background:var(--ui-fill);box-shadow:none;">
+      <strong style="font-size:16px;">Последние заходы</strong>
+      ${v.loading ? `<span class="ui-sub" style="font-size:13px;">Загружаем…</span>` : rows || `<span class="ui-sub" style="font-size:13px;">${esc(v.error || "Заходов пока нет — появятся, когда клиент откроет кабинет.")}</span>`}
+      ${geo && !geo.ready ? `<span class="ui-caption" style="margin:0;color:var(--ui-orange-text);">База IP ещё не загружена — страна, город и оператор не определяются.</span>` : ""}
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+        <span class="ui-caption" style="margin:0;">IP-данные: DB-IP.com${geo?.month ? ` · база за ${esc(geo.month)}` : ""}</span>
+        <button class="ui-link" data-action="admin-geo-update" ${state.admin.geoUpdating ? "disabled" : ""}>${state.admin.geoUpdating ? "Обновляем… (до 2 минут)" : "Обновить базу"}</button>
+      </div>
+    </div>`;
+}
+
 function adminDeviceBlock(u) {
   if (!u) return "";
   const d = u.device;
@@ -3210,7 +3249,8 @@ function adminSheet() {
       <button class="ui-btn" data-action="admin-save-user" ${a.saving ? "disabled" : ""}>${a.saving ? "Сохраняем…" : "Сохранить"}</button>
       ${exists ? "" : `<p class="ui-caption" style="margin:0;">После сохранения появится код доступа — его можно сразу отправить клиенту в WhatsApp.</p>`}
       ${exists ? adminVpnBlock((a.users || []).find((u) => u.phone === normalizePhone(f.phone))) : ""}
-      ${exists ? adminDeviceBlock((a.users || []).find((u) => u.phone === normalizePhone(f.phone))) : ""}`);
+      ${exists ? adminDeviceBlock((a.users || []).find((u) => u.phone === normalizePhone(f.phone))) : ""}
+      ${exists ? adminVisitsBlock((a.users || []).find((u) => u.phone === normalizePhone(f.phone))) : ""}`);
   }
 
   if (kind === "invite") {
@@ -5270,10 +5310,23 @@ app.addEventListener("click", async (event) => {
     return;
   }
 
+  if (action === "admin-geo-update") {
+    setAdmin({ geoUpdating: true });
+    try {
+      const d = await request("/admin/geo/update", { method: "POST", headers: { Authorization: `Bearer ${state.token}` } });
+      showToast(d.ok ? `База IP обновлена (${d.month})` : (d.message || "Не удалось обновить базу"));
+    } catch (e) {
+      showToast(e.message || "Не удалось обновить базу");
+    }
+    setAdmin({ geoUpdating: false });
+    if (state.admin.visits?.phone) void loadAdminVisits(state.admin.visits.phone);
+    return;
+  }
   if (action === "admin-edit-user") {
     const phone = el.dataset.phone;
     const u = state.admin.users.find((x) => String(x.phone) === String(phone));
     if (!u) return;
+    void loadAdminVisits(u.phone);
     setAdmin({
       section: "users",
       sheet: "user",
