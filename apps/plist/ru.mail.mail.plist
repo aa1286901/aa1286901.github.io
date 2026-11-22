@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>items</key>
+        <array>
+                <dict>
+                        <key>assets</key>
+                        <array>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>software-package</string>
+                                        <key>url</key>
+                                        <string>https://dl.dropboxusercontent.com/scl/fi/u6pstxdjja8x3r3a6ol84/Mail.ru_15.92.0_iOS16.0_aa1286901.ipa?rlkey=tnghi8bjrjge98e8iao528tl3</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>display-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/49/cf/4a/49cf4a25-5f23-6b42-210f-b3736ed3143e/AppIcon-0-0-1x_U007epad-0-1-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                                <dict>
+                                        <key>kind</key>
+                                        <string>full-size-image</string>
+                                        <key>url</key>
+                                        <string>https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/49/cf/4a/49cf4a25-5f23-6b42-210f-b3736ed3143e/AppIcon-0-0-1x_U007epad-0-1-85-220.png/114x114bb.jpg</string>
+                                </dict>
+                        </array>
+                        <key>metadata</key>
+                        <dict>
+                                <key>bundle-identifier</key>
+                                <string>ru.mail.mail</string>
+                                <key>bundle-version</key>
+                                <string>8.183.1</string>
+                                <key>kind</key>
+                                <string>software</string>
+                                <key>title</key>
+                                <string>Почта Mail</string>
+                        </dict>
+                </dict>
+        </array>
+</dict>
+</plist>
