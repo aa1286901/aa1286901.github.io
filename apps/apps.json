@@ -22,11 +22,18 @@
       "ipa": "https://dl.dropboxusercontent.com/scl/fi/dmrwfh6phjy57y5rv66on/MAX-mail.ru.ipa?rlkey=p5j2lj1ef5vzlqdtgrfgwbm04"
     },
     {
+      "title": "Почта Mail",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/49/cf/4a/49cf4a25-5f23-6b42-210f-b3736ed3143e/AppIcon-0-0-1x_U007epad-0-1-85-220.png/114x114bb.jpg",
+      "bundleId": "ru.mail.mail",
+      "category": "v. 15.92.0",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/u6pstxdjja8x3r3a6ol84/Mail.ru_15.92.0_iOS16.0_aa1286901.ipa?rlkey=tnghi8bjrjge98e8iao528tl3"
+    },
+    {
       "title": "Облако Mail",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/8b/1c/77/8b1c77b2-6e84-551d-da58-7c069cca900c/AppIcon-Store-0-0-1x_U007epad-0-1-0-85-220.png/114x114bb.jpg",
       "bundleId": "ru.mail.cloud",
       "category": "v. 9.92.0",
-      "ipa": "fi/q0qtvrzshbd0n3ts9hngf/Cloud-Mail_9.92.0_iOS15.0_aa1286901.ipa?rlkey=oxguz4oqhcc311mlf9lw8e3eg"
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/q0qtvrzshbd0n3ts9hngf/Cloud-Mail_9.92.0_iOS15.0_aa1286901.ipa?rlkey=oxguz4oqhcc311mlf9lw8e3eg"
     },
     {
       "title": "Вконтакте",
