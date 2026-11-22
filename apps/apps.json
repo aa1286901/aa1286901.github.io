@@ -29,6 +29,13 @@
       "ipa": "https://dl.dropboxusercontent.com/scl/fi/cohlob610ghkbtni8f2bu/VK-mail.ipa?rlkey=xy0wlglnu6m94jhp6k4ct8nmn"
     },
     {
+      "title": "ВК Видео",
+      "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/bf/c4/97/bfc497b9-7c7b-327d-76ef-d81dcbdcdc7c/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/114x114bb.jpg",
+      "bundleId": "com.vk.vkvideo.prod",
+      "category": "v. 8.183",
+      "ipa": "https://dl.dropboxusercontent.com/scl/fi/v7cra7o65vf3ii2z2qrx4/VK-Video_8.183_iOS17.6_aa1286901.ipa?rlkey=2bhndvuzpmibuj3nuv4fp87oy"
+    },
+    {
       "title": "Сириус (ВТБ)",
       "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/7a/4a/e1/7a4ae123-f112-8c8b-aab7-0be6399aa982/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/114x114bb.jpg",
       "bundleId": "com.sm.FlowTime",
